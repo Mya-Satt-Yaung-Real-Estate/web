@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, User, LogOut, Globe, X, Grid3x3, Award, FileText, History as HistoryIcon, Calendar, Megaphone, Building2, BookOpen, Scale, Home as HomeIcon, HelpCircle, Mail, Newspaper, MessageSquare, Heart, Eye, Settings, Info, Coins, Banknote, Calculator, Briefcase, Star, Search } from 'lucide-react';
 import logoImage from '@/assets/jade.png';
 import { navigationStyles, getNavigationLinkClasses } from '@/lib/component-styles';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,13 +11,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuGroup,
-} from './ui/dropdown-menu';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { NotificationDropdown } from './NotificationDropdown';
-import { useAuth } from '../contexts/AuthContext';
-import { useLanguage } from '../contexts/LanguageContext';
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { NotificationDropdown } from '@/components/common/NotificationDropdown';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
-import { ScrollArea } from './ui/scroll-area';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export function Navigation() {
   const location = useLocation();

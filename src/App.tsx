@@ -1,12 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Navigation } from './components/Navigation';
-import { Footer } from './components/Footer';
-import { Home } from './pages/Home';
-import { About } from './pages/About';
+import { BrowserRouter } from 'react-router-dom';
+import { Navigation } from './components/layout/Navigation';
+import { Footer } from './components/layout/Footer';
+import { AppRoutes } from './routes/AppRoutes';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import './styles/globals.css';
+import './globals.css';
 
 function App() {
   return (
@@ -17,11 +16,7 @@ function App() {
             <div className="min-h-screen flex flex-col">
               <Navigation />
               <main className="flex-1 pt-20">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  {/* Add other routes here as we build more pages */}
-                </Routes>
+                <AppRoutes />
               </main>
               <Footer />
             </div>

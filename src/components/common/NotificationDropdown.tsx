@@ -1,5 +1,5 @@
 import { Bell, Check, X } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,8 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-} from './ui/dropdown-menu';
-import { Badge } from './ui/badge';
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 interface Notification {
   id: string;
@@ -107,7 +107,7 @@ export function NotificationDropdown() {
                   className={`p-4 cursor-pointer hover:bg-accent/50 ${
                     !notification.isRead ? 'bg-primary/5' : ''
                   }`}
-                  onSelect={(e) => {
+                  onSelect={(e: Event) => {
                     e.preventDefault();
                     if (!notification.isRead) {
                       markAsRead(notification.id);
@@ -134,7 +134,7 @@ export function NotificationDropdown() {
                               variant="ghost"
                               size="sm"
                               className="h-6 w-6 p-0 hover:bg-primary/10"
-                              onClick={(e) => {
+                              onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation();
                                 markAsRead(notification.id);
                               }}
@@ -146,7 +146,7 @@ export function NotificationDropdown() {
                             variant="ghost"
                             size="sm"
                             className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600"
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent) => {
                               e.stopPropagation();
                               dismiss(notification.id);
                             }}
@@ -177,3 +177,5 @@ export function NotificationDropdown() {
     </DropdownMenu>
   );
 }
+
+

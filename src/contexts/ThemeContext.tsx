@@ -19,7 +19,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     // Apply CSS variables for light mode
     Object.entries(theme.cssVariables).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
+      root.style.setProperty(key, String(value));
     });
   }, []);
 

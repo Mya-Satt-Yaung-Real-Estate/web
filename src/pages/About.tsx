@@ -1,7 +1,7 @@
 import { Mail, Phone, MapPin, Target, Users, Heart, Award, TrendingUp, Shield, Sparkles, Eye, Rocket, Building2, Search, FileText, Calendar, UserCheck, BarChart3, Bell, Lock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { useLanguage } from '../contexts/LanguageContext';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export function About() {
   const { t } = useLanguage();
