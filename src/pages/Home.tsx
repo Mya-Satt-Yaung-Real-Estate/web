@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { seoUtils } from '@/lib/seo';
 import { 
   Home as HomeIcon, 
   Search, 
@@ -15,6 +17,8 @@ import {
 } from 'lucide-react';
 
 export function Home() {
+  const seo = seoUtils.getPageSEO('home');
+  
   const stats = [
     {
       icon: <HomeIcon className="h-6 w-6" />,
@@ -96,7 +100,9 @@ export function Home() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <>
+      <SEOHead seo={seo} path="/" />
+      <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 gradient-primary animate-gradient opacity-10" />
@@ -259,6 +265,7 @@ export function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 

@@ -2,9 +2,12 @@ import { Mail, Phone, MapPin, Target, Users, Heart, Award, TrendingUp, Shield, S
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { seoUtils } from '@/lib/seo';
 
 export function About() {
   const { t } = useLanguage();
+  const seo = seoUtils.getPageSEO('about');
   
   const team = [
     {
@@ -179,7 +182,9 @@ export function About() {
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+    <>
+      <SEOHead seo={seo} path="/about" />
+      <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <section className="mb-20 gradient-mesh -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-7xl mx-auto text-center">
@@ -563,5 +568,6 @@ export function About() {
         </div>
       </section>
     </div>
+    </>
   );
 }

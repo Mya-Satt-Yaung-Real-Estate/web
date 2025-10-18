@@ -2,10 +2,16 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Home, ArrowLeft } from 'lucide-react';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { seoUtils } from '@/lib/seo';
 
 export function NotFound() {
+  const seo = seoUtils.getPageSEO('notFound');
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-purple-500/5 flex items-center justify-center p-4">
+    <>
+      <SEOHead seo={seo} path="/404" />
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-purple-500/5 flex items-center justify-center p-4">
       <div className="max-w-lg mx-auto text-center">
         {/* 404 Illustration */}
         <div className="mb-8">
@@ -47,5 +53,6 @@ export function NotFound() {
         </Card>
       </div>
     </div>
+    </>
   );
 }
