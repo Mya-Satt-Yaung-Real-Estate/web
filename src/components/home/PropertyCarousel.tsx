@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import { Button } from './ui/button';
-import { ImageWithFallback } from './ImageWithFallback';
-import { useLanguage } from '../contexts/LanguageContext';
+import { Button } from '../ui/button';
+import { ImageWithFallback } from '../ImageWithFallback';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const carouselImages = [
   {
