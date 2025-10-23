@@ -93,3 +93,4 @@ export function StructuredData({ type = 'all' }: StructuredDataProps) {
     </Helmet>
   );
 }
+

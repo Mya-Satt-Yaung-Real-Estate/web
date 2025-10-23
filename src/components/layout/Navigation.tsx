@@ -1,7 +1,14 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, User, LogOut, Globe, X, Grid3x3, Award, FileText, History as HistoryIcon, Calendar, Megaphone, Building2, BookOpen, Scale, Home as HomeIcon, HelpCircle, Mail, Newspaper, MessageSquare, Heart, Eye, Settings, Info, Coins, Banknote, Calculator, Briefcase, Star, Search } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Menu, User, LogOut, Globe, X, Grid3x3, Award, History as HistoryIcon,
+  Calendar, Megaphone, Building2, BookOpen, Scale, Home as HomeIcon,
+  HelpCircle, Mail, Newspaper, MessageSquare, Heart, Eye, Settings, Info,
+  Coins, Banknote, Calculator, Briefcase, Star, Search, ChevronDown,
+  Building, TrendingUp, Users
+} from 'lucide-react';
+
 import logoImage from '@/assets/jade.png';
-import { navigationStyles, getNavigationLinkClasses } from '@/lib/component-styles';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,12 +19,96 @@ import {
   DropdownMenuLabel,
   DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { NotificationDropdown } from '@/components/common/NotificationDropdown';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useState } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
+// Navigation data structure
+const createNavigationData = (t: (key: string) => string) => ({
+  navLinks: [
+    { name: t('nav.home'), path: '/' },
+  ],
+  
+  propertyCategories: [
+    { name: t('categories.searchAllProperty'), path: '/search-all', icon: Search },
+    { name: t('categories.tantantan'), path: '/search-all?filter=tantantan', icon: Grid3x3 },
+    { name: t('categories.premiumProperties'), path: '/search-all?type=premium', icon: Star },
+    { name: t('listings.forSale'), path: '/search-all?filter=sale', icon: HomeIcon },
+    { name: t('listings.forRent'), path: '/search-all?filter=rent', icon: Building },
+    { name: t('categories.preSale'), path: '/search-all?filter=presale', icon: TrendingUp },
+    { name: t('categories.installment'), path: '/search-all?filter=installment', icon: Calculator },
+    { name: t('categories.buyerPosts'), path: '/search-all?type=wanted&listingType=buyer', icon: Search },
+    { name: t('categories.renterPosts'), path: '/search-all?type=wanted&listingType=renter', icon: Users },
+    { name: t('categories.vacanciesJobs'), path: '/search-all?type=job', icon: Briefcase },
+    { name: t('services.housingEvent'), path: '/search-all?type=event', icon: Calendar },
+  ],
+  
+  createListingOptions: [
+    { name: t('createListing.propertyPost'), path: '/post-property?tab=property', icon: HomeIcon },
+    { name: t('createListing.wantedPost'), path: '/post-property?tab=wanted', icon: Search },
+    { name: t('createListing.advertisementPost'), path: '/post-property?tab=advertisement', icon: Megaphone },
+    { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
+    { name: t('createListing.giveYourReview'), path: '/review-post', icon: Star },
+    { name: t('createListing.jobPostCreate'), path: '/jobs', icon: Briefcase },
+    { name: t('services.homeLoanRequest'), path: '/loan-request', icon: Banknote },
+  ],
+  
+  calculatorOptions: [
+    { name: t('calculators.loanCalculator'), path: '/loan-calculator', icon: Banknote },
+    { name: t('calculators.yarPyatTaxCalculator'), path: '/yar-pyat-tax-calculator', icon: Calculator },
+  ],
+  
+  knowledgeCategories: [
+    { name: t('services.knowledgeHub'), path: '/knowledge-hub', icon: BookOpen },
+    { name: t('services.faq'), path: '/faq', icon: HelpCircle },
+    { name: t('services.newsUpdates'), path: '/news-updates', icon: Newspaper },
+    { name: t('services.aboutUs'), path: '/about', icon: Info },
+    { name: t('services.contactUs'), path: '/contact', icon: Mail },
+    { name: t('services.legalTeam'), path: '/legal-team', icon: Scale },
+  ],
+  
+  companyCategories: [
+    { name: t('categories.realEstateAgency'), path: '/companies?category=agency', icon: HomeIcon },
+    { name: t('categories.constructionCompany'), path: '/companies?category=construction', icon: Building },
+    { name: t('categories.propertyManagement'), path: '/companies?category=management', icon: Briefcase },
+    { name: t('categories.propertyDeveloper'), path: '/companies?category=developer', icon: TrendingUp },
+    { name: t('categories.realEstateConsultant'), path: '/companies?category=consultant', icon: Users },
+  ],
+});
+
+// Reusable dropdown component
+const NavigationDropdown = ({ 
+  trigger, 
+  label, 
+  items, 
+  onItemClick 
+}: {
+  trigger: React.ReactNode;
+  label: string;
+  items: Array<{ name: string; path: string; icon: any }>;
+  onItemClick: (path: string) => void;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      {trigger}
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="start" className="w-64 backdrop-blur-xl bg-background/95 border-border/50">
+      <DropdownMenuLabel className="text-primary">{label}</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      {items.map((item) => (
+        <DropdownMenuItem 
+          key={item.path} 
+          onClick={() => onItemClick(item.path)}
+          className="cursor-pointer whitespace-nowrap"
+        >
+          <item.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span className="truncate">{item.name}</span>
+        </DropdownMenuItem>
+      ))}
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
 
 export function Navigation() {
   const location = useLocation();
@@ -25,50 +116,8 @@ export function Navigation() {
   const { user, signOut, isAuthenticated } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [servicesSheetOpen, setServicesSheetOpen] = useState(false);
 
-  const navLinks = [
-    { name: t('nav.home'), path: '/' },
-    { name: t('nav.about'), path: '/about' },
-    { name: t('nav.companies'), path: '/companies' },
-    { name: t('nav.appointments'), path: '/appointments' },
-    { name: t('nav.createListing'), path: '/post-property' },
-  ];
-
-  const serviceFeatures = {
-    propertyManagement: [
-      { icon: Award, name: t('services.pointManagement'), path: '/point-management', desc: t('services.pointManagementDesc') },
-      { icon: FileText, name: t('services.createListing'), path: '/post-property', desc: t('services.createListingDesc') },
-      { icon: FileText, name: t('services.wantedListing'), path: '/wanted-listing', desc: t('services.wantedListingDesc') },
-      { icon: HistoryIcon, name: t('services.history'), path: '/history', desc: t('services.historyDesc') },
-      { icon: Calendar, name: t('services.appointmentRequest'), path: '/appointments', desc: t('services.appointmentRequestDesc') },
-      { icon: Megaphone, name: t('services.advertisement'), path: '/advertisement-management', desc: t('services.advertisementDesc') },
-      { icon: Banknote, name: t('services.loanRequest'), path: '/loan-request', desc: t('services.loanRequestDesc') },
-      { icon: Calculator, name: t('services.loanCalculator'), path: '/loan-calculator', desc: t('services.loanCalculatorDesc') },
-      { icon: Calculator, name: 'Yar Pyat Tax Calculator', path: '/yar-pyat-tax-calculator', desc: 'Calculate property taxes (ရာပြတ်ခွန်) for land transactions' },
-      { icon: Briefcase, name: t('services.jobPostListing'), path: '/jobs', desc: t('services.jobPostListingDesc') },
-      { icon: Star, name: t('services.reviewPost'), path: '/reviews', desc: t('services.reviewPostDesc') },
-      { icon: Search, name: t('services.searchAll'), path: '/search-all', desc: t('services.searchAllDesc') },
-    ],
-    information: [
-      { icon: Building2, name: t('services.companies'), path: '/companies', desc: t('services.companiesDesc') },
-      { icon: BookOpen, name: t('services.knowledgeHub'), path: '/knowledge-hub', desc: t('services.knowledgeHubDesc') },
-      { icon: Scale, name: t('services.legalTeam'), path: '/legal-team', desc: t('services.legalTeamDesc') },
-      { icon: HomeIcon, name: t('services.housingEvent'), path: '/events', desc: t('services.housingEventDesc') },
-      { icon: HelpCircle, name: t('services.faq'), path: '/faq', desc: t('services.faqDesc') },
-      { icon: Mail, name: t('services.contactUs'), path: '/contact', desc: t('services.contactUsDesc') },
-      { icon: Newspaper, name: t('services.newsUpdates'), path: '/news-updates', desc: t('services.newsUpdatesDesc') },
-      { icon: MessageSquare, name: t('services.applyFeedback'), path: '/feedback', desc: t('services.applyFeedbackDesc') },
-    ],
-    userFeatures: [
-      { icon: Heart, name: t('services.favorite'), path: '/favorites', desc: t('services.favoriteDesc') },
-      { icon: Eye, name: t('services.recentViews'), path: '/recent-views', desc: t('services.recentViewsDesc') },
-      { icon: User, name: t('services.profile'), path: '/profile', desc: t('services.profileDesc') },
-      { icon: Settings, name: t('services.setting'), path: '/settings', desc: t('services.settingDesc') },
-      { icon: Info, name: t('services.aboutApp'), path: '/about-app', desc: t('services.aboutAppDesc') },
-    ],
-  };
-
+  const navigationData = createNavigationData(t);
   const isActive = (path: string) => location.pathname === path;
 
   const handleSignOut = () => {
@@ -76,170 +125,182 @@ export function Navigation() {
     navigate('/');
   };
 
-  const handleServiceClick = (path: string) => {
+  const handleNavigation = (path: string) => {
     navigate(path);
-    setServicesSheetOpen(false);
     setMobileMenuOpen(false);
   };
 
   return (
-    <nav className={navigationStyles.container}>
+    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50 backdrop-blur-xl bg-background/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className={navigationStyles.logo.container}>
+          <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
               <img 
                 src={logoImage} 
                 alt="Jade Property Logo" 
-                className={navigationStyles.logo.image}
+                className="relative w-10 h-10 rounded-xl shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all group-hover:scale-105"
               />
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className={navigationStyles.logo.text}>
+              <span className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent background-animate">
                 Jade Property
               </span>
-              <span className={navigationStyles.logo.subtitle}>
+              <span className="text-muted-foreground -mt-1">
                 {t('home.newProperties')}
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-2">
-            {navLinks.map(link => (
+          <div className="hidden md:flex items-center gap-1 lg:gap-2 flex-wrap">
+            {navigationData.navLinks.map(link => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={getNavigationLinkClasses(isActive(link.path))}
+                className={`relative px-4 py-2 rounded-xl transition-all group ${
+                  isActive(link.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                }`}
               >
                 {isActive(link.path) && (
-                  <div className={navigationStyles.link.background} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
                 )}
-                <span className={navigationStyles.link.hover}>
+                <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform">
                   {link.name}
                 </span>
               </Link>
             ))}
+            
+            {/* Properties Dropdown */}
+            <NavigationDropdown
+              trigger={
+                <button
+                  className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
+                    isActive('/modules') || isActive('/wanted-listing')
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {(isActive('/modules') || isActive('/wanted-listing')) && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
+                  )}
+                  <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">
+                    {t('nav.properties')}
+                  </span>
+                  <ChevronDown className="relative z-10 h-4 w-4 transition-transform group-hover:translate-y-0.5 flex-shrink-0" />
+                </button>
+              }
+              label={t('nav.properties')}
+              items={navigationData.propertyCategories}
+              onItemClick={handleNavigation}
+            />
+            
+            {/* Companies Dropdown */}
+            <NavigationDropdown
+              trigger={
+                <button
+                  className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
+                    isActive('/companies')
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {isActive('/companies') && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
+                  )}
+                  <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">
+                    {t('nav.companies')}
+                  </span>
+                  <ChevronDown className="relative z-10 h-4 w-4 transition-transform group-hover:translate-y-0.5 flex-shrink-0" />
+                </button>
+              }
+              label={t('categories.companies')}
+              items={[
+                { name: 'All Companies', path: '/companies', icon: Building2 },
+                ...navigationData.companyCategories
+              ]}
+              onItemClick={handleNavigation}
+            />
+
+            {/* Create Listing Dropdown */}
+            <NavigationDropdown
+              trigger={
+                <button
+                  className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
+                    isActive('/post-property')
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {isActive('/post-property') && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
+                  )}
+                  <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">
+                    {t('nav.createListing')}
+                  </span>
+                  <ChevronDown className="relative z-10 h-4 w-4 transition-transform group-hover:translate-y-0.5 flex-shrink-0" />
+                </button>
+              }
+              label={t('createListing.title')}
+              items={navigationData.createListingOptions}
+              onItemClick={handleNavigation}
+            />
+
+            {/* Calculator Dropdown */}
+            <NavigationDropdown
+              trigger={
+                <button
+                  className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
+                    isActive('/loan-calculator') || isActive('/yar-pyat-tax-calculator')
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {(isActive('/loan-calculator') || isActive('/yar-pyat-tax-calculator')) && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
+                  )}
+                  <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">
+                    {t('nav.calculator')}
+                  </span>
+                  <ChevronDown className="relative z-10 h-4 w-4 transition-transform group-hover:translate-y-0.5 flex-shrink-0" />
+                </button>
+              }
+              label={t('nav.calculator')}
+              items={navigationData.calculatorOptions}
+              onItemClick={handleNavigation}
+            />
+
+            {/* Knowledges Dropdown */}
+            <NavigationDropdown
+              trigger={
+                <button
+                  className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
+                    isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
+                    isActive('/about') || isActive('/contact') || isActive('/legal-team')
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {(isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
+                   isActive('/about') || isActive('/contact') || isActive('/legal-team')) && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
+                  )}
+                  <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">
+                    {t('nav.knowledges')}
+                  </span>
+                  <ChevronDown className="relative z-10 h-4 w-4 transition-transform group-hover:translate-y-0.5 flex-shrink-0" />
+                </button>
+              }
+              label={t('nav.knowledges')}
+              items={navigationData.knowledgeCategories}
+              onItemClick={handleNavigation}
+            />
           </div>
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
-            {/* Our Service Features - Desktop */}
-            <Sheet open={servicesSheetOpen} onOpenChange={setServicesSheetOpen}>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className="hidden md:flex items-center gap-2 rounded-xl hover:bg-primary/10 transition-all"
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                  {t('services.ourServices')}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-2xl glass backdrop-blur-xl bg-background/95 border-border/50">
-                <SheetHeader>
-                  <SheetTitle className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                    {t('services.ourServices')}
-                  </SheetTitle>
-                  <SheetDescription>
-                    Access all features and services in one place
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[calc(100vh-120px)] mt-6 pr-4">
-                  <div className="space-y-8">
-                    {/* Property Management Section */}
-                    <div>
-                      <h3 className="mb-4 flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-primary" />
-                        {t('services.propertyManagement')}
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {serviceFeatures.propertyManagement.map((service) => (
-                          <button
-                            key={service.path}
-                            onClick={() => handleServiceClick(service.path)}
-                            className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 text-left group"
-                          >
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary group-hover:to-[#4a9b82] transition-all">
-                              <service.icon className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="mb-1 group-hover:text-primary transition-colors truncate">
-                                {service.name}
-                              </p>
-                              <p className="text-muted-foreground line-clamp-2">
-                                {service.desc}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Information Center Section */}
-                    <div>
-                      <h3 className="mb-4 flex items-center gap-2">
-                        <BookOpen className="h-5 w-5 text-primary" />
-                        {t('services.informationCenter')}
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {serviceFeatures.information.map((service) => (
-                          <button
-                            key={service.path}
-                            onClick={() => handleServiceClick(service.path)}
-                            className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 text-left group"
-                          >
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary group-hover:to-[#4a9b82] transition-all">
-                              <service.icon className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="mb-1 group-hover:text-primary transition-colors truncate">
-                                {service.name}
-                              </p>
-                              <p className="text-muted-foreground line-clamp-2">
-                                {service.desc}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* User Features Section */}
-                    <div>
-                      <h3 className="mb-4 flex items-center gap-2">
-                        <User className="h-5 w-5 text-primary" />
-                        {t('services.userFeatures')}
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {serviceFeatures.userFeatures.map((service) => (
-                          <button
-                            key={service.path}
-                            onClick={() => handleServiceClick(service.path)}
-                            className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 text-left group"
-                          >
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary group-hover:to-[#4a9b82] transition-all">
-                              <service.icon className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="mb-1 group-hover:text-primary transition-colors truncate">
-                                {service.name}
-                              </p>
-                              <p className="text-muted-foreground line-clamp-2">
-                                {service.desc}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -328,6 +389,14 @@ export function Navigation() {
                       <User className="mr-2 h-4 w-4" />
                       {t('services.profile')}
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/favorites')}>
+                      <Heart className="mr-2 h-4 w-4" />
+                      {t('services.favorite')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/recent-views')}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      {t('services.recentViews')}
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/history')}>
                       <HistoryIcon className="mr-2 h-4 w-4" />
                       {t('services.history')}
@@ -335,6 +404,18 @@ export function Navigation() {
                     <DropdownMenuItem onClick={() => navigate('/settings')}>
                       <Settings className="mr-2 h-4 w-4" />
                       {t('services.setting')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/about-app')}>
+                      <Info className="mr-2 h-4 w-4" />
+                      {t('services.aboutApp')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/point-management')}>
+                      <Award className="mr-2 h-4 w-4" />
+                      {t('services.pointManagement')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/feedback')}>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      {t('services.applyFeedback')}
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
@@ -348,7 +429,7 @@ export function Navigation() {
               <Button 
                 variant="default" 
                 size="sm" 
-                className="gradient-primary text-white shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
+                className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
                 onClick={() => navigate('/signin')}
               >
                 {t('nav.signIn')}
@@ -371,7 +452,7 @@ export function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border/50 backdrop-blur-xl">
             <div className="space-y-1">
-              {navLinks.map(link => (
+              {navigationData.navLinks.map(link => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -385,114 +466,91 @@ export function Navigation() {
                   {link.name}
                 </Link>
               ))}
-              <Sheet open={servicesSheetOpen} onOpenChange={setServicesSheetOpen}>
-                <SheetTrigger asChild>
-                  <button className="w-full text-left px-4 py-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-all flex items-center gap-2">
-                    <Grid3x3 className="h-4 w-4" />
-                    {t('services.ourServices')}
+              
+              {/* Mobile Dropdowns */}
+              <NavigationDropdown
+                trigger={
+                  <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
+                    isActive('/modules') || isActive('/wanted-listing')
+                      ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}>
+                    <span>{t('nav.properties')}</span>
+                    <ChevronDown className="h-4 w-4" />
                   </button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-full sm:max-w-2xl glass backdrop-blur-xl bg-background/95 border-border/50">
-                  <SheetHeader>
-                    <SheetTitle className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                      {t('services.ourServices')}
-                    </SheetTitle>
-                    <SheetDescription>
-                      Access all features and services in one place
-                    </SheetDescription>
-                  </SheetHeader>
-                  <ScrollArea className="h-[calc(100vh-120px)] mt-6 pr-4">
-                    <div className="space-y-8">
-                      {/* Property Management Section */}
-                      <div>
-                        <h3 className="mb-4 flex items-center gap-2">
-                          <FileText className="h-5 w-5 text-primary" />
-                          {t('services.propertyManagement')}
-                        </h3>
-                        <div className="grid grid-cols-1 gap-3">
-                          {serviceFeatures.propertyManagement.map((service) => (
-                            <button
-                              key={service.path}
-                              onClick={() => handleServiceClick(service.path)}
-                              className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 text-left group"
-                            >
-                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary group-hover:to-[#4a9b82] transition-all">
-                                <service.icon className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="mb-1 group-hover:text-primary transition-colors">
-                                  {service.name}
-                                </p>
-                                <p className="text-muted-foreground line-clamp-2">
-                                  {service.desc}
-                                </p>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                }
+                label={t('nav.properties')}
+                items={navigationData.propertyCategories}
+                onItemClick={handleNavigation}
+              />
+              
+              <NavigationDropdown
+                trigger={
+                  <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
+                    isActive('/companies')
+                      ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}>
+                    <span>{t('nav.companies')}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                }
+                label={t('categories.companies')}
+                items={[
+                  { name: 'All Companies', path: '/companies', icon: Building2 },
+                  ...navigationData.companyCategories
+                ]}
+                onItemClick={handleNavigation}
+              />
 
-                      {/* Information Center Section */}
-                      <div>
-                        <h3 className="mb-4 flex items-center gap-2">
-                          <BookOpen className="h-5 w-5 text-primary" />
-                          {t('services.informationCenter')}
-                        </h3>
-                        <div className="grid grid-cols-1 gap-3">
-                          {serviceFeatures.information.map((service) => (
-                            <button
-                              key={service.path}
-                              onClick={() => handleServiceClick(service.path)}
-                              className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 text-left group"
-                            >
-                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary group-hover:to-[#4a9b82] transition-all">
-                                <service.icon className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="mb-1 group-hover:text-primary transition-colors">
-                                  {service.name}
-                                </p>
-                                <p className="text-muted-foreground line-clamp-2">
-                                  {service.desc}
-                                </p>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+              <NavigationDropdown
+                trigger={
+                  <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
+                    isActive('/post-property')
+                      ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}>
+                    <span>{t('nav.createListing')}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                }
+                label={t('createListing.title')}
+                items={navigationData.createListingOptions}
+                onItemClick={handleNavigation}
+              />
 
-                      {/* User Features Section */}
-                      <div>
-                        <h3 className="mb-4 flex items-center gap-2">
-                          <User className="h-5 w-5 text-primary" />
-                          {t('services.userFeatures')}
-                        </h3>
-                        <div className="grid grid-cols-1 gap-3">
-                          {serviceFeatures.userFeatures.map((service) => (
-                            <button
-                              key={service.path}
-                              onClick={() => handleServiceClick(service.path)}
-                              className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 text-left group"
-                            >
-                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary group-hover:to-[#4a9b82] transition-all">
-                                <service.icon className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="mb-1 group-hover:text-primary transition-colors">
-                                  {service.name}
-                                </p>
-                                <p className="text-muted-foreground line-clamp-2">
-                                  {service.desc}
-                                </p>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </SheetContent>
-              </Sheet>
+              <NavigationDropdown
+                trigger={
+                  <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
+                    isActive('/loan-calculator') || isActive('/yar-pyat-tax-calculator')
+                      ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}>
+                    <span>{t('nav.calculator')}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                }
+                label={t('nav.calculator')}
+                items={navigationData.calculatorOptions}
+                onItemClick={handleNavigation}
+              />
+
+              <NavigationDropdown
+                trigger={
+                  <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
+                    isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
+                    isActive('/about') || isActive('/contact') || isActive('/legal-team')
+                      ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }`}>
+                    <span>{t('nav.knowledges')}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                }
+                label={t('nav.knowledges')}
+                items={navigationData.knowledgeCategories}
+                onItemClick={handleNavigation}
+              />
             </div>
           </div>
         )}

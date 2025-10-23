@@ -11,18 +11,53 @@ interface Translations {
 
 const translations: Translations = {
   // Navigation
-  'nav.home': { en: 'Home', mm: 'ပင်မစာမျက်နှာ' },
+  'nav.home': { en: 'Home', mm: 'ပင်မ' },
   'nav.about': { en: 'About Us', mm: 'ကျွန်ုပ်တို့အကြောင်း' },
   'nav.properties': { en: 'Properties', mm: 'အိမ်ခြံမြေများ' },
   'nav.companies': { en: 'Companies', mm: 'ကုမ္ပဏီများ' },
   'nav.appointments': { en: 'Appointments', mm: 'ချိန်းဆိုမှုများ' },
   'nav.postProperty': { en: 'Post Property', mm: 'အိမ်ခြံမြေတင်ရန်' },
-  'nav.createListing': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },
+  'nav.createListing': { en: 'Create Listing', mm: 'ပို့စ်တင်ရန်' },
+  'nav.calculator': { en: 'Calculator', mm: 'တွက်ချက်စက်' },
+  'nav.knowledges': { en: 'Knowledges', mm: 'သိကောင်းစရာ' },
   'nav.signIn': { en: 'Sign In', mm: 'ဝင်ရောက်ရန်' },
   'nav.signOut': { en: 'Sign Out', mm: 'ထွက်ရန်' },
   
   // Home Page
-  'home.newProperties': { en: 'Find your dream property', mm: 'သင်၏အိပ်မက်မက်သော အိမ်ခြံမြေကိုရှာပါ' },
+  'home.newProperties': { en: 'Find your dream property', mm: 'သင့်အိပ်မက် အိမ်ခြံမြေကိုရှာပါ' },
+  
+  // Categories
+  'categories.searchAllProperty': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
+  'categories.tantantan': { en: 'Tantantan', mm: 'တန်တန်တန်' },
+  'categories.premiumProperties': { en: 'Premium Properties', mm: 'အဆင့်မြင့်အိမ်ခြံမြေများ' },
+  'categories.preSale': { en: 'Pre-Sale', mm: 'ကြိုတင်ရောင်းချမှု' },
+  'categories.installment': { en: 'Installment', mm: 'အရစ်ကျ' },
+  'categories.buyerPosts': { en: 'Buyer Posts', mm: 'ဝယ်သူများ၏စာရင်း' },
+  'categories.renterPosts': { en: 'Renter Posts', mm: 'ငှားသူများ၏စာရင်း' },
+  'categories.vacanciesJobs': { en: 'Vacancies & Jobs', mm: 'အလုပ်လစ်လပ်မှုများနှင့်အလုပ်များ' },
+  'categories.companies': { en: 'Companies', mm: 'ကုမ္ပဏီများ' },
+  'categories.realEstateAgency': { en: 'Real Estate Agency', mm: 'အိမ်ခြံမြေအေဂျင်စီ' },
+  'categories.constructionCompany': { en: 'Construction Company', mm: 'ဆောက်လုပ်ရေးကုမ္ပဏီ' },
+  'categories.propertyManagement': { en: 'Property Management', mm: 'အိမ်ခြံမြေစီမံခန့်ခွဲမှု' },
+  'categories.propertyDeveloper': { en: 'Property Developer', mm: 'အိမ်ခြံမြေဖွံ့ဖြိုးတိုးတက်ရေးကုမ္ပဏီ' },
+  'categories.realEstateConsultant': { en: 'Real Estate Consultant', mm: 'အိမ်ခြံမြေအကြံပေးကုမ္ပဏီ' },
+  
+  // Listings
+  'listings.forSale': { en: 'For Sale', mm: 'ရောင်းချရန်' },
+  'listings.forRent': { en: 'For Rent', mm: 'ငှားရန်ရှိသည်' },
+  
+  // Create Listing
+  'createListing.title': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },
+  'createListing.propertyPost': { en: 'Property Post', mm: 'အိမ်ခြံမြေတင်ရန်' },
+  'createListing.wantedPost': { en: 'Wanted Post', mm: 'လိုချင်သောစာရင်း' },
+  'createListing.advertisementPost': { en: 'Advertisement Post', mm: 'ကြော်ငြာတင်ရန်' },
+  'createListing.appointmentRequest': { en: 'Appointment Request', mm: 'ချိန်းဆိုမှုတောင်းဆိုရန်' },
+  'createListing.giveYourReview': { en: 'Give Your Review', mm: 'သင်၏သုံးသပ်ချက်ပေးပါ' },
+  'createListing.jobPostCreate': { en: 'Job Post Create', mm: 'အလုပ်စာရင်းဖန်တီးရန်' },
+  
+  // Calculators
+  'calculators.loanCalculator': { en: 'Loan Calculator', mm: 'ချေးငွေတွက်စက်' },
+  'calculators.yarPyatTaxCalculator': { en: 'Yar Pyat Tax Calculator', mm: 'ရာပြတ်ခွန်တွက်စက်' },
   
   // Services
   'services.ourServices': { en: 'Our Services', mm: 'ကျွန်ုပ်တို့၏ဝန်ဆောင်မှုများ' },
@@ -116,6 +151,30 @@ const translations: Translations = {
   'about.marketLeaderDesc': { en: 'Trusted by thousands for buying, selling, and investing in properties', mm: 'အိမ်ခြံမြေ ဝယ်ယူခြင်း၊ ရောင်းချခြင်းနှင့် ရင်းနှီးမြှုပ်နှံခြင်းတွင် လူထောင်ပေါင်းများစွာမှ ယုံကြည်ခံရသော' },
   'about.innovation': { en: 'Innovation Focus', mm: 'ဆန်းသစ်တီထွင်မှု အာရုံစိုက်မှု' },
   'about.innovationDesc': { en: 'Leveraging cutting-edge technology to enhance your property journey', mm: 'သင်၏ အိမ်ခြံမြေခရီးကို မြှင့်တင်ရန် အဆင့်မြင့် နည်းပညာကို အသုံးပြုခြင်း' },
+  
+  // Carousel
+  'carousel.villa': { en: 'Modern Luxury Villa', mm: 'ခေတ်မီဇိမ်ခံ အိမ်ကြီး' },
+  'carousel.villaDesc': { en: 'Stunning contemporary architecture with premium amenities', mm: 'အဆင့်မြင့် အဆောက်အအုံနှင့် ထူးခြားလှပသော ခေတ်မီဗိသုကာ' },
+  'carousel.apartment': { en: 'Urban Apartment', mm: 'မြို့တွင်း တိုက်ခန်း' },
+  'carousel.apartmentDesc': { en: 'City living at its finest with modern conveniences', mm: 'ခေတ်မီအဆင်ပြေမှုများဖြင့် မြို့တွင်းနေထိုင်မှု အကောင်းဆုံး' },
+  'carousel.office': { en: 'Commercial Office Space', mm: 'စီးပွားရေး ရုံးခန်း' },
+  'carousel.officeDesc': { en: 'Prime business location for your success', mm: 'သင်၏အောင်မြင်မှုအတွက် အကောင်းဆုံး စီးပွားရေးတည်နေရာ' },
+  'carousel.estate': { en: 'Luxury Estate with Pool', mm: 'ရေကူးကန်ပါ ဇိမ်ခံအိမ်' },
+  'carousel.estateDesc': { en: 'Resort-style living with exclusive amenities', mm: 'သီးသန့် အဆောက်အအုံများဖြင့် အပန်းဖြေစခန်းပုံစံ နေထိုင်မှု' },
+  'carousel.condo': { en: 'Downtown Condominium', mm: 'မြို့လယ်ခေါင် ကွန်ဒို' },
+  'carousel.condoDesc': { en: 'Modern urban lifestyle in the heart of the city', mm: 'မြို့၏ နှလုံးသားတွင် ခေတ်မီမြို့ပြဘဝပုံစံ' },
+  'carousel.scrollDown': { en: 'Scroll Down', mm: 'အောက်သို့ဆွဲကြည့်ရန်' },
+  
+  // Companies
+  'companies.title': { en: 'Real Estate Companies', mm: 'အိမ်ခြံမြေကုမ္ပဏီများ' },
+  'companies.subtitle': { en: 'Browse verified property companies', mm: 'အတည်ပြုထားသော အိမ်ခြံမြေကုမ္ပဏီများကို ကြည့်ရှုပါ' },
+  'companies.search': { en: 'Search companies...', mm: 'ကုမ္ပဏီများရှာဖွေရန်...' },
+  'companies.verified': { en: 'Verified', mm: 'အတည်ပြုပြီး' },
+  'companies.properties': { en: 'properties', mm: 'အိမ်ခြံမြေများ' },
+  'companies.viewProperties': { en: 'View Properties', mm: 'အိမ်ခြံမြေများကြည့်ရန်' },
+  'companies.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
+  'companies.noResults': { en: 'No Companies Found', mm: 'ကုမ္ပဏီများမတွေ့ပါ' },
+  'companies.noResultsDesc': { en: 'Try adjusting your search criteria', mm: 'သင့်ရှာဖွေမှုစံနှုန်းများကို ပြင်ဆင်ကြည့်ပါ' },
 };
 
 interface LanguageContextType {

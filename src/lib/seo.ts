@@ -36,6 +36,14 @@ export const pageSEO: Record<string, SEOConfig> = {
     url: 'https://jadeproperty.com/about',
     type: 'website'
   },
+  companies: {
+    title: 'Real Estate Companies - Verified Property Agencies',
+    description: 'Browse verified property companies in Myanmar. Find trusted real estate agencies, developers, and property management companies.',
+    keywords: 'real estate companies Myanmar, property agencies, property developers, property management, verified companies',
+    image: '/assets/jade-companies-og.jpg',
+    url: 'https://jadeproperty.com/companies',
+    type: 'website'
+  },
   notFound: {
     title: 'Page Not Found - Jade Property',
     description: 'The page you are looking for could not be found. Return to Jade Property homepage to continue browsing our properties.',

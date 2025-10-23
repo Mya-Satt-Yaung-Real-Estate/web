@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SEOHead } from '@/components/seo/SEOHead';
+import { PropertyCarousel } from '@/components/PropertyCarousel';
 import { seoUtils } from '@/lib/seo';
-import { 
-  Home as HomeIcon, 
-  Search, 
-  MapPin, 
-  Award, 
+import {
+  Home as HomeIcon,
+  Search,
+  MapPin,
+  Award,
   ArrowRight,
   Building2,
   TrendingUp,
@@ -103,33 +104,8 @@ export function Home() {
     <>
       <SEOHead seo={seo} path="/" />
       <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 gradient-primary animate-gradient opacity-10" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnptLTEyIDEyYzMuMzE0IDAgNiAyLjY4NiA2IDZzLTIuNjg2IDYtNiA2LTYtMi42ODYtNi02IDIuNjg2LTYgNi02eiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L2c+PC9zdmc+')] opacity-30" />
-        
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
-            Find Your Perfect Property with{' '}
-            <span className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-              Jade Property
-            </span>
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in">
-            Discover premium residential and commercial properties tailored to your needs. 
-            From luxury homes to investment opportunities, we help you make informed decisions.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-            <Button size="lg" className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105">
-              Browse Properties
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/5">
-              Learn More
-            </Button>
-          </div>
-        </div>
-      </section>
+        {/* Property Carousel */}
+        <PropertyCarousel />
 
       {/* Stats Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">

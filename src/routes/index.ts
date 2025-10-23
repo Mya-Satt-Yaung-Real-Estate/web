@@ -11,12 +11,14 @@ export interface RouteConfig {
 // Import page components
 import { Home } from '../pages/Home';
 import { About } from '../pages/About';
+import { Companies } from '../pages/Companies';
 import { NotFound } from '../pages/NotFound';
 
-// Route configuration - Home, About, and 404 pages
+// Route configuration - Home, About, Companies, and 404 pages
 export const routes: RouteConfig[] = [
   { path: '/', component: Home, title: 'Home', public: true, exact: true },
   { path: '/about', component: About, title: 'About Us', public: true },
+  { path: '/companies', component: Companies, title: 'Companies', public: true },
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
@@ -25,6 +27,7 @@ export const navigationConfig = {
   public: [
     { name: 'Home', path: '/', icon: 'Home' },
     { name: 'About', path: '/about', icon: 'Info' },
+    { name: 'Companies', path: '/companies', icon: 'Building2' },
   ],
   authenticated: [
     // No authenticated routes for now

@@ -32,3 +32,4 @@ export const LANGUAGES = {
   en: { code: 'en', name: 'English', flag: '🇺🇸' },
   my: { code: 'my', name: 'မြန်မာ', flag: '🇲🇲' },
 } as const;
+
