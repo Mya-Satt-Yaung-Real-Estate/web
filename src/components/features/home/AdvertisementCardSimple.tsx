@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { ExternalLink } from 'lucide-react';
+import { memo } from 'react';
 
 interface AdvertisementCardSimpleProps {
   id: string;
@@ -17,7 +18,7 @@ interface AdvertisementCardSimpleProps {
   promoted: boolean;
 }
 
-export function AdvertisementCardSimple({
+export const AdvertisementCardSimple = memo(function AdvertisementCardSimple({
   image,
   title,
   description,
@@ -53,4 +54,4 @@ export function AdvertisementCardSimple({
       </CardContent>
     </Card>
   );
-}
+});

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { PremiumPostCard } from '@/components/features/home/PremiumPostCard';
 import { ArrowRight, Star } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { memo } from 'react';
 
 interface PremiumPost {
   id: string;
@@ -31,7 +32,7 @@ interface PremiumPostsSectionProps {
   premiumPosts: PremiumPost[];
 }
 
-export function PremiumPostsSection({ premiumPosts }: PremiumPostsSectionProps) {
+export const PremiumPostsSection = memo(function PremiumPostsSection({ premiumPosts }: PremiumPostsSectionProps) {
   const { t } = useLanguage();
 
   return (
@@ -65,4 +66,5 @@ export function PremiumPostsSection({ premiumPosts }: PremiumPostsSectionProps) 
       </div>
     </section>
   );
-}
+});
+

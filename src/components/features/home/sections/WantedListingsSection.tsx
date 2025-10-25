@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { WantedListingCard } from '@/components/features/home/WantedListingCard';
 import { ArrowRight } from 'lucide-react';
+import { memo } from 'react';
 
 interface WantedListing {
   id: string;
@@ -30,7 +31,7 @@ interface WantedListingsSectionProps {
   wantedListings: WantedListing[];
 }
 
-export function WantedListingsSection({ wantedListings }: WantedListingsSectionProps) {
+export const WantedListingsSection = memo(function WantedListingsSection({ wantedListings }: WantedListingsSectionProps) {
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">
       <div className="max-w-7xl mx-auto">
@@ -56,4 +57,5 @@ export function WantedListingsSection({ wantedListings }: WantedListingsSectionP
       </div>
     </section>
   );
-}
+});
+

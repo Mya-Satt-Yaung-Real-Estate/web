@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { AdvertisementCard } from '@/components/features/home/AdvertisementCard';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { memo } from 'react';
 
 interface Advertisement {
   id: string;
@@ -25,7 +26,7 @@ interface AdvertisementsSectionProps {
   advertisements: Advertisement[];
 }
 
-export function AdvertisementsSection({ advertisements }: AdvertisementsSectionProps) {
+export const AdvertisementsSection = memo(function AdvertisementsSection({ advertisements }: AdvertisementsSectionProps) {
   const { t } = useLanguage();
 
   return (
@@ -53,4 +54,5 @@ export function AdvertisementsSection({ advertisements }: AdvertisementsSectionP
       </div>
     </section>
   );
-}
+});
+

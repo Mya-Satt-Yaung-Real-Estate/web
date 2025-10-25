@@ -10,6 +10,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { AdvertisementCardSimple } from '@/components/features/home/AdvertisementCardSimple';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { memo } from 'react';
 // import Autoplay from 'embla-carousel-autoplay@8.6.0';
 
 interface Advertisement {
@@ -24,7 +25,7 @@ interface FeaturedAdvertisementsSectionProps {
   advertisements: Advertisement[];
 }
 
-export function FeaturedAdvertisementsSection({ advertisements }: FeaturedAdvertisementsSectionProps) {
+export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisementsSection({ advertisements }: FeaturedAdvertisementsSectionProps) {
   const { t } = useLanguage();
 
   return (
@@ -71,4 +72,4 @@ export function FeaturedAdvertisementsSection({ advertisements }: FeaturedAdvert
       </div>
     </section>
   );
-}
+});

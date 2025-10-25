@@ -10,6 +10,7 @@ import { EventCard } from '@/components/features/home/EventCard';
 import { MapView } from '@/components/features/home/MapView';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { memo } from 'react';
 
 interface Event {
   id: string;
@@ -38,7 +39,7 @@ interface EventsSectionProps {
   propertyLocations: Location[];
 }
 
-export function EventsSection({ events, propertyLocations }: EventsSectionProps) {
+export const EventsSection = memo(function EventsSection({ events, propertyLocations }: EventsSectionProps) {
   const { t } = useLanguage();
 
   return (
@@ -77,4 +78,5 @@ export function EventsSection({ events, propertyLocations }: EventsSectionProps)
       </div>
     </section>
   );
-}
+});
+

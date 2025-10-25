@@ -17,6 +17,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { dataLoaders } from '@/data/loaders';
+import { memo, useMemo, useCallback } from 'react';
 import {
   Home as HomeIcon,
   Search,
@@ -34,16 +35,16 @@ import {
   Scale
 } from 'lucide-react';
 
-export function Home() {
+export const Home = memo(function Home() {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
-  const handleSearch = (filters: SearchFilters) => {
+  const handleSearch = useCallback((filters: SearchFilters) => {
     // Navigate to property listing page with filters
     navigate('/modules', { state: { filters } });
-  };
+  }, [navigate]);
   
-  const stats = [
+  const stats = useMemo(() => [
     {
       icon: <HomeIcon className="h-6 w-6" />,
       value: '12,500+',
@@ -64,9 +65,9 @@ export function Home() {
       value: '15+',
       label: 'yearsExperience',
     },
-  ];
+  ], []);
 
-  const features = [
+  const features = useMemo(() => [
     {
       icon: <Building2 className="h-8 w-8" />,
       title: 'Premium Listings',
@@ -97,9 +98,9 @@ export function Home() {
       descriptionKey: 'services.loanCalculatorDesc',
       link: '/loan-calculator',
     },
-  ];
+  ], []);
 
-  const companyHighlights = [
+  const companyHighlights = useMemo(() => [
     {
       title: 'About Jade Property',
       description: 'Founded in 2010, Jade Property has grown to become one of the most trusted names in real estate. We specialize in residential, commercial, and investment properties across major metropolitan areas.',
@@ -112,9 +113,9 @@ export function Home() {
       title: 'Technology-Driven',
       description: 'We leverage cutting-edge technology including virtual tours, AI-powered property matching, and advanced market analytics to provide our clients with the best possible experience.',
     },
-  ];
+  ], []);
 
-  const legalTeamPreview = [
+  const legalTeamPreview = useMemo(() => [
     {
       id: 1,
       name: 'U Aung Myat',
@@ -142,7 +143,7 @@ export function Home() {
       photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop',
       cases: 150,
     },
-  ];
+  ], []);
 
   // premiumPosts data is now loaded lazily
 
@@ -540,5 +541,5 @@ export function Home() {
       </section>
     </div>
   );
-}
+});
 

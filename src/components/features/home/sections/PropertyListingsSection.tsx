@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { PropertyListingCard } from '@/components/features/home/PropertyListingCard';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { memo } from 'react';
 
 interface PropertyListing {
   id: string;
@@ -29,7 +30,7 @@ interface PropertyListingsSectionProps {
   featuredListings: PropertyListing[];
 }
 
-export function PropertyListingsSection({ featuredListings }: PropertyListingsSectionProps) {
+export const PropertyListingsSection = memo(function PropertyListingsSection({ featuredListings }: PropertyListingsSectionProps) {
   const { t } = useLanguage();
 
   return (
@@ -57,4 +58,5 @@ export function PropertyListingsSection({ featuredListings }: PropertyListingsSe
       </div>
     </section>
   );
-}
+});
+
