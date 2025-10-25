@@ -10,3 +10,4 @@
 
 export * from './useProperties';
 export * from './useAuth';
+export * from './useKnowledge';
