@@ -58,3 +58,28 @@ export interface KnowledgeHubFilters {
   per_page?: number;
   page?: number;
 }
+
+export interface KnowledgeHubDetail {
+  id: number;
+  title_en: string;
+  title_mm: string;
+  slug: string;
+  short_description: string;
+  main_content: string;
+  tag: string[];
+  view_count: number;
+  like_count: number;
+  posted_user: string;
+  reading_time: number;
+  images: KnowledgeImages | null;
+  created_at: string;
+  updated_at: string;
+  published_at: string;
+}
+
+export interface KnowledgeHubDetailResponse {
+  success: boolean;
+  message: string;
+  data: KnowledgeHubDetail;
+}
+

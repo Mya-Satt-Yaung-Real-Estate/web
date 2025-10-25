@@ -5,7 +5,7 @@
  */
 
 import { apiClient } from './client';
-import type { KnowledgeHubResponse, KnowledgeHubFilters } from '@/types/knowledge';
+import type { KnowledgeHubResponse, KnowledgeHubFilters, KnowledgeHubDetailResponse } from '@/types/knowledge';
 
 export const knowledgeApi = {
   /**
@@ -40,8 +40,8 @@ export const knowledgeApi = {
   /**
    * Get a single knowledge hub article by slug
    */
-  async getKnowledgeHubBySlug(slug: string): Promise<KnowledgeHubResponse> {
-    const response = await apiClient.get<KnowledgeHubResponse>(`/api/v1/frontend/knowledges-hubs/${slug}`);
+  async getKnowledgeHubBySlug(slug: string): Promise<KnowledgeHubDetailResponse> {
+    const response = await apiClient.get<KnowledgeHubDetailResponse>(`/api/v1/frontend/knowledges-hubs/${slug}`);
     return response.data;
   },
 
