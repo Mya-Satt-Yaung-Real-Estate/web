@@ -4,16 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PropertyCarousel } from '@/components/features/home/PropertyCarousel';
 import { AdvancedSearchFilter, type SearchFilters } from '@/components/features/home/AdvancedSearchFilter';
-import { AdvertisementCard } from '@/components/features/home/AdvertisementCard';
-import { AdvertisementCardSimple } from '@/components/features/home/AdvertisementCardSimple';
-import { EventCard } from '@/components/features/home/EventCard';
-import { PremiumPostCard } from '@/components/features/home/PremiumPostCard';
-import { WantedListingCard } from '@/components/features/home/WantedListingCard';
-import { PropertyListingCard } from '@/components/features/home/PropertyListingCard';
-import { MapView } from '@/components/features/home/MapView';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+// import { LazySection } from '@/components/LazySection';
+import { LazyDataLoader } from '@/components/LazyDataLoader';
+import { 
+  FeaturedAdvertisementsSection,
+  PremiumPostsSection,
+  WantedListingsSection,
+  PropertyListingsSection,
+  AdvertisementsSection,
+  EventsSection
+} from '@/components/features/home/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { dataLoaders } from '@/data/loaders';
 import {
   Home as HomeIcon,
   Search,
@@ -141,451 +144,17 @@ export function Home() {
     },
   ];
 
-  const premiumPosts = [
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&auto=format&fit=crop',
-      title: 'Spectacular Waterfront Penthouse',
-      price: '7,350M MMK',
-      location: 'Inya Lake, Yangon',
-      bedrooms: 6,
-      bathrooms: 5,
-      area: '6,200 sqft',
-      type: t('listings.forSale'),
-      views: 12500,
-      trending: true,
-      likes: 342,
-      comments: 89,
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&auto=format&fit=crop',
-      title: 'Ultra-Modern Smart Mansion',
-      price: '8,820M MMK',
-      location: 'Golden Valley, Yangon',
-      bedrooms: 7,
-      bathrooms: 6,
-      area: '8,500 sqft',
-      type: t('listings.forSale'),
-      views: 15300,
-      trending: true,
-      likes: 521,
-      comments: 124,
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&auto=format&fit=crop',
-      title: 'Luxury Hillside Estate',
-      price: '5,985M MMK',
-      location: 'Bahan Township, Yangon',
-      bedrooms: 5,
-      bathrooms: 5,
-      area: '5,800 sqft',
-      type: t('listings.forSale'),
-      views: 9800,
-      trending: false,
-      likes: 287,
-      comments: 63,
-    },
-    {
-      id: '4',
-      image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&auto=format&fit=crop',
-      title: 'Contemporary Luxury Villa',
-      price: '6,510M MMK',
-      location: 'Star City, Yangon',
-      bedrooms: 6,
-      bathrooms: 5,
-      area: '7,000 sqft',
-      type: t('listings.forSale'),
-      views: 11200,
-      trending: true,
-      likes: 398,
-      comments: 91,
-    },
-    {
-      id: '5',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop',
-      title: 'Elegant Garden Mansion',
-      price: '4,725M MMK',
-      location: 'Mayangone, Yangon',
-      bedrooms: 5,
-      bathrooms: 4,
-      area: '5,200 sqft',
-      type: t('listings.forSale'),
-      views: 8600,
-      trending: false,
-      likes: 231,
-      comments: 47,
-    },
-    {
-      id: '6',
-      image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&auto=format&fit=crop',
-      title: 'Riverside Luxury Residence',
-      price: '9,975M MMK',
-      location: 'Yangon River View',
-      bedrooms: 8,
-      bathrooms: 7,
-      area: '9,800 sqft',
-      type: t('listings.forSale'),
-      views: 17800,
-      trending: true,
-      likes: 672,
-      comments: 156,
-    },
-    {
-      id: '7',
-      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&auto=format&fit=crop',
-      title: 'Modern Minimalist Villa',
-      price: '3,675M MMK',
-      location: 'Hlaing, Yangon',
-      bedrooms: 4,
-      bathrooms: 4,
-      area: '4,500 sqft',
-      type: t('listings.forSale'),
-      views: 7200,
-      trending: false,
-      likes: 189,
-      comments: 38,
-    },
-    {
-      id: '8',
-      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&auto=format&fit=crop',
-      title: 'Skyline Penthouse Suite',
-      price: '11,550M MMK',
-      location: 'Downtown Yangon',
-      bedrooms: 6,
-      bathrooms: 6,
-      area: '7,800 sqft',
-      type: t('listings.forSale'),
-      views: 19500,
-      trending: true,
-      likes: 823,
-      comments: 201,
-    },
-  ];
+  // premiumPosts data is now loaded lazily
 
-  const featuredListings = [
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop',
-      title: 'Modern Luxury Villa with Pool',
-      price: '2,625M MMK',
-      location: 'Golden Valley, Yangon',
-      bedrooms: 5,
-      bathrooms: 4,
-      area: '4,500 sqft',
-      type: t('listings.forSale'),
-      featured: true,
-      likes: 156,
-      comments: 42,
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop',
-      title: 'Downtown Luxury Apartment',
-      price: '5.25M MMK/month',
-      location: 'City Center, Mandalay',
-      bedrooms: 3,
-      bathrooms: 2,
-      area: '1,800 sqft',
-      type: t('listings.forRent'),
-      featured: false,
-      likes: 98,
-      comments: 27,
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop',
-      title: 'Contemporary Family Home',
-      price: '1,785M MMK',
-      location: 'Star City, Yangon',
-      bedrooms: 4,
-      bathrooms: 3,
-      area: '3,200 sqft',
-      type: t('listings.forSale'),
-      featured: true,
-      likes: 134,
-      comments: 31,
-    },
-    {
-      id: '4',
-      image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&auto=format&fit=crop',
-      title: 'Luxury Penthouse Suite',
-      price: '7.98M MMK/month',
-      location: 'Inya Lake, Yangon',
-      bedrooms: 4,
-      bathrooms: 3,
-      area: '2,600 sqft',
-      type: t('listings.forRent'),
-      featured: false,
-      likes: 187,
-      comments: 53,
-    },
-  ];
+  // featuredListings data is now loaded lazily
 
-  const advertisements = [
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop',
-      title: 'Grand Opening Sale - 20% Off on Select Properties',
-      description: 'Limited time offer on premium residential properties in prime locations. Don\'t miss this exclusive opportunity!',
-      company: 'Jade Property Group',
-      category: 'Special Offer',
-      validUntil: 'Dec 31, 2025',
-      promoted: true,
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop',
-      title: 'Investment Opportunity - Commercial Spaces',
-      description: 'High-yield commercial properties available in major business districts. Perfect for investors seeking stable returns.',
-      company: 'Elite Real Estate Partners',
-      category: 'Investment',
-      validUntil: 'Jan 15, 2026',
-      promoted: false,
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&auto=format&fit=crop',
-      title: 'Luxury Condo Pre-Launch - Early Bird Discount',
-      description: 'Be among the first to own a unit in our newest luxury development. Special pricing for early registrations.',
-      company: 'Premium Developers Ltd',
-      category: 'New Launch',
-      validUntil: 'Nov 30, 2025',
-      promoted: true,
-    },
-    {
-      id: '4',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop',
-      title: 'Zero Down Payment Housing Scheme',
-      description: 'Own your dream home with no initial payment. Flexible financing options with low monthly installments available.',
-      company: 'Jade Property Finance',
-      category: 'Financing',
-      validUntil: 'Feb 28, 2026',
-      promoted: true,
-    },
-    {
-      id: '5',
-      image: 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&auto=format&fit=crop',
-      title: 'Smart Home Upgrade Package - Free Installation',
-      description: 'Get complimentary smart home system installation worth 10M MMK with selected property purchases.',
-      company: 'Smart Living Solutions',
-      category: 'Promotion',
-      validUntil: 'Jan 20, 2026',
-      promoted: false,
-    },
-    {
-      id: '6',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop',
-      title: 'Referral Rewards Program - Earn 5M MMK',
-      description: 'Refer a friend and earn up to 5M MMK in rewards. Both you and your referral receive exclusive benefits!',
-      company: 'Jade Property Group',
-      category: 'Rewards',
-      validUntil: 'Dec 31, 2025',
-      promoted: false,
-    },
-    {
-      id: '7',
-      image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&auto=format&fit=crop',
-      title: 'Waterfront Living - Premium Apartments Available',
-      description: 'Experience luxurious waterfront living with stunning lake views and world-class amenities. Book your site visit today!',
-      company: 'Waterfront Estates',
-      category: 'New Launch',
-      validUntil: 'Mar 15, 2026',
-      promoted: true,
-    },
-    {
-      id: '8',
-      image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&auto=format&fit=crop',
-      title: 'Year-End Property Expo - Exclusive Deals',
-      description: 'Join our biggest property showcase of the year with special discounts and instant approval on home loans.',
-      company: 'Jade Property Group',
-      category: 'Event',
-      validUntil: 'Dec 20, 2025',
-      promoted: true,
-    },
-    {
-      id: '9',
-      image: 'https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=800&auto=format&fit=crop',
-      title: 'Green Living Community - Eco-Friendly Homes',
-      description: 'Sustainable living meets modern luxury. Solar-powered homes with rainwater harvesting and organic gardens.',
-      company: 'EcoLife Developers',
-      category: 'Eco-Friendly',
-      validUntil: 'Feb 10, 2026',
-      promoted: false,
-    },
-    {
-      id: '10',
-      image: 'https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=800&auto=format&fit=crop',
-      title: 'Business District Office Spaces - Move-in Ready',
-      description: 'Premium office spaces in the heart of downtown. Fully furnished with high-speed internet and parking.',
-      company: 'Corporate Realty',
-      category: 'Commercial',
-      validUntil: 'Jan 31, 2026',
-      promoted: false,
-    },
-    {
-      id: '11',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop',
-      title: 'Family Homes with Gardens - Limited Units',
-      description: 'Spacious family homes with private gardens in a secure gated community. Perfect for growing families.',
-      company: 'Family Living Estates',
-      category: 'Residential',
-      validUntil: 'Mar 30, 2026',
-      promoted: true,
-    },
-    {
-      id: '12',
-      image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&auto=format&fit=crop',
-      title: 'Student Housing - Budget-Friendly Options',
-      description: 'Affordable studio apartments near universities with study rooms, Wi-Fi, and 24/7 security. Student discounts available!',
-      company: 'Campus Living Solutions',
-      category: 'Student Housing',
-      validUntil: 'Apr 15, 2026',
-      promoted: false,
-    },
-  ];
+  // advertisements data is now loaded lazily
 
-  const events = [
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop',
-      title: 'Real Estate Investment Summit 2025',
-      description: 'Join industry experts to discuss market trends, investment strategies, and networking opportunities.',
-      date: '15 Nov',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Yangon Convention Center',
-      attendees: 350,
-      category: 'Conference',
-      status: 'upcoming' as const,
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&auto=format&fit=crop',
-      title: 'First-Time Home Buyer Workshop',
-      description: 'Learn everything you need to know about purchasing your first home, from financing to closing.',
-      date: '22 Nov',
-      time: '2:00 PM - 4:30 PM',
-      location: 'Online Webinar',
-      attendees: 180,
-      category: 'Workshop',
-      status: 'upcoming' as const,
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&auto=format&fit=crop',
-      title: 'Luxury Property Showcase',
-      description: 'Exclusive viewing of premium properties with complimentary consultation from our expert advisors.',
-      date: '8 Nov',
-      time: '10:00 AM - 6:00 PM',
-      location: 'Jade Property Gallery, Mandalay',
-      attendees: 125,
-      category: 'Open House',
-      status: 'ongoing' as const,
-    },
-  ];
+  // events data is now loaded lazily
 
-  const wantedListings = [
-    {
-      id: '1',
-      title: 'Looking for 3 Bedroom Condo in Yangon',
-      propertyType: 'Condominium',
-      location: 'Yangon, Myanmar',
-      budget: '150M - 200M MMK',
-      bedrooms: 3,
-      bathrooms: 2,
-      postedDate: '2025-10-14',
-      status: 'Active' as const,
-      description: 'Seeking a modern condominium with parking space, gym access, and good security.',
-      poster: 'Ko Aung',
-      responses: 12,
-      listingType: 'buyer' as const,
-    },
-    {
-      id: '2',
-      title: 'Wanted: Commercial Space in Downtown',
-      propertyType: 'Commercial Building',
-      location: 'Downtown Yangon, Myanmar',
-      budget: '300M - 500M MMK',
-      area: '2,000 sqft',
-      postedDate: '2025-10-12',
-      status: 'Active' as const,
-      description: 'Looking for ground floor commercial space suitable for retail business.',
-      poster: 'Ma Thandar',
-      responses: 8,
-      listingType: 'renter' as const,
-    },
-    {
-      id: '3',
-      title: 'Need Villa with Garden in Golden Valley',
-      propertyType: 'Villa',
-      location: 'Golden Valley, Yangon',
-      budget: '500M - 800M MMK',
-      bedrooms: 5,
-      bathrooms: 4,
-      area: '4,500 sqft',
-      postedDate: '2025-10-10',
-      status: 'Active' as const,
-      description: 'Seeking luxury villa with large garden, swimming pool, and modern amenities.',
-      poster: 'U Kyaw Win',
-      responses: 15,
-      listingType: 'buyer' as const,
-    },
-    {
-      id: '4',
-      title: 'Looking for Office Space in Business District',
-      propertyType: 'Office Space',
-      location: 'Central Business District, Yangon',
-      budget: '200M - 350M MMK',
-      area: '1,500 sqft',
-      postedDate: '2025-10-08',
-      status: 'Active' as const,
-      description: 'Need office space with good parking facilities and modern infrastructure.',
-      poster: 'Daw Aye',
-      responses: 6,
-      listingType: 'renter' as const,
-    },
-    {
-      id: '5',
-      title: 'Seeking Beachfront Property in Ngwe Saung',
-      propertyType: 'Beach House',
-      location: 'Ngwe Saung Beach',
-      budget: '400M - 600M MMK',
-      bedrooms: 4,
-      bathrooms: 3,
-      area: '3,200 sqft',
-      postedDate: '2025-10-06',
-      status: 'Active' as const,
-      description: 'Looking for beachfront villa for vacation rental business.',
-      poster: 'Ko Min',
-      responses: 9,
-      listingType: 'buyer' as const,
-    },
-    {
-      id: '6',
-      title: 'Want Studio Apartment Near University',
-      propertyType: 'Studio',
-      location: 'Near Yangon University',
-      budget: '50M - 80M MMK',
-      area: '500 sqft',
-      postedDate: '2025-10-04',
-      status: 'Active' as const,
-      description: 'Student accommodation with basic amenities and good transport links.',
-      poster: 'Ma Ei',
-      responses: 18,
-      listingType: 'renter' as const,
-    },
-  ];
+  // wantedListings data is now loaded lazily
 
-  // Map locations for property listings
-  const propertyLocations = featuredListings.map((listing) => ({
-    id: listing.id,
-    title: listing.title,
-    location: listing.location,
-    lat: 16.8661 + (Math.random() - 0.5) * 0.1,
-    lng: 96.1951 + (Math.random() - 0.5) * 0.1,
-    type: listing.type,
-  }));
+  // propertyLocations data is now loaded lazily
 
   return (
       <div className="min-h-screen">
@@ -618,191 +187,87 @@ export function Home() {
         </div>
       </section>
 
-      {/* Featured Advertisements */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-            <div>
-              <h2 className="mb-4">{t('ads.title')}</h2>
-              <p className="text-muted-foreground">
-                {t('ads.subtitle')}
-              </p>
-            </div>
-            <Link to="/search-all?type=advertisement">
-              <Button variant="outline">
-                {t('ads.viewAll')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-4">
-              {advertisements.map(ad => (
-                <CarouselItem key={ad.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                  <AdvertisementCardSimple 
-                    id={ad.id}
-                    image={ad.image}
-                    title={ad.title}
-                    description={ad.description}
-                    promoted={ad.promoted}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-4 bg-background/90 backdrop-blur-sm border-border/50 hover:bg-primary hover:text-white hover:border-primary transition-all" />
-            <CarouselNext className="hidden md:flex -right-4 bg-background/90 backdrop-blur-sm border-border/50 hover:bg-primary hover:text-white hover:border-primary transition-all" />
-          </Carousel>
-        </div>
-      </section>
+      {/* Featured Advertisements - Lazy Loaded */}
+      <LazyDataLoader
+        dataLoader={dataLoaders.loadFeaturedAdvertisements}
+        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
+        rootMargin="200px"
+      >
+        {(data, isLoading, error) => {
+          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load advertisements</div></div>;
+          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
+          return <FeaturedAdvertisementsSection advertisements={data} />;
+        }}
+      </LazyDataLoader>
 
-      {/* Premium Posts */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-amber-50/30 to-background dark:from-amber-950/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <h2>{t('premium.title')}</h2>
-                <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0">
-                  <Star className="h-3 w-3 mr-1 fill-white" />
-                  Premium
-                </Badge>
-              </div>
-              <p className="text-muted-foreground">
-                {t('premium.subtitle')}
-              </p>
-            </div>
-            <Link to="/search-all?type=premium">
-              <Button variant="outline" className="border-primary/30 hover:bg-primary/5">
-                {t('premium.viewAll')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {premiumPosts.map(post => (
-              <PremiumPostCard key={post.id} {...post} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Premium Posts - Lazy Loaded */}
+      <LazyDataLoader
+        dataLoader={dataLoaders.loadPremiumPosts}
+        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-amber-50/30 to-background dark:from-amber-950/10"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
+        rootMargin="200px"
+      >
+        {(data, isLoading, error) => {
+          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-amber-50/30 to-background dark:from-amber-950/10"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load premium posts</div></div>;
+          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-amber-50/30 to-background dark:from-amber-950/10"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
+          return <PremiumPostsSection premiumPosts={data} />;
+        }}
+      </LazyDataLoader>
 
-      {/* Wanted Listings */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-            <div>
-              <h2 className="mb-4">Wanted Listings</h2>
-              <p className="text-muted-foreground">
-                Browse active property requests from buyers and renters
-              </p>
-            </div>
-            <Link to="/search-all?type=wanted">
-              <Button variant="outline">
-                View All Requests
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {wantedListings.slice(0, 6).map(listing => (
-              <WantedListingCard key={listing.id} {...listing} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Wanted Listings - Lazy Loaded */}
+      <LazyDataLoader
+        dataLoader={dataLoaders.loadWantedListings}
+        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
+        rootMargin="200px"
+      >
+        {(data, isLoading, error) => {
+          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load wanted listings</div></div>;
+          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
+          return <WantedListingsSection wantedListings={data} />;
+        }}
+      </LazyDataLoader>
 
-      {/* Property Listings */}
+      {/* Property Listings - Lazy Loaded */}
+      <LazyDataLoader
+        dataLoader={dataLoaders.loadPropertyListings}
+        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
+        rootMargin="200px"
+      >
+        {(data, isLoading, error) => {
+          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load property listings</div></div>;
+          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
+          return <PropertyListingsSection featuredListings={data} />;
+        }}
+      </LazyDataLoader>
+
+      {/* Advertisements - Lazy Loaded */}
+      <LazyDataLoader
+        dataLoader={dataLoaders.loadAdvertisements}
+        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
+        rootMargin="200px"
+      >
+        {(data, isLoading, error) => {
+          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load advertisements</div></div>;
+          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
+          return <AdvertisementsSection advertisements={data} />;
+        }}
+      </LazyDataLoader>
+
+      {/* Events - Lazy Loaded */}
+      <LazyDataLoader
+        dataLoader={dataLoaders.loadEventsAndMap}
+        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
+        rootMargin="200px"
+      >
+        {(data, isLoading, error) => {
+          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load events</div></div>;
+          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
+          return <EventsSection events={data.events} propertyLocations={data.propertyLocations} />;
+        }}
+      </LazyDataLoader>
+
+      {/* Job Posts Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-            <div>
-              <h2 className="mb-4">{t('listings.title')}</h2>
-              <p className="text-muted-foreground">
-                {t('listings.subtitle')}
-            </p>
-          </div>
-            <Link to="/search-all?type=property">
-              <Button variant="outline">
-                {t('listings.viewAll')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredListings.map(listing => (
-              <PropertyListingCard key={listing.id} {...listing} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Advertisements */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-            <div>
-              <h2 className="mb-4">{t('ads.title')}</h2>
-              <p className="text-muted-foreground">
-                {t('ads.subtitle')}
-              </p>
-            </div>
-            <Link to="/search-all?type=advertisement">
-              <Button variant="outline">
-                {t('ads.viewAll')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {advertisements.map(ad => (
-              <AdvertisementCard key={ad.id} {...ad} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Events */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-            <div>
-              <h2 className="mb-4">{t('events.title')}</h2>
-              <p className="text-muted-foreground">
-                {t('events.subtitle')}
-              </p>
-            </div>
-            <Link to="/search-all?type=event">
-              <Button variant="outline">
-                {t('events.viewAll')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {events.map(event => (
-              <EventCard key={event.id} {...event} />
-            ))}
-          </div>
-
-          {/* Property Listings Map */}
-          <div className="mt-12">
-            <div className="mb-6">
-              <h3 className="mb-2">Featured Property Locations</h3>
-              <p className="text-muted-foreground">
-                Explore featured properties on the map
-              </p>
-            </div>
-            <MapView locations={propertyLocations} height="400px" />
-          </div>
-
-          {/* Job Posts Section */}
           <div className="mt-16">
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
               <div>

@@ -1,12 +1,3 @@
-/**
- * Styles Index
- * 
- * Centralized exports for all styles.
- */
-
-// ============================================================================
-// GLOBAL STYLES
-// ============================================================================
-
+// Import all styles
 import './globals.css';
 import './index.css';

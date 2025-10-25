@@ -51,6 +51,7 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 
 export { NotificationDropdown } from './common/NotificationDropdown';
 export { ImageWithFallback } from './ImageWithFallback';
+export { LazyImage } from './LazyImage';
 
 // ============================================================================
 // TYPE EXPORTS

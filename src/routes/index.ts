@@ -8,12 +8,15 @@ export interface RouteConfig {
   exact?: boolean;
 }
 
-// Import page components
-import { Home } from '../pages/Home';
-import { About } from '../pages/About';
-import { Companies } from '../pages/Companies';
-import { KnowledgeHub } from '../pages/KnowledgeHub';
-import { NotFound } from '../pages/NotFound';
+// Lazy load page components for code splitting
+import { lazy } from 'react';
+
+// Lazy load page components
+const Home = lazy(() => import('../pages/Home').then(module => ({ default: module.Home })));
+const About = lazy(() => import('../pages/About').then(module => ({ default: module.About })));
+const Companies = lazy(() => import('../pages/Companies').then(module => ({ default: module.Companies })));
+const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub').then(module => ({ default: module.KnowledgeHub })));
+const NotFound = lazy(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Route configuration - Home, About, Companies, Knowledge Hub, and 404 pages
 export const routes: RouteConfig[] = [
