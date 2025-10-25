@@ -9,11 +9,15 @@ export function useMediaQuery(query: string): boolean {
       setMatches(media.matches);
     }
     const listener = () => setMatches(media.matches);
-    media.addEventListener('change', listener);
-    return () => media.removeEventListener('change', listener);
+    window.addEventListener('resize', listener);
+    return () => window.removeEventListener('resize', listener);
   }, [matches, query]);
 
   return matches;
 }
 
-
+// Common breakpoint hooks
+export const useIsMobile = () => useMediaQuery('(max-width: 767px)');
+export const useIsTablet = () => useMediaQuery('(min-width: 768px) and (max-width: 1023px)');
+export const useIsDesktop = () => useMediaQuery('(min-width: 1024px)');
+export const useIsMobileOrTablet = () => useMediaQuery('(max-width: 1023px)');

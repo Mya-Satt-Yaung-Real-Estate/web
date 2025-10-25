@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { Search, MapPin, Home, DollarSign, Bed, Bath, SlidersHorizontal, X, Square, Car, Calendar, Sparkles } from 'lucide-react';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Card, CardContent } from '../ui/card';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { Badge } from '../ui/badge';
-import { useIsMobileOrTablet } from '../../hooks/useMediaQuery';
-import { MobileAdvancedSearchFilter } from './mobile';
+import { Input } from '../../ui/input';
+import { Button } from '../../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Card, CardContent } from '../../ui/card';
+import { useLanguage } from '../../../contexts/LanguageContext';
+import { Badge } from '../../ui/badge';
 
-interface AdvancedSearchFilterProps {
+interface MobileAdvancedSearchFilterProps {
   onSearch?: (filters: SearchFilters) => void;
 }
 
@@ -33,9 +31,8 @@ export interface SearchFilters {
   amenities: string[];
 }
 
-export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
+export function MobileAdvancedSearchFilter({ onSearch }: MobileAdvancedSearchFilterProps) {
   const { t } = useLanguage();
-  const isMobileOrTablet = useIsMobileOrTablet();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>({
     keywords: '',
@@ -102,22 +99,16 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
     filters.yearBuilt !== 'any' ||
     filters.amenities.length > 0;
 
-  // Use mobile component for mobile/tablet
-  if (isMobileOrTablet) {
-    return <MobileAdvancedSearchFilter onSearch={onSearch} />;
-  }
-
-  // Desktop version (100% Figma match)
   return (
     <Card className="shadow-2xl border-border/50 backdrop-blur-xl bg-background/95 overflow-hidden">
-      <CardContent className="p-6">
-        {/* Recommended Property Types */}
+      <CardContent className="p-4">
+        {/* Recommended Property Types - Mobile Optimized */}
         <div className="mb-4">
           <label className="flex items-center gap-2 text-muted-foreground mb-3">
             <Sparkles className="h-4 w-4 text-primary" />
             {t('propertyTypes.recommendedTitle')}
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {[
               { key: 'apartment', label: 'propertyTypes.apartment' },
               { key: 'beachHouse', label: 'propertyTypes.beachHouse' },
@@ -145,7 +136,7 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => updateFilter('propertyType', type.key.toLowerCase())}
-                className={filters.propertyType === type.key.toLowerCase() ? 'border-primary bg-primary/10' : ''}
+                className={`text-xs ${filters.propertyType === type.key.toLowerCase() ? 'border-primary bg-primary/10' : ''}`}
               >
                 {t(type.label)}
               </Button>
@@ -153,24 +144,24 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
           </div>
         </div>
 
-        {/* Main Search Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        {/* Main Search Bar - Mobile Optimized */}
+        <div className="space-y-3">
           {/* Keywords */}
-          <div className="md:col-span-4 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
             <Input
               placeholder={t('search.keywords')}
               value={filters.keywords}
               onChange={(e) => updateFilter('keywords', e.target.value)}
-              className="pl-10 h-12 bg-background/50 border-border/50 focus:border-primary/50"
+              className="pl-10 h-10 bg-background/50 border-border/50 focus:border-primary/50 text-sm"
             />
           </div>
 
-          {/* Property Type */}
-          <div className="md:col-span-3">
+          {/* Property Type & Region - Side by side on mobile */}
+          <div className="grid grid-cols-2 gap-2">
             <Select value={filters.propertyType} onValueChange={(value) => updateFilter('propertyType', value)}>
-              <SelectTrigger className="h-12 bg-background/50 border-border/50">
-                <Home className="h-4 w-4 mr-2 text-primary" />
+              <SelectTrigger className="h-10 bg-background/50 border-border/50">
+                <Home className="h-3 w-3 mr-1 text-primary" />
                 <SelectValue placeholder={t('search.propertyType')} />
               </SelectTrigger>
               <SelectContent>
@@ -181,13 +172,10 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
                 <SelectItem value="land">{t('search.land')}</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-          {/* Region/State */}
-          <div className="md:col-span-3">
             <Select value={filters.region} onValueChange={(value) => updateFilter('region', value)}>
-              <SelectTrigger className="h-12 bg-background/50 border-border/50">
-                <MapPin className="h-4 w-4 mr-2 text-primary" />
+              <SelectTrigger className="h-10 bg-background/50 border-border/50">
+                <MapPin className="h-3 w-3 mr-1 text-primary" />
                 <SelectValue placeholder={t('search.regionState')} />
               </SelectTrigger>
               <SelectContent>
@@ -212,36 +200,36 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
           </div>
 
           {/* Actions */}
-          <div className="md:col-span-2 flex gap-2">
+          <div className="flex gap-2">
             <Button
               onClick={handleSearch}
-              className="flex-1 h-12 gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
+              className="flex-1 h-10 gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40 text-sm"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-4 w-4 mr-1" />
+              {t('search.search')}
             </Button>
             <Button
               variant="outline"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="h-12 px-3"
+              className="h-10 px-3"
             >
-              <SlidersHorizontal className="h-5 w-5" />
+              <SlidersHorizontal className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Advanced Filters */}
+        {/* Advanced Filters - Mobile Optimized */}
         {showAdvanced && (
-          <div className="mt-6 pt-6 border-t border-border/50 space-y-6 animate-fade-in">
-            {/* Property Listing Type, Condition, Region, Township */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Property Listing */}
+          <div className="mt-4 pt-4 border-t border-border/50 space-y-4 animate-fade-in">
+            {/* Property Details */}
+            <div className="space-y-3">
               <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Home className="h-4 w-4 text-primary" />
+                <label className="flex items-center gap-2 text-muted-foreground mb-2 text-sm">
+                  <Home className="h-3 w-3 text-primary" />
                   {t('search.propertyListing')}
                 </label>
                 <Select value={filters.propertyListing} onValueChange={(value) => updateFilter('propertyListing', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
+                  <SelectTrigger className="bg-background/50 border-border/50 h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -253,14 +241,13 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
                 </Select>
               </div>
 
-              {/* Property Condition */}
               <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Sparkles className="h-4 w-4 text-primary" />
+                <label className="flex items-center gap-2 text-muted-foreground mb-2 text-sm">
+                  <Sparkles className="h-3 w-3 text-primary" />
                   {t('search.propertyCondition')}
                 </label>
                 <Select value={filters.propertyCondition} onValueChange={(value) => updateFilter('propertyCondition', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
+                  <SelectTrigger className="bg-background/50 border-border/50 h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -273,91 +260,47 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* Region */}
-              <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  {t('search.region')}
-                </label>
-                <Select value={filters.region} onValueChange={(value) => updateFilter('region', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('search.all')}</SelectItem>
-                    <SelectItem value="yangon">{t('search.yangon')}</SelectItem>
-                    <SelectItem value="mandalay">{t('search.mandalay')}</SelectItem>
-                    <SelectItem value="naypyidaw">{t('search.naypyidaw')}</SelectItem>
-                    <SelectItem value="bago">{t('search.bago')}</SelectItem>
-                    <SelectItem value="ayeyarwady">{t('search.ayeyarwady')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Township */}
-              <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  {t('search.township')}
-                </label>
-                <Select value={filters.township} onValueChange={(value) => updateFilter('township', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('search.all')}</SelectItem>
-                    <SelectItem value="bahan">{t('search.bahan')}</SelectItem>
-                    <SelectItem value="kamayut">{t('search.kamayut')}</SelectItem>
-                    <SelectItem value="yankin">{t('search.yankin')}</SelectItem>
-                    <SelectItem value="sanchaung">{t('search.sanchaung')}</SelectItem>
-                    <SelectItem value="hlaing">{t('search.hlaing')}</SelectItem>
-                    <SelectItem value="mayangone">{t('search.mayangone')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             {/* Price Range */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="flex items-center gap-2 text-muted-foreground">
-                  <DollarSign className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-between mb-2">
+                <label className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <DollarSign className="h-3 w-3 text-primary" />
                   {t('search.priceRange')}
                 </label>
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   ${filters.priceMin.toLocaleString()} - ${filters.priceMax.toLocaleString()}
                 </span>
               </div>
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-2 items-center">
                 <Input
                   type="number"
                   placeholder="Min"
                   value={filters.priceMin}
                   onChange={(e) => updateFilter('priceMin', Number(e.target.value))}
-                  className="bg-background/50 border-border/50"
+                  className="bg-background/50 border-border/50 h-9 text-sm"
                 />
-                <span className="text-muted-foreground">-</span>
+                <span className="text-muted-foreground text-xs">-</span>
                 <Input
                   type="number"
                   placeholder="Max"
                   value={filters.priceMax}
                   onChange={(e) => updateFilter('priceMax', Number(e.target.value))}
-                  className="bg-background/50 border-border/50"
+                  className="bg-background/50 border-border/50 h-9 text-sm"
                 />
               </div>
             </div>
 
             {/* Bedrooms & Bathrooms */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Bedrooms */}
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Bed className="h-4 w-4 text-primary" />
+                <label className="flex items-center gap-2 text-muted-foreground mb-2 text-sm">
+                  <Bed className="h-3 w-3 text-primary" />
                   {t('search.bedrooms')}
                 </label>
                 <Select value={filters.bedrooms} onValueChange={(value) => updateFilter('bedrooms', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
+                  <SelectTrigger className="bg-background/50 border-border/50 h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -371,14 +314,13 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
                 </Select>
               </div>
 
-              {/* Bathrooms */}
               <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Bath className="h-4 w-4 text-primary" />
+                <label className="flex items-center gap-2 text-muted-foreground mb-2 text-sm">
+                  <Bath className="h-3 w-3 text-primary" />
                   {t('search.bathrooms')}
                 </label>
                 <Select value={filters.bathrooms} onValueChange={(value) => updateFilter('bathrooms', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
+                  <SelectTrigger className="bg-background/50 border-border/50 h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -392,111 +334,24 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
               </div>
             </div>
 
-            {/* Area Size */}
-            <div>
-              <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                <Square className="h-4 w-4 text-primary" />
-                {t('search.areaSize')}
-              </label>
-              <div className="flex gap-4 items-center">
-                <Input
-                  type="number"
-                  placeholder={t('search.min')}
-                  value={filters.areaMin}
-                  onChange={(e) => updateFilter('areaMin', Number(e.target.value))}
-                  className="bg-background/50 border-border/50"
-                />
-                <span className="text-muted-foreground">-</span>
-                <Input
-                  type="number"
-                  placeholder={t('search.max')}
-                  value={filters.areaMax}
-                  onChange={(e) => updateFilter('areaMax', Number(e.target.value))}
-                  className="bg-background/50 border-border/50"
-                />
-                <span className="text-muted-foreground whitespace-nowrap">{t('listings.sqft')}</span>
-              </div>
-            </div>
-
-            {/* Furnished, Parking, Year Built */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Furnished */}
-              <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  {t('search.furnished')}
-                </label>
-                <Select value={filters.furnished} onValueChange={(value) => updateFilter('furnished', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">{t('search.any')}</SelectItem>
-                    <SelectItem value="furnished">{t('search.furnished')}</SelectItem>
-                    <SelectItem value="unfurnished">{t('search.unfurnished')}</SelectItem>
-                    <SelectItem value="semi-furnished">{t('search.semiFurnished')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Parking */}
-              <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Car className="h-4 w-4 text-primary" />
-                  {t('search.parking')}
-                </label>
-                <Select value={filters.parking} onValueChange={(value) => updateFilter('parking', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">{t('search.any')}</SelectItem>
-                    <SelectItem value="1">1+</SelectItem>
-                    <SelectItem value="2">2+</SelectItem>
-                    <SelectItem value="3">3+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Year Built */}
-              <div>
-                <label className="flex items-center gap-2 text-muted-foreground mb-3">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  {t('search.yearBuilt')}
-                </label>
-                <Select value={filters.yearBuilt} onValueChange={(value) => updateFilter('yearBuilt', value)}>
-                  <SelectTrigger className="bg-background/50 border-border/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">{t('search.any')}</SelectItem>
-                    <SelectItem value="2024">2024+</SelectItem>
-                    <SelectItem value="2020">2020+</SelectItem>
-                    <SelectItem value="2015">2015+</SelectItem>
-                    <SelectItem value="2010">2010+</SelectItem>
-                    <SelectItem value="2000">2000+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-2 pt-2">
               {hasActiveFilters && (
                 <Button
                   variant="outline"
                   onClick={clearFilters}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1 text-xs"
+                  size="sm"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                   {t('search.clearFilters')}
                 </Button>
               )}
               <Button
                 onClick={handleSearch}
-                className="flex-1 gradient-primary shadow-lg shadow-primary/25"
+                className="flex-1 gradient-primary shadow-lg shadow-primary/25 text-sm"
               >
-                <Search className="mr-2 h-4 w-4" />
+                <Search className="mr-1 h-3 w-3" />
                 {t('search.searchProperties')}
               </Button>
             </div>
@@ -505,36 +360,36 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
 
         {/* Active Filters Display */}
         {hasActiveFilters && !showAdvanced && (
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex flex-wrap gap-1 mt-3">
             {filters.propertyType !== 'all' && (
-              <Badge variant="secondary" className="gap-1">
+              <Badge variant="secondary" className="gap-1 text-xs">
                 {filters.propertyType}
                 <button onClick={() => updateFilter('propertyType', 'all')}>
-                  <X className="h-3 w-3" />
+                  <X className="h-2 w-2" />
                 </button>
               </Badge>
             )}
             {filters.location && (
-              <Badge variant="secondary" className="gap-1">
+              <Badge variant="secondary" className="gap-1 text-xs">
                 {filters.location}
                 <button onClick={() => updateFilter('location', '')}>
-                  <X className="h-3 w-3" />
+                  <X className="h-2 w-2" />
                 </button>
               </Badge>
             )}
             {filters.bedrooms !== 'any' && (
-              <Badge variant="secondary" className="gap-1">
+              <Badge variant="secondary" className="gap-1 text-xs">
                 {filters.bedrooms}+ beds
                 <button onClick={() => updateFilter('bedrooms', 'any')}>
-                  <X className="h-3 w-3" />
+                  <X className="h-2 w-2" />
                 </button>
               </Badge>
             )}
             {filters.bathrooms !== 'any' && (
-              <Badge variant="secondary" className="gap-1">
+              <Badge variant="secondary" className="gap-1 text-xs">
                 {filters.bathrooms}+ baths
                 <button onClick={() => updateFilter('bathrooms', 'any')}>
-                  <X className="h-3 w-3" />
+                  <X className="h-2 w-2" />
                 </button>
               </Badge>
             )}
@@ -544,3 +399,4 @@ export function AdvancedSearchFilter({ onSearch }: AdvancedSearchFilterProps) {
     </Card>
   );
 }
+
