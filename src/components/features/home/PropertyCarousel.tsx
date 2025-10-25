@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import { Button } from '../ui/button';
-import { ImageWithFallback } from '../ImageWithFallback';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useIsMobileOrTablet } from '../../hooks/useMediaQuery';
+import { Button } from '@/components/ui/button';
+import { ImageWithFallback } from '@/components/ImageWithFallback';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobileOrTablet } from '@/hooks/useMediaQuery';
 import { MobilePropertyCarousel } from './mobile';
 
 const carouselImages = [

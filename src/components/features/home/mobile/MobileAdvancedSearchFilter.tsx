@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Search, MapPin, Home, DollarSign, Bed, Bath, SlidersHorizontal, X, Square, Car, Calendar, Sparkles } from 'lucide-react';
-import { Input } from '../../ui/input';
-import { Button } from '../../ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { Card, CardContent } from '../../ui/card';
-import { useLanguage } from '../../../contexts/LanguageContext';
-import { Badge } from '../../ui/badge';
+import { Search, MapPin, Home, DollarSign, Bed, Bath, SlidersHorizontal, X, Sparkles } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Badge } from '@/components/ui/badge';
 
 interface MobileAdvancedSearchFilterProps {
   onSearch?: (filters: SearchFilters) => void;

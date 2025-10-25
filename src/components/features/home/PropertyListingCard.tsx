@@ -1,9 +1,9 @@
-import { Card, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { MapPin, Bed, Bath, Square, Heart, MessageCircle, Share2 } from 'lucide-react';
-import { ImageWithFallback } from '../ImageWithFallback';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { ImageWithFallback } from '@/components/ImageWithFallback';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
