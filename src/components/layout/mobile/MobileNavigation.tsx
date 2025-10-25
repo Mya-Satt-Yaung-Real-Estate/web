@@ -393,7 +393,7 @@ export function MobileNavigation() {
                 trigger={
                   <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                     isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
-                    isActive('/about') || isActive('/contact') || isActive('/legal-team')
+                    isActive('/about') || isActive('/contact') || isActive('/legacy')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
                       : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   }`}>

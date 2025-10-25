@@ -66,7 +66,7 @@ const createNavigationData = (t: (key: string) => string) => ({
     { name: t('services.newsUpdates'), path: '/news-updates', icon: Newspaper },
     { name: t('services.aboutUs'), path: '/about', icon: Info },
     { name: t('services.contactUs'), path: '/contact', icon: Mail },
-    { name: t('services.legalTeam'), path: '/legal-team', icon: Scale },
+    { name: t('services.legalTeam'), path: '/legacy', icon: Scale },
   ],
   
   companyCategories: [
@@ -287,13 +287,13 @@ export function Navigation() {
                 <button
                   className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
                     isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
-                    isActive('/about') || isActive('/contact') || isActive('/legal-team')
+                    isActive('/about') || isActive('/contact') || isActive('/legacy')
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {(isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
-                   isActive('/about') || isActive('/contact') || isActive('/legal-team')) && (
+                   isActive('/about') || isActive('/contact') || isActive('/legacy')) && (
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
                   )}
                   <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">
@@ -548,7 +548,7 @@ export function Navigation() {
                 trigger={
                   <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                     isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
-                    isActive('/about') || isActive('/contact') || isActive('/legal-team')
+                    isActive('/about') || isActive('/contact') || isActive('/legacy')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
                       : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   }`}>

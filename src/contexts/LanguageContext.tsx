@@ -127,6 +127,7 @@ const translations: Translations = {
   'services.reviewPostDesc': { en: 'Share your property reviews and experiences', mm: 'သင်၏အိမ်ခြံမြေသုံးသပ်ချက်နှင့်အတွေ့အကြုံများမျှဝေပါ' },
   'services.searchAll': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
   'services.searchAllDesc': { en: 'Search properties, advertisements, and events', mm: 'အိမ်ခြံမြေများ၊ ကြော်ငြာများနှင့် အခမ်းအနားများကို ရှာဖွေပါ' },
+  'services.aboutUs': { en: 'About Us', mm: 'ကျွန်ုပ်တို့အကြောင်း' },
   
   // Property Types
   'propertyTypes.recommendedTitle': { en: 'Recommended Property Types', mm: 'အကြံပြုထားသောအိမ်ခြံမြေအမျိုးအစားများ' },

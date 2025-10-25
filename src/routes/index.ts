@@ -17,6 +17,8 @@ const About = lazy(() => import('../pages/About').then(module => ({ default: mod
 const Companies = lazy(() => import('../pages/Companies').then(module => ({ default: module.Companies })));
 const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub').then(module => ({ default: module.KnowledgeHub })));
 const KnowledgeDetail = lazy(() => import('../pages/KnowledgeDetail').then(module => ({ default: module.default })));
+const Legacy = lazy(() => import('../pages/Legacy').then(module => ({ default: module.default })));
+const LegacyDetail = lazy(() => import('../pages/LegacyDetail').then(module => ({ default: module.default })));
 const NotFound = lazy(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Route configuration - Home, About, Companies, Knowledge Hub, and 404 pages
@@ -26,6 +28,8 @@ export const routes: RouteConfig[] = [
   { path: '/companies', component: Companies, title: 'Companies', public: true },
   { path: '/knowledge-hub', component: KnowledgeHub, title: 'Knowledge Hub', public: true },
   { path: '/knowledge-hub/:slug', component: KnowledgeDetail, title: 'Knowledge Detail', public: true },
+  { path: '/legacy', component: Legacy, title: 'Legacy Team', public: true },
+  { path: '/legacy/:slug', component: LegacyDetail, title: 'Legacy Team Detail', public: true },
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
