@@ -1,11 +1,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
-  Menu, User, LogOut, Globe, X, Grid3x3, Award, History as HistoryIcon,
-  Calendar, Megaphone, Building2, BookOpen, Scale, Home as HomeIcon,
-  HelpCircle, Mail, Newspaper, MessageSquare, Heart, Eye, Settings, Info,
-  Coins, Banknote, Calculator, Briefcase, Star, Search, ChevronDown,
-  Building, TrendingUp, Users
+  Menu, User, LogOut, Globe, X, ChevronDown,
+  Coins, Award, Heart, Eye, History as HistoryIcon,
+  Settings, Info, MessageSquare
 } from 'lucide-react';
 
 import logoImage from '@/assets/jade.png';
@@ -22,59 +20,8 @@ import {
 import { NotificationDropdown } from '../../common/NotificationDropdown';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import { useNavigationData } from '../../../hooks/useNavigationData';
 
-// Navigation data structure
-const createNavigationData = (t: (key: string) => string) => ({
-  navLinks: [
-    { name: t('nav.home'), path: '/' },
-  ],
-  
-  propertyCategories: [
-    { name: t('categories.searchAllProperty'), path: '/search-all', icon: Search },
-    { name: t('categories.tantantan'), path: '/search-all?filter=tantantan', icon: Grid3x3 },
-    { name: t('categories.premiumProperties'), path: '/search-all?type=premium', icon: Star },
-    { name: t('listings.forSale'), path: '/search-all?filter=sale', icon: HomeIcon },
-    { name: t('listings.forRent'), path: '/search-all?filter=rent', icon: Building },
-    { name: t('categories.preSale'), path: '/search-all?filter=presale', icon: TrendingUp },
-    { name: t('categories.installment'), path: '/search-all?filter=installment', icon: Calculator },
-    { name: t('categories.buyerPosts'), path: '/search-all?type=wanted&listingType=buyer', icon: Search },
-    { name: t('categories.renterPosts'), path: '/search-all?type=wanted&listingType=renter', icon: Users },
-    { name: t('categories.vacanciesJobs'), path: '/search-all?type=job', icon: Briefcase },
-    { name: t('services.housingEvent'), path: '/search-all?type=event', icon: Calendar },
-  ],
-  
-  createListingOptions: [
-    { name: t('createListing.propertyPost'), path: '/post-property?tab=property', icon: HomeIcon },
-    { name: t('createListing.wantedPost'), path: '/post-property?tab=wanted', icon: Search },
-    { name: t('createListing.advertisementPost'), path: '/post-property?tab=advertisement', icon: Megaphone },
-    { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
-    { name: t('createListing.giveYourReview'), path: '/review-post', icon: Star },
-    { name: t('createListing.jobPostCreate'), path: '/jobs', icon: Briefcase },
-    { name: t('services.homeLoanRequest'), path: '/loan-request', icon: Banknote },
-  ],
-  
-  calculatorOptions: [
-    { name: t('calculators.loanCalculator'), path: '/loan-calculator', icon: Banknote },
-             { name: t('calculators.yarPyatTaxCalculator'), path: '/yarpyat-taxes-calculator', icon: Calculator },
-  ],
-  
-  knowledgeCategories: [
-    { name: t('services.knowledgeHub'), path: '/knowledge-hub', icon: BookOpen },
-    { name: t('services.newsUpdates'), path: '/news-and-updates', icon: Newspaper },
-    { name: t('services.faq'), path: '/faq', icon: HelpCircle },
-    { name: t('services.aboutUs'), path: '/about', icon: Info },
-    { name: t('services.contactUs'), path: '/contact', icon: Mail },
-    { name: t('services.legalTeam'), path: '/legacy', icon: Scale },
-  ],
-  
-  companyCategories: [
-    { name: t('categories.realEstateAgency'), path: '/companies?category=agency', icon: HomeIcon },
-    { name: t('categories.constructionCompany'), path: '/companies?category=construction', icon: Building },
-    { name: t('categories.propertyManagement'), path: '/companies?category=management', icon: Briefcase },
-    { name: t('categories.propertyDeveloper'), path: '/companies?category=developer', icon: TrendingUp },
-    { name: t('categories.realEstateConsultant'), path: '/companies?category=consultant', icon: Users },
-  ],
-});
 
 // Reusable dropdown component for mobile
 const MobileNavigationDropdown = ({ 
@@ -116,7 +63,7 @@ export function MobileNavigation() {
   const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navigationData = createNavigationData(t);
+  const navigationData = useNavigationData();
   const isActive = (path: string) => location.pathname === path;
 
   const handleSignOut = () => {
@@ -350,10 +297,7 @@ export function MobileNavigation() {
                   </button>
                 }
                 label={t('categories.companies')}
-                items={[
-                  { name: 'All Companies', path: '/companies', icon: Building2 },
-                  ...navigationData.companyCategories
-                ]}
+                items={navigationData.companyCategories}
                 onItemClick={handleNavigation}
               />
 

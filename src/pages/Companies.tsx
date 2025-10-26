@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -17,11 +17,22 @@ import type { Company, CompanyType } from '../types';
 export function Companies() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const seo = seoUtils.getPageSEO('companies');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
+
+  // Handle URL parameter for company type filtering
+  useEffect(() => {
+    const typeId = searchParams.get('typeId');
+    if (typeId) {
+      setSelectedCategory(typeId);
+    } else {
+      setSelectedCategory('all'); // Default to "All Companies"
+    }
+  }, [searchParams]);
 
   // API data - fetch all companies at once for client-side filtering
   const { data: companiesResponse, isLoading, error } = useCompanies();
@@ -33,10 +44,17 @@ export function Companies() {
 
   // Build categories from API data with language support
   const categories = useMemo(() => {
-    return companyTypes.map(type => ({
+    const allCategoriesOption = {
+      value: 'all',
+      label: language === 'mm' ? 'အမျိုးအစားအားလုံး' : 'All Companies',
+    };
+    
+    const apiCategories = companyTypes.map(type => ({
       value: type.id.toString(),
       label: language === 'mm' ? type.name_mm : type.name_en,
     }));
+    
+    return [allCategoriesOption, ...apiCategories];
   }, [companyTypes, language]);
 
   // Client-side filtering and search
@@ -54,6 +72,8 @@ export function Companies() {
       if (!matchesSearch) return false;
       
       // Category filter - filter by company type ID
+      if (selectedCategory === 'all' || !selectedCategory) return true; // Show all if "all" selected or no category
+      
       const categoryId = parseInt(selectedCategory);
       if (!isNaN(categoryId)) {
         return company.company_type?.id === categoryId;
