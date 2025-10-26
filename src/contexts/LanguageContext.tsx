@@ -128,6 +128,7 @@ const translations: Translations = {
   'services.searchAll': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
   'services.searchAllDesc': { en: 'Search properties, advertisements, and events', mm: 'အိမ်ခြံမြေများ၊ ကြော်ငြာများနှင့် အခမ်းအနားများကို ရှာဖွေပါ' },
   'services.aboutUs': { en: 'About Us', mm: 'ကျွန်ုပ်တို့အကြောင်း' },
+  'services.homeLoanRequest': { en: 'Loan Request', mm: 'ချေးငွေတောင်းဆိုမှု' },
   
   // Property Types
   'propertyTypes.recommendedTitle': { en: 'Recommended Property Types', mm: 'အကြံပြုထားသောအိမ်ခြံမြေအမျိုးအစားများ' },
@@ -405,6 +406,9 @@ const translations: Translations = {
   'news.noResults': { en: 'No news found', mm: 'သတင်းများမတွေ့ပါ' },
   'news.tryAgain': { en: 'Try different search terms', mm: 'အခြားရှာဖွေမှုစာလုံးများကြိုးစားကြည့်ပါ' },
   'news.loading': { en: 'Loading news...', mm: 'သတင်းများတည်ဆောက်နေသည်...' },
+  'news.loadMore': { en: 'Load More', mm: 'ပိုမိုတင်ရန်' },
+  'news.typeMore': { en: 'Type at least 3 characters', mm: 'အနည်းဆုံး ၃ လုံးရိုက်ပါ' },
+  'news.typeMoreDesc': { en: 'Search will start when you type more characters', mm: 'ပိုမိုရိုက်သောအခါ ရှာဖွေမှုစတင်မည်' },
   'news.error': { en: 'Failed to load news', mm: 'သတင်းများတည်ဆောက်၍မရပါ' },
 };
 

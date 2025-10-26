@@ -1,18 +1,16 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNewsAndUpdates, useNewsCategories } from '@/hooks/queries/useNews';
-import { useDebounce } from '@/hooks/useDebounce';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pagination } from '@/components/ui/pagination';
 import { Clock, Eye, User, Search } from 'lucide-react';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { Link } from 'react-router-dom';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { NewsGridSkeleton } from '@/components/news/NewsCardSkeleton';
-import type { NewsFilters } from '@/types/news';
+import { Pagination } from '@/components/ui/pagination';
 
 // Helper function to decode Unicode escape sequences
 const decodeUnicode = (str: string): string => {
@@ -31,85 +29,16 @@ export function NewsAndUpdates() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const itemsPerPage = 9;
 
-  // Debounce search term to avoid too many API calls
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-  // Maintain focus on search input during typing
-  useEffect(() => {
-    if (isSearchFocused && searchInputRef.current) {
-      const input = searchInputRef.current;
-      const cursorPosition = input.selectionStart;
-      
-      // Restore cursor position after re-render
-      setTimeout(() => {
-        if (input && document.activeElement !== input) {
-          input.focus();
-          if (cursorPosition !== null) {
-            input.setSelectionRange(cursorPosition, cursorPosition);
-          }
-        }
-      }, 0);
-    }
-  }, [isSearchFocused, searchTerm]);
-
-  // API filters
-  const filters: NewsFilters = useMemo(() => ({
-    search: debouncedSearchTerm || undefined,
-    category: selectedCategory,
-    per_page: 9,
-    page: currentPage,
-  }), [debouncedSearchTerm, selectedCategory, currentPage]);
-
-  // Fetch news data
-  const { data: newsData, isLoading: isLoadingNews, error: newsError, isFetching } = useNewsAndUpdates(filters);
+  // Fetch ALL news data once (no pagination, no search filters)
+  const { data: allNewsData, isLoading: isLoadingNews, error: newsError } = useNewsAndUpdates({});
   const { data: categoriesData } = useNewsCategories();
 
-  // Show loading when fetching new data due to filter changes
-  // Only show loading if not currently typing in search
-  const isFilterLoading = isFetching && !isLoadingNews && !isSearchFocused;
-
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Handle category change - reset to page 1
-  const handleCategoryChange = (categoryId: string) => {
-    setSelectedCategory(categoryId ? Number(categoryId) : undefined);
-    setCurrentPage(1);
-  };
-
-  // Handle search change - reset to page 1
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
-  // Handle search focus
-  const handleSearchFocus = () => {
-    setIsSearchFocused(true);
-  };
-
-  // Handle search blur
-  const handleSearchBlur = () => {
-    setIsSearchFocused(false);
-  };
-
-  // Handle filter reset
-  const handleResetFilters = () => {
-    setSearchTerm('');
-    setSelectedCategory(undefined);
-    setCurrentPage(1);
-  };
-
-  // Extract news items from API response
-  const newsItems = useMemo(() => {
-    if (!newsData?.data) return [];
-    return newsData.data.map(item => ({
+  // Process all news data and apply client-side filtering
+  const allNewsItems = useMemo(() => {
+    if (!allNewsData?.data) return [];
+    return allNewsData.data.map(item => ({
       id: item.id,
       title_en: item.title_en,
       title_mm: item.title_mm,
@@ -125,7 +54,63 @@ export function NewsAndUpdates() {
       posted_user: item.posted_user.name,
       tags: item.tag,
     }));
-  }, [newsData, t]);
+  }, [allNewsData, t]);
+
+  // Client-side filtering
+  const filteredNewsItems = useMemo(() => {
+    let filtered = allNewsItems;
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(item => 
+        item.title_en.toLowerCase().includes(searchLower) ||
+        item.title_mm.toLowerCase().includes(searchLower) ||
+        (item.description && item.description.toLowerCase().includes(searchLower)) ||
+        item.category_en.toLowerCase().includes(searchLower) ||
+        item.category_mm.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply category filter
+    if (selectedCategory) {
+      filtered = filtered.filter(item => item.category_id === selectedCategory);
+    }
+
+    return filtered;
+  }, [allNewsItems, searchTerm, selectedCategory]);
+
+  // Client-side pagination
+  const paginatedNewsItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredNewsItems.slice(startIndex, endIndex);
+  }, [filteredNewsItems, currentPage, itemsPerPage]);
+
+  // Pagination info
+  const totalPages = Math.ceil(filteredNewsItems.length / itemsPerPage);
+
+  // Simple handlers - no complex state management needed
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId ? Number(categoryId) : undefined);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory(undefined);
+    setCurrentPage(1);
+  };
 
   // Extract categories from API response
   const categories = useMemo(() => {
@@ -215,20 +200,12 @@ export function NewsAndUpdates() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
-                  ref={searchInputRef}
                   placeholder={t('news.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
                   className="pl-10"
                   autoComplete="off"
                 />
-                {searchTerm !== debouncedSearchTerm && isSearchFocused && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                  </div>
-                )}
               </div>
             </div>
             <div className="sm:w-64">
@@ -251,19 +228,21 @@ export function NewsAndUpdates() {
           </div>
         </div>
 
-        {/* News Grid - Stable Container */}
-        <div className="min-h-[600px] relative">
-          {isFilterLoading ? (
-            <div className="absolute inset-0">
-              <NewsGridSkeleton count={9} />
-            </div>
-          ) : newsItems.length === 0 ? (
+        {/* News Grid */}
+        <div className="min-h-[600px]">
+          {isLoadingNews ? (
+            <NewsGridSkeleton />
+          ) : paginatedNewsItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">{t('news.noResults')}</h3>
-            <p className="text-muted-foreground mb-4">{t('news.tryAgain')}</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {t('news.noResults')}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {t('news.tryAgain')}
+            </p>
             <Button 
               variant="outline" 
               onClick={handleResetFilters}
@@ -273,7 +252,7 @@ export function NewsAndUpdates() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {newsItems.map((item) => (
+            {paginatedNewsItems.map((item) => (
               <Card key={item.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
                 <div className="relative">
                   <ImageWithFallback
@@ -336,11 +315,11 @@ export function NewsAndUpdates() {
         </div>
 
         {/* Pagination */}
-        {newsData?.pagination && newsData.pagination.last_page > 1 && (
+        {totalPages > 1 && (
           <div className="mt-12">
             <Pagination
-              currentPage={newsData.pagination.current_page}
-              totalPages={newsData.pagination.last_page}
+              currentPage={currentPage}
+              totalPages={totalPages}
               onPageChange={handlePageChange}
             />
           </div>

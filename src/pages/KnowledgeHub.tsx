@@ -5,37 +5,26 @@ import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useKnowledgeHubs, useKnowledgeCategories } from '../hooks/queries/useKnowledge';
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Link } from 'react-router-dom';
-import { useDebounce } from '../hooks/useDebounce';
-import type { KnowledgeHubFilters } from '../types/knowledge';
+import { Pagination } from '../components/ui/pagination';
 
 export function KnowledgeHub() {
   const { t, language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
-  // Debounced search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-  // API filters
-  const filters: KnowledgeHubFilters = useMemo(() => ({
-    search: debouncedSearchTerm || undefined,
-    category: selectedCategory,
-    per_page: 20,
-  }), [debouncedSearchTerm, selectedCategory]);
-
-  // Fetch knowledge hub data
-  const { data: knowledgeData, isLoading: isLoadingKnowledge, error: knowledgeError } = useKnowledgeHubs(filters);
+  // Fetch ALL knowledge hub data once (no pagination, no search filters)
+  const { data: allKnowledgeData, isLoading: isLoadingKnowledge, error: knowledgeError } = useKnowledgeHubs({});
   const { data: categoriesData } = useKnowledgeCategories();
 
-  // Extract articles from API response
-  const articles = useMemo(() => {
-    if (!knowledgeData?.data) return [];
-    return knowledgeData.data.map(article => ({
+  // Process all knowledge hub data and apply client-side filtering
+  const allArticles = useMemo(() => {
+    if (!allKnowledgeData?.data) return [];
+    return allKnowledgeData.data.map(article => ({
       id: article.id,
       title_en: article.title_en,
       title_mm: article.title_mm,
@@ -51,7 +40,41 @@ export function KnowledgeHub() {
       posted_user: article.posted_user.name,
       tags: article.tag,
     }));
-  }, [knowledgeData]);
+  }, [allKnowledgeData]);
+
+  // Client-side filtering
+  const filteredArticles = useMemo(() => {
+    let filtered = allArticles;
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(article => 
+        article.title_en.toLowerCase().includes(searchLower) ||
+        article.title_mm.toLowerCase().includes(searchLower) ||
+        (article.description && article.description.toLowerCase().includes(searchLower)) ||
+        (article.category_en && article.category_en.toLowerCase().includes(searchLower)) ||
+        (article.category_mm && article.category_mm.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply category filter
+    if (selectedCategory) {
+      filtered = filtered.filter(article => article.category_id === selectedCategory);
+    }
+
+    return filtered;
+  }, [allArticles, searchTerm, selectedCategory]);
+
+  // Client-side pagination
+  const paginatedArticles = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredArticles.slice(startIndex, endIndex);
+  }, [filteredArticles, currentPage, itemsPerPage]);
+
+  // Pagination info
+  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
 
   // Extract categories from API response
   const categories = useMemo(() => {
@@ -63,34 +86,27 @@ export function KnowledgeHub() {
     }));
   }, [categoriesData]);
 
-  // Handle category change
+  // Simple handlers - no complex state management needed
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId ? Number(categoryId) : undefined);
+    setCurrentPage(1); // Reset to first page when filtering
   };
 
-  // Handle search change
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
-  // Handle search focus
-  const handleSearchFocus = () => {
-    setIsSearchFocused(true);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Handle search blur
-  const handleSearchBlur = () => {
-    setIsSearchFocused(false);
-  };
-
-  // Handle filter reset
   const handleResetFilters = () => {
     setSearchTerm('');
     setSelectedCategory(undefined);
+    setCurrentPage(1);
   };
-
-  // Check if filters are loading
-  const isFilterLoading = searchTerm !== debouncedSearchTerm;
 
 
   return (
@@ -114,20 +130,12 @@ export function KnowledgeHub() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
-                  ref={searchInputRef}
                   placeholder={t('knowledge.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
                   className="pl-10"
                   autoComplete="off"
                 />
-                {searchTerm !== debouncedSearchTerm && isSearchFocused && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                  </div>
-                )}
               </div>
             </div>
             <div className="sm:w-64">
@@ -151,28 +159,8 @@ export function KnowledgeHub() {
         </div>
 
         {/* Articles Content */}
-        <div className="min-h-[600px] relative">
-          {isFilterLoading ? (
-            <div className="absolute inset-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="glass border-border/50 overflow-hidden">
-                    <div className="h-48 bg-muted/20 animate-pulse" />
-                    <CardHeader>
-                      <div className="h-6 bg-muted/20 animate-pulse rounded" />
-                      <div className="h-4 bg-muted/20 animate-pulse rounded w-1/2" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="h-4 bg-muted/20 animate-pulse rounded" />
-                        <div className="h-4 bg-muted/20 animate-pulse rounded w-3/4" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ) : isLoadingKnowledge ? (
+        <div className="min-h-[600px]">
+          {isLoadingKnowledge ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
                 <Card key={i} className="glass border-border/50 overflow-hidden">
@@ -195,7 +183,7 @@ export function KnowledgeHub() {
               <p className="text-muted-foreground mb-4">Failed to load articles</p>
               <Button onClick={() => window.location.reload()}>Try Again</Button>
             </div>
-          ) : articles.length === 0 ? (
+          ) : paginatedArticles.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-muted-foreground" />
@@ -211,7 +199,7 @@ export function KnowledgeHub() {
             </div>
           ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {articles.map((article) => (
+                {paginatedArticles.map((article) => (
                   <Card key={article.id} className="glass border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 overflow-hidden group">
                     <div className="relative h-48 overflow-hidden">
                       <ImageWithFallback
@@ -270,6 +258,17 @@ export function KnowledgeHub() {
               </div>
             )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-12">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
