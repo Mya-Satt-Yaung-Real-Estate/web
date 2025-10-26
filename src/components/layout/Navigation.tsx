@@ -57,7 +57,7 @@ const createNavigationData = (t: (key: string) => string) => ({
   
   calculatorOptions: [
     { name: t('calculators.loanCalculator'), path: '/loan-calculator', icon: Banknote },
-    { name: t('calculators.yarPyatTaxCalculator'), path: '/yar-pyat-tax-calculator', icon: Calculator },
+             { name: t('calculators.yarPyatTaxCalculator'), path: '/yarpyat-taxes-calculator', icon: Calculator },
   ],
   
   knowledgeCategories: [
@@ -262,12 +262,12 @@ export function Navigation() {
               trigger={
                 <button
                   className={`relative px-4 py-2 rounded-xl transition-all group flex items-center gap-1 whitespace-nowrap ${
-                    isActive('/loan-calculator') || isActive('/yar-pyat-tax-calculator')
+                    isActive('/loan-calculator') || isActive('/yarpyat-taxes-calculator')
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {(isActive('/loan-calculator') || isActive('/yar-pyat-tax-calculator')) && (
+                  {(isActive('/loan-calculator') || isActive('/yarpyat-taxes-calculator')) && (
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl" />
                   )}
                   <span className="relative z-10 group-hover:translate-y-[-2px] inline-block transition-transform text-sm lg:text-base">

@@ -23,6 +23,7 @@ const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.
 const Contact = lazy(() => import('../pages/Contact').then(module => ({ default: module.default })));
 const NewsAndUpdates = lazy(() => import('../pages/NewsAndUpdates').then(module => ({ default: module.default })));
 const NewsDetail = lazy(() => import('../pages/NewsDetail').then(module => ({ default: module.default })));
+const YarPyatCalculator = lazy(() => import('../pages/calculators/yarpyatCalculator').then(module => ({ default: module.YarPyatCalculator })));
 const NotFound = lazy(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Route configuration - Home, About, Companies, Knowledge Hub, and 404 pages
@@ -38,6 +39,7 @@ export const routes: RouteConfig[] = [
   { path: '/contact', component: Contact, title: 'Contact Us', public: true },
   { path: '/news-and-updates', component: NewsAndUpdates, title: 'News & Updates', public: true },
   { path: '/news-and-updates/:slug', component: NewsDetail, title: 'News Detail', public: true },
+  { path: '/yarpyat-taxes-calculator', component: YarPyatCalculator, title: 'Yar Pyat Tax Calculator', public: true },
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
@@ -49,6 +51,7 @@ export const navigationConfig = {
     { name: 'Companies', path: '/companies', icon: 'Building2' },
     { name: 'Knowledge Hub', path: '/knowledge-hub', icon: 'BookOpen' },
     { name: 'News & Updates', path: '/news-and-updates', icon: 'Newspaper' },
+    { name: 'Calculator', path: '/yarpyat-taxes-calculator', icon: 'Calculator' },
     { name: 'FAQ', path: '/faq', icon: 'HelpCircle' },
     { name: 'Contact', path: '/contact', icon: 'Mail' },
   ],

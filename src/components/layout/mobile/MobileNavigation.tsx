@@ -55,7 +55,7 @@ const createNavigationData = (t: (key: string) => string) => ({
   
   calculatorOptions: [
     { name: t('calculators.loanCalculator'), path: '/loan-calculator', icon: Banknote },
-    { name: t('calculators.yarPyatTaxCalculator'), path: '/yar-pyat-tax-calculator', icon: Calculator },
+             { name: t('calculators.yarPyatTaxCalculator'), path: '/yarpyat-taxes-calculator', icon: Calculator },
   ],
   
   knowledgeCategories: [
