@@ -19,6 +19,7 @@ const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub').then(module => (
 const KnowledgeDetail = lazy(() => import('../pages/KnowledgeDetail').then(module => ({ default: module.default })));
 const Legacy = lazy(() => import('../pages/Legacy').then(module => ({ default: module.default })));
 const LegacyDetail = lazy(() => import('../pages/LegacyDetail').then(module => ({ default: module.default })));
+const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.default })));
 const NotFound = lazy(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Route configuration - Home, About, Companies, Knowledge Hub, and 404 pages
@@ -30,6 +31,7 @@ export const routes: RouteConfig[] = [
   { path: '/knowledge-hub/:slug', component: KnowledgeDetail, title: 'Knowledge Detail', public: true },
   { path: '/legacy', component: Legacy, title: 'Legacy Team', public: true },
   { path: '/legacy/:slug', component: LegacyDetail, title: 'Legacy Team Detail', public: true },
+  { path: '/faq', component: FAQ, title: 'FAQ', public: true },
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
@@ -40,6 +42,7 @@ export const navigationConfig = {
     { name: 'About', path: '/about', icon: 'Info' },
     { name: 'Companies', path: '/companies', icon: 'Building2' },
     { name: 'Knowledge Hub', path: '/knowledge-hub', icon: 'BookOpen' },
+    { name: 'FAQ', path: '/faq', icon: 'HelpCircle' },
   ],
   authenticated: [
     // No authenticated routes for now
