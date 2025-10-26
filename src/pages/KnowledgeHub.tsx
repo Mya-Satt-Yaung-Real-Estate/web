@@ -1,26 +1,32 @@
 import { useLanguage } from '../contexts/LanguageContext';
-import { BookOpen, Clock, Eye, User } from 'lucide-react';
+import { Clock, Eye, User, Search } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useKnowledgeHubs, useKnowledgeCategories } from '../hooks/queries/useKnowledge';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Link } from 'react-router-dom';
+import { useDebounce } from '../hooks/useDebounce';
 import type { KnowledgeHubFilters } from '../types/knowledge';
 
 export function KnowledgeHub() {
   const { t, language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Debounced search term
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // API filters
   const filters: KnowledgeHubFilters = useMemo(() => ({
-    search: searchTerm || undefined,
+    search: debouncedSearchTerm || undefined,
     category: selectedCategory,
     per_page: 20,
-  }), [searchTerm, selectedCategory]);
+  }), [debouncedSearchTerm, selectedCategory]);
 
   // Fetch knowledge hub data
   const { data: knowledgeData, isLoading: isLoadingKnowledge, error: knowledgeError } = useKnowledgeHubs(filters);
@@ -57,6 +63,35 @@ export function KnowledgeHub() {
     }));
   }, [categoriesData]);
 
+  // Handle category change
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId ? Number(categoryId) : undefined);
+  };
+
+  // Handle search change
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // Handle search focus
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  // Handle search blur
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+  };
+
+  // Handle filter reset
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory(undefined);
+  };
+
+  // Check if filters are loading
+  const isFilterLoading = searchTerm !== debouncedSearchTerm;
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
@@ -76,25 +111,37 @@ export function KnowledgeHub() {
         <div className="mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
-              <Input
-                placeholder={t('knowledge.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  ref={searchInputRef}
+                  placeholder={t('knowledge.searchPlaceholder')}
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
+                  className="pl-10"
+                  autoComplete="off"
+                />
+                {searchTerm !== debouncedSearchTerm && isSearchFocused && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="sm:w-64">
               <select
                 value={selectedCategory || ''}
-                onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
               >
                 <option value="">{t('knowledge.categoryAll')}</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
                     {language === 'mm' 
-                      ? (category.name_mm || category.name_en) 
-                      : (category.name_en || category.name_mm)
+                      ? (category.name_mm && category.name_mm !== category.name_en ? category.name_mm : category.name_en) 
+                      : category.name_en
                     }
                   </option>
                 ))}
@@ -104,8 +151,9 @@ export function KnowledgeHub() {
         </div>
 
         {/* Articles Content */}
-        <div className="space-y-6">
-            {isLoadingKnowledge ? (
+        <div className="min-h-[600px] relative">
+          {isFilterLoading ? (
+            <div className="absolute inset-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
                   <Card key={i} className="glass border-border/50 overflow-hidden">
@@ -123,17 +171,45 @@ export function KnowledgeHub() {
                   </Card>
                 ))}
               </div>
-            ) : knowledgeError ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground mb-4">Failed to load articles</p>
-                <Button onClick={() => window.location.reload()}>Try Again</Button>
+            </div>
+          ) : isLoadingKnowledge ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="glass border-border/50 overflow-hidden">
+                  <div className="h-48 bg-muted/20 animate-pulse" />
+                  <CardHeader>
+                    <div className="h-6 bg-muted/20 animate-pulse rounded" />
+                    <div className="h-4 bg-muted/20 animate-pulse rounded w-1/2" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-muted/20 animate-pulse rounded" />
+                      <div className="h-4 bg-muted/20 animate-pulse rounded w-3/4" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : knowledgeError ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground mb-4">Failed to load articles</p>
+              <Button onClick={() => window.location.reload()}>Try Again</Button>
+            </div>
+          ) : articles.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="h-8 w-8 text-muted-foreground" />
               </div>
-            ) : articles.length === 0 ? (
-              <div className="text-center py-12">
-                <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">No articles found</p>
-              </div>
-            ) : (
+              <h3 className="text-lg font-semibold text-foreground mb-2">No articles found</h3>
+              <p className="text-muted-foreground mb-4">Try adjusting your search or filter criteria</p>
+              <Button 
+                variant="outline" 
+                onClick={handleResetFilters}
+              >
+                Clear Filters
+              </Button>
+            </div>
+          ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {articles.map((article) => (
                   <Card key={article.id} className="glass border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 overflow-hidden group">

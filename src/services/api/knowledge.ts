@@ -18,7 +18,7 @@ export const knowledgeApi = {
       params.append('search', filters.search);
     }
     if (filters.category) {
-      params.append('category', filters.category.toString());
+      params.append('news_article_category_id', filters.category.toString());
     }
     if (filters.tag) {
       params.append('tag', filters.tag);
@@ -49,7 +49,7 @@ export const knowledgeApi = {
    * Get knowledge hub categories
    */
   async getKnowledgeCategories(): Promise<{ success: boolean; data: any[] }> {
-    const response = await apiClient.get<{ success: boolean; data: any[] }>('/api/v1/frontend/knowledge-categories');
+    const response = await apiClient.get<{ success: boolean; data: any[] }>('/api/v1/news-article-categories');
     return response.data;
   },
 
