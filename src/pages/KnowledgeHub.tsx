@@ -77,7 +77,7 @@ export function KnowledgeHub() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <Input
-                placeholder="Search articles..."
+                placeholder={t('knowledge.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -89,7 +89,7 @@ export function KnowledgeHub() {
                 onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : undefined)}
                 className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
               >
-                <option value="">All Categories</option>
+                <option value="">{t('knowledge.categoryAll')}</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
                     {language === 'mm' 

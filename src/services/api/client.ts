@@ -69,7 +69,25 @@ class ApiClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // Try to parse error response body for detailed error messages
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+          // Create a custom error object with the response data
+          const error = new Error(errorMessage);
+          (error as any).response = {
+            status: response.status,
+            statusText: response.statusText,
+            data: errorData
+          };
+          throw error;
+        } catch (parseError) {
+          // If parsing fails, throw the original error
+          throw new Error(errorMessage);
+        }
       }
 
       const data = await response.json();

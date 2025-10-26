@@ -11,3 +11,5 @@ export interface FAQResponse {
   message: string;
   data: FAQ[];
 }
+
+

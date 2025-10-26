@@ -7,3 +7,5 @@ export const faqApi = {
     return response.data;
   },
 };
+
+

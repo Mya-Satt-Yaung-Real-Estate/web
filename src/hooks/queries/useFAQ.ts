@@ -4,3 +4,5 @@ import { faqQueries } from '@/services/queries/faq';
 export const useFAQs = () => {
   return useQuery(faqQueries.getFAQs());
 };
+
+

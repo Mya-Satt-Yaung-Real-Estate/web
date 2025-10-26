@@ -6,6 +6,7 @@ import { AppRoutes } from './routes/AppRoutes';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ModalProvider } from './contexts/ModalContext';
 import { QueryProvider } from './providers';
 import { StructuredData } from './components/seo/StructuredData';
 import './styles';
@@ -18,14 +19,16 @@ function App() {
           <ThemeProvider>
             <LanguageProvider>
               <AuthProvider>
-                <StructuredData type="all" />
-                <div className="min-h-screen flex flex-col">
-                  <Navigation />
-                  <main className="flex-1">
-                    <AppRoutes />
-                  </main>
-                  <Footer />
-                </div>
+                <ModalProvider>
+                  <StructuredData type="all" />
+                  <div className="min-h-screen flex flex-col">
+                    <Navigation />
+                    <main className="flex-1">
+                      <AppRoutes />
+                    </main>
+                    <Footer />
+                  </div>
+                </ModalProvider>
               </AuthProvider>
             </LanguageProvider>
           </ThemeProvider>

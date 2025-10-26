@@ -54,7 +54,7 @@ const FAQItem = ({ faq, isOpen, onToggle }: FAQItemProps) => {
 };
 
 export default function FAQ() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const { data: faqData, isLoading, error } = useFAQs();
   const [searchTerm, setSearchTerm] = useState('');
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
@@ -195,10 +195,7 @@ export default function FAQ() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder={language === 'mm' 
-                ? 'မေးခွန်းများကို ရှာဖွေရန်...'
-                : 'Search for answers...'
-              }
+              placeholder={t('faq.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
