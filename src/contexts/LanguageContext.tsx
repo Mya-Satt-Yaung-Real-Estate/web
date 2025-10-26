@@ -344,6 +344,7 @@ const translations: Translations = {
   'forms.yes': { en: 'Yes', mm: 'ဟုတ်ကဲ့' },
   'forms.no': { en: 'No', mm: 'မဟုတ်ပါ' },
   'forms.loading': { en: 'Loading...', mm: 'တည်ဆောက်နေသည်...' },
+  'forms.loadMore': { en: 'Load More', mm: 'ပိုမိုတင်ရန်' },
   'forms.error': { en: 'Error', mm: 'အမှား' },
   'forms.success': { en: 'Success', mm: 'အောင်မြင်ပါပြီ' },
   'forms.warning': { en: 'Warning', mm: 'သတိပေးချက်' },
@@ -387,10 +388,24 @@ const translations: Translations = {
   'knowledge.subtitle': { en: 'Learn about real estate', mm: 'အိမ်ခြံမြေအကြောင်းလေ့လာပါ' },
   'knowledge.searchPlaceholder': { en: 'Search articles...', mm: 'ဆောင်းပါးများရှာဖွေရန်...' },
   'knowledge.categoryAll': { en: 'All Categories', mm: 'အမျိုးအစားအားလုံး' },
-  'knowledge.readMore': { en: 'Read More', mm: 'ပိုမိုဖတ်ရန်' },
+  'knowledge.readMore': { en: 'Read More', mm: 'အသေးစိတ်ကြည့်ရန်' },
   'knowledge.minRead': { en: 'min read', mm: 'မိနစ်ဖတ်ရန်' },
   'knowledge.views': { en: 'views', mm: 'ကြည့်ရှုမှုများ' },
   'knowledge.by': { en: 'by', mm: 'မှ' },
+
+  // News & Updates
+  'news.title': { en: 'News & Updates', mm: 'သတင်းနှင့်အပ်ဒိတ်များ' },
+  'news.subtitle': { en: 'Stay informed with the latest real estate news', mm: 'နောက်ဆုံးအိမ်ခြံမြေသတင်းများနှင့်အတူ အသိပေးထားပါ' },
+  'news.searchPlaceholder': { en: 'Search news...', mm: 'သတင်းများရှာဖွေရန်...' },
+  'news.categoryAll': { en: 'All Categories', mm: 'အမျိုးအစားအားလုံး' },
+  'news.readMore': { en: 'Read More', mm: 'အသေးစိတ်ကြည့်ရန်' },
+  'news.minRead': { en: 'min read', mm: 'မိနစ်ဖတ်ရန်' },
+  'news.views': { en: 'views', mm: 'ကြည့်ရှုမှုများ' },
+  'news.by': { en: 'by', mm: 'မှ' },
+  'news.noResults': { en: 'No news found', mm: 'သတင်းများမတွေ့ပါ' },
+  'news.tryAgain': { en: 'Try different search terms', mm: 'အခြားရှာဖွေမှုစာလုံးများကြိုးစားကြည့်ပါ' },
+  'news.loading': { en: 'Loading news...', mm: 'သတင်းများတည်ဆောက်နေသည်...' },
+  'news.error': { en: 'Failed to load news', mm: 'သတင်းများတည်ဆောက်၍မရပါ' },
 };
 
 interface LanguageContextType {

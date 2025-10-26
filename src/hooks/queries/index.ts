@@ -12,3 +12,4 @@ export * from './useProperties';
 export * from './useAuth';
 export * from './useKnowledge';
 export * from './useLegacy';
+export * from './useNews';

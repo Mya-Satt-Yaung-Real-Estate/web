@@ -15,7 +15,7 @@ export { useIsMobileOrTablet } from './useMediaQuery';
 // UTILITY HOOKS
 // ============================================================================
 
-export { useDebounce, useDebouncedCallback } from './useDebounce';
+export { useDebounce } from './useDebounce';
 
 // ============================================================================
 // CONTEXT HOOKS

@@ -60,11 +60,11 @@ const createNavigationData = (t: (key: string) => string) => ({
   
   knowledgeCategories: [
     { name: t('services.knowledgeHub'), path: '/knowledge-hub', icon: BookOpen },
+    { name: t('services.newsUpdates'), path: '/news-and-updates', icon: Newspaper },
     { name: t('services.faq'), path: '/faq', icon: HelpCircle },
-    { name: t('services.newsUpdates'), path: '/news-updates', icon: Newspaper },
     { name: t('services.aboutUs'), path: '/about', icon: Info },
     { name: t('services.contactUs'), path: '/contact', icon: Mail },
-    { name: t('services.legalTeam'), path: '/legal-team', icon: Scale },
+    { name: t('services.legalTeam'), path: '/legacy', icon: Scale },
   ],
   
   companyCategories: [

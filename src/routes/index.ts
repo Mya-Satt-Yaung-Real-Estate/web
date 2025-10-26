@@ -21,6 +21,8 @@ const Legacy = lazy(() => import('../pages/Legacy').then(module => ({ default: m
 const LegacyDetail = lazy(() => import('../pages/LegacyDetail').then(module => ({ default: module.default })));
 const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.default })));
 const Contact = lazy(() => import('../pages/Contact').then(module => ({ default: module.default })));
+const NewsAndUpdates = lazy(() => import('../pages/NewsAndUpdates').then(module => ({ default: module.default })));
+const NewsDetail = lazy(() => import('../pages/NewsDetail').then(module => ({ default: module.default })));
 const NotFound = lazy(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Route configuration - Home, About, Companies, Knowledge Hub, and 404 pages
@@ -34,6 +36,8 @@ export const routes: RouteConfig[] = [
   { path: '/legacy/:slug', component: LegacyDetail, title: 'Legacy Team Detail', public: true },
   { path: '/faq', component: FAQ, title: 'FAQ', public: true },
   { path: '/contact', component: Contact, title: 'Contact Us', public: true },
+  { path: '/news-and-updates', component: NewsAndUpdates, title: 'News & Updates', public: true },
+  { path: '/news-and-updates/:slug', component: NewsDetail, title: 'News Detail', public: true },
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
@@ -44,6 +48,7 @@ export const navigationConfig = {
     { name: 'About', path: '/about', icon: 'Info' },
     { name: 'Companies', path: '/companies', icon: 'Building2' },
     { name: 'Knowledge Hub', path: '/knowledge-hub', icon: 'BookOpen' },
+    { name: 'News & Updates', path: '/news-and-updates', icon: 'Newspaper' },
     { name: 'FAQ', path: '/faq', icon: 'HelpCircle' },
     { name: 'Contact', path: '/contact', icon: 'Mail' },
   ],

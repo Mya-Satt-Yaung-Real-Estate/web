@@ -20,3 +20,4 @@ export { knowledgeApi } from './knowledge';
 export { legacyApi } from './legacy';
 export { faqApi } from './faq';
 export { contactApi } from './contact';
+export { newsApi } from './news';

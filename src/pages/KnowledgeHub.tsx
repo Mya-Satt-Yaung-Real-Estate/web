@@ -186,7 +186,7 @@ export function KnowledgeHub() {
                         to={`/knowledge-hub/${article.slug}`}
                         className="text-primary hover:text-primary/80 hover:underline transition-colors font-medium"
                       >
-                        Read More →
+                        {t('knowledge.readMore')} →
                       </Link>
                     </CardContent>
                   </Card>

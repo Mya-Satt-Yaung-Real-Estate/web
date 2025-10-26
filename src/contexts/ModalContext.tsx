@@ -102,3 +102,4 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     </ModalContext.Provider>
   );
 };
+
