@@ -453,6 +453,9 @@ const translations: Translations = {
   'calculator.yarPyat.landArea': { en: 'Land Area', mm: 'မြေကွက်အကျယ်အဝန်း' },
   'calculator.yarPyat.landAreaDescription': { en: 'Enter the total land area in square feet', mm: 'စတုရန်းပေဖြင့် မြေကွက်၏ စုစုပေါင်းဧရိယာကို ထည့်သွင်းပါ' },
   'calculator.yarPyat.landAreaSqft': { en: 'Land Area (Sqft)', mm: 'စတုရန်းပေ' },
+  'calculator.yarPyat.length': { en: 'Length (ft)', mm: 'အလျား (ပေ)' },
+  'calculator.yarPyat.width': { en: 'Width (ft)', mm: 'အနံ (ပေ)' },
+  'calculator.yarPyat.or': { en: 'OR', mm: 'သို့မဟုတ်' },
   'calculator.yarPyat.landAreaExample': { en: 'Example: If land is 40 ft × 60 ft = 2,400 Sqft', mm: 'ဥပမာ: မြေကွက်သည် 40 ပေ × 60 ပေ = 2,400 စတုရန်းပေ' },
   'calculator.yarPyat.ratePerSqft': { en: 'Rate per Sqft', mm: 'ရာပြတ်တန်ဖိုး' },
   'calculator.yarPyat.calculateTax': { en: 'Calculate Tax', mm: 'အခွန်တွက်ချက်ရန်' },
@@ -463,6 +466,30 @@ const translations: Translations = {
   'calculator.yarPyat.buyingTax': { en: 'Buying Tax (7.5%)', mm: 'ဝယ်ခွန် (7.5%)' },
   'calculator.yarPyat.fillFormMessage': { en: 'Fill in the form and click "Calculate Tax" to see results', mm: 'ပုံစံကိုဖြည့်ပြီး ရလဒ်များကိုကြည့်ရန် "အခွန်တွက်ချက်ရန်" ကိုနှိပ်ပါ' },
   'calculator.yarPyat.infoNote': { en: 'These calculations are estimates based on standard rates. Actual taxes may vary. Please consult with local authorities for exact amounts.', mm: 'ဤတွက်ချက်မှုများသည် စံနှုန်းများအပေါ်အခြေခံသော ခန့်မှန်းချက်များဖြစ်သည်။ အတည်ပြုအခွန်များသည် ကွဲပြားနိုင်သည်။ တိကျသောပမာဏများအတွက် ဒေသဆိုင်ရာအာဏာပိုင်များနှင့် တိုင်ပင်ပါ။' },
+  
+  // Missing YarPyat calculator translations
+  'calculator.yarPyat.township': { en: 'Township', mm: 'မြို့နယ်' },
+  'calculator.yarPyat.selectRegion': { en: 'Select Region', mm: 'တိုင်းဒေသကြီးရွေးချယ်ရန်' },
+  'calculator.yarPyat.selectTownship': { en: 'Select Township', mm: 'မြို့နယ်ရွေးချယ်ရန်' },
+  'calculator.yarPyat.selectWard': { en: 'Select Ward', mm: 'ရပ်ကွက်ရွေးချယ်ရန်' },
+  'calculator.yarPyat.selectRoad': { en: 'Select Road', mm: 'လမ်းရွေးချယ်ရန်' },
+  'calculator.yarPyat.areaInSqft': { en: 'Area in Sqft', mm: 'စတုရန်းပေဖြင့်ဧရိယာ' },
+  'calculator.yarPyat.calculate': { en: 'Calculate', mm: 'တွက်ချက်ရန်' },
+  'calculator.yarPyat.reset': { en: 'Reset', mm: 'ပြန်စရန်' },
+  'calculator.yarPyat.taxCalculationResults': { en: 'Tax Calculation Results', mm: 'အခွန်တွက်ချက်မှုရလဒ်များ' },
+  'calculator.yarPyat.resultsDescription': { en: 'Your tax calculation results', mm: 'သင့်အခွန်တွက်ချက်မှုရလဒ်များ' },
+  'calculator.yarPyat.totalTax': { en: 'Total Tax', mm: 'စုစုပေါင်းအခွန်' },
+  'calculator.yarPyat.selectLocationAndArea': { en: 'Select location and enter land area to calculate taxes', mm: 'အခွန်တွက်ချက်ရန် တည်နေရာရွေးချယ်ပြီး မြေကွက်ဧရိယာထည့်သွင်းပါ' },
+  
+  // Additional YarPyat calculator translations
+  'calculator.yarPyat.selectAllFields': { en: 'Please select Region, City, Ward, and Road', mm: 'တိုင်းဒေသကြီး၊ မြို့၊ ရပ်ကွက်နှင့် လမ်းကို ရွေးချယ်ပါ' },
+  'calculator.yarPyat.enterValidArea': { en: 'Please enter a valid land area', mm: 'မြေကွက်ဧရိယာကို မှန်ကန်စွာ ထည့်သွင်းပါ' },
+  'calculator.yarPyat.enterLengthAndWidth': { en: 'Please enter both length and width', mm: 'အလျားနှင့် အနံကို ထည့်သွင်းပါ' },
+  'calculator.yarPyat.autoCalculated': { en: 'Auto-calculated from length × width', mm: 'အလျား × အနံမှ အလိုအလျောက်တွက်ချက်သည်' },
+  
+  // Common translations
+  'common.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },
+  'common.error': { en: 'Error', mm: 'အမှား' },
 };
 
 interface LanguageContextType {

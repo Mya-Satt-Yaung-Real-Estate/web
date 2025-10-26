@@ -6,130 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Calculator as CalculatorIcon, MapPin, Building2, Home, DollarSign, TrendingUp, Info } from 'lucide-react';
+import { Calculator as CalculatorIcon, MapPin, Building2, Home, DollarSign, TrendingUp, Info, Loader2 } from 'lucide-react';
 import { SEOHead } from '@/components/seo/SEOHead';
-
-// Location data with tax rates per square foot
-const locationData = {
-  'Yangon': {
-    cities: {
-      'Yangon City': {
-        wards: {
-          'Kamayut': {
-            roads: {
-              'Pyay Road': 150000,
-              'Inya Road': 180000,
-              'U Wisara Road': 120000,
-            }
-          },
-          'Bahan': {
-            roads: {
-              'Shwe Gon Daing Road': 200000,
-              'Than Lwin Road': 170000,
-              'Aye Yeik Thar Road': 160000,
-            }
-          },
-          'Hlaing': {
-            roads: {
-              'Hlaing River Road': 140000,
-              'Parami Road': 130000,
-              'Kaba Aye Pagoda Road': 125000,
-            }
-          },
-          'Yankin': {
-            roads: {
-              'Yankin Road': 110000,
-              'Myay Ni Gone Road': 105000,
-              'Thanlyin Road': 100000,
-            }
-          }
-        }
-      },
-      'Yangon North': {
-        wards: {
-          'Insein': {
-            roads: {
-              'Insein Road': 80000,
-              'Pyay Road': 85000,
-              'Mingaladon Road': 75000,
-            }
-          },
-          'Shwe Pyi Thar': {
-            roads: {
-              'Main Road': 60000,
-              'Industrial Road': 55000,
-              'Airport Road': 70000,
-            }
-          }
-        }
-      }
-    }
-  },
-  'Mandalay': {
-    cities: {
-      'Mandalay City': {
-        wards: {
-          'Chan Aye Thar Zan': {
-            roads: {
-              '84th Street': 90000,
-              '80th Street': 95000,
-              '73rd Street': 85000,
-            }
-          },
-          'Aung Myay Thar Zan': {
-            roads: {
-              '27th Street': 100000,
-              '35th Street': 105000,
-              '26th Street': 98000,
-            }
-          },
-          'Maha Aung Myay': {
-            roads: {
-              'Mandalay-Lashio Road': 75000,
-              'Mandalay-Myitkyina Road': 70000,
-              'Strand Road': 80000,
-            }
-          }
-        }
-      }
-    }
-  },
-  'Nay Pyi Taw': {
-    cities: {
-      'Zeyar Thiri': {
-        wards: {
-          'Hotel Zone': {
-            roads: {
-              'Main Boulevard': 120000,
-              'Hotel Zone Road 1': 110000,
-              'Hotel Zone Road 2': 115000,
-            }
-          },
-          'Diplomatic Zone': {
-            roads: {
-              'Embassy Road': 130000,
-              'Diplomatic Road': 125000,
-            }
-          }
-        }
-      },
-      'Pyinmana': {
-        wards: {
-          'Downtown': {
-            roads: {
-              'Main Road': 60000,
-              'Market Road': 55000,
-              'Station Road': 50000,
-            }
-          }
-        }
-      }
-    }
-  }
-};
+import { useRegions, useTownships, useWards, useRoads } from '@/hooks/queries/useLocations';
+import type { Region, Township, Ward, Road } from '@/services/api/locations';
 
 export function YarPyatCalculator() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Location selections
   const [selectedRegion, setSelectedRegion] = useState<string>('');
@@ -139,6 +22,8 @@ export function YarPyatCalculator() {
   
   // Land dimensions
   const [landArea, setLandArea] = useState<string>('');
+  const [length, setLength] = useState<string>('');
+  const [width, setWidth] = useState<string>('');
   
   // Calculated values
   const [ratePerSqft, setRatePerSqft] = useState<number>(0);
@@ -146,72 +31,168 @@ export function YarPyatCalculator() {
   const [sellingTax, setSellingTax] = useState<number>(0);
   const [buyingTax, setBuyingTax] = useState<number>(0);
   const [showResults, setShowResults] = useState<boolean>(false);
+  
+  // Validation states
+  const [errors, setErrors] = useState<{
+    region?: string;
+    city?: string;
+    ward?: string;
+    road?: string;
+    landArea?: string;
+    length?: string;
+    width?: string;
+  }>({});
 
-  // Available options based on selections
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
-  const [availableWards, setAvailableWards] = useState<string[]>([]);
-  const [availableRoads, setAvailableRoads] = useState<string[]>([]);
+  // API data
+  const { data: regionsData, isLoading: regionsLoading, error: regionsError } = useRegions();
+  const { data: townshipsData, isLoading: townshipsLoading, error: townshipsError } = useTownships();
+  const { data: wardsData, isLoading: wardsLoading, error: wardsError } = useWards(
+    selectedCity ? parseInt(selectedCity) : null
+  );
+  const { data: roadsData, isLoading: roadsLoading, error: roadsError } = useRoads(
+    selectedWard ? parseInt(selectedWard) : null
+  );
 
-  // Update available cities when region changes
+  // Filter townships based on selected region
+  const filteredTownships = townshipsData?.data?.filter(
+    (township: Township) => township.region_id === parseInt(selectedRegion)
+  ) || [];
+
+  // Reset dependent selections when parent selection changes
   useEffect(() => {
     if (selectedRegion) {
-      const cities = Object.keys(locationData[selectedRegion as keyof typeof locationData]?.cities || {});
-      setAvailableCities(cities);
       setSelectedCity('');
       setSelectedWard('');
       setSelectedRoad('');
-      setAvailableWards([]);
-      setAvailableRoads([]);
       setRatePerSqft(0);
       setShowResults(false);
+      // Clear errors for dependent fields
+      setErrors(prev => ({ ...prev, city: undefined, ward: undefined, road: undefined }));
     }
   }, [selectedRegion]);
 
-  // Update available wards when city changes
   useEffect(() => {
-    if (selectedRegion && selectedCity) {
-      const wards = Object.keys(
-        (locationData[selectedRegion as keyof typeof locationData]?.cities as any)?.[selectedCity]?.wards || {}
-      );
-      setAvailableWards(wards);
+    if (selectedCity) {
       setSelectedWard('');
       setSelectedRoad('');
-      setAvailableRoads([]);
       setRatePerSqft(0);
       setShowResults(false);
+      // Clear errors for dependent fields
+      setErrors(prev => ({ ...prev, ward: undefined, road: undefined }));
     }
-  }, [selectedCity, selectedRegion]);
+  }, [selectedCity]);
 
-  // Update available roads when ward changes
   useEffect(() => {
-    if (selectedRegion && selectedCity && selectedWard) {
-      const roads = Object.keys(
-        (locationData[selectedRegion as keyof typeof locationData]?.cities as any)?.[selectedCity]?.wards?.[selectedWard]?.roads || {}
-      );
-      setAvailableRoads(roads);
+    if (selectedWard) {
       setSelectedRoad('');
       setRatePerSqft(0);
       setShowResults(false);
+      // Clear error for dependent field
+      setErrors(prev => ({ ...prev, road: undefined }));
     }
-  }, [selectedWard, selectedCity, selectedRegion]);
+  }, [selectedWard]);
 
   // Update rate when road is selected
   useEffect(() => {
-    if (selectedRegion && selectedCity && selectedWard && selectedRoad) {
-      const rate = (locationData[selectedRegion as keyof typeof locationData]?.cities as any)?.[selectedCity]?.wards?.[selectedWard]?.roads?.[selectedRoad] || 0;
-      setRatePerSqft(rate);
-      setShowResults(false);
+    if (selectedRoad && roadsData?.data) {
+      const road = roadsData.data.find((road: Road) => road.id === parseInt(selectedRoad));
+      if (road) {
+        setRatePerSqft(parseFloat(road.price));
+      }
     }
-  }, [selectedRoad, selectedWard, selectedCity, selectedRegion]);
+  }, [selectedRoad, roadsData]);
+
+  // Auto-calculate land area when length and width are entered
+  useEffect(() => {
+    if (length && width && parseFloat(length) > 0 && parseFloat(width) > 0) {
+      const calculatedArea = parseFloat(length) * parseFloat(width);
+      setLandArea(calculatedArea.toString());
+      // Clear land area error if it exists
+      if (errors.landArea) {
+        setErrors(prev => ({ ...prev, landArea: undefined }));
+      }
+    }
+  }, [length, width, errors.landArea]);
+
+  // Handlers to clear individual field errors
+  const handleRegionChange = (value: string) => {
+    setSelectedRegion(value);
+    if (errors.region) {
+      setErrors(prev => ({ ...prev, region: undefined }));
+    }
+  };
+
+  const handleCityChange = (value: string) => {
+    setSelectedCity(value);
+    if (errors.city) {
+      setErrors(prev => ({ ...prev, city: undefined }));
+    }
+  };
+
+  const handleWardChange = (value: string) => {
+    setSelectedWard(value);
+    if (errors.ward) {
+      setErrors(prev => ({ ...prev, ward: undefined }));
+    }
+  };
+
+  const handleRoadChange = (value: string) => {
+    setSelectedRoad(value);
+    if (errors.road) {
+      setErrors(prev => ({ ...prev, road: undefined }));
+    }
+  };
+
+  const handleLandAreaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLandArea(e.target.value);
+    if (errors.landArea) {
+      setErrors(prev => ({ ...prev, landArea: undefined }));
+    }
+  };
+
+  const handleLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLength(e.target.value);
+    if (errors.length) {
+      setErrors(prev => ({ ...prev, length: undefined }));
+    }
+  };
+
+  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWidth(e.target.value);
+    if (errors.width) {
+      setErrors(prev => ({ ...prev, width: undefined }));
+    }
+  };
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+    
+    if (!selectedRegion) {
+      newErrors.region = t('calculator.yarPyat.selectRegion');
+    }
+    if (!selectedCity) {
+      newErrors.city = t('calculator.yarPyat.selectTownship');
+    }
+    if (!selectedWard) {
+      newErrors.ward = t('calculator.yarPyat.selectWard');
+    }
+    if (!selectedRoad) {
+      newErrors.road = t('calculator.yarPyat.selectRoad');
+    }
+    
+    // Check if user has both length and width (land area is auto-calculated)
+    const hasLength = length && parseFloat(length) > 0;
+    const hasWidth = width && parseFloat(width) > 0;
+    
+    if (!hasLength || !hasWidth) {
+      newErrors.landArea = t('calculator.yarPyat.enterLengthAndWidth');
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleCalculate = () => {
-    if (!selectedRegion || !selectedCity || !selectedWard || !selectedRoad) {
-      alert('Please select Region, City, Ward, and Road');
-      return;
-    }
-
-    if (!landArea || parseFloat(landArea) <= 0) {
-      alert('Please enter a valid land area');
+    if (!validateForm()) {
       return;
     }
 
@@ -232,18 +213,18 @@ export function YarPyatCalculator() {
     setSelectedWard('');
     setSelectedRoad('');
     setLandArea('');
+    setLength('');
+    setWidth('');
     setRatePerSqft(0);
     setAssessedValue(0);
     setSellingTax(0);
     setBuyingTax(0);
     setShowResults(false);
-    setAvailableCities([]);
-    setAvailableWards([]);
-    setAvailableRoads([]);
+    setErrors({});
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 pt-24 pb-12">
       <SEOHead
         seo={{
           title: t('calculators.yarPyatTaxCalculator'),
@@ -287,89 +268,158 @@ export function YarPyatCalculator() {
                 {/* Region */}
                 <div className="space-y-2">
                   <Label htmlFor="region">
-                    {t('calculator.yarPyat.region')}
+                    {t('calculator.yarPyat.region')} <span className="text-red-500">*</span>
                   </Label>
-                  <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                    <SelectTrigger id="region">
-                      <SelectValue placeholder="Select Region" />
+                  <Select value={selectedRegion} onValueChange={handleRegionChange}>
+                    <SelectTrigger id="region" className={errors.region ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t('calculator.yarPyat.selectRegion')} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(locationData).map((region) => (
-                        <SelectItem key={region} value={region}>
-                          {region}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                     <SelectContent>
+                       {regionsLoading ? (
+                         <SelectItem value="loading" disabled>
+                           <div className="flex items-center gap-2">
+                             <Loader2 className="w-4 h-4 animate-spin" />
+                             {t('common.loading')}
+                           </div>
+                         </SelectItem>
+                       ) : regionsError ? (
+                         <SelectItem value="error" disabled>
+                           {t('common.error')}
+                         </SelectItem>
+                       ) : (
+                         regionsData?.data?.map((region: Region) => (
+                           <SelectItem key={region.id} value={region.id.toString()}>
+                             {language === 'mm' ? region.name_mm : region.name_en}
+                           </SelectItem>
+                         ))
+                       )}
+                     </SelectContent>
                   </Select>
+                  {errors.region && (
+                    <p className="text-sm text-red-500">{errors.region}</p>
+                  )}
                 </div>
 
                 {/* City */}
                 <div className="space-y-2">
                   <Label htmlFor="city">
-                    {t('calculator.yarPyat.city')}
+                    {t('calculator.yarPyat.city')} <span className="text-red-500">*</span>
                   </Label>
                   <Select 
                     value={selectedCity} 
-                    onValueChange={setSelectedCity}
+                    onValueChange={handleCityChange}
                     disabled={!selectedRegion}
                   >
-                    <SelectTrigger id="city">
-                      <SelectValue placeholder="Select City" />
+                    <SelectTrigger id="city" className={errors.city ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t('calculator.yarPyat.selectTownship')} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {availableCities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                     <SelectContent>
+                       {townshipsLoading ? (
+                         <SelectItem value="loading" disabled>
+                           <div className="flex items-center gap-2">
+                             <Loader2 className="w-4 h-4 animate-spin" />
+                             {t('common.loading')}
+                           </div>
+                         </SelectItem>
+                       ) : townshipsError ? (
+                         <SelectItem value="error" disabled>
+                           {t('common.error')}
+                         </SelectItem>
+                       ) : (
+                         filteredTownships.map((township: Township) => (
+                           <SelectItem key={township.id} value={township.id.toString()}>
+                             {language === 'mm' ? township.name_mm : township.name_en}
+                           </SelectItem>
+                         ))
+                       )}
+                     </SelectContent>
                   </Select>
+                  {errors.city && (
+                    <p className="text-sm text-red-500">{errors.city}</p>
+                  )}
                 </div>
 
                 {/* Ward */}
                 <div className="space-y-2">
                   <Label htmlFor="ward">
-                    {t('calculator.yarPyat.ward')}
+                    {t('calculator.yarPyat.ward')} <span className="text-red-500">*</span>
                   </Label>
                   <Select 
                     value={selectedWard} 
-                    onValueChange={setSelectedWard}
+                    onValueChange={handleWardChange}
                     disabled={!selectedCity}
                   >
-                    <SelectTrigger id="ward">
-                      <SelectValue placeholder="Select Ward" />
+                    <SelectTrigger id="ward" className={errors.ward ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t('calculator.yarPyat.selectWard')} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {availableWards.map((ward) => (
-                        <SelectItem key={ward} value={ward}>
-                          {ward}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                     <SelectContent>
+                       {wardsLoading ? (
+                         <SelectItem value="loading" disabled>
+                           <div className="flex items-center gap-2">
+                             <Loader2 className="w-4 h-4 animate-spin" />
+                             {t('common.loading')}
+                           </div>
+                         </SelectItem>
+                       ) : wardsError ? (
+                         <SelectItem value="error" disabled>
+                           {t('common.error')}
+                         </SelectItem>
+                       ) : (
+                         wardsData?.data?.map((ward: Ward) => (
+                           <SelectItem key={ward.id} value={ward.id.toString()}>
+                             {language === 'mm' ? ward.ward_name_mm : ward.ward_name_en}
+                           </SelectItem>
+                         ))
+                       )}
+                     </SelectContent>
                   </Select>
+                  {errors.ward && (
+                    <p className="text-sm text-red-500">{errors.ward}</p>
+                  )}
                 </div>
 
                 {/* Road */}
                 <div className="space-y-2">
                   <Label htmlFor="road">
-                    {t('calculator.yarPyat.road')}
+                    {t('calculator.yarPyat.road')} <span className="text-red-500">*</span>
                   </Label>
                   <Select 
                     value={selectedRoad} 
-                    onValueChange={setSelectedRoad}
+                    onValueChange={handleRoadChange}
                     disabled={!selectedWard}
                   >
-                    <SelectTrigger id="road">
-                      <SelectValue placeholder="Select Road" />
+                    <SelectTrigger id="road" className={errors.road ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t('calculator.yarPyat.selectRoad')} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {availableRoads.map((road) => (
-                        <SelectItem key={road} value={road}>
-                          {road}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                     <SelectContent>
+                       {roadsLoading ? (
+                         <SelectItem value="loading" disabled>
+                           <div className="flex items-center gap-2">
+                             <Loader2 className="w-4 h-4 animate-spin" />
+                             {t('common.loading')}
+                           </div>
+                         </SelectItem>
+                       ) : roadsError ? (
+                         <SelectItem value="error" disabled>
+                           {t('common.error')}
+                         </SelectItem>
+                       ) : (
+                         roadsData?.data?.map((road: Road) => (
+                           <SelectItem key={road.id} value={road.id.toString()}>
+                             <div className="flex items-center justify-between w-full">
+                               <span>{language === 'mm' ? road.name_mm : road.name_en}</span>
+                               <Badge variant="secondary" className="ml-2">
+                                 {parseFloat(road.price).toLocaleString()} MMK
+                               </Badge>
+                             </div>
+                           </SelectItem>
+                         ))
+                       )}
+                     </SelectContent>
                   </Select>
+                  {errors.road && (
+                    <p className="text-sm text-red-500">{errors.road}</p>
+                  )}
                 </div>
 
                 {/* Current Rate Display */}
@@ -401,22 +451,106 @@ export function YarPyatCalculator() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Length, Width, and Land Area Fields in One Row */}
                 <div className="space-y-2">
-                  <Label htmlFor="landArea">
-                    {t('calculator.yarPyat.landAreaSqft')}
-                  </Label>
-                  <Input
-                    id="landArea"
-                    type="number"
-                    placeholder="e.g., 2400"
-                    value={landArea}
-                    onChange={(e) => setLandArea(e.target.value)}
-                    min="0"
-                    step="0.01"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {t('calculator.yarPyat.landAreaExample')}
-                  </p>
+                  {/* Labels Row */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 max-w-[120px]">
+                      <Label htmlFor="length">
+                        {t('calculator.yarPyat.length')}
+                      </Label>
+                    </div>
+                    <div className="w-6"></div>
+                    <div className="flex-1 max-w-[120px]">
+                      <Label htmlFor="width">
+                        {t('calculator.yarPyat.width')}
+                      </Label>
+                    </div>
+                    <div className="w-6"></div>
+                    <div className="flex-1">
+                      <Label htmlFor="landArea">
+                        {t('calculator.yarPyat.landAreaSqft')} <span className="text-red-500">*</span>
+                      </Label>
+                    </div>
+                  </div>
+
+                  {/* Input Fields Row */}
+                  <div className="flex items-center gap-4">
+                    {/* Length Field */}
+                    <div className="flex-1 max-w-[120px]">
+                      <Input
+                        id="length"
+                        type="number"
+                        placeholder="e.g., 40"
+                        value={length}
+                        onChange={handleLengthChange}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    {/* Multiplication Sign */}
+                    <div className="flex items-center justify-center w-6">
+                      <span className="text-lg font-semibold text-muted-foreground">×</span>
+                    </div>
+
+                    {/* Width Field */}
+                    <div className="flex-1 max-w-[120px]">
+                      <Input
+                        id="width"
+                        type="number"
+                        placeholder="e.g., 60"
+                        value={width}
+                        onChange={handleWidthChange}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    {/* Equals Sign */}
+                    <div className="flex items-center justify-center w-6">
+                      <span className="text-lg font-semibold text-muted-foreground">=</span>
+                    </div>
+
+                    {/* Land Area Field */}
+                    <div className="flex-1">
+                      <Input
+                        id="landArea"
+                        type="number"
+                        placeholder={t('calculator.yarPyat.landAreaExample')}
+                        value={landArea}
+                        onChange={handleLandAreaChange}
+                        min="0"
+                        step="0.01"
+                        className={`${errors.landArea ? "border-red-500" : ""} bg-gray-50 cursor-not-allowed`}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+
+                  {/* Helper Text Row */}
+                  <div className="flex items-start gap-4">
+                    <div className="flex-1 max-w-[120px]">
+                      <p className="text-xs text-muted-foreground">
+                        {t('calculator.yarPyat.length')}
+                      </p>
+                    </div>
+                    <div className="w-6"></div>
+                    <div className="flex-1 max-w-[120px]">
+                      <p className="text-xs text-muted-foreground">
+                        {t('calculator.yarPyat.width')}
+                      </p>
+                    </div>
+                    <div className="w-6"></div>
+                    <div className="flex-1">
+                      <p className="text-xs text-muted-foreground">
+                        {t('calculator.yarPyat.autoCalculated')}
+                      </p>
+                      {errors.landArea && (
+                        <p className="text-sm text-red-500 mt-1">{errors.landArea}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="border-t border-border my-4"></div>
@@ -468,11 +602,11 @@ export function YarPyatCalculator() {
                     <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
                       <div className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                        <div className="space-y-1">
-                          <p className="text-muted-foreground">{t('calculator.yarPyat.location')}</p>
-                          <p>{selectedRoad}, {selectedWard}</p>
-                          <p>{selectedCity}, {selectedRegion}</p>
-                        </div>
+                         <div className="space-y-1">
+                           <p className="text-muted-foreground">{t('calculator.yarPyat.location')}</p>
+                           <p>{language === 'mm' ? roadsData?.data?.find((road: Road) => road.id === parseInt(selectedRoad))?.name_mm : roadsData?.data?.find((road: Road) => road.id === parseInt(selectedRoad))?.name_en}, {language === 'mm' ? wardsData?.data?.find((ward: Ward) => ward.id === parseInt(selectedWard))?.ward_name_mm : wardsData?.data?.find((ward: Ward) => ward.id === parseInt(selectedWard))?.ward_name_en}</p>
+                           <p>{language === 'mm' ? filteredTownships.find((township: Township) => township.id === parseInt(selectedCity))?.name_mm : filteredTownships.find((township: Township) => township.id === parseInt(selectedCity))?.name_en}, {language === 'mm' ? regionsData?.data?.find((region: Region) => region.id === parseInt(selectedRegion))?.name_mm : regionsData?.data?.find((region: Region) => region.id === parseInt(selectedRegion))?.name_en}</p>
+                         </div>
                       </div>
                     </div>
 
