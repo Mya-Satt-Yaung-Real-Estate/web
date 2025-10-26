@@ -13,3 +13,5 @@ export * from './auth';
 export * from './knowledge';
 export * from './legacy';
 export * from './news';
+export * from './companies';
+export * from './companyTypes';

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -8,240 +9,165 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { SEOHead } from '../components/seo/SEOHead';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { seoUtils } from '../lib/seo';
-import { Building2, MapPin, Phone, Mail, Globe, Star, Users, Home, Search } from 'lucide-react';
-
-interface Company {
-  id: string;
-  name: string;
-  logo: string;
-  description: string;
-  address: string;
-  phone: string;
-  email: string;
-  website: string;
-  rating: number;
-  properties: number;
-  employees: number;
-  verified: boolean;
-  specialties: string[];
-}
+import { Building2, MapPin, Phone, Mail, Star, Eye, Home, Search, Globe } from 'lucide-react';
+import { useCompanies } from '../hooks/queries/useCompanies';
+import { useCompanyTypes } from '../hooks/queries/useCompanyTypes';
+import type { Company, CompanyType } from '../types';
 
 export function Companies() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const seo = seoUtils.getPageSEO('companies');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
-  const companies: Company[] = [
-    {
-      id: '1',
-      name: 'Jade Property Group',
-      logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=400&auto=format&fit=crop',
-      description: 'Leading real estate company specializing in luxury residential and commercial properties across Myanmar.',
-      address: 'Golden Valley, Bahan Township, Yangon',
-      phone: '+95 9 123 456 789',
-      email: 'info@jadeproperty.com',
-      website: 'www.jadeproperty.com',
-      rating: 4.8,
-      properties: 250,
-      employees: 45,
-      verified: true,
-      specialties: ['Luxury Homes', 'Commercial', 'Investment'],
-    },
-    {
-      id: '2',
-      name: 'Myanmar Premier Estates',
-      logo: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&auto=format&fit=crop',
-      description: 'Trusted property developer and consultant with over 15 years of experience in the Myanmar real estate market.',
-      address: 'Downtown, Yangon',
-      phone: '+95 9 987 654 321',
-      email: 'contact@myanmarpremier.com',
-      website: 'www.myanmarpremier.com',
-      rating: 4.6,
-      properties: 180,
-      employees: 32,
-      verified: true,
-      specialties: ['Residential', 'Land Development', 'Property Management'],
-    },
-    {
-      id: '3',
-      name: 'Golden City Developers',
-      logo: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&auto=format&fit=crop',
-      description: 'Innovative real estate development company focused on sustainable and modern living solutions.',
-      address: 'Star City, Yangon',
-      phone: '+95 9 555 123 456',
-      email: 'info@goldencity.com',
-      website: 'www.goldencity.com',
-      rating: 4.7,
-      properties: 120,
-      employees: 28,
-      verified: true,
-      specialties: ['Modern Living', 'Sustainable Development', 'Smart Homes'],
-    },
-    {
-      id: '4',
-      name: 'Yangon Elite Properties',
-      logo: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&auto=format&fit=crop',
-      description: 'Premium property consultancy specializing in high-end residential and commercial real estate.',
-      address: 'Inya Lake, Yangon',
-      phone: '+95 9 777 888 999',
-      email: 'contact@yangonelite.com',
-      website: 'www.yangonelite.com',
-      rating: 4.9,
-      properties: 95,
-      employees: 22,
-      verified: true,
-      specialties: ['Luxury Properties', 'Prime Locations', 'Exclusive Listings'],
-    },
-    {
-      id: '5',
-      name: 'Mandalay Real Estate Co.',
-      logo: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&auto=format&fit=crop',
-      description: 'Established real estate company serving the Mandalay region with comprehensive property services.',
-      address: 'Mandalay, Myanmar',
-      phone: '+95 9 333 444 555',
-      email: 'info@mandalayrealestate.com',
-      website: 'www.mandalayrealestate.com',
-      rating: 4.5,
-      properties: 160,
-      employees: 35,
-      verified: true,
-      specialties: ['Regional Expertise', 'Property Management', 'Investment Advisory'],
-    },
-    {
-      id: '6',
-      name: 'Naypyidaw Properties Ltd',
-      logo: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&auto=format&fit=crop',
-      description: 'Government and commercial property specialists serving the capital region.',
-      address: 'Naypyidaw, Myanmar',
-      phone: '+95 9 111 222 333',
-      email: 'contact@naypyidawproperties.com',
-      website: 'www.naypyidawproperties.com',
-      rating: 4.4,
-      properties: 85,
-      employees: 18,
-      verified: true,
-      specialties: ['Government Properties', 'Commercial Spaces', 'Capital Region'],
-    },
-    {
-      id: '7',
-      name: 'Coastal Properties Myanmar',
-      logo: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&fit=crop',
-      description: 'Specializing in beachfront and coastal properties for vacation and investment purposes.',
-      address: 'Ngwe Saung, Myanmar',
-      phone: '+95 9 666 777 888',
-      email: 'info@coastalproperties.com',
-      website: 'www.coastalproperties.com',
-      rating: 4.6,
-      properties: 75,
-      employees: 15,
-      verified: true,
-      specialties: ['Beachfront Properties', 'Vacation Rentals', 'Coastal Development'],
-    },
-    {
-      id: '8',
-      name: 'Urban Living Solutions',
-      logo: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&auto=format&fit=crop',
-      description: 'Modern urban development company focused on smart city solutions and contemporary living.',
-      address: 'Hlaing, Yangon',
-      phone: '+95 9 444 555 666',
-      email: 'contact@urbanliving.com',
-      website: 'www.urbanliving.com',
-      rating: 4.3,
-      properties: 110,
-      employees: 25,
-      verified: true,
-      specialties: ['Smart Cities', 'Urban Planning', 'Modern Living'],
-    },
-  ];
+  // API data - fetch all companies at once for client-side filtering
+  const { data: companiesResponse, isLoading, error } = useCompanies();
+  const allCompanies: Company[] = companiesResponse?.data?.data || [];
 
-  const filteredCompanies = companies.filter(company => {
-    const matchesSearch = company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         company.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         company.specialties.some(specialty => 
-                           specialty.toLowerCase().includes(searchQuery.toLowerCase())
-                         );
-    
-    const matchesCategory = selectedCategory === 'all' || 
-                            company.specialties.some(specialty => 
-                              specialty.toLowerCase().includes(selectedCategory.toLowerCase())
-                            );
-    
-    return matchesSearch && matchesCategory;
-  });
+  // API data - fetch company types for category filter
+  const { data: companyTypesResponse } = useCompanyTypes();
+  const companyTypes: CompanyType[] = companyTypesResponse?.data?.data || [];
+
+  // Build categories from API data with language support
+  const categories = useMemo(() => {
+    return companyTypes.map(type => ({
+      value: type.id.toString(),
+      label: language === 'mm' ? type.name_mm : type.name_en,
+    }));
+  }, [companyTypes, language]);
+
+  // Client-side filtering and search
+  const filteredCompanies = useMemo(() => {
+    return allCompanies.filter((company: Company) => {
+      // Search filter with null checks
+      const companyName = company.name || '';
+      const companyDescription = company.description || '';
+      const companyTypeName = company.company_type?.name_en || '';
+      
+      const matchesSearch = companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        companyDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        companyTypeName.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      if (!matchesSearch) return false;
+      
+      // Category filter - filter by company type ID
+      const categoryId = parseInt(selectedCategory);
+      if (!isNaN(categoryId)) {
+        return company.company_type?.id === categoryId;
+      }
+      
+      return true;
+    });
+  }, [allCompanies, searchQuery, selectedCategory]);
+
+  // Client-side pagination
+  const paginatedCompanies = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredCompanies.slice(startIndex, endIndex);
+  }, [filteredCompanies, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
+
+  // Reset to first page when search or filter changes
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    setCurrentPage(1);
+  };
 
   return (
     <>
       <SEOHead seo={seo} path="/companies" />
-      <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-mesh pt-24 pb-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <section className="mb-12">
-          <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
+          <div className="mb-8">
+            <div className="flex items-center justify-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-primary/80 rounded-full shadow-lg">
+                <Building2 className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent text-center">
               {t('companies.title')}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground mt-2 text-center">
               {t('companies.subtitle')}
             </p>
           </div>
-        </section>
 
         {/* Search and Filter */}
-        <section className="mb-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     placeholder={t('companies.search')}
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
                   />
-                </div>
               </div>
-              <div className="md:w-64">
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="luxury">Luxury Homes</SelectItem>
-                    <SelectItem value="commercial">Commercial</SelectItem>
-                    <SelectItem value="residential">Residential</SelectItem>
-                    <SelectItem value="investment">Investment</SelectItem>
-                    <SelectItem value="development">Development</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                <SelectTrigger className="w-full sm:w-64">
+                  <SelectValue placeholder={language === 'mm' ? 'အမျိုးအစားရွေးချယ်ရန်' : 'Select category'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </section>
 
-        {/* Companies Grid */}
-        <section>
-          <div className="max-w-7xl mx-auto">
-            {filteredCompanies.length === 0 ? (
+          {/* Loading State */}
+          {isLoading && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading companies...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
               <div className="text-center py-12">
-                <Building2 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {t('companies.noResults')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('companies.noResultsDesc')}
-                </p>
+              <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="mb-2">Error Loading Companies</h3>
+              <p className="text-muted-foreground">Please try again later.</p>
+            </div>
+          )}
+
+          {/* Results Count */}
+          {!isLoading && !error && (
+            <div className="mb-6">
+              <p className="text-sm text-muted-foreground">
+                Showing {paginatedCompanies.length} of {filteredCompanies.length} companies
+                {searchQuery && ` for "${searchQuery}"`}
+                {selectedCategory && ` in ${categories.find(c => c.value === selectedCategory)?.label}`}
+              </p>
               </div>
-            ) : (
+          )}
+
+          {/* Companies Grid */}
+          {!isLoading && !error && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredCompanies.map((company) => (
+              {paginatedCompanies.map((company: Company) => (
                   <Card key={company.id} className="backdrop-blur-sm bg-background/95 hover:shadow-xl transition-all">
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 border-primary/20">
                           <ImageWithFallback
-                            src={company.logo}
+                          src={company.company_profile}
                             alt={company.name}
                             className="w-full h-full object-cover"
                           />
@@ -249,7 +175,7 @@ export function Companies() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <CardTitle className="text-xl">{company.name}</CardTitle>
-                            {company.verified && (
+                          {company.verification_status === 'approved' && (
                               <Badge className="bg-primary/10 text-primary border-primary/20">
                                 {t('companies.verified')}
                               </Badge>
@@ -258,16 +184,16 @@ export function Companies() {
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                              <span>{company.rating}</span>
+                            <span className="capitalize">{company.member_level}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Home className="h-4 w-4" />
-                              <span>{company.properties} {t('companies.properties')}</span>
+                            <span>{company.property_count} {t('companies.properties')}</span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="h-4 w-4" />
-                              <span>{company.employees}</span>
-                            </div>
+                          <div className="flex items-center gap-1">
+                            <Eye className="h-4 w-4" />
+                            <span>{company.view_count} views</span>
+                          </div>
                           </div>
                         </div>
                       </div>
@@ -275,38 +201,73 @@ export function Companies() {
                     <CardContent className="space-y-4">
                       <p className="text-muted-foreground">{company.description}</p>
                       
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="h-4 w-4 text-primary" />
-                          <span>{company.address}</span>
+                    {/* Company Type and Location */}
+                    <div className="flex flex-wrap gap-2">
+                      {company.company_type && (
+                        <Badge variant="outline" className="border-primary/30 text-primary">
+                          {language === 'mm' ? company.company_type.name_mm : company.company_type.name_en}
+                        </Badge>
+                      )}
+                      {company.region && (
+                        <Badge variant="outline" className="border-primary/30 text-primary">
+                          {language === 'mm' ? company.region.name_mm : company.region.name_en}
+                        </Badge>
+                      )}
+                      {company.township && (
+                        <Badge variant="outline" className="border-primary/30 text-primary">
+                          {language === 'mm' ? company.township.name_mm : company.township.name_en}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Contact Info */}
+                    <div className="space-y-2 pt-2">
+                      {company.business_address && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                          <span>{company.business_address}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Phone className="h-4 w-4 text-primary" />
+                      )}
+                      {company.phone && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Phone className="h-4 w-4 text-primary flex-shrink-0" />
                           <span>{company.phone}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Mail className="h-4 w-4 text-primary" />
+                      )}
+                      {company.email && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Mail className="h-4 w-4 text-primary flex-shrink-0" />
                           <span>{company.email}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Globe className="h-4 w-4 text-primary" />
-                          <span>{company.website}</span>
+                      )}
+                      {company.slug && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Globe className="h-4 w-4 text-primary flex-shrink-0" />
+                          <a 
+                            href={`${window.location.origin}/${company.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            {`${window.location.origin}/${company.slug}`}
+                          </a>
                         </div>
+                      )}
                       </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        {company.specialties.map((specialty, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {specialty}
-                          </Badge>
-                        ))}
-                      </div>
-
-                      <div className="flex gap-2 pt-4">
-                        <Button className="flex-1">
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-2">
+                      <Button 
+                        className="flex-1 gradient-primary"
+                        onClick={() => navigate('/modules', { state: { companyId: company.id, companyName: company.name } })}
+                      >
                           {t('companies.viewProperties')}
                         </Button>
-                        <Button variant="outline">
+                      <Button 
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={() => window.location.href = `mailto:${company.email}`}
+                      >
                           {t('companies.contact')}
                         </Button>
                       </div>
@@ -315,8 +276,57 @@ export function Companies() {
                 ))}
               </div>
             )}
+
+          {/* Pagination */}
+          {!isLoading && !error && totalPages > 1 && (
+            <div className="flex justify-center mt-8">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className="w-10 h-10"
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* No Results */}
+          {!isLoading && !error && filteredCompanies.length === 0 && (
+            <Card className="backdrop-blur-sm bg-background/95">
+              <CardContent className="py-12 text-center">
+                <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="mb-2">{t('companies.noResults')}</h3>
+                <p className="text-muted-foreground">{t('companies.noResultsDesc')}</p>
+              </CardContent>
+            </Card>
+          )}
           </div>
-        </section>
       </div>
     </>
   );

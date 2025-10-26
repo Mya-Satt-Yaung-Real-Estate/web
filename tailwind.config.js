@@ -83,6 +83,9 @@ export default {
         gradient: "gradient 3s ease infinite",
         fadeIn: "fadeIn 0.6s ease-in-out",
       },
+      backgroundImage: {
+        'gradient-mesh': 'radial-gradient(at 0% 0%, rgba(54, 132, 110, 0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(74, 155, 130, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(94, 179, 150, 0.15) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(45, 107, 90, 0.15) 0px, transparent 50%)',
+      },
     },
   },
   plugins: [],

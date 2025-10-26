@@ -146,3 +146,14 @@ export type {
   FC,
   PropsWithChildren,
 } from 'react';
+
+// Export company types
+export type {
+  Company,
+  CompanyType,
+  Region,
+  Township,
+  CompaniesResponse,
+  CompanyTypeResponse,
+  CompanyFilters,
+} from './company';

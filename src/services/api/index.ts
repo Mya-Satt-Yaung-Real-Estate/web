@@ -21,3 +21,5 @@ export { legacyApi } from './legacy';
 export { faqApi } from './faq';
 export { contactApi } from './contact';
 export { newsApi } from './news';
+export { companiesApi } from './companies';
+export { companyTypesApi } from './companyTypes';

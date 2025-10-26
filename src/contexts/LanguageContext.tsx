@@ -321,6 +321,9 @@ const translations: Translations = {
   'companies.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
   'companies.noResults': { en: 'No Companies Found', mm: 'ကုမ္ပဏီများမတွေ့ပါ' },
   'companies.noResultsDesc': { en: 'Try adjusting your search criteria', mm: 'သင့်ရှာဖွေမှုစံနှုန်းများကို ပြင်ဆင်ကြည့်ပါ' },
+  'companies.categories.all': { en: 'All Categories', mm: 'အမျိုးအစားအားလုံး' },
+  'companies.categories.luxury': { en: 'Luxury Properties', mm: 'ဇိမ်ခံအိမ်ခြံမြေများ' },
+  'companies.categories.ecoFriendly': { en: 'Eco-Friendly', mm: 'ဂေဟစနစ်နှင့်သဟဇာတဖြစ်သော' },
 
   // Forms
   'forms.name': { en: 'Name', mm: 'အမည်' },
