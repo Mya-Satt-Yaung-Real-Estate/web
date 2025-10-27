@@ -54,7 +54,7 @@ export function useNavigationData() {
       { name: t('createListing.wantedPost'), path: '/post-property?tab=wanted', icon: Search },
       { name: t('createListing.advertisementPost'), path: '/post-property?tab=advertisement', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
-      { name: t('createListing.giveYourReview'), path: '/review-post', icon: Star },
+      { name: t('createListing.giveYourReview'), path: '/feedback', icon: Star },
       { name: t('createListing.jobPostCreate'), path: '/jobs', icon: Briefcase },
       { name: t('services.homeLoanRequest'), path: '/loan-request', icon: Banknote },
     ],

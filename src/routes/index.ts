@@ -25,6 +25,7 @@ const NewsAndUpdates = lazy(() => import('../pages/NewsAndUpdates').then(module 
 const NewsDetail = lazy(() => import('../pages/NewsDetail').then(module => ({ default: module.default })));
 const YarPyatCalculator = lazy(() => import('../pages/calculators/yarpyatCalculator').then(module => ({ default: module.YarPyatCalculator })));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const Feedback = lazy(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
 const NotFound = lazy(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
 // Route configuration - Home, About, Companies, Knowledge Hub, and 404 pages
@@ -42,6 +43,7 @@ export const routes: RouteConfig[] = [
   { path: '/news-and-updates/:slug', component: NewsDetail, title: 'News Detail', public: true },
   { path: '/yarpyat-taxes-calculator', component: YarPyatCalculator, title: 'Yar Pyat Tax Calculator', public: true },
   { path: '/privacy-policy', component: PrivacyPolicy, title: 'Privacy Policy', public: true },
+  { path: '/feedback', component: Feedback, title: 'Feedback', public: true },
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
