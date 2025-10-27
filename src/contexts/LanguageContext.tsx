@@ -272,6 +272,84 @@ const translations: Translations = {
   'footer.terms': { en: 'Terms of Service', mm: 'ဝန်ဆောင်မှုစည်းမျဉ်းများ' },
   'footer.rights': { en: 'All rights reserved.', mm: 'မူပိုင်ခွင့်များ လုံးဝ ရယူထားပါသည်။' },
   
+  // Privacy Policy
+  'privacyPolicy.title': { en: 'Privacy Policy', mm: 'ကိုယ်ရေးကိုယ်တာမူဝါဒ' },
+  'privacyPolicy.subtitle': { en: 'How we collect, use, and protect your personal information', mm: 'ကျွန်ုပ်တို့သည် သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို မည်သို့စုဆောင်း၊ အသုံးပြုနှင့် ကာကွယ်ပေးသည်ကို လေ့လာပါ' },
+  'privacyPolicy.lastUpdated': { en: 'Last Updated', mm: 'နောက်ဆုံးအပ်ဒိတ်' },
+  'privacyPolicy.backToTop': { en: 'Back to Top', mm: 'အပေါ်သို့ပြန်သွားရန်' },
+  
+  // SEO
+  'privacyPolicy.seo.title': { en: 'Privacy Policy - Jade Property', mm: 'ကိုယ်ရေးကိုယ်တာမူဝါဒ - Jade Property' },
+  'privacyPolicy.seo.description': { en: 'Learn how Jade Property collects, uses, and protects your personal information. Our comprehensive privacy policy covers data collection, security, and your rights.', mm: 'Jade Property သည် သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို မည်သို့စုဆောင်း၊ အသုံးပြုနှင့် ကာကွယ်ပေးသည်ကို လေ့လာပါ။' },
+  'privacyPolicy.seo.keywords': { en: 'privacy policy, data protection, personal information, Jade Property, Myanmar real estate', mm: 'ကိုယ်ရေးကိုယ်တာမူဝါဒ, အချက်အလက်ကာကွယ်ရေး, ကိုယ်ရေးကိုယ်တာအချက်အလက်' },
+  
+  // Table of Contents
+  'privacyPolicy.toc.title': { en: 'Table of Contents', mm: 'မာတိကာ' },
+  'privacyPolicy.toc.introduction': { en: 'Introduction', mm: 'မိတ်ဆက်' },
+  'privacyPolicy.toc.definition': { en: 'Definition of Personal Data', mm: 'ကိုယ်ရေးကိုယ်တာအချက်အလက်၏ အဓိပ္ပါယ်' },
+  'privacyPolicy.toc.whyCollect': { en: 'Why We Collect Personal Data', mm: 'ကျွန်ုပ်တို့ဘာ့ကြောင့် ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို စုဆောင်းရသနည်း' },
+  'privacyPolicy.toc.howCollect': { en: 'How We Collect Personal Data', mm: 'ကျွန်ုပ်တို့သည် ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို မည်သို့စုဆောင်းသနည်း' },
+  'privacyPolicy.toc.dataDisclosure': { en: 'Data Disclosure', mm: 'အချက်အလက်မျှဝေခြင်း' },
+  'privacyPolicy.toc.retention': { en: 'Retention of Personal Data', mm: 'ကိုယ်ရေးကိုယ်တာအချက်အလက်များ သိမ်းဆည်းခြင်း' },
+  'privacyPolicy.toc.security': { en: 'Security of Personal Data', mm: 'ကိုယ်ရေးကိုယ်တာအချက်အလက်များ၏ လုံခြုံရေး' },
+  'privacyPolicy.toc.privacyRights': { en: 'Privacy Rights', mm: 'ကိုယ်ရေးကိုယ်တာခွင့်ပြုချက်များ' },
+  'privacyPolicy.toc.notifications': { en: 'Push Notifications', mm: 'ပွတ်ရှ်အသိပေးချက်များ' },
+  'privacyPolicy.toc.amendments': { en: 'Amendments and Updates', mm: 'ပြင်ဆင်မှုများနှင့် အပ်ဒိတ်များ' },
+  'privacyPolicy.toc.contact': { en: 'Contact Us', mm: 'ဆက်သွယ်ရန်' },
+  'privacyPolicy.toc.governingLaw': { en: 'Governing Law', mm: 'အုပ်ချုပ်သောဥပဒေ' },
+  
+  // Sections
+  'privacyPolicy.sections.introduction.title': { en: 'INTRODUCTION', mm: 'မိတ်ဆက်' },
+  'privacyPolicy.sections.introduction.content': { en: 'This privacy policy (the "Privacy Policy") describes how Jade Property ("we", "us" or "our") collect, store, use, share and protect the personal data of our employees ("you", "users", or "your") through the platform website at Jade Property and mobile application (the "Platforms") that links to this Privacy Policy. This Privacy Policy applies to the users of the Platforms. By accessing the Platforms, submitting information to us (whether through Platforms or otherwise), you agree for us to process your Personal Data, as defined in Clause 2 of this Privacy Policy, and disclosing it to our subsidiaries, affiliates, and our third party service providers in the manner set forth in this Privacy Policy.', mm: 'ဤကိုယ်ရေးကိုယ်တာမူဝါဒ ("ကိုယ်ရေးကိုယ်တာမူဝါဒ") သည် Jade Property ("ကျွန်ုပ်တို့", "ကျွန်ုပ်တို့" သို့မဟုတ် "ကျွန်ုပ်တို့၏") သည် ကျွန်ုပ်တို့၏ဝန်ထမ်းများ ("သင်တို့", "အသုံးပြုသူများ", သို့မဟုတ် "သင့်") ၏ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို Jade Property ပလက်ဖောင်းဝဘ်ဆိုက်နှင့် မိုဘိုင်းအက်ပ်လီကေးရှင်း (ဤကိုယ်ရေးကိုယ်တာမူဝါဒနှင့်ချိတ်ဆက်ထားသော "ပလက်ဖောင်းများ") မှတဆင့် မည်သို့စုဆောင်း၊ သိမ်းဆည်း၊ အသုံးပြုနှင့် ကာကွယ်ပေးသည်ကို ဖော်ပြပါသည်။' },
+  'privacyPolicy.sections.introduction.highlight': { en: 'Reading this Privacy Policy will help you understand your privacy rights, our policies, and practices.', mm: 'ဤကိုယ်ရေးကိုယ်တာမူဝါဒကို ဖတ်ရှုခြင်းသည် သင့်ကိုယ်ရေးကိုယ်တာခွင့်ပြုချက်များ၊ ကျွန်ုပ်တို့၏မူဝါဒများနှင့် လုပ်ဆောင်ချက်များကို နားလည်ရန် ကူညီပေးပါမည်။' },
+  
+  'privacyPolicy.sections.definition.title': { en: 'DEFINITION OF PERSONAL DATA', mm: 'ကိုယ်ရေးကိုယ်တာအချက်အလက်၏ အဓိပ္ပါယ်' },
+  'privacyPolicy.sections.definition.content': { en: '"Personal Data" means information about you, from which you are identifiable, including but not limited to your name, employee number, telephone number, date of birth, gender, email address, biometrics, profile photo, and any information about you which you have provided to us.', mm: '"ကိုယ်ရေးကိုယ်တာအချက်အလက်" ဆိုသည်မှာ သင့်အကြောင်းအချက်အလက်များဖြစ်ပြီး၊ သင်ကိုဖော်ထုတ်နိုင်သော အချက်အလက်များဖြစ်သည်။ ယင်းတွင် သင့်အမည်၊ ဝန်ထမ်းနံပါတ်၊ ဖုန်းနံပါတ်၊ မွေးနေ့၊ လိင်၊ အီးမေးလ်လိပ်စာ၊ ဇီဝမှတ်တမ်းများ၊ ပရိုဖိုင်ဓာတ်ပုံ၊ နှင့် သင်ကျွန်ုပ်တို့ထံ ပေးအပ်ထားသော သင့်အကြောင်းအချက်အလက်များ ပါဝင်ပါသည်။' },
+  
+  'privacyPolicy.sections.whyCollect.title': { en: 'WHY WE COLLECT PERSONAL DATA', mm: 'ကျွန်ုပ်တို့ဘာ့ကြောင့် ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို စုဆောင်းရသနည်း' },
+  'privacyPolicy.sections.whyCollect.ageVerification.title': { en: 'Age Verification', mm: 'အသက်အတည်ပြုခြင်း' },
+  'privacyPolicy.sections.whyCollect.ageVerification.content': { en: 'Obtaining a date of birth enables us to verify users\' ages, ensuring compliance with legal requirements and age restrictions. This not only helps us provide age-appropriate content but also ensures a safer online environment for users of all ages.', mm: 'မွေးနေ့ရရှိခြင်းသည် ကျွန်ုပ်တို့အား အသုံးပြုသူများ၏အသက်များကို အတည်ပြုနိုင်စေပြီး၊ ဥပဒေအရ လိုအပ်ချက်များနှင့် အသက်ကန့်သတ်ချက်များကို လိုက်နာစေပါသည်။' },
+  'privacyPolicy.sections.whyCollect.accountSecurity.title': { en: 'Account Security', mm: 'အကောင့်လုံခြုံရေး' },
+  'privacyPolicy.sections.whyCollect.accountSecurity.content': { en: 'Gathering phone numbers enhances account security by enabling two-factor authentication (2FA) and aiding in account recovery processes. Additionally, it facilitates communication by allowing us to send important updates, security alerts, and personalized offers directly to users via SMS.', mm: 'ဖုန်းနံပါတ်များစုဆောင်းခြင်းသည် နှစ်ဆအမျိုးအစားအတည်ပြုခြင်း (2FA) ကို ဖွင့်ပေးခြင်းနှင့် အကောင့်ပြန်လည်ရယူမှုလုပ်ငန်းစဉ်များတွင် ကူညီပေးခြင်းဖြင့် အကောင့်လုံခြုံရေးကို မြှင့်တင်ပေးပါသည်။' },
+  'privacyPolicy.sections.whyCollect.cameraAccess.title': { en: 'Camera Access', mm: 'ကင်မရာအသုံးပြုခွင့်' },
+  'privacyPolicy.sections.whyCollect.cameraAccess.content': { en: 'The Platforms may seek permission to access your device\'s camera, which is integral to the core functionality and user experience of Platforms. The camera is used for your profile photo updates and document capture.', mm: 'ပလက်ဖောင်းများသည် သင့်စက်ပစ္စည်း၏ကင်မရာအသုံးပြုခွင့်ကို တောင်းဆိုနိုင်ပြီး၊ ယင်းသည် ပလက်ဖောင်းများ၏ အဓိကလုပ်ဆောင်ချက်နှင့် အသုံးပြုသူအတွေ့အကြုံအတွက် အရေးကြီးပါသည်။' },
+  'privacyPolicy.sections.whyCollect.cameraAccess.additional': { en: 'Users have the option to update their profile photos directly on the Platforms, enhancing personalization and engagement. Camera access allows for a seamless process, enabling users to capture and upload their photos instantly.', mm: 'အသုံးပြုသူများသည် ပလက်ဖောင်းများပေါ်တွင် သူတို့၏ပရိုဖိုင်ဓာတ်ပုံများကို တိုက်ရိုက်အပ်ဒိတ်လုပ်နိုင်သော ရွေးချယ်စရာရှိပြီး၊ ယင်းသည် ပုဂ္ဂိုလ်ရေးဆိုင်ရာပြုလုပ်ခြင်းနှင့် ပါဝင်မှုကို မြှင့်တင်ပေးပါသည်။' },
+  
+  'privacyPolicy.sections.howCollect.title': { en: 'HOW WE COLLECT PERSONAL DATA', mm: 'ကျွန်ုပ်တို့သည် ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို မည်သို့စုဆောင်းသနည်း' },
+  'privacyPolicy.sections.howCollect.content': { en: 'We collect Personal Data voluntarily provided to us when you are employed for the Jade Property or when you participate in activities on the Platforms, or otherwise when you contact us.', mm: 'ကျွန်ုပ်တို့သည် သင်သည် Jade Property အတွက် အလုပ်လုပ်သောအခါ သို့မဟုတ် သင်သည် ပလက်ဖောင်းများပေါ်တွင် လုပ်ဆောင်ချက်များတွင် ပါဝင်သောအခါ သို့မဟုတ် အခြားနည်းဖြင့် သင်ကျွန်ုပ်တို့နှင့် ဆက်သွယ်သောအခါ ကျွန်ုပ်တို့ထံ စေတနာအလျောက်ပေးအပ်ထားသော ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို စုဆောင်းပါသည်။' },
+  'privacyPolicy.sections.howCollect.additional': { en: 'Personal Data that we collect depends on the context of your interactions with us and the Platforms, the choices you make, and the features you use.', mm: 'ကျွန်ုပ်တို့စုဆောင်းသော ကိုယ်ရေးကိုယ်တာအချက်အလက်များသည် သင်ကျွန်ုပ်တို့နှင့် ပလက်ဖောင်းများနှင့် သင်၏အပြန်အလှန်ဆက်သွယ်မှု၊ သင်ရွေးချယ်သောအရာများ၊ နှင့် သင်အသုံးပြုသောလုပ်ဆောင်ချက်များပေါ်တွင် မူတည်ပါသည်။' },
+  
+  'privacyPolicy.sections.dataDisclosure.title': { en: 'DATA DISCLOSURE', mm: 'အချက်အလက်မျှဝေခြင်း' },
+  'privacyPolicy.sections.dataDisclosure.content': { en: 'We reserve the right to share your Personal Data with relevant authorities as may be required by them under applicable law.', mm: 'ကျွန်ုပ်တို့သည် သက်ဆိုင်ရာဥပဒေအရ သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို သက်ဆိုင်ရာအာဏာပိုင်များနှင့် မျှဝေပိုင်ခွင့်ရှိပါသည်။' },
+  
+  'privacyPolicy.sections.retention.title': { en: 'RETENTION OF PERSONAL DATA', mm: 'ကိုယ်ရေးကိုယ်တာအချက်အလက်များ သိမ်းဆည်းခြင်း' },
+  'privacyPolicy.sections.retention.content': { en: 'We will only keep your Personal Data for as long as it is necessary for the purposes set out in this Privacy Policy, unless a longer retention period is required or permitted by a relevant law (such as for tax, accounting, or other legal requirements).', mm: 'ကျွန်ုပ်တို့သည် သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို ဤကိုယ်ရေးကိုယ်တာမူဝါဒတွင် သတ်မှတ်ထားသော ရည်ရွယ်ချက်များအတွက် လိုအပ်သလောက်သာ သိမ်းဆည်းထားပါမည်။' },
+  'privacyPolicy.sections.retention.additional': { en: 'When we have no ongoing legitimate business requiring us to process your Personal Data, we will either delete or anonymise such information, or, if this is not possible, securely store your Personal Data and segregate it from any further processing until deletion is made possible.', mm: 'ကျွန်ုပ်တို့အား သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို လုပ်ဆောင်ရန် ဆက်လက်လုပ်ငန်းလိုအပ်ချက်မရှိသောအခါ၊ ကျွန်ုပ်တို့သည် ထိုအချက်အလက်များကို ဖျက်ပစ်မည် သို့မဟုတ် အမည်မဖော်ပြနိုင်အောင် ပြုလုပ်မည်။' },
+  
+  'privacyPolicy.sections.security.title': { en: 'SECURITY OF PERSONAL DATA', mm: 'ကိုယ်ရေးကိုယ်တာအချက်အလက်များ၏ လုံခြုံရေး' },
+  'privacyPolicy.sections.security.measures.title': { en: 'Security Measures', mm: 'လုံခြုံရေးအစီအမံများ' },
+  'privacyPolicy.sections.security.measures.content': { en: 'We have implemented appropriate and reasonable technical and organisational security measures designed to protect the security of any Personal Data we process.', mm: 'ကျွန်ုပ်တို့သည် ကျွန်ုပ်တို့လုပ်ဆောင်သော မည်သည့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များ၏ လုံခြုံရေးကို ကာကွယ်ရန်ရည်ရွယ်ထားသော သင့်လျော်ပြီး သင့်တင့်သော နည်းပညာနှင့် အဖွဲ့အစည်းဆိုင်ရာ လုံခြုံရေးအစီအမံများကို အကောင်အထည်ဖော်ထားပါသည်။' },
+  'privacyPolicy.sections.security.limitations.title': { en: 'Limitations on Security', mm: 'လုံခြုံရေးအပေါ် ကန့်သတ်ချက်များ' },
+  'privacyPolicy.sections.security.limitations.content': { en: 'While we take commercially reasonable steps to help secure and safeguard Personal Data, no security system is impenetrable. Due to the inherent nature of the Internet or information storage technology as an open global communication vehicle, we cannot promise or guarantee that your Personal Data, during transmission to and from our Platforms through any online means, will be absolutely safe from intrusion by others.', mm: 'ကျွန်ုပ်တို့သည် ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို လုံခြုံစေရန်နှင့် ကာကွယ်ရန် ကူညီပေးရန် စီးပွားရေးအရ သင့်တင့်သောအဆင့်များကို ပြုလုပ်သော်လည်း၊ မည်သည့်လုံခြုံရေးစနစ်မျှ ထိုးဖောက်၍မရပါ။' },
+  
+  'privacyPolicy.sections.privacyRights.title': { en: 'PRIVACY RIGHTS', mm: 'ကိုယ်ရေးကိုယ်တာခွင့်ပြုချက်များ' },
+  'privacyPolicy.sections.privacyRights.content': { en: 'We process your Personal Data with your consent, and we respect your privacy rights in accordance with applicable laws. You can withdraw your consent for us to process your Personal Data at any time by serving us a Personal Data withdrawal notice to the contact details provided in Clause 11 of this Privacy Policy.', mm: 'ကျွန်ုပ်တို့သည် သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များကို သင့်ခွင့်ပြုချက်ဖြင့် လုပ်ဆောင်ပြီး၊ ကျွန်ုပ်တို့သည် သက်ဆိုင်ရာဥပဒေများနှင့်အညီ သင့်ကိုယ်ရေးကိုယ်တာခွင့်ပြုချက်များကို လေးစားပါသည်။' },
+  'privacyPolicy.sections.privacyRights.highlight': { en: 'Please note that serving us a Personal Data withdrawal notice will not affect the lawfulness of the processing of your Personal Data before the Personal Data withdrawal notice has been served to us neither will it affect the processing of your Personal Data conducted in reliance on lawful processing grounds other than consent.', mm: 'ကျွန်ုပ်တို့ထံ ကိုယ်ရေးကိုယ်တာအချက်အလက်ရုပ်သိမ်းခြင်းအသိပေးချက်ပေးခြင်းသည် ကိုယ်ရေးကိုယ်တာအချက်အလက်ရုပ်သိမ်းခြင်းအသိပေးချက်ကို ကျွန်ုပ်တို့ထံ ပေးအပ်မီ သင့်ကိုယ်ရေးကိုယ်တာအချက်အလက်များ၏ လုပ်ဆောင်မှု၏ တရားဝင်မှုကို ထိခိုက်မည်မဟုတ်ပါ။' },
+  
+  'privacyPolicy.sections.notifications.title': { en: 'THE PLATFORMS\' PUSH NOTIFICATIONS', mm: 'ပလက်ဖောင်းများ၏ ပွတ်ရှ်အသိပေးချက်များ' },
+  'privacyPolicy.sections.notifications.content': { en: 'If you use our Platforms, we may request you to send you push notifications regarding your account or certain features of the Platforms. If you wish to opt out from receiving these types of communications, you may turn them off in your device\'s settings.', mm: 'သင်သည် ကျွန်ုပ်တို့၏ပလက်ဖောင်းများကို အသုံးပြုပါက၊ ကျွန်ုပ်တို့သည် သင့်အကောင့် သို့မဟုတ် ပလက်ဖောင်းများ၏ အချို့လုပ်ဆောင်ချက်များနှင့်ပတ်သက်၍ ပွတ်ရှ်အသိပေးချက်များကို ပို့ပေးရန် တောင်းဆိုနိုင်ပါသည်။' },
+  
+  'privacyPolicy.sections.amendments.title': { en: 'AMENDMENTS AND UPDATES', mm: 'ပြင်ဆင်မှုများနှင့် အပ်ဒိတ်များ' },
+  'privacyPolicy.sections.amendments.content': { en: 'We reserve the right to amend and update this Privacy Policy without prior notice to you. The updated version will be indicated by an updated "Revised" date and the updated version will be effective as soon as it is accessible. If we make material changes to this Privacy Policy, we may, but are not obligated to, notify you either by prominently posting a notice of such changes or by directly sending you a notification.', mm: 'ကျွန်ုပ်တို့သည် သင့်အား ကြိုတင်အသိပေးခြင်းမရှိဘဲ ဤကိုယ်ရေးကိုယ်တာမူဝါဒကို ပြင်ဆင်နှင့် အပ်ဒိတ်လုပ်ပိုင်ခွင့်ရှိပါသည်။' },
+  
+  'privacyPolicy.sections.contact.title': { en: 'CONTACT US', mm: 'ဆက်သွယ်ရန်' },
+  'privacyPolicy.sections.contact.subtitle': { en: 'Get in Touch', mm: 'ဆက်သွယ်ရန်' },
+  'privacyPolicy.sections.contact.content': { en: 'If you have any questions or concerns about this Privacy Policy, please contact us at:', mm: 'ဤကိုယ်ရေးကိုယ်တာမူဝါဒနှင့်ပတ်သက်၍ မေးခွန်းများ သို့မဟုတ် စိုးရိမ်မှုများရှိပါက၊ ကျေးဇူးပြု၍ ကျွန်ုပ်တို့နှင့် ဆက်သွယ်ပါ:' },
+  'privacyPolicy.sections.contact.email': { en: 'Email', mm: 'အီးမေးလ်' },
+  
+  'privacyPolicy.sections.governingLaw.title': { en: 'GOVERNING LAW', mm: 'အုပ်ချုပ်သောဥပဒေ' },
+  'privacyPolicy.sections.governingLaw.content': { en: 'This Privacy Policy is governed in all respects by the laws of Myanmar.', mm: 'ဤကိုယ်ရေးကိုယ်တာမူဝါဒသည် မြန်မာနိုင်ငံ၏ ဥပဒေများဖြင့် အုပ်ချုပ်ပါသည်။' },
+  
   // About Us
   'about.story': { en: 'Our Story', mm: 'ကျွန်ုပ်တို့၏ ဇာတ်လမ်း' },
   'about.title': { en: 'About Jade Property', mm: 'Jade Property အကြောင်း' },

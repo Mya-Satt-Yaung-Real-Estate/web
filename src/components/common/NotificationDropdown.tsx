@@ -104,7 +104,7 @@ export function NotificationDropdown() {
             {notifications.map((notification) => (
               <div key={notification.id} className="relative">
                 <DropdownMenuItem
-                  className={`p-4 cursor-pointer hover:bg-accent/50 ${
+                  className={`p-4 cursor-pointer hover:bg-primary/10 ${
                     !notification.isRead ? 'bg-primary/5' : ''
                   }`}
                   onSelect={(e: Event) => {

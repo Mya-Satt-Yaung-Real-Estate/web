@@ -143,7 +143,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link 
-                  to="/privacy" 
+                  to="/privacy-policy" 
                   className="text-muted-foreground hover:text-primary transition-all inline-flex items-center gap-2 group"
                 >
                   <span className="group-hover:translate-x-1 transition-transform">→</span> 

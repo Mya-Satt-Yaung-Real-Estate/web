@@ -412,7 +412,7 @@ export function Navigation() {
                   className={`block px-4 py-3 rounded-xl transition-all ${
                     isActive(link.path)
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -426,7 +426,7 @@ export function Navigation() {
                   <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                     isActive('/modules') || isActive('/wanted-listing')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                   }`}>
                     <span>{t('nav.properties')}</span>
                     <ChevronDown className="h-4 w-4" />
@@ -442,7 +442,7 @@ export function Navigation() {
                   <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                     isActive('/companies')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                   }`}>
                     <span>{t('nav.companies')}</span>
                     <ChevronDown className="h-4 w-4" />
@@ -461,7 +461,7 @@ export function Navigation() {
                   <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                     isActive('/post-property')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                   }`}>
                     <span>{t('nav.createListing')}</span>
                     <ChevronDown className="h-4 w-4" />
@@ -477,7 +477,7 @@ export function Navigation() {
                   <button className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                     isActive('/loan-calculator') || isActive('/yar-pyat-tax-calculator')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                   }`}>
                     <span>{t('nav.calculator')}</span>
                     <ChevronDown className="h-4 w-4" />
@@ -494,7 +494,7 @@ export function Navigation() {
                     isActive('/knowledge-hub') || isActive('/faq') || isActive('/news-updates') || 
                     isActive('/about') || isActive('/contact') || isActive('/legacy')
                       ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                   }`}>
                     <span>{t('nav.knowledges')}</span>
                     <ChevronDown className="h-4 w-4" />

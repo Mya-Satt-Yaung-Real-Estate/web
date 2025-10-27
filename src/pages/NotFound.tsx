@@ -15,8 +15,8 @@ export function NotFound() {
       <div className="max-w-lg mx-auto text-center">
         {/* 404 Illustration */}
         <div className="mb-8">
-          <div className="text-8xl font-bold text-primary/20 mb-4">
-            404
+          <div className="text-3xl font-bold text-primary/50 mb-4">
+            Wait! Mg Khaing! <br /> We are still developing this page.
           </div>
         </div>
 
