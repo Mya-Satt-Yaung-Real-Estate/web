@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { MessageSquare, Send } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -131,9 +131,9 @@ export function Feedback() {
         <Card className="glass border-border/50">
           <CardHeader>
             <CardTitle>{t('feedback.form.title')}</CardTitle>
-            <CardDescription>
+            {/* <CardDescription>
               {t('feedback.form.description')}
-            </CardDescription>
+            </CardDescription> */}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
