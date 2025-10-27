@@ -71,23 +71,25 @@ class ApiClient {
       if (!response.ok) {
         // Try to parse error response body for detailed error messages
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        let errorData = null;
+        
         try {
-          const errorData = await response.json();
+          errorData = await response.json();
           if (errorData.message) {
             errorMessage = errorData.message;
           }
-          // Create a custom error object with the response data
-          const error = new Error(errorMessage);
-          (error as any).response = {
-            status: response.status,
-            statusText: response.statusText,
-            data: errorData
-          };
-          throw error;
         } catch (parseError) {
-          // If parsing fails, throw the original error
-          throw new Error(errorMessage);
+          // If parsing fails, we'll use the default error message
         }
+        
+        // Create a custom error object with the response data
+        const error = new Error(errorMessage);
+        (error as any).response = {
+          status: response.status,
+          statusText: response.statusText,
+          data: errorData
+        };
+        throw error;
       }
 
       const data = await response.json();

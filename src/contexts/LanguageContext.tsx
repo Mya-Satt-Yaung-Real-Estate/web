@@ -608,6 +608,28 @@ const translations: Translations = {
   'calculator.yarPyat.enterLengthAndWidth': { en: 'Please enter both length and width', mm: 'အလျားနှင့် အနံကို ထည့်သွင်းပါ' },
   'calculator.yarPyat.autoCalculated': { en: 'Auto-calculated from length × width', mm: 'အလျား × အနံမှ အလိုအလျောက်တွက်ချက်သည်' },
   
+  // SignIn Page
+  'signin.title': { en: 'Sign In', mm: 'ဝင်ရောက်ရန်' },
+  'signin.subtitle': { en: 'Welcome back to Jade Property', mm: 'Jade Property သို့ပြန်လည်ကြိုဆိုပါသည်' },
+  'signin.email': { en: 'Email', mm: 'အီးမေးလ်' },
+  'signin.phone': { en: 'Phone', mm: 'ဖုန်း' },
+  'signin.phoneNumber': { en: 'Phone Number', mm: 'ဖုန်းနံပါတ်' },
+  'signin.password': { en: 'Password', mm: 'စကားဝှက်' },
+  'signin.signIn': { en: 'Sign In', mm: 'ဝင်ရောက်ရန်' },
+  'signin.signingIn': { en: 'Signing in...', mm: 'ဝင်ရောက်နေသည်...' },
+  'signin.or': { en: 'Or', mm: 'သို့မဟုတ်' },
+  'signin.continueAsGuest': { en: 'Continue as Guest', mm: 'ဧည့်သည်အနေဖြင့်ဆက်လက်ရန်' },
+  'signin.noAccount': { en: "Don't have an account?", mm: 'အကောင့်မရှိသေးပါသလား?' },
+  'signin.signUp': { en: 'Sign Up', mm: 'စာရင်းသွင်းရန်' },
+  'signin.emailPlaceholder': { en: 'you@example.com', mm: 'you@example.com' },
+  'signin.welcomeBack': { en: 'Welcome back!', mm: 'ပြန်လည်ကြိုဆိုပါသည်!' },
+  'signin.signInSuccessful': { en: 'Sign in successful', mm: 'အောင်မြင်စွာဝင်ရောက်ပါပြီ' },
+  'signin.signInFailed': { en: 'Sign in failed. Please try again.', mm: 'ဝင်ရောက်မှုမအောင်မြင်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
+  'signin.invalidPhonePassword': { en: 'Invalid phone number or password. Please try again.', mm: 'ဖုန်းနံပါတ်သို့မဟုတ်စကားဝှက်မမှန်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
+  'signin.phoneValidationError': { en: 'Phone number must have 9 digits.', mm: 'ဖုန်းနံပါတ်သည် 9 လုံးရှိရပါမည်။' },
+  'signin.guestAccess': { en: 'Guest Access', mm: 'ဧည့်သည်ဝင်ရောက်မှု' },
+  'signin.guestMessage': { en: 'Signed in as guest. Some features may be limited.', mm: 'ဧည့်သည်အနေဖြင့်ဝင်ရောက်ပါပြီ။ အချို့အင်္ဂါရပ်များကန့်သတ်ထားနိုင်ပါသည်။' },
+
   // Common translations
   'common.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },
   'common.error': { en: 'Error', mm: 'အမှား' },
