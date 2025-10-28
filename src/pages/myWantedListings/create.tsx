@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Home, MapPin, DollarSign, User, Phone } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, MapPin, User, Phone } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -53,7 +53,6 @@ export default function CreateWantedList() {
     max_area: '',
     additional_requirement: '',
     email: '',
-    status: 'published',
   });
 
   const availableTownships = townships.filter(township => township.region_id === parseInt(formData.prefer_region_id));
@@ -84,9 +83,17 @@ export default function CreateWantedList() {
       <SEOHead seo={seo} path="/my-wanted-listings/create" />
       
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
+                Create Wanted Listing
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                Let sellers know what you're looking for
+              </p>
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -96,141 +103,132 @@ export default function CreateWantedList() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
-            <div>
-              <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                Create Wanted Listing
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                Let sellers know what you're looking for
-              </p>
-            </div>
           </div>
 
-          <Card className="glass border-border/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5 text-primary" />
-                Property Requirements
-              </CardTitle>
-              <CardDescription>
-                Fill in the details of what you're looking for
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Basic Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <User className="h-5 w-5 text-primary" />
-                    Basic Information
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="wanted_type">I am a *</Label>
-                      <Select value={formData.wanted_type} onValueChange={(value) => handleInputChange('wanted_type', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="buyer">Buyer</SelectItem>
-                          <SelectItem value="renter">Renter</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="property_type_id">Property Type *</Label>
-                      <Select value={formData.property_type_id} onValueChange={(value) => handleInputChange('property_type_id', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select property type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {propertyTypes.map((type) => (
-                            <SelectItem key={type.id} value={type.id.toString()}>
-                              {type.name_en}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information Card */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <User className="h-5 w-5 text-primary" />
+                  Basic Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="wanted_type">I am a <span className="text-red-500">*</span></Label>
+                    <Select value={formData.wanted_type} onValueChange={(value) => handleInputChange('wanted_type', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="buyer">Buyer</SelectItem>
+                        <SelectItem value="renter">Renter</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      placeholder="e.g., Looking for 3 Bedroom Apartment in Yangon"
-                      value={formData.title}
-                      onChange={(e) => handleInputChange('title', e.target.value)}
-                    />
+                    <Label htmlFor="property_type_id">Property Type <span className="text-red-500">*</span></Label>
+                    <Select value={formData.property_type_id} onValueChange={(value) => handleInputChange('property_type_id', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select property type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {propertyTypes.map((type) => (
+                          <SelectItem key={type.id} value={type.id.toString()}>
+                            {type.name_en}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="title"
+                    placeholder="e.g., Looking for 3 Bedroom Apartment in Yangon"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe your requirements in detail..."
+                    rows={4}
+                    value={formData.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Preferred Location Card */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Preferred Location
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="prefer_region_id">Region <span className="text-red-500">*</span></Label>
+                    <Select value={formData.prefer_region_id} onValueChange={(value) => handleInputChange('prefer_region_id', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select region" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {regions.map((region) => (
+                          <SelectItem key={region.id} value={region.id.toString()}>
+                            {region.name_en}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Describe your requirements in detail..."
-                      rows={4}
-                      value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                    />
+                    <Label htmlFor="prefer_township_id">Township <span className="text-red-500">*</span></Label>
+                    <Select 
+                      value={formData.prefer_township_id} 
+                      onValueChange={(value) => handleInputChange('prefer_township_id', value)}
+                      disabled={!formData.prefer_region_id}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select township" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableTownships.map((township) => (
+                          <SelectItem key={township.id} value={township.id.toString()}>
+                            {township.name_en}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Location */}
+            {/* Budget & Property Specifications Card */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <User className="h-5 w-5 text-primary" />
+                  Budget & Property Specifications
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Budget Range Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    Preferred Location
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="prefer_region_id">Region *</Label>
-                      <Select value={formData.prefer_region_id} onValueChange={(value) => handleInputChange('prefer_region_id', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select region" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {regions.map((region) => (
-                            <SelectItem key={region.id} value={region.id.toString()}>
-                              {region.name_en}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="prefer_township_id">Township *</Label>
-                      <Select 
-                        value={formData.prefer_township_id} 
-                        onValueChange={(value) => handleInputChange('prefer_township_id', value)}
-                        disabled={!formData.prefer_region_id}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select township" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableTownships.map((township) => (
-                            <SelectItem key={township.id} value={township.id.toString()}>
-                              {township.name_en}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Budget */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-primary" />
-                    Budget Range
-                  </h3>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="min_budget">Minimum Budget (MMK)</Label>
@@ -256,13 +254,8 @@ export default function CreateWantedList() {
                   </div>
                 </div>
 
-                {/* Specifications */}
+                {/* Property Specifications Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Home className="h-5 w-5 text-primary" />
-                    Property Specifications
-                  </h3>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="bedrooms">Bedrooms</Label>
@@ -322,34 +315,37 @@ export default function CreateWantedList() {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Contact Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-primary" />
-                    Contact Information
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
-                      <Input
-                        id="name"
-                        placeholder="Your full name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                      />
-                    </div>
+            {/* Contact Information Card */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Phone className="h-5 w-5 text-primary" />
+                  Contact Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="name"
+                      placeholder="Your full name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number *</Label>
-                      <Input
-                        id="phone"
-                        placeholder="e.g., 09123456789"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="phone"
+                      placeholder="e.g., 09123456789"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -363,43 +359,32 @@ export default function CreateWantedList() {
                     />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Additional Requirements */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Additional Requirements</h3>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="additional_requirement">Special Requirements</Label>
-                    <Textarea
-                      id="additional_requirement"
-                      placeholder="Any special requirements, preferences, or additional details..."
-                      rows={3}
-                      value={formData.additional_requirement}
-                      onChange={(e) => handleInputChange('additional_requirement', e.target.value)}
-                    />
-                  </div>
+            {/* Additional Requirements Card */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Additional Requirements</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="additional_requirement">Special Requirements</Label>
+                  <Textarea
+                    id="additional_requirement"
+                    placeholder="Any special requirements, preferences, or additional details..."
+                    rows={3}
+                    value={formData.additional_requirement}
+                    onChange={(e) => handleInputChange('additional_requirement', e.target.value)}
+                  />
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Status */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Publishing Options</h3>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="published">Publish Now</SelectItem>
-                        <SelectItem value="draft">Save as Draft</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Submit Buttons */}
-                <div className="flex gap-4 pt-6">
+            {/* Submit Buttons Card */}
+            <Card className="shadow-lg">
+              <CardContent className="pt-6">
+                <div className="flex justify-end gap-4">
                   <Button
                     type="submit"
                     disabled={isSubmitting}
@@ -415,9 +400,9 @@ export default function CreateWantedList() {
                     Cancel
                   </Button>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </form>
         </div>
       </div>
     </>
