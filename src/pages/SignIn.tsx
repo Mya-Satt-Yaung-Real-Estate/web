@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SEOHead } from '@/components/seo/SEOHead';
 
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
 import { useModal } from '@/contexts/ModalContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLogin } from '@/hooks/mutations/useLogin';
@@ -34,7 +34,7 @@ const TOTAL_PHONE_LENGTH = 11; // prefix + digits
 
 export function SignIn() {
   const navigate = useNavigate();
-  const { signInAsGuest, checkAuth } = useAuth();
+  const { signInAsGuest, checkAuth, setToken } = useAuthStore();
   const { showSuccess } = useModal();
   const { t } = useLanguage();
   const { mutate: login, isPending } = useLogin();
@@ -112,7 +112,10 @@ export function SignIn() {
     };
 
     login(loginData, {
-      onSuccess: async () => {
+      onSuccess: async (response) => {
+        // Store token in Zustand store
+        setToken(response.data.token);
+        
         // Refresh auth context to get user data
         await checkAuth();
         
@@ -146,7 +149,10 @@ export function SignIn() {
     };
 
     login(loginData, {
-      onSuccess: async () => {
+      onSuccess: async (response) => {
+        // Store token in Zustand store
+        setToken(response.data.token);
+        
         // Refresh auth context to get user data
         await checkAuth();
         

@@ -1,6 +1,5 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { RouterProvider } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ModalProvider } from './contexts/ModalContext';
@@ -15,12 +14,10 @@ function App() {
       <QueryProvider>
         <ThemeProvider>
           <LanguageProvider>
-            <AuthProvider>
-              <ModalProvider>
-                <StructuredData type="all" />
-                <RouterProvider router={router} />
-              </ModalProvider>
-            </AuthProvider>
+            <ModalProvider>
+              <StructuredData type="all" />
+              <RouterProvider router={router} />
+            </ModalProvider>
           </LanguageProvider>
         </ThemeProvider>
       </QueryProvider>

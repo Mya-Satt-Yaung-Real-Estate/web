@@ -21,7 +21,6 @@ export { useDebounce } from './useDebounce';
 // CONTEXT HOOKS
 // ============================================================================
 
-export { useAuth } from '../contexts/AuthContext';
 export { useLanguage } from '../contexts/LanguageContext';
 export { useTheme } from '../contexts/ThemeContext';
 

@@ -20,7 +20,7 @@ import {
   DropdownMenuGroup,
 } from '../ui/dropdown-menu';
 import { NotificationDropdown } from '../common/NotificationDropdown';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNavigationData } from '../../hooks/useNavigationData';
 
@@ -62,7 +62,7 @@ const NavigationDropdown = ({
 export function Navigation() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut, isAuthenticated } = useAuth();
+  const { user, signOut, isAuthenticated, isLoading } = useAuthStore();
   const { language, setLanguage, t } = useLanguage();
   const isMobileOrTablet = useIsMobileOrTablet();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -283,7 +283,9 @@ export function Navigation() {
 
             {isAuthenticated && <NotificationDropdown />}
 
-            {isAuthenticated ? (
+            {isLoading ? (
+              <div className="w-9 h-9 rounded-full bg-muted animate-pulse"></div>
+            ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
@@ -291,9 +293,34 @@ export function Navigation() {
                     size="icon" 
                     className="rounded-full hover:bg-primary/10 transition-all group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center text-white shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all">
-                      <User className="h-5 w-5" />
-                    </div>
+                    {user?.profile_image_url ? (
+                      <div className="w-9 h-9 rounded-full overflow-hidden shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all group-hover:scale-105">
+                        <img 
+                          src={user.profile_image_url} 
+                          alt={`${user.name}'s profile`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Fallback to gradient background if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="w-full h-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center text-white">
+                                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                  </svg>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center text-white shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all group-hover:scale-105">
+                        <User className="h-5 w-5" />
+                      </div>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 backdrop-blur-xl bg-background/95 border-border/50">

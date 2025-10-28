@@ -8,21 +8,39 @@ export interface LoginRequest {
 }
 
 export interface User {
-  id: number;
+  user_id: number;
   name: string;
   email: string;
   phone: string;
   user_type: string;
   member_level: string;
-  is_active: boolean;
+  verify_account: boolean;
   member_since: string;
-  last_login_at: string;
   profile_image_url: string;
-  point_balance: number;
-  total_points_allocated: number;
-  total_points_consumed: number;
+  current_point: number;
+  account_statistics: {
+    total_property_count: number;
+    sold_property_count: number;
+  };
+  achievements: {
+    verify_account: boolean;
+    top_seller: number;
+    fast_responder: number;
+    trusted_agent: boolean;
+  };
+  my_property_listing: {
+    total_property_count: number;
+    sold_property_count: number;
+  };
+  // Backward compatibility fields
+  id?: number; // Alias for user_id
+  is_active?: boolean; // Derived from verify_account
+  last_login_at?: string; // Not in API response
+  point_balance?: number; // Alias for current_point
+  total_points_allocated?: number; // Not in API response
+  total_points_consumed?: number; // Not in API response
   isGuest?: boolean; // Optional for guest users
-  points?: number; // Alias for point_balance for backward compatibility
+  points?: number; // Alias for current_point for backward compatibility
 }
 
 export interface LoginResponse {

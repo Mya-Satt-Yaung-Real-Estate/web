@@ -9,7 +9,7 @@ export const authApi = {
 
   async getProfile(): Promise<User> {
     // Cookies are automatically included in requests due to credentials: 'include'
-    const response = await apiClient.get<User>('/api/v1/frontend/auth/profile');
+    const response = await apiClient.get<User>('/api/v1/frontend/profile');
     return response.data;
   },
 

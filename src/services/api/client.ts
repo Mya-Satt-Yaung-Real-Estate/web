@@ -6,6 +6,7 @@
 
 import { CONFIG } from '@/lib/config';
 import type { ApiResponse } from '@/types';
+import { useAuthStore } from '@/stores/authStore';
 
 // ============================================================================
 // TYPES
@@ -56,17 +57,17 @@ class ApiClient {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      // Only include credentials for authentication endpoints
-      const isAuthEndpoint = endpoint.includes('/auth/');
+      // Get token from Zustand store
+      const token = useAuthStore.getState().token;
       
       const response = await fetch(url, {
         ...fetchOptions,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
           ...headers,
         },
-        credentials: isAuthEndpoint ? 'include' : 'same-origin',
         signal: controller.signal,
       });
 
