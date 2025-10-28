@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
   Menu, User, LogOut, Globe, X, ChevronDown,
-  Building2, Coins, Award, Heart, Eye, History as HistoryIcon,
+  Building2, Star, Award, Heart, Eye, History as HistoryIcon,
   Settings, Info, MessageSquare
 } from 'lucide-react';
 import { useIsMobileOrTablet } from '../../hooks/useMediaQuery';
@@ -283,9 +283,11 @@ export function Navigation() {
 
             {isAuthenticated && <NotificationDropdown />}
 
-            {isLoading ? (
-              <div className="w-9 h-9 rounded-full bg-muted animate-pulse"></div>
-            ) : isAuthenticated ? (
+                {isLoading ? (
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 animate-pulse flex items-center justify-center">
+                    <Star className="h-5 w-5 text-white" />
+                  </div>
+                ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
@@ -299,6 +301,13 @@ export function Navigation() {
                           src={user.profile_image_url} 
                           alt={`${user.name}'s profile`}
                           className="w-full h-full object-cover"
+                          loading="eager"
+                          decoding="async"
+                          onLoad={(e) => {
+                            // Image loaded successfully
+                            const target = e.target as HTMLImageElement;
+                            target.style.opacity = '1';
+                          }}
                           onError={(e) => {
                             // Fallback to gradient background if image fails to load
                             const target = e.target as HTMLImageElement;
@@ -314,6 +323,7 @@ export function Navigation() {
                               `;
                             }
                           }}
+                          style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
                         />
                       </div>
                     ) : (
@@ -325,16 +335,10 @@ export function Navigation() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 backdrop-blur-xl bg-background/95 border-border/50">
                   <DropdownMenuLabel>
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-2">
                       <p className="truncate">{user?.name}</p>
-                      {user?.email && (
-                        <p className="text-muted-foreground truncate">{user.email}</p>
-                      )}
-                      {user?.phone && (
-                        <p className="text-muted-foreground truncate">{user.phone}</p>
-                      )}
                       {user?.isGuest && (
-                        <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                        <span className="inline-block px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
                           Guest
                         </span>
                       )}
@@ -350,17 +354,14 @@ export function Navigation() {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center">
-                          <Coins className="h-4 w-4 text-white" />
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
+                          <Star className="h-4 w-4 text-white" />
                         </div>
-                        <div>
-                          <p className="text-muted-foreground">Your Points</p>
-                          <p className="text-primary">{user?.points?.toLocaleString() || 0}</p>
-                        </div>
+                      <div>
+                        {/* <p className="text-muted-foreground">Your Points</p> */}
+                        <p className="text-primary">{user?.points?.toLocaleString() || 0} Points</p>
                       </div>
-                      <Award className="h-5 w-5 text-primary" />
                     </div>
                   </div>
                   <DropdownMenuSeparator />

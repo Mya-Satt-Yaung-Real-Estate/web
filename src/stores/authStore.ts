@@ -110,7 +110,17 @@ export const useAuthStore = create<AuthState>()(
         
         try {
           set({ isLoading: true });
-          const userData = await authApi.getProfile();
+          const apiResponse = await authApi.getProfile();
+          
+          // Extract user data from API response
+          // The API returns { success, message, data: { user_data } }
+          const userData = (apiResponse as any).data || apiResponse;
+          
+          // Preload profile image for better performance
+          if (userData.profile_image_url) {
+            const img = new Image();
+            img.src = userData.profile_image_url;
+          }
           
           // Add backward compatibility fields
           const userWithCompatibility = {
