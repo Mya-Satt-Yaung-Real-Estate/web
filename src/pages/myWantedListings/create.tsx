@@ -9,33 +9,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
-
-// Mock data for dropdowns
-const propertyTypes = [
-  { id: 1, name_en: 'House', name_mm: 'အိမ်' },
-  { id: 2, name_en: 'Apartment', name_mm: 'ကွန်ဒို' },
-  { id: 3, name_en: 'Commercial', name_mm: 'ကုန်သွယ်ရေး' },
-  { id: 4, name_en: 'Land', name_mm: 'မြေ' },
-];
-
-const regions = [
-  { id: 1, name_en: 'Yangon', name_mm: 'ရန်ကုန်' },
-  { id: 2, name_en: 'Mandalay', name_mm: 'မန္တလေး' },
-  { id: 3, name_en: 'Naypyidaw', name_mm: 'နေပြည်တော်' },
-];
-
-const townships = [
-  { id: 1, name_en: 'Bahan', name_mm: 'ဗဟန်း', region_id: 1 },
-  { id: 2, name_en: 'Dagon', name_mm: 'ဒဂုံ', region_id: 1 },
-  { id: 3, name_en: 'Chan Aye Thar Zan', name_mm: 'ချမ်းအေးသာဇံ', region_id: 2 },
-  { id: 4, name_en: 'Mahar Aung Myay', name_mm: 'မဟာအောင်မြေ', region_id: 2 },
-];
+import { useRegions, useTownships } from '@/hooks/queries/useLocations';
+import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CreateWantedList() {
   const navigate = useNavigate();
   const seo = seoUtils.getPageSEO('createWantedList');
+  const { t, language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Fetch API data
+  const { data: regionsData, isLoading: regionsLoading } = useRegions();
+  const { data: townshipsData, isLoading: townshipsLoading } = useTownships();
+  const { data: propertyTypesData, isLoading: propertyTypesLoading } = usePropertyTypes();
+  
+  const isLoading = regionsLoading || townshipsLoading || propertyTypesLoading;
+
+  const regions = regionsData?.data || [];
+  const townships = townshipsData?.data || [];
+  const propertyTypes = propertyTypesData?.data || [];
+
   const [formData, setFormData] = useState({
     wanted_type: '',
     property_type_id: '',
@@ -57,6 +51,7 @@ export default function CreateWantedList() {
 
   const availableTownships = townships.filter(township => township.region_id === parseInt(formData.prefer_region_id));
 
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
@@ -65,6 +60,7 @@ export default function CreateWantedList() {
       setFormData(prev => ({ ...prev, prefer_township_id: '' }));
     }
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,10 +84,10 @@ export default function CreateWantedList() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                Create Wanted Listing
+                {t('createWantedList.title')}
               </h1>
               <p className="text-muted-foreground mt-2">
-                Let sellers know what you're looking for
+                {t('createWantedList.description')}
               </p>
             </div>
             <Button
@@ -101,44 +97,52 @@ export default function CreateWantedList() {
               className="hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              {t('createWantedList.back')}
             </Button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">{t('createWantedList.loading')}</p>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information Card */}
             <Card className="shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <User className="h-5 w-5 text-primary" />
-                  Basic Information
+                  {t('createWantedList.basicInformation')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="wanted_type">I am a <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="wanted_type">{t('createWantedList.iAmA')} <span className="text-red-500">*</span></Label>
                     <Select value={formData.wanted_type} onValueChange={(value) => handleInputChange('wanted_type', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder={t('createWantedList.selectType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="buyer">Buyer</SelectItem>
-                        <SelectItem value="renter">Renter</SelectItem>
+                        <SelectItem value="buyer">{t('myWantedList.buyer')}</SelectItem>
+                        <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="property_type_id">Property Type <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="property_type_id">{t('createWantedList.propertyType')} <span className="text-red-500">*</span></Label>
                     <Select value={formData.property_type_id} onValueChange={(value) => handleInputChange('property_type_id', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select property type" />
+                        <SelectValue placeholder={t('createWantedList.selectPropertyType')} />
                       </SelectTrigger>
                       <SelectContent>
                         {propertyTypes.map((type) => (
                           <SelectItem key={type.id} value={type.id.toString()}>
-                            {type.name_en}
+                            {type[`name_${language}`]}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -147,20 +151,20 @@ export default function CreateWantedList() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="title">{t('createWantedList.titleLabel')} <span className="text-red-500">*</span></Label>
                   <Input
                     id="title"
-                    placeholder="e.g., Looking for 3 Bedroom Apartment in Yangon"
+                    placeholder={t('createWantedList.titlePlaceholder')}
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">{t('createWantedList.descriptionLabel')}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Describe your requirements in detail..."
+                    placeholder={t('createWantedList.descriptionPlaceholder')}
                     rows={4}
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
@@ -174,21 +178,21 @@ export default function CreateWantedList() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <MapPin className="h-5 w-5 text-primary" />
-                  Preferred Location
+                  {t('createWantedList.preferredLocation')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="prefer_region_id">Region <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="prefer_region_id">{t('createWantedList.region')} <span className="text-red-500">*</span></Label>
                     <Select value={formData.prefer_region_id} onValueChange={(value) => handleInputChange('prefer_region_id', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select region" />
+                        <SelectValue placeholder={t('createWantedList.selectRegion')} />
                       </SelectTrigger>
                       <SelectContent>
                         {regions.map((region) => (
                           <SelectItem key={region.id} value={region.id.toString()}>
-                            {region.name_en}
+                            {region[`name_${language}`]}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -196,19 +200,19 @@ export default function CreateWantedList() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="prefer_township_id">Township <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="prefer_township_id">{t('createWantedList.township')} <span className="text-red-500">*</span></Label>
                     <Select 
                       value={formData.prefer_township_id} 
                       onValueChange={(value) => handleInputChange('prefer_township_id', value)}
                       disabled={!formData.prefer_region_id}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select township" />
+                        <SelectValue placeholder={t('createWantedList.selectTownship')} />
                       </SelectTrigger>
                       <SelectContent>
                         {availableTownships.map((township) => (
                           <SelectItem key={township.id} value={township.id.toString()}>
-                            {township.name_en}
+                            {township[`name_${language}`]}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -223,7 +227,7 @@ export default function CreateWantedList() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <User className="h-5 w-5 text-primary" />
-                  Budget & Property Specifications
+                  {t('createWantedList.budgetPropertySpecs')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -231,7 +235,7 @@ export default function CreateWantedList() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="min_budget">Minimum Budget (MMK)</Label>
+                      <Label htmlFor="min_budget">{t('createWantedList.minBudget')}</Label>
                       <Input
                         id="min_budget"
                         type="number"
@@ -242,7 +246,7 @@ export default function CreateWantedList() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="max_budget">Maximum Budget (MMK)</Label>
+                      <Label htmlFor="max_budget">{t('createWantedList.maxBudget')}</Label>
                       <Input
                         id="max_budget"
                         type="number"
@@ -258,13 +262,13 @@ export default function CreateWantedList() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="bedrooms">Bedrooms</Label>
+                      <Label htmlFor="bedrooms">{t('createWantedList.bedrooms')}</Label>
                       <Select value={formData.bedrooms} onValueChange={(value) => handleInputChange('bedrooms', value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Any" />
+                          <SelectValue placeholder={t('createWantedList.any')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Any</SelectItem>
+                          <SelectItem value="0">{t('createWantedList.any')}</SelectItem>
                           <SelectItem value="1">1</SelectItem>
                           <SelectItem value="2">2</SelectItem>
                           <SelectItem value="3">3</SelectItem>
@@ -275,17 +279,18 @@ export default function CreateWantedList() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="bathrooms">Bathrooms</Label>
+                      <Label htmlFor="bathrooms">{t('createWantedList.bathrooms')}</Label>
                       <Select value={formData.bathrooms} onValueChange={(value) => handleInputChange('bathrooms', value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Any" />
+                          <SelectValue placeholder={t('createWantedList.any')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Any</SelectItem>
+                          <SelectItem value="0">{t('createWantedList.any')}</SelectItem>
                           <SelectItem value="1">1</SelectItem>
                           <SelectItem value="2">2</SelectItem>
                           <SelectItem value="3">3</SelectItem>
-                          <SelectItem value="4">4+</SelectItem>
+                          <SelectItem value="4">4</SelectItem>
+                          <SelectItem value="5">5+</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -293,7 +298,7 @@ export default function CreateWantedList() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="min_area">Minimum Area (sqft)</Label>
+                      <Label htmlFor="min_area">{t('createWantedList.minArea')}</Label>
                       <Input
                         id="min_area"
                         type="number"
@@ -304,7 +309,7 @@ export default function CreateWantedList() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="max_area">Maximum Area (sqft)</Label>
+                      <Label htmlFor="max_area">{t('createWantedList.maxArea')}</Label>
                       <Input
                         id="max_area"
                         type="number"
@@ -323,13 +328,13 @@ export default function CreateWantedList() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Phone className="h-5 w-5 text-primary" />
-                  Contact Information
+                  {t('createWantedList.contactInformation')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="name">{t('createWantedList.fullName')} <span className="text-red-500">*</span></Label>
                     <Input
                       id="name"
                       placeholder="Your full name"
@@ -339,7 +344,7 @@ export default function CreateWantedList() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="phone">{t('createWantedList.phoneNumber')} <span className="text-red-500">*</span></Label>
                     <Input
                       id="phone"
                       placeholder="e.g., 09123456789"
@@ -349,7 +354,7 @@ export default function CreateWantedList() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">{t('createWantedList.emailAddress')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -365,14 +370,17 @@ export default function CreateWantedList() {
             {/* Additional Requirements Card */}
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle>Additional Requirements</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <User className="h-5 w-5 text-primary" />
+                  {t('createWantedList.additionalRequirements')}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Label htmlFor="additional_requirement">Special Requirements</Label>
+                  <Label htmlFor="additional_requirement">{t('createWantedList.specialRequirements')}</Label>
                   <Textarea
                     id="additional_requirement"
-                    placeholder="Any special requirements, preferences, or additional details..."
+                    placeholder={t('createWantedList.specialRequirementsPlaceholder')}
                     rows={3}
                     value={formData.additional_requirement}
                     onChange={(e) => handleInputChange('additional_requirement', e.target.value)}
@@ -390,19 +398,20 @@ export default function CreateWantedList() {
                     disabled={isSubmitting}
                     className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
                   >
-                    {isSubmitting ? 'Creating...' : 'Create Wanted Listing'}
+                    {isSubmitting ? t('createWantedList.creating') : t('createWantedList.createListing')}
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => navigate(-1)}
                   >
-                    Cancel
+                    {t('createWantedList.cancel')}
                   </Button>
                 </div>
               </CardContent>
             </Card>
           </form>
+          )}
         </div>
       </div>
     </>

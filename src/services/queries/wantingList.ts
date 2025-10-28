@@ -119,3 +119,4 @@ export const wantingListMutations = {
     mutationFn: () => wantingListApi.toggleStatus(slug),
   }),
 };
+

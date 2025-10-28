@@ -3,9 +3,9 @@ import { PageLoader } from './components/shared';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Lazy load protected page components
-const MyWantedList = lazy(() => import('../pages/myWantedListings/list').then(module => ({ default: module.default })));
-const CreateWantedList = lazy(() => import('../pages/myWantedListings/create').then(module => ({ default: module.default })));
-const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail').then(module => ({ default: module.default })));
+const MyWantedList = lazy(() => import('../pages/myWantedListings/list'));
+const CreateWantedList = lazy(() => import('../pages/myWantedListings/create'));
+const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'));
 
 // Protected routes configuration
 export const protectedRoutes = [

@@ -40,3 +40,4 @@ export function useImagePreload({ src, enabled = true }: UseImagePreloadOptions)
 
   return { isLoaded, hasError };
 }
+
