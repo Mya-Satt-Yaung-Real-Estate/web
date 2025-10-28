@@ -23,3 +23,4 @@ export { contactApi } from './contact';
 export { newsApi } from './news';
 export { companiesApi } from './companies';
 export { companyTypesApi } from './companyTypes';
+export { wantingListApi } from './wantingList';

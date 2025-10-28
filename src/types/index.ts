@@ -157,3 +157,22 @@ export type {
   CompanyTypeResponse,
   CompanyFilters,
 } from './company';
+
+// Export wanting list types
+export type {
+  WantingList,
+  WantingListFilters,
+  WantingListCreateData,
+  WantingListUpdateData,
+  WantingListResponse,
+  WantingListListResponse,
+  WantingListStatistics,
+  WantingListStatisticsResponse,
+  WantingListPropertyType,
+  WantingListLocation,
+  WantingListBudget,
+  WantingListSpecifications,
+  WantingListContact,
+  WantingListStatus,
+  WantingListUser,
+} from './wantingList';

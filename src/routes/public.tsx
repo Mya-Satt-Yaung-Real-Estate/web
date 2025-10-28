@@ -26,6 +26,9 @@ const LegacyDetail = lazy(() => import('../pages/LegacyDetail').then(module => (
 // Calculator pages
 const YarPyatCalculator = lazy(() => import('../pages/calculators/yarpyatCalculator').then(module => ({ default: module.YarPyatCalculator })));
 
+// Public Wanting List pages
+const PublicWantedList = lazy(() => import('../pages/publicWantedListings/list').then(module => ({ default: module.default })));
+
 // Public routes configuration
 export const publicRoutes = [
   // Basic pages
@@ -154,6 +157,15 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <YarPyatCalculator />
+      </Suspense>
+    ),
+  },
+  
+  {
+    path: '/public-wanted-list',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicWantedList />
       </Suspense>
     ),
   },

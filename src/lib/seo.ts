@@ -51,6 +51,30 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade-og-image.jpg',
     url: 'https://jadeproperty.com/404',
     type: 'website'
+  },
+  myWantedList: {
+    title: 'My Wanted Listings - Jade Property',
+    description: 'Manage your wanted listings and property requirements. Create, edit, and track your property search needs.',
+    keywords: 'my wanted listings, property requirements, manage listings, wanted list, property search',
+    image: '/assets/jade-og-image.jpg',
+    url: 'https://jadeproperty.com/my-wanted-listings/list',
+    type: 'website'
+  },
+  createWantedList: {
+    title: 'Create Wanted Listing - Jade Property',
+    description: 'Post your property requirements and let sellers know what you\'re looking for. Create detailed wanted listings for better matches.',
+    keywords: 'create wanted listing, property requirements, post requirements, wanted list, property search',
+    image: '/assets/jade-og-image.jpg',
+    url: 'https://jadeproperty.com/my-wanted-listings/create',
+    type: 'website'
+  },
+  publicWantedList: {
+    title: 'Wanted Listings - Jade Property',
+    description: 'Browse property requirements and wanted listings from buyers and renters. Find potential customers for your properties.',
+    keywords: 'wanted listings, property requirements, buyers, renters, Myanmar property, property search',
+    image: '/assets/jade-og-image.jpg',
+    url: 'https://jadeproperty.com/public-wanted-list',
+    type: 'website'
   }
 };
 

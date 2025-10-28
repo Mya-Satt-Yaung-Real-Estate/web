@@ -15,3 +15,4 @@ export * from './useLegacy';
 export * from './useNews';
 export * from './useCompanies';
 export * from './useCompanyTypes';
+export * from './useWantingList';
