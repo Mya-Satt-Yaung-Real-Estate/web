@@ -1,39 +1,29 @@
-import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { Navigation } from './components/layout/Navigation';
-import { Footer } from './components/layout/Footer';
-import { AppRoutes } from './routes/AppRoutes';
+import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ModalProvider } from './contexts/ModalContext';
 import { QueryProvider } from './providers';
 import { StructuredData } from './components/seo/StructuredData';
+import { router } from './routes';
 import './styles';
 
 function App() {
   return (
     <HelmetProvider>
-      <BrowserRouter>
-        <QueryProvider>
-          <ThemeProvider>
-            <LanguageProvider>
-              <AuthProvider>
-                <ModalProvider>
-                  <StructuredData type="all" />
-                  <div className="min-h-screen flex flex-col">
-                    <Navigation />
-                    <main className="flex-1">
-                      <AppRoutes />
-                    </main>
-                    <Footer />
-                  </div>
-                </ModalProvider>
-              </AuthProvider>
-            </LanguageProvider>
-          </ThemeProvider>
-        </QueryProvider>
-      </BrowserRouter>
+      <QueryProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <ModalProvider>
+                <StructuredData type="all" />
+                <RouterProvider router={router} />
+              </ModalProvider>
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </QueryProvider>
     </HelmetProvider>
   );
 }
