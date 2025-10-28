@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { LoginRequest, LoginResponse, User } from '@/types/auth';
+import type { LoginRequest, LoginResponse, ExtendedUser } from '@/types/auth';
 
 export const authApi = {
   async login(data: LoginRequest): Promise<LoginResponse> {
@@ -7,9 +7,9 @@ export const authApi = {
     return response.data;
   },
 
-  async getProfile(): Promise<User> {
+  async getProfile(): Promise<ExtendedUser> {
     // Cookies are automatically included in requests due to credentials: 'include'
-    const response = await apiClient.get<User>('/api/v1/frontend/profile');
+    const response = await apiClient.get<ExtendedUser>('/api/v1/frontend/profile');
     return response.data;
   },
 

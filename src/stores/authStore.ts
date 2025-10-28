@@ -1,20 +1,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi } from '@/services/api/auth';
-import type { User } from '@/types/auth';
+import type { ExtendedUser } from '@/types/auth';
 
 interface AuthState {
   // State
-  user: User | null;
+  user: ExtendedUser | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 
   // Actions
-  setUser: (user: User | null) => void;
+  setUser: (user: ExtendedUser | null) => void;
   setToken: (token: string | null) => void;
   setLoading: (loading: boolean) => void;
-  updateUser: (updates: Partial<User>) => void;
+  updateUser: (updates: Partial<ExtendedUser>) => void;
   signOut: () => void;
   signInAsGuest: () => void;
   checkAuth: () => Promise<void>;
@@ -68,7 +68,7 @@ export const useAuthStore = create<AuthState>()(
             member_level: 'bronze',
             verify_account: false,
             member_since: new Date().toISOString(),
-            profile_image_url: '',
+            profile_image_url: null,
             current_point: 0,
             account_statistics: {
               total_property_count: 0,
