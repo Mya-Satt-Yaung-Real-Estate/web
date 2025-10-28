@@ -34,7 +34,7 @@ const TOTAL_PHONE_LENGTH = 11; // prefix + digits
 
 export function SignIn() {
   const navigate = useNavigate();
-  const { signInAsGuest } = useAuth();
+  const { signInAsGuest, checkAuth } = useAuth();
   const { showSuccess } = useModal();
   const { t } = useLanguage();
   const { mutate: login, isPending } = useLogin();
@@ -112,9 +112,9 @@ export function SignIn() {
     };
 
     login(loginData, {
-      onSuccess: (response) => {
-        localStorage.setItem('auth_token', response.data.token);
-        localStorage.setItem('user_data', JSON.stringify(response.data.user));
+      onSuccess: async () => {
+        // Refresh auth context to get user data
+        await checkAuth();
         
         showSuccess(
           t('signin.welcomeBack'),
@@ -146,9 +146,9 @@ export function SignIn() {
     };
 
     login(loginData, {
-      onSuccess: (response) => {
-        localStorage.setItem('auth_token', response.data.token);
-        localStorage.setItem('user_data', JSON.stringify(response.data.user));
+      onSuccess: async () => {
+        // Refresh auth context to get user data
+        await checkAuth();
         
         showSuccess(
           t('signin.welcomeBack'),

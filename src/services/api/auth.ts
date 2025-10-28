@@ -8,12 +8,13 @@ export const authApi = {
   },
 
   async getProfile(): Promise<User> {
-    const token = localStorage.getItem('auth_token');
-    const response = await apiClient.get<User>('/api/v1/frontend/auth/profile', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    // Cookies are automatically included in requests due to credentials: 'include'
+    const response = await apiClient.get<User>('/api/v1/frontend/auth/profile');
+    return response.data;
+  },
+
+  async logout(): Promise<{ success: boolean; message: string }> {
+    const response = await apiClient.post<{ success: boolean; message: string }>('/api/v1/frontend/auth/logout');
     return response.data;
   },
 };

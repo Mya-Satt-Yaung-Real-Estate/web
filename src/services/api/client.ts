@@ -56,6 +56,9 @@ class ApiClient {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
+      // Only include credentials for authentication endpoints
+      const isAuthEndpoint = endpoint.includes('/auth/');
+      
       const response = await fetch(url, {
         ...fetchOptions,
         headers: {
@@ -63,6 +66,7 @@ class ApiClient {
           'Accept': 'application/json',
           ...headers,
         },
+        credentials: isAuthEndpoint ? 'include' : 'same-origin',
         signal: controller.signal,
       });
 

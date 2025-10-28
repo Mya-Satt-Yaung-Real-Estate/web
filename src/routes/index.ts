@@ -6,6 +6,10 @@ export interface RouteConfig {
   public?: boolean;
   protected?: boolean;
   exact?: boolean;
+  roles?: string[]; // Allowed user roles
+  memberLevels?: string[]; // Required member levels
+  guestAllowed?: boolean; // Allow guest access
+  redirectTo?: string; // Custom redirect path
 }
 
 // Lazy load page components for code splitting
@@ -46,6 +50,10 @@ export const routes: RouteConfig[] = [
   { path: '/privacy-policy', component: PrivacyPolicy, title: 'Privacy Policy', public: true },
   { path: '/feedback', component: Feedback, title: 'Feedback', public: true },
   { path: '/signin', component: SignIn, title: 'Sign In', public: true },
+  
+  // TODO: Add protected routes here when features are implemented
+  // Example: { path: '/profile', component: Profile, title: 'Profile', protected: true },
+  
   { path: '/404', component: NotFound, title: 'Page Not Found', public: true },
 ];
 
@@ -62,7 +70,8 @@ export const navigationConfig = {
     { name: 'Contact', path: '/contact', icon: 'Mail' },
   ],
   authenticated: [
-    // No authenticated routes for now
+    // TODO: Add authenticated routes here when features are implemented
+    // Example: { name: 'Profile', path: '/profile', icon: 'User' },
   ],
 };
 

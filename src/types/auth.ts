@@ -21,6 +21,8 @@ export interface User {
   point_balance: number;
   total_points_allocated: number;
   total_points_consumed: number;
+  isGuest?: boolean; // Optional for guest users
+  points?: number; // Alias for point_balance for backward compatibility
 }
 
 export interface LoginResponse {
