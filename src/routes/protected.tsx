@@ -7,6 +7,7 @@ const MyWantedList = lazy(() => import('../pages/myWantedListings/list'));
 const CreateWantedList = lazy(() => import('../pages/myWantedListings/create'));
 const EditWantedList = lazy(() => import('../pages/myWantedListings/edit'));
 const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'));
+const AppointmentList = lazy(() => import('../pages/appointments/list'));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -47,6 +48,17 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <WantingListDetail />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  // Appointments routes
+  {
+    path: '/appointments',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <AppointmentList />
         </Suspense>
       </ProtectedRoute>
     ),
