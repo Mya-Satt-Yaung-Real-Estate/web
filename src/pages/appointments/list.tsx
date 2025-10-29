@@ -1,37 +1,44 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Calendar, Clock, MapPin, DollarSign, User, Phone, Mail, Edit, Trash2 } from 'lucide-react';
+import { Plus, Calendar, Clock, MapPin, DollarSign, User, Phone, Mail, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
-import { useAppointments } from '@/hooks/queries/useAppointment';
+import { useAppointments, usePropertyListingTypes } from '@/hooks/queries/useAppointment';
 import { useLanguage } from '@/contexts/LanguageContext';
-import type { AppointmentFilters } from '@/types/appointment';
+import { CreateAppointmentModal } from '@/components/appointments/CreateAppointmentModal';
+import type { AppointmentFilters, Appointment } from '@/types/appointment';
 
 export default function AppointmentList() {
   const seo = seoUtils.getPageSEO('appointments');
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<AppointmentFilters>({
     status: '' as any,
+    property_listing_type_id: undefined,
   });
 
   // API hooks
   const { data: appointmentsData, isLoading, error, refetch } = useAppointments({
     status: filters.status || undefined,
-    page: 1,
+    property_listing_type_id: filters.property_listing_type_id,
+    page: currentPage,
     per_page: 12,
     sort_by: 'created_at',
     sort_direction: 'desc',
   });
 
-  const getTimeDisplay = (appointment: any) => {
+  // Fetch filter options
+  const { data: propertyListingTypesData } = usePropertyListingTypes();
+
+  const getTimeDisplay = (appointment: Appointment) => {
     if (appointment.is_anytime) {
       return t('appointments.anytime') || 'Anytime';
     }
@@ -55,7 +62,7 @@ export default function AppointmentList() {
     return appointment.prefer_time_name || appointment.display_time_range || t('appointments.notSpecified') || 'Not specified';
   };
 
-  const getScheduleTimeDisplay = (appointment: any) => {
+  const getScheduleTimeDisplay = (appointment: Appointment) => {
     if (appointment.schedule_start_time && appointment.schedule_end_time) {
       const start = new Date(`2000-01-01T${appointment.schedule_start_time}`).toLocaleTimeString('en-US', { 
         hour: 'numeric', 
@@ -73,7 +80,10 @@ export default function AppointmentList() {
   };
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value === 'all' ? '' : value }));
+    setFilters(prev => ({ 
+      ...prev, 
+      [key]: value === 'all' ? undefined : (key === 'property_listing_type_id' ? Number(value) : value)
+    }));
   };
 
   const getPropertyTypeName = (propertyType?: { name_en: string; name_mm: string }) => {
@@ -81,9 +91,7 @@ export default function AppointmentList() {
     return language === 'mm' ? propertyType.name_mm : propertyType.name_en;
   };
 
-  const handleSearch = (value: string) => {
-    setSearchQuery(value);
-  };
+  const propertyListingTypes = propertyListingTypesData?.data || [];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -107,19 +115,10 @@ export default function AppointmentList() {
   };
 
   const appointments = appointmentsData?.data || [];
-  
-  // Client-side search filtering
-  const filteredAppointments = appointments.filter(appointment => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      getPropertyTypeName(appointment.property_listing_type).toLowerCase().includes(query) ||
-      appointment.contact_name.toLowerCase().includes(query) ||
-      appointment.contact_email.toLowerCase().includes(query) ||
-      appointment.contact_phone.includes(query) ||
-      appointment.status.toLowerCase().includes(query)
-    );
-  });
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
@@ -139,7 +138,7 @@ export default function AppointmentList() {
             </div>
             <Button 
               className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
-              onClick={() => navigate('/appointments/create')}
+              onClick={() => setIsCreateModalOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
               {t('appointments.createNew') || 'Create New Appointment'}
@@ -150,23 +149,30 @@ export default function AppointmentList() {
           <Card className="glass border-border/50 mb-6">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row gap-4">
-                {/* Search */}
+                {/* Property Listing Type Filter */}
                 <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder={t('appointments.searchPlaceholder') || 'Search appointments...'}
-                      value={searchQuery}
-                      onChange={(e) => handleSearch(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
+                  <Select 
+                    value={filters.property_listing_type_id?.toString() || 'all'} 
+                    onValueChange={(value) => handleFilterChange('property_listing_type_id', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('appointments.propertyType') || 'Property Type'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('appointments.allPropertyTypes') || 'All Property Types'}</SelectItem>
+                      {propertyListingTypes.map((type: { id: number; name_en: string; name_mm: string }) => (
+                        <SelectItem key={type.id} value={type.id.toString()}>
+                          {getPropertyTypeName(type)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                {/* Filters */}
-                <div className="flex gap-2">
+                {/* Status Filter */}
+                <div className="flex-1">
                   <Select value={filters.status || 'all'} onValueChange={(value) => handleFilterChange('status', value)}>
-                    <SelectTrigger className="w-32">
+                    <SelectTrigger>
                       <SelectValue placeholder={t('appointments.status') || 'Status'} />
                     </SelectTrigger>
                     <SelectContent>
@@ -175,6 +181,7 @@ export default function AppointmentList() {
                       <SelectItem value="confirmed">{t('appointments.status.confirmed') || 'Confirmed'}</SelectItem>
                       <SelectItem value="completed">{t('appointments.status.completed') || 'Completed'}</SelectItem>
                       <SelectItem value="cancelled">{t('appointments.status.cancelled') || 'Cancelled'}</SelectItem>
+                      <SelectItem value="rescheduled">{t('appointments.status.rescheduled') || 'Rescheduled'}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -223,7 +230,7 @@ export default function AppointmentList() {
                 </Button>
               </CardContent>
             </Card>
-          ) : filteredAppointments.length === 0 ? (
+          ) : appointments.length === 0 ? (
             <Card className="backdrop-blur-sm bg-background/95">
               <CardContent className="py-12 text-center">
                 <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
@@ -239,7 +246,7 @@ export default function AppointmentList() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {filteredAppointments.map((appointment) => (
+              {appointments.map((appointment: Appointment) => (
                 <Card key={appointment.id} className="backdrop-blur-sm bg-background/95 hover:shadow-lg transition-all">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -257,14 +264,16 @@ export default function AppointmentList() {
                           {getPropertyTypeName(appointment.property_listing_type)}
                         </CardDescription>
                       </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="icon">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" className="text-destructive hover:bg-destructive/10">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      {appointment.status === 'pending' && (
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="icon">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -335,8 +344,27 @@ export default function AppointmentList() {
               ))}
             </div>
           )}
+
+          {/* Pagination */}
+          {appointmentsData?.pagination && appointmentsData.pagination.last_page > 1 && (
+            <div className="flex justify-center mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={appointmentsData.pagination.last_page}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </div>
+      
+      <CreateAppointmentModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          refetch();
+        }}
+      />
     </>
   );
 }

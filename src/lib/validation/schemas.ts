@@ -158,3 +158,71 @@ export const createWantingListSchema = (t: (key: string) => string) => z.object(
 );
 
 export type WantingListFormData = z.infer<ReturnType<typeof createWantingListSchema>>;
+
+export const createAppointmentSchema = (t: (key: string) => string) => z.object({
+  property_listing_type_id: z.any().refine((val) => {
+    if (val === '' || val === null || val === undefined) {
+      return false;
+    }
+    const num = Number(val);
+    return !isNaN(num) && num > 0;
+  }, {
+    message: t('validation.propertyType.required')
+  }).transform((val) => Number(val)),
+  
+  prefer_time_id: z.any().optional().transform((val) => {
+    if (val === '' || val === null || val === undefined) {
+      return undefined;
+    }
+    return Number(val);
+  }),
+  
+  is_anytime: z.boolean().default(false),
+  
+  date: z.string()
+    .min(1, t('validation.date.required') || 'Date is required'),
+  
+  contact_name: z.string()
+    .min(1, t('validation.name.required') || 'Name is required')
+    .min(2, t('validation.name.minLength') || 'Name must be at least 2 characters'),
+  
+  contact_phone: z.string()
+    .min(1, t('validation.phone.required') || 'Phone number is required')
+    .regex(/^\+?[0-9]{9,11}$/, t('validation.phone.invalid') || 'Phone number must be 9-11 digits'),
+  
+  contact_email: z.string()
+    .min(1, t('validation.email.required') || 'Email is required')
+    .email(t('validation.email.invalid') || 'Please enter a valid email address'),
+  
+  advance_amount: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return undefined;
+      const num = Number(val);
+      return isNaN(num) ? undefined : num;
+    },
+    z.number()
+      .optional()
+      .refine((val) => {
+        if (val === undefined) return true;
+        return val >= 0;
+      }, {
+        message: t('validation.budget.positive') || 'Advance amount must be a positive number'
+      })
+  ),
+  
+  message: z.string().optional(),
+}).refine(
+  (data) => {
+    // If is_anytime is false, prefer_time_id must be provided
+    if (!data.is_anytime && !data.prefer_time_id) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: t('validation.timeSlot.required') || 'Please select a preferred time slot',
+    path: ['prefer_time_id']
+  }
+);
+
+export type AppointmentFormData = z.infer<ReturnType<typeof createAppointmentSchema>>;

@@ -206,6 +206,14 @@ const translations: Translations = {
   'appointments.notSpecified': { en: 'Not specified', mm: 'မဖော်ပြထား' },
   'appointments.scheduledDate': { en: 'Scheduled', mm: 'ချိန်းဆိုထားသော' },
   'appointments.scheduledTime': { en: 'Scheduled Time', mm: 'ချိန်းဆိုထားသောအချိန်' },
+  'appointments.createSuccess': { en: 'Appointment created successfully!', mm: 'ချိန်းဆိုမှုကိုအောင်မြင်စွာဖန်တီးပြီးပါပြီ!' },
+  'appointments.createSuccessTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
+  'appointments.createError': { en: 'Failed to create appointment', mm: 'ချိန်းဆိုမှုဖန်တီးရန်မအောင်မြင်ပါ' },
+  'appointments.createErrorTitle': { en: 'Error', mm: 'အမှား' },
+  'appointments.cancel': { en: 'Cancel', mm: 'ပယ်ဖျက်ရန်' },
+  'appointments.creating': { en: 'Creating...', mm: 'ဖန်တီးနေသည်...' },
+  'appointments.allPropertyTypes': { en: 'All Property Types', mm: 'အိမ်ခြံမြေအမျိုးအစားအားလုံး' },
+  'appointments.allTimes': { en: 'All Times', mm: 'အချိန်အားလုံး' },
     
   // Toast Messages
   'toast.createWantingList.success': { en: 'Wanted listing created successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!' },
@@ -238,6 +246,10 @@ const translations: Translations = {
     'validation.phone.invalid': { en: 'Phone number must be 9-11 digits', mm: 'ဖုန်းနံပါတ်သည် ၉-၁၁ လုံးရှိရပါမည်' },
     
     'validation.email.invalid': { en: 'Please enter a valid email address', mm: 'မှန်ကန်သော အီးမေးလ်လိပ်စာကို ရိုက်ထည့်ပါ' },
+    'validation.email.required': { en: 'Email is required', mm: 'အီးမေးလ် လိုအပ်ပါသည်' },
+    
+    'validation.date.required': { en: 'Date is required', mm: 'ရက် လိုအပ်ပါသည်' },
+    'validation.timeSlot.required': { en: 'Please select a preferred time slot', mm: 'နှစ်သက်သောအချိန်ကို ရွေးချယ်ပါ' },
     
     'validation.budget.positive': { en: 'Budget must be a positive number', mm: 'ဘတ်ဂျက်သည် အပေါင်းကိန်းဖြစ်ရပါမည်' },
     'validation.budget.range': { en: 'Maximum budget must be greater than minimum budget', mm: 'အများဆုံးဘတ်ဂျက်သည် အနည်းဆုံးဘတ်ဂျက်ထက် ကြီးရပါမည်' },

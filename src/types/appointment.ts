@@ -53,6 +53,7 @@ export interface AppointmentFilters {
   date_from?: string;
   date_to?: string;
   property_listing_type_id?: number;
+  prefer_time_id?: number;
   sort_by?: string;
   sort_direction?: 'asc' | 'desc';
   per_page?: number;
@@ -85,4 +86,44 @@ export interface AppointmentListResponse {
     per_page: number;
     total: number;
   };
+}
+
+export interface AppointmentTimeSlot {
+  id: number;
+  name: string;
+}
+
+export interface AppointmentTimeSlotResponse {
+  success: boolean;
+  message: string;
+  data: AppointmentTimeSlot[];
+}
+
+export interface PropertyListingType {
+  id: number;
+  name_en: string;
+  name_mm: string;
+  full_name: string;
+  slug: string;
+  description: string;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface PropertyListingTypeResponse {
+  success: boolean;
+  message: string;
+  data: PropertyListingType[];
+}
+
+export interface CreateAppointmentData {
+  property_listing_type_id: number;
+  prefer_time_id?: number;
+  is_anytime: boolean;
+  date: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  advance_amount?: number;
+  message?: string;
 }

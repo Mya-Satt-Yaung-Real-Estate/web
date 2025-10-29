@@ -13,4 +13,4 @@ export * from './separator';
 export * from './collapsible';
 export * from './tabs';
 export * from './toaster';
-export * from './ConfirmModal';
+export * from './dialog';

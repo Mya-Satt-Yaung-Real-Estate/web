@@ -17,6 +17,8 @@ export const appointmentKeys = {
   list: (filters: AppointmentFilters) => [...appointmentKeys.lists(), filters] as const,
   details: () => [...appointmentKeys.all, 'detail'] as const,
   detail: (id: number) => [...appointmentKeys.details(), id] as const,
+  timeSlots: () => [...appointmentKeys.all, 'time-slots'] as const,
+  propertyListingTypes: () => [...appointmentKeys.all, 'property-listing-types'] as const,
 };
 
 // ============================================================================
@@ -40,5 +42,21 @@ export const appointmentQueries = {
     queryKey: appointmentKeys.detail(id),
     queryFn: () => appointmentApi.getAppointment(id),
     enabled: !!id,
+  }),
+
+  /**
+   * Get appointment time slots
+   */
+  getTimeSlots: () => ({
+    queryKey: appointmentKeys.timeSlots(),
+    queryFn: () => appointmentApi.getTimeSlots(),
+  }),
+
+  /**
+   * Get property listing types
+   */
+  getPropertyListingTypes: () => ({
+    queryKey: appointmentKeys.propertyListingTypes(),
+    queryFn: () => appointmentApi.getPropertyListingTypes(),
   }),
 };

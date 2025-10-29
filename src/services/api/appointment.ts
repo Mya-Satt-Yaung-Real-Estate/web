@@ -2,7 +2,10 @@ import { apiClient } from './client';
 import type { 
   AppointmentResponse, 
   AppointmentListResponse,
-  AppointmentFilters
+  AppointmentFilters,
+  AppointmentTimeSlotResponse,
+  PropertyListingTypeResponse,
+  CreateAppointmentData
 } from '@/types/appointment';
 
 export const appointmentApi = {
@@ -23,6 +26,24 @@ export const appointmentApi = {
   // Get single appointment
   async getAppointment(id: number): Promise<AppointmentResponse> {
     const response = await apiClient.get<AppointmentResponse>(`/api/v1/frontend/appointments/${id}`);
+    return response.data;
+  },
+
+  // Create appointment
+  async createAppointment(data: CreateAppointmentData): Promise<AppointmentResponse> {
+    const response = await apiClient.post<AppointmentResponse>('/api/v1/frontend/appointments', data);
+    return response.data;
+  },
+
+  // Get appointment time slots
+  async getTimeSlots(): Promise<AppointmentTimeSlotResponse> {
+    const response = await apiClient.get<AppointmentTimeSlotResponse>('/api/v1/frontend/appointment-time-slots');
+    return response.data;
+  },
+
+  // Get property listing types
+  async getPropertyListingTypes(): Promise<PropertyListingTypeResponse> {
+    const response = await apiClient.get<PropertyListingTypeResponse>('/api/v1/frontend/property-listing-types');
     return response.data;
   },
 };
