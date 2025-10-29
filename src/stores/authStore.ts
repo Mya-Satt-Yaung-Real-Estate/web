@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi } from '@/services/api/auth';
+import { queryClient } from '@/providers/QueryProvider';
+import { wantingListKeys } from '@/services/queries/wantingList';
 import type { ExtendedUser } from '@/types/auth';
 
 interface AuthState {
@@ -49,6 +51,14 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           // Even if logout API fails, clear local state
         } finally {
+          // Clear all user-specific queries from React Query cache
+          // This ensures new user won't see previous user's cached data
+          queryClient.removeQueries({ queryKey: wantingListKeys.all });
+          queryClient.removeQueries({ queryKey: wantingListKeys.public.all });
+          
+          // Clear any other user-specific queries if needed
+          // For now, we'll focus on wantingList as that's the reported issue
+          
           set({ 
             user: null, 
             token: null, 
@@ -139,6 +149,9 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true, 
             isLoading: false 
           });
+          
+          // Clear wanting list cache when new user logs in to ensure fresh data
+          queryClient.removeQueries({ queryKey: wantingListKeys.all });
         } catch (error) {
           // User is not authenticated or token is invalid
           set({ 
