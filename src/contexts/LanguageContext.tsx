@@ -221,6 +221,7 @@ const translations: Translations = {
   'appointments.backToList': { en: 'Back to Appointments', mm: 'ချိန်းဆိုမှုများသို့ပြန်သွားရန်' },
   'appointments.allPropertyTypes': { en: 'All Property Types', mm: 'အိမ်ခြံမြေအမျိုးအစားအားလုံး' },
   'appointments.allTimes': { en: 'All Times', mm: 'အချိန်အားလုံး' },
+  'appointments.createdAt': { en: 'Created', mm: 'ဖန်တီးထားသည်' },
     
   // Toast Messages
   'toast.createWantingList.success': { en: 'Wanted listing created successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!' },

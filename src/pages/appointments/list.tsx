@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Calendar, Clock, MapPin, DollarSign, User, Phone, Mail, Edit, Trash2 } from 'lucide-react';
+import { Plus, Calendar, Clock, MapPin, DollarSign, User, Phone, Mail, Edit, Trash2, CalendarDays } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -326,6 +326,18 @@ export default function AppointmentList() {
                             </span>
                           </div>
                         )}
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <CalendarDays className="h-4 w-4 text-primary" />
+                          <span>
+                            {t('appointments.createdAt') || 'Created'}: {new Date(appointment.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
                       </div>
                       <div className="space-y-3">
                         <h4 className="text-muted-foreground">{t('appointments.contactInfo') || 'Contact Information'}</h4>
