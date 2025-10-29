@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Calendar, MapPin, DollarSign, Home, Bed, Bath, Square } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Calendar, MapPin, DollarSign, Home, Bed, Bath, Square } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useWantingLists } from '@/hooks/queries/useWantingList';
-import { useDeleteWantingList, useToggleWantingListStatus } from '@/hooks/mutations';
+import { useDeleteWantingList } from '@/hooks/mutations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
@@ -37,7 +37,6 @@ export default function MyWantedList() {
   });
   
   const deleteWantingListMutation = useDeleteWantingList();
-  const toggleStatusMutation = useToggleWantingListStatus();
 
   const handleSearch = (value: string) => {
     setFilters(prev => ({ ...prev, search: value }));
@@ -64,16 +63,6 @@ export default function MyWantedList() {
     }
   };
 
-  const handleToggleStatus = async (slug: string) => {
-    try {
-      await toggleStatusMutation.mutateAsync(slug);
-      toast.success('Status updated successfully');
-      refetch();
-    } catch (error) {
-      toast.error('Failed to update status');
-      console.error('Toggle status error:', error);
-    }
-  };
 
   const getVerificationStatusColor = (verificationStatus: string, isExpired: boolean) => {
     if (isExpired) return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
@@ -259,24 +248,17 @@ export default function MyWantedList() {
 {t('myWantedList.view')}
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
+                            <DropdownMenuItem 
+                              asChild={listing.status?.verification_status !== 'approved'}
+                              disabled={listing.status?.verification_status === 'approved'}
+                            >
+                              <Link 
+                                to={listing.status?.verification_status === 'approved' ? '#' : `/my-wanted-listings/edit/${listing.slug}`}
+                                className={listing.status?.verification_status === 'approved' ? 'opacity-50 cursor-not-allowed' : ''}
+                              >
                                 <Edit className="h-4 w-4 mr-2" />
 {t('myWantedList.edit')}
                               </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleToggleStatus(listing.slug)}>
-                              {listing.status?.is_published ? (
-                                <>
-                                  <EyeOff className="h-4 w-4 mr-2" />
-{t('myWantedList.unpublish')}
-                                </>
-                              ) : (
-                                <>
-                                  <Eye className="h-4 w-4 mr-2" />
-{t('myWantedList.publish')}
-                                </>
-                              )}
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleDelete(listing.slug)}
@@ -345,19 +327,29 @@ export default function MyWantedList() {
                             asChild
                             variant="outline" 
                             size="sm"
-                            className="flex-1"
+                            className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
                           >
                             <Link to={`/my-wanted-listings/detail/${listing.slug}`}>
-{t('myWantedList.viewDetails')}
+                              <Eye className="h-4 w-4 mr-2" />
+                              {t('myWantedList.viewDetails')}
                             </Link>
                           </Button>
                           <Button 
-                            asChild
+                            asChild={listing.status?.verification_status !== 'approved'}
                             variant="outline" 
                             size="sm"
-                            className="flex-1"
+                            disabled={listing.status?.verification_status === 'approved'}
+                            className={`flex-1 bg-primary/10 text-primary hover:bg-primary/20 ${
+                              listing.status?.verification_status === 'approved' 
+                                ? 'opacity-50 cursor-not-allowed' 
+                                : ''
+                            }`}
                           >
-                            <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
+                            <Link 
+                              to={listing.status?.verification_status === 'approved' ? '#' : `/my-wanted-listings/edit/${listing.slug}`}
+                              className={listing.status?.verification_status === 'approved' ? 'pointer-events-none' : ''}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
                               {t('myWantedList.edit')}
                             </Link>
                           </Button>

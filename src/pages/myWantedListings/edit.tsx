@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { ArrowLeft, MapPin, User, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,44 +51,117 @@ export default function EditWantedList() {
 
   const watchedRegionId = form.watch('prefer_region_id');
   const availableTownships = townships.filter(township => township.region_id === watchedRegionId);
+  
+  // Track if form has been initialized to prevent overwriting user changes
+  const formInitializedRef = useRef(false);
 
-  // Pre-fill form when wanting list data is loaded
+  // Pre-fill form when wanting list data and all API data are loaded
   useEffect(() => {
-    if (wantingList && regions.length > 0) {
-      form.setValue('wanted_type', wantingList.wanted_type);
-      form.setValue('property_type_id', wantingList.property_type.id);
-      form.setValue('title', wantingList.title);
-      form.setValue('description', wantingList.description || '');
-      
-      // Handle location - check both preferred_location (API) and location (type) formats
-      const location = (wantingList as any).preferred_location || wantingList.location;
-      if (location) {
-        if (location.region?.id) {
-          form.setValue('prefer_region_id', location.region.id);
-          form.setValue('prefer_township_id', location.township?.id || 0);
-        } else if (location.region_en || location.region_mm) {
-          // Fallback: find region by name
-          const region = regions.find(r => 
-            r.name_en === location.region_en || r.name_mm === location.region_mm
-          );
-          if (region) {
-            form.setValue('prefer_region_id', region.id);
+    if (wantingList && regions.length > 0 && propertyTypes.length > 0 && townships.length > 0 && !formInitializedRef.current) {
+      // Use setTimeout to ensure components are rendered before setting values
+      setTimeout(() => {
+        // Set basic fields
+        if (wantingList.wanted_type) {
+          form.setValue('wanted_type', wantingList.wanted_type);
+        }
+        
+        // Set property type - ensure it exists in propertyTypes array
+        if (wantingList.property_type?.id) {
+          const propertyTypeExists = propertyTypes.some(pt => pt.id === wantingList.property_type.id);
+          if (propertyTypeExists) {
+            form.setValue('property_type_id', wantingList.property_type.id);
           }
         }
-      }
-      
-      form.setValue('min_budget', wantingList.budget?.min_budget || undefined);
-      form.setValue('max_budget', wantingList.budget?.max_budget || undefined);
-      form.setValue('bedrooms', wantingList.specifications?.bedrooms || undefined);
-      form.setValue('bathrooms', wantingList.specifications?.bathrooms || undefined);
-      form.setValue('min_area', wantingList.specifications?.min_area || undefined);
-      form.setValue('max_area', wantingList.specifications?.max_area || undefined);
-      form.setValue('name', wantingList.contact?.name || '');
-      form.setValue('phone', wantingList.contact?.phone || '');
-      form.setValue('email', wantingList.contact?.email || '');
-      form.setValue('additional_requirement', wantingList.additional_requirement || '');
+        
+        form.setValue('title', wantingList.title || '');
+        form.setValue('description', wantingList.description || '');
+        
+        // Handle location - check both preferred_location (API) and location (type) formats
+        const location = (wantingList as any).preferred_location || wantingList.location;
+        if (location) {
+          let regionId: number | null = null;
+          
+          // Try to get region ID
+          if (location.region?.id) {
+            regionId = location.region.id;
+          } else if (location.region_en || location.region_mm) {
+            // Fallback: find region by name
+            const region = regions.find(r => 
+              r.name_en === location.region_en || r.name_mm === location.region_mm
+            );
+            if (region) {
+              regionId = region.id;
+            }
+          }
+          
+          // Set region if found
+          if (regionId) {
+            form.setValue('prefer_region_id', regionId);
+            // Township will be set by the second useEffect after region is set and availableTownships is ready
+          }
+        }
+        
+        form.setValue('min_budget', wantingList.budget?.min_budget || undefined);
+        form.setValue('max_budget', wantingList.budget?.max_budget || undefined);
+        form.setValue('bedrooms', wantingList.specifications?.bedrooms || undefined);
+        form.setValue('bathrooms', wantingList.specifications?.bathrooms || undefined);
+        form.setValue('min_area', wantingList.specifications?.min_area || undefined);
+        form.setValue('max_area', wantingList.specifications?.max_area || undefined);
+        form.setValue('name', wantingList.contact?.name || '');
+        form.setValue('phone', wantingList.contact?.phone || '');
+        form.setValue('email', wantingList.contact?.email || '');
+        form.setValue('additional_requirement', wantingList.additional_requirement || '');
+        
+        formInitializedRef.current = true;
+      }, 100); // Small delay to ensure components are rendered
     }
-  }, [wantingList, form, regions]);
+  }, [wantingList, form, regions, propertyTypes, townships]);
+
+  // Set township after region is set and availableTownships is ready
+  useEffect(() => {
+    if (wantingList && watchedRegionId && availableTownships.length > 0 && formInitializedRef.current) {
+      // Use setTimeout to ensure the region change has been processed
+      setTimeout(() => {
+        const location = (wantingList as any).preferred_location || wantingList.location;
+        if (location) {
+          let townshipId: number | null = null;
+          
+          // Check if we have region ID match and township ID
+          if (location.region?.id === watchedRegionId && location.township?.id) {
+            // Check if township exists in available townships
+            const townshipExists = availableTownships.some(t => t.id === location.township.id);
+            if (townshipExists) {
+              townshipId = location.township.id;
+            }
+          } else if (location.region_en || location.region_mm) {
+            // Find township by name if using string-based location
+            // First verify the region matches
+            const regionMatches = regions.some(r => 
+              r.id === watchedRegionId && 
+              (r.name_en === location.region_en || r.name_mm === location.region_mm)
+            );
+            
+            if (regionMatches && (location.township_en || location.township_mm)) {
+              const township = availableTownships.find(t => 
+                t.name_en === location.township_en || t.name_mm === location.township_mm
+              );
+              if (township) {
+                townshipId = township.id;
+              }
+            }
+          }
+          
+          // Set township if found and different from current value
+          if (townshipId) {
+            const currentTownshipId = form.getValues('prefer_township_id');
+            if (currentTownshipId !== townshipId) {
+              form.setValue('prefer_township_id', townshipId);
+            }
+          }
+        }
+      }, 50); // Small delay to ensure region change is processed
+    }
+  }, [watchedRegionId, availableTownships, wantingList, form, regions]);
 
   const onSubmit = (data: any) => {
     if (!id) return;
@@ -193,7 +266,7 @@ export default function EditWantedList() {
                     required
                   >
                     <Select 
-                      value={form.watch('wanted_type')} 
+                      value={form.watch('wanted_type') || ''} 
                       onValueChange={(value) => form.setValue('wanted_type', value as 'buyer' | 'renter')}
                     >
                       <SelectTrigger>
@@ -213,7 +286,7 @@ export default function EditWantedList() {
                     required
                   >
                     <Select 
-                      value={form.watch('property_type_id')?.toString()} 
+                      value={form.watch('property_type_id')?.toString() || ''} 
                       onValueChange={(value) => form.setValue('property_type_id', parseInt(value))}
                     >
                       <SelectTrigger>
@@ -273,7 +346,7 @@ export default function EditWantedList() {
                     required
                   >
                     <Select 
-                      value={form.watch('prefer_region_id')?.toString()} 
+                      value={form.watch('prefer_region_id')?.toString() || ''} 
                       onValueChange={handleRegionChange}
                     >
                       <SelectTrigger>
@@ -296,7 +369,7 @@ export default function EditWantedList() {
                     required
                   >
                     <Select 
-                      value={form.watch('prefer_township_id')?.toString()} 
+                      value={form.watch('prefer_township_id')?.toString() || ''} 
                       onValueChange={(value) => form.setValue('prefer_township_id', parseInt(value))}
                       disabled={!watchedRegionId}
                     >
