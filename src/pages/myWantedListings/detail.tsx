@@ -11,6 +11,9 @@ import { ShareModal } from '@/components/ui/ShareModal';
 import { useWantingList } from '@/hooks/queries/useWantingList';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useDeleteWantingList } from '@/hooks/mutations';
+import { useConfirmModal } from '@/hooks/useConfirmModal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useModal } from '@/contexts/ModalContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function WantingListDetail() {
@@ -22,19 +25,46 @@ export default function WantingListDetail() {
   // Fetch wanting list data
   const { data: wantingListData, isLoading, error } = useWantingList(id || '');
   const deleteWantingListMutation = useDeleteWantingList();
+  
+  // Modal hooks
+  const { showSuccess, showError } = useModal();
+  const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
   const wantingList = wantingListData?.data;
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this wanted listing?')) {
-      if (id) {
-        deleteWantingListMutation.mutate(id, {
-          onSuccess: () => {
-            navigate('/my-wanted-listings/list');
-          },
+    if (!id) return;
+    
+    showConfirm({
+      title: t('editWantedList.confirmDeleteTitle') || 'Confirm Delete',
+      message: t('editWantedList.confirmDeleteMessage') || 'Are you sure you want to delete this wanted listing? This action cannot be undone.',
+      confirmText: t('myWantedList.delete'),
+      cancelText: t('editWantedList.cancel') || 'Cancel',
+      confirmVariant: 'destructive',
+      onConfirm: () => {
+        return new Promise((resolve, reject) => {
+          deleteWantingListMutation.mutate(id, {
+            onSuccess: () => {
+              showSuccess(
+                t('toast.deleteWantingList.success'),
+                t('editWantedList.deleteSuccessTitle') || 'Success!'
+              );
+              setTimeout(() => {
+                navigate('/my-wanted-listings/list');
+              }, 1500);
+              resolve();
+            },
+            onError: (error) => {
+              showError(
+                t('toast.deleteWantingList.error'),
+                t('editWantedList.errorTitle')
+              );
+              reject(error);
+            },
+          });
         });
-      }
-    }
+      },
+    });
   };
 
   const getVerificationStatusColor = (verificationStatus: string, isExpired: boolean) => {
@@ -411,6 +441,19 @@ export default function WantingListDetail() {
           </div>
         </div>
       </div>
+      
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={hideConfirm}
+        onConfirm={handleConfirm}
+        title={confirmOptions?.title || ''}
+        message={confirmOptions?.message || ''}
+        confirmText={confirmOptions?.confirmText}
+        cancelText={confirmOptions?.cancelText}
+        confirmVariant={confirmOptions?.confirmVariant}
+        isLoading={isConfirmLoading}
+      />
     </>
   );
 }

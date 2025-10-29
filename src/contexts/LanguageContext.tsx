@@ -163,6 +163,11 @@ const translations: Translations = {
     'editWantedList.successTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
     'editWantedList.errorMessage': { en: 'Failed to update wanted listing. Please try again.', mm: 'လိုချင်သောစာရင်းပြင်ဆင်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
     'editWantedList.errorTitle': { en: 'Error', mm: 'အမှား' },
+    'editWantedList.confirmDeleteTitle': { en: 'Confirm Delete', mm: 'ဖျက်ရန်အတည်ပြုရန်' },
+    'editWantedList.confirmDeleteMessage': { en: 'Are you sure you want to delete this wanted listing? This action cannot be undone.', mm: 'ဤလိုချင်သောစာရင်းကို ဖျက်လိုသည်မှာ သေချာပါသလား? ဤလုပ်ဆောင်ချက်ကို ပြန်လည်မလုပ်နိုင်ပါ။' },
+    'editWantedList.cancel': { en: 'Cancel', mm: 'ပယ်ဖျက်ရန်' },
+    'editWantedList.deleting': { en: 'Deleting...', mm: 'ဖျက်နေသည်...' },
+    'editWantedList.deleteSuccessTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
     
   // Toast Messages
   'toast.createWantingList.success': { en: 'Wanted listing created successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!' },

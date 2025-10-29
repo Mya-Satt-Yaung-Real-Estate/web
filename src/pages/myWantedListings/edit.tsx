@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
-import { ArrowLeft, MapPin, User, Phone } from 'lucide-react';
+import { ArrowLeft, MapPin, User, Phone, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,9 @@ import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
-import { useUpdateWantingList } from '@/hooks/mutations';
+import { useUpdateWantingList, useDeleteWantingList } from '@/hooks/mutations';
+import { useConfirmModal } from '@/hooks/useConfirmModal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useWantingList } from '@/hooks/queries/useWantingList';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { createWantingListSchema } from '@/lib/validation';
@@ -34,11 +36,15 @@ export default function EditWantedList() {
   const { data: townshipsData, isLoading: townshipsLoading } = useTownships();
   const { data: propertyTypesData, isLoading: propertyTypesLoading } = usePropertyTypes();
   
-  // Mutation hook
+  // Mutation hooks
   const updateWantingListMutation = useUpdateWantingList();
+  const deleteWantingListMutation = useDeleteWantingList();
   
   // Modal hook
   const { showSuccess, showError } = useModal();
+  
+  // Confirm modal hook
+  const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
   
   // Form validation
   const { form, errors } = useFormValidation(createWantingListSchema);
@@ -206,6 +212,41 @@ export default function EditWantedList() {
         },
       }
     );
+  };
+
+  const handleDelete = () => {
+    if (!id) return;
+    
+    showConfirm({
+      title: t('editWantedList.confirmDeleteTitle') || 'Confirm Delete',
+      message: t('editWantedList.confirmDeleteMessage') || 'Are you sure you want to delete this wanted listing? This action cannot be undone.',
+      confirmText: t('myWantedList.delete'),
+      cancelText: t('editWantedList.cancel') || 'Cancel',
+      confirmVariant: 'destructive',
+      onConfirm: () => {
+        return new Promise((resolve, reject) => {
+          deleteWantingListMutation.mutate(id, {
+            onSuccess: () => {
+              showSuccess(
+                t('toast.deleteWantingList.success'),
+                t('editWantedList.deleteSuccessTitle') || 'Success!'
+              );
+              setTimeout(() => {
+                navigate('/my-wanted-listings/list');
+              }, 1500);
+              resolve();
+            },
+            onError: (error) => {
+              showError(
+                t('toast.deleteWantingList.error'),
+                t('editWantedList.errorTitle')
+              );
+              reject(error);
+            },
+          });
+        });
+      },
+    });
   };
 
   const handleRegionChange = (value: string) => {
@@ -581,21 +622,33 @@ export default function EditWantedList() {
             {/* Submit Buttons Card */}
             <Card className="shadow-lg">
               <CardContent className="pt-6">
-                <div className="flex justify-end gap-4">
-                  <Button
-                    type="submit"
-                    disabled={updateWantingListMutation.isPending}
-                    className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
-                  >
-                    {updateWantingListMutation.isPending ? t('editWantedList.updating') : t('editWantedList.updateListing')}
-                  </Button>
+                <div className="flex justify-between gap-4">
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={() => navigate(-1)}
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={deleteWantingListMutation.isPending}
+                    className="flex items-center gap-2"
                   >
-                    {t('createWantedList.cancel')}
+                    <Trash2 className="h-4 w-4" />
+                    {deleteWantingListMutation.isPending ? (t('editWantedList.deleting') || 'Deleting...') : t('myWantedList.delete')}
                   </Button>
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate(-1)}
+                    >
+                      {t('createWantedList.cancel')}
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={updateWantingListMutation.isPending}
+                      className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
+                    >
+                      {updateWantingListMutation.isPending ? t('editWantedList.updating') : t('editWantedList.updateListing')}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -603,6 +656,19 @@ export default function EditWantedList() {
           )}
         </div>
       </div>
+      
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={hideConfirm}
+        onConfirm={handleConfirm}
+        title={confirmOptions?.title || ''}
+        message={confirmOptions?.message || ''}
+        confirmText={confirmOptions?.confirmText}
+        cancelText={confirmOptions?.cancelText}
+        confirmVariant={confirmOptions?.confirmVariant}
+        isLoading={isConfirmLoading}
+      />
     </>
   );
 }

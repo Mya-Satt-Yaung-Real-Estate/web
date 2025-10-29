@@ -14,7 +14,9 @@ import { seoUtils } from '@/lib/seo';
 import { useWantingLists } from '@/hooks/queries/useWantingList';
 import { useDeleteWantingList } from '@/hooks/mutations';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { toast } from 'sonner';
+import { useConfirmModal } from '@/hooks/useConfirmModal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useModal } from '@/contexts/ModalContext';
 
 
 export default function MyWantedList() {
@@ -37,6 +39,10 @@ export default function MyWantedList() {
   });
   
   const deleteWantingListMutation = useDeleteWantingList();
+  
+  // Modal hooks
+  const { showSuccess, showError } = useModal();
+  const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
   const handleSearch = (value: string) => {
     setFilters(prev => ({ ...prev, search: value }));
@@ -50,17 +56,35 @@ export default function MyWantedList() {
     setCurrentPage(page);
   };
 
-  const handleDelete = async (slug: string) => {
-    if (window.confirm('Are you sure you want to delete this wanted listing?')) {
-      try {
-        await deleteWantingListMutation.mutateAsync(slug);
-        toast.success('Wanted listing deleted successfully');
-        refetch();
-      } catch (error) {
-        toast.error('Failed to delete wanted listing');
-        console.error('Delete error:', error);
-      }
-    }
+  const handleDelete = (slug: string) => {
+    showConfirm({
+      title: t('editWantedList.confirmDeleteTitle') || 'Confirm Delete',
+      message: t('editWantedList.confirmDeleteMessage') || 'Are you sure you want to delete this wanted listing? This action cannot be undone.',
+      confirmText: t('myWantedList.delete'),
+      cancelText: t('editWantedList.cancel') || 'Cancel',
+      confirmVariant: 'destructive',
+      onConfirm: () => {
+        return new Promise((resolve, reject) => {
+          deleteWantingListMutation.mutate(slug, {
+            onSuccess: () => {
+              showSuccess(
+                t('toast.deleteWantingList.success'),
+                t('editWantedList.deleteSuccessTitle') || 'Success!'
+              );
+              refetch();
+              resolve();
+            },
+            onError: (error) => {
+              showError(
+                t('toast.deleteWantingList.error'),
+                t('editWantedList.errorTitle')
+              );
+              reject(error);
+            },
+          });
+        });
+      },
+    });
   };
 
 
@@ -374,6 +398,19 @@ export default function MyWantedList() {
           )}
         </div>
       </div>
+      
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={hideConfirm}
+        onConfirm={handleConfirm}
+        title={confirmOptions?.title || ''}
+        message={confirmOptions?.message || ''}
+        confirmText={confirmOptions?.confirmText}
+        cancelText={confirmOptions?.cancelText}
+        confirmVariant={confirmOptions?.confirmVariant}
+        isLoading={isConfirmLoading}
+      />
     </>
   );
 }
