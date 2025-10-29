@@ -128,7 +128,41 @@ const translations: Translations = {
     'createWantedList.selectTownship': { en: 'Select township', mm: 'မြို့နယ်ရွေးချယ်ပါ' },
     'createWantedList.any': { en: 'Any', mm: 'မည်သည့်အရာ' },
     
-    // Validation Error Messages
+    // Validation Error Messages - Field-specific
+    'validation.wantedType.required': { en: 'Please select if you are a buyer or renter', mm: 'သင်သည် ဝယ်သူ သို့မဟုတ် ငှားသူ ဖြစ်ကြောင်း ရွေးချယ်ပါ' },
+    'validation.wantedType.invalid': { en: 'Please select a valid option', mm: 'မှန်ကန်သော ရွေးချယ်မှုတစ်ခုကို ရွေးချယ်ပါ' },
+    
+    'validation.propertyType.required': { en: 'Please select a property type', mm: 'အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
+    'validation.propertyType.invalid': { en: 'Please select a valid property type', mm: 'မှန်ကန်သော အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
+    
+    'validation.title.required': { en: 'Title is required', mm: 'ခေါင်းစဉ်လိုအပ်ပါသည်' },
+    'validation.title.minLength': { en: 'Title must be at least 10 characters', mm: 'ခေါင်းစဉ်သည် အနည်းဆုံး ၁၀ လုံးရှိရပါမည်' },
+    
+    'validation.region.required': { en: 'Please select a region', mm: 'တိုင်းဒေသကြီးကို ရွေးချယ်ပါ' },
+    
+    'validation.township.required': { en: 'Please select a township', mm: 'မြို့နယ်ကို ရွေးချယ်ပါ' },
+    
+    'validation.name.required': { en: 'Full name is required', mm: 'အမည်အပြည့်အစုံ လိုအပ်ပါသည်' },
+    'validation.name.minLength': { en: 'Name must be at least 2 characters', mm: 'အမည်သည် အနည်းဆုံး ၂ လုံးရှိရပါမည်' },
+    
+    'validation.phone.required': { en: 'Phone number is required', mm: 'ဖုန်းနံပါတ် လိုအပ်ပါသည်' },
+    'validation.phone.invalid': { en: 'Phone number must be 9-11 digits', mm: 'ဖုန်းနံပါတ်သည် ၉-၁၁ လုံးရှိရပါမည်' },
+    
+    'validation.email.invalid': { en: 'Please enter a valid email address', mm: 'မှန်ကန်သော အီးမေးလ်လိပ်စာကို ရိုက်ထည့်ပါ' },
+    
+    'validation.budget.positive': { en: 'Budget must be a positive number', mm: 'ဘတ်ဂျက်သည် အပေါင်းကိန်းဖြစ်ရပါမည်' },
+    'validation.budget.range': { en: 'Maximum budget must be greater than minimum budget', mm: 'အများဆုံးဘတ်ဂျက်သည် အနည်းဆုံးဘတ်ဂျက်ထက် ကြီးရပါမည်' },
+    
+    'validation.bedrooms.integer': { en: 'Number of bedrooms must be a whole number', mm: 'အိပ်ခန်းအရေအတွက်သည် ကိန်းပြည့်ဖြစ်ရပါမည်' },
+    'validation.bedrooms.positive': { en: 'Number of bedrooms must be 0 or greater', mm: 'အိပ်ခန်းအရေအတွက်သည် ၀ သို့မဟုတ် ပိုကြီးရပါမည်' },
+    
+    'validation.bathrooms.integer': { en: 'Number of bathrooms must be a whole number', mm: 'ရေချိုးခန်းအရေအတွက်သည် ကိန်းပြည့်ဖြစ်ရပါမည်' },
+    'validation.bathrooms.positive': { en: 'Number of bathrooms must be 0 or greater', mm: 'ရေချိုးခန်းအရေအတွက်သည် ၀ သို့မဟုတ် ပိုကြီးရပါမည်' },
+    
+    'validation.area.positive': { en: 'Area must be a positive number', mm: 'ဧရိယာသည် အပေါင်းကိန်းဖြစ်ရပါမည်' },
+    'validation.area.range': { en: 'Maximum area must be greater than minimum area', mm: 'အများဆုံးဧရိယာသည် အနည်းဆုံးဧရိယာထက် ကြီးရပါမည်' },
+    
+    // Legacy validation messages (keeping for backward compatibility)
     'validation.required': { en: 'is required', mm: 'ဖြည့်ရန် လိုအပ်ပါသည်' },
     'validation.budgetRange': { en: 'Minimum budget must be less than or equal to maximum budget', mm: 'အနည်းဆုံးဘတ်ဂျက်သည် အများဆုံးဘတ်ဂျက်ထက် နည်းရမည် သို့မဟုတ် ညီမျှရမည်' },
     'validation.areaRange': { en: 'Minimum area must be less than or equal to maximum area', mm: 'အနည်းဆုံးဧရိယာသည် အများဆုံးဧရိယာထက် နည်းရမည် သို့မဟုတ် ညီမျှရမည်' },
