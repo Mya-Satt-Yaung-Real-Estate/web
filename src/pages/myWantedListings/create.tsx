@@ -68,14 +68,14 @@ export default function CreateWantedList() {
     };
 
     createWantingListMutation.mutate(createData, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         showSuccess(
           t('createWantedList.successMessage'),
           t('createWantedList.successTitle')
         );
-        // Navigate after showing success modal
+        // Navigate to the detail page of the created listing
         setTimeout(() => {
-          navigate('/my-wanted-listings/list');
+          navigate(`/my-wanted-listings/detail/${response.data.slug}`);
         }, 2000);
       },
       onError: (error: any) => {

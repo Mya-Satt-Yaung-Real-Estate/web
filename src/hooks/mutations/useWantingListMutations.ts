@@ -9,12 +9,15 @@ export const useCreateWantingList = () => {
 
   return useMutation({
     mutationFn: (data: WantingListCreateData) => wantingListApi.createList(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
       // Invalidate and refetch wanting lists
       queryClient.invalidateQueries({ queryKey: wantingListKeys.lists() });
       queryClient.invalidateQueries({ queryKey: wantingListKeys.statistics() });
       
       toast.success('Wanted listing created successfully!');
+      
+      // Return response for component to use
+      return response;
     },
     onError: (error: any) => {
       console.error('Create wanting list failed:', error);
