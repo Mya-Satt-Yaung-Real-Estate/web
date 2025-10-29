@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 // Lazy load protected page components
 const MyWantedList = lazy(() => import('../pages/myWantedListings/list'));
 const CreateWantedList = lazy(() => import('../pages/myWantedListings/create'));
+const EditWantedList = lazy(() => import('../pages/myWantedListings/edit'));
 const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'));
 
 // Protected routes configuration
@@ -26,6 +27,16 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <CreateWantedList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-wanted-listings/edit/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditWantedList />
         </Suspense>
       </ProtectedRoute>
     ),

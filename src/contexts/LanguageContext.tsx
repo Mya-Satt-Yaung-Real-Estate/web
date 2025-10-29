@@ -155,6 +155,15 @@ const translations: Translations = {
     'createWantedList.selectTownship': { en: 'Select township', mm: 'မြို့နယ်ရွေးချယ်ပါ' },
     'createWantedList.any': { en: 'Any', mm: 'မည်သည့်အရာ' },
     
+    // Edit Wanted List
+    'editWantedList.title': { en: 'Edit Wanted Listing', mm: 'လိုချင်သောစာရင်းပြင်ဆင်ရန်' },
+    'editWantedList.updateListing': { en: 'Update Listing', mm: 'စာရင်းပြင်ဆင်ရန်' },
+    'editWantedList.updating': { en: 'Updating...', mm: 'ပြင်ဆင်နေသည်...' },
+    'editWantedList.successMessage': { en: 'Your wanted listing has been updated successfully!', mm: 'သင့်လိုချင်သောစာရင်းကိုအောင်မြင်စွာပြင်ဆင်ပြီးပါပြီ!' },
+    'editWantedList.successTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
+    'editWantedList.errorMessage': { en: 'Failed to update wanted listing. Please try again.', mm: 'လိုချင်သောစာရင်းပြင်ဆင်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
+    'editWantedList.errorTitle': { en: 'Error', mm: 'အမှား' },
+    
   // Toast Messages
   'toast.createWantingList.success': { en: 'Wanted listing created successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!' },
   'toast.createWantingList.error': { en: 'Failed to create wanted listing', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို ဖန်တီးရာတွင် မအောင်မြင်ပါ' },
