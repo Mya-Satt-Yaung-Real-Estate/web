@@ -241,7 +241,7 @@ export default function AppointmentList() {
                 <p className="text-muted-foreground mb-4">
                   {t('appointments.noAppointmentsDesc') || 'You haven\'t created any appointments yet.'}
                 </p>
-                <Button onClick={() => navigate('/appointments/create')} className="gradient-primary">
+                <Button onClick={() => setIsCreateModalOpen(true)} className="gradient-primary">
                   <Plus className="h-4 w-4 mr-2" />
                   {t('appointments.create') || 'Create Appointment'}
                 </Button>

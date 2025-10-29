@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi } from '@/services/api/auth';
-import { queryClient } from '@/providers/QueryProvider';
-import { wantingListKeys } from '@/services/queries/wantingList';
+import { clearUserSpecificCache, clearUserDataOnly } from '@/utils/cacheUtils';
 import type { ExtendedUser } from '@/types/auth';
 
 interface AuthState {
@@ -32,10 +31,19 @@ export const useAuthStore = create<AuthState>()(
       isLoading: true,
 
       // Actions
-      setUser: (user) => set({ 
-        user, 
-        isAuthenticated: !!user && user.user_id !== 0 
-      }),
+      setUser: (user) => {
+        // Clear caches when user changes (including when user becomes null)
+        if (!user) {
+          clearUserSpecificCache();
+        } else {
+          clearUserDataOnly();
+        }
+        
+        set({ 
+          user, 
+          isAuthenticated: !!user && user.user_id !== 0 
+        });
+      },
 
       setToken: (token) => set({ token }),
 
@@ -53,11 +61,7 @@ export const useAuthStore = create<AuthState>()(
         } finally {
           // Clear all user-specific queries from React Query cache
           // This ensures new user won't see previous user's cached data
-          queryClient.removeQueries({ queryKey: wantingListKeys.all });
-          queryClient.removeQueries({ queryKey: wantingListKeys.public.all });
-          
-          // Clear any other user-specific queries if needed
-          // For now, we'll focus on wantingList as that's the reported issue
+          clearUserSpecificCache();
           
           set({ 
             user: null, 
@@ -114,6 +118,8 @@ export const useAuthStore = create<AuthState>()(
         const { token } = get();
         
         if (!token) {
+          // Clear all user data when no token is present
+          clearUserSpecificCache();
           set({ user: null, isAuthenticated: false, isLoading: false });
           return;
         }
@@ -150,10 +156,13 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false 
           });
           
-          // Clear wanting list cache when new user logs in to ensure fresh data
-          queryClient.removeQueries({ queryKey: wantingListKeys.all });
+          // Clear all user-specific caches when new user logs in to ensure fresh data
+          clearUserDataOnly();
         } catch (error) {
           // User is not authenticated or token is invalid
+          // Clear all user data when authentication fails
+          clearUserSpecificCache();
+          
           set({ 
             user: null, 
             token: null, 

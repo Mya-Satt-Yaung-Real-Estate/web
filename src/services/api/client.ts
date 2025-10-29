@@ -7,6 +7,7 @@
 import { CONFIG } from '@/lib/config';
 import type { ApiResponse } from '@/types';
 import { useAuthStore } from '@/stores/authStore';
+import { clearUserSpecificCache } from '@/utils/cacheUtils';
 
 // ============================================================================
 // TYPES
@@ -74,6 +75,16 @@ class ApiClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
+        // Handle authentication errors by clearing user data
+        if (response.status === 401) {
+          // Clear all user-specific caches when authentication fails
+          clearUserSpecificCache();
+          
+          // Reset auth state
+          useAuthStore.getState().setUser(null);
+          useAuthStore.getState().setToken(null);
+        }
+        
         // Try to parse error response body for detailed error messages
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         let errorData = null;
