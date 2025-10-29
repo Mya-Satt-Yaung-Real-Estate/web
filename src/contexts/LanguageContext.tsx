@@ -128,9 +128,19 @@ const translations: Translations = {
     'createWantedList.selectTownship': { en: 'Select township', mm: 'မြို့နယ်ရွေးချယ်ပါ' },
     'createWantedList.any': { en: 'Any', mm: 'မည်သည့်အရာ' },
     
-    // Validation Error Messages - Field-specific
-    'validation.wantedType.required': { en: 'Please select if you are a buyer or renter', mm: 'သင်သည် ဝယ်သူ သို့မဟုတ် ငှားသူ ဖြစ်ကြောင်း ရွေးချယ်ပါ' },
-    'validation.wantedType.invalid': { en: 'Please select a valid option', mm: 'မှန်ကန်သော ရွေးချယ်မှုတစ်ခုကို ရွေးချယ်ပါ' },
+  // Toast Messages
+  'toast.createWantingList.success': { en: 'Wanted listing created successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!' },
+  'toast.createWantingList.error': { en: 'Failed to create wanted listing', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို ဖန်တီးရာတွင် မအောင်မြင်ပါ' },
+  'toast.updateWantingList.success': { en: 'Wanted listing updated successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ!' },
+  'toast.updateWantingList.error': { en: 'Failed to update wanted listing', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို ပြင်ဆင်ရာတွင် မအောင်မြင်ပါ' },
+  'toast.deleteWantingList.success': { en: 'Wanted listing deleted successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ!' },
+  'toast.deleteWantingList.error': { en: 'Failed to delete wanted listing', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်းကို ဖျက်ရာတွင် မအောင်မြင်ပါ' },
+  'toast.toggleWantingListStatus.success': { en: 'Wanted listing status updated successfully!', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်း အခြေအနေကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ!' },
+  'toast.toggleWantingListStatus.error': { en: 'Failed to update wanted listing status', mm: 'လိုချင်သော အိမ်ခြံမြေစာရင်း အခြေအနေကို ပြင်ဆင်ရာတွင် မအောင်မြင်ပါ' },
+
+  // Validation Error Messages - Field-specific
+  'validation.wantedType.required': { en: 'Please select if you are a buyer or renter', mm: 'သင်သည် ဝယ်သူ သို့မဟုတ် ငှားသူ ဖြစ်ကြောင်း ရွေးချယ်ပါ' },
+  'validation.wantedType.invalid': { en: 'Please select a valid option', mm: 'မှန်ကန်သော ရွေးချယ်မှုတစ်ခုကို ရွေးချယ်ပါ' },
     
     'validation.propertyType.required': { en: 'Please select a property type', mm: 'အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
     'validation.propertyType.invalid': { en: 'Please select a valid property type', mm: 'မှန်ကန်သော အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },

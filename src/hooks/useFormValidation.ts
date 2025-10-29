@@ -3,12 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { ZodSchema } from 'zod';
+import type { FieldValues } from 'react-hook-form';
 
 /**
  * Custom hook for form validation using React Hook Form and Zod
  * Integrates with existing i18n system for field-specific error messages
  */
-export const useFormValidation = <T>(
+export const useFormValidation = <T extends FieldValues>(
   schemaFactory: (t: (key: string) => string) => ZodSchema<T>
 ) => {
   const { t, language } = useLanguage();
@@ -17,7 +18,7 @@ export const useFormValidation = <T>(
   const schema = useMemo(() => schemaFactory(t), [t, language]);
   
   const form = useForm<T>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any) as any,
     mode: 'onBlur', // Validate on blur for better UX
     reValidateMode: 'onChange', // Re-validate on change after first error
     defaultValues: {
@@ -30,7 +31,7 @@ export const useFormValidation = <T>(
       email: '',
       description: '',
       additional_requirement: ''
-    } as Partial<T>
+    } as any
   });
   
   // Transform errors to use translated messages

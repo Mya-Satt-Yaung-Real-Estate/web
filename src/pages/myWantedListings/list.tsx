@@ -11,7 +11,8 @@ import { Pagination } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
-import { useWantingLists, useDeleteWantingList, useToggleWantingListStatus } from '@/hooks/queries/useWantingList';
+import { useWantingLists } from '@/hooks/queries/useWantingList';
+import { useDeleteWantingList, useToggleWantingListStatus } from '@/hooks/mutations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 

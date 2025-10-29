@@ -10,6 +10,7 @@ import { seoUtils } from '@/lib/seo';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useModal } from '@/contexts/ModalContext';
 import { useCreateWantingList } from '@/hooks/mutations';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { createWantingListSchema } from '@/lib/validation';
@@ -28,6 +29,9 @@ export default function CreateWantedList() {
   
   // Mutation hook
   const createWantingListMutation = useCreateWantingList();
+  
+  // Modal hook
+  const { showSuccess, showError } = useModal();
   
   // Form validation
   const { form, errors } = useFormValidation(createWantingListSchema);
@@ -65,7 +69,19 @@ export default function CreateWantedList() {
 
     createWantingListMutation.mutate(createData, {
       onSuccess: () => {
-        navigate('/my-wanted-listings/list');
+        showSuccess(
+          t('createWantedList.successMessage'),
+          t('createWantedList.successTitle')
+        );
+        // Navigate after showing success modal
+        setTimeout(() => {
+          navigate('/my-wanted-listings/list');
+        }, 2000);
+      },
+      onError: (error: any) => {
+        console.error('Create wanting list failed:', error);
+        const errorMessage = error?.response?.data?.message || error?.message || t('createWantedList.errorMessage');
+        showError(errorMessage, t('createWantedList.errorTitle'));
       },
     });
   };

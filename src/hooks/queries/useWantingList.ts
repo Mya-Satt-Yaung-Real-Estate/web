@@ -4,10 +4,9 @@
  * TanStack Query hooks for wanting list operations.
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { wantingListQueries, wantingListKeys } from '../../services/queries/wantingList';
-import { wantingListApi } from '../../services/api/wantingList';
-import type { WantingListFilters, WantingListCreateData, WantingListUpdateData } from '@/types/wantingList';
+import { useQuery } from '@tanstack/react-query';
+import { wantingListQueries } from '../../services/queries/wantingList';
+import type { WantingListFilters } from '@/types/wantingList';
 
 // ============================================================================
 // AUTHENTICATED USER WANTING LISTS
@@ -57,69 +56,6 @@ export function usePublicWantingList(slug: string) {
  */
 export function usePublicWantingListStatistics() {
   return useQuery(wantingListQueries.getPublicStatistics());
-}
-
-// ============================================================================
-// MUTATIONS
-// ============================================================================
-
-/**
- * Create a new wanting list (authenticated)
- */
-export function useCreateWantingList() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (data: WantingListCreateData) => wantingListApi.createList(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wantingListKeys.all });
-    },
-  });
-}
-
-/**
- * Update a wanting list (authenticated)
- */
-export function useUpdateWantingList() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: ({ slug, data }: { slug: string; data: WantingListUpdateData }) => 
-      wantingListApi.updateList(slug, data),
-    onSuccess: (_, { slug }) => {
-      queryClient.invalidateQueries({ queryKey: wantingListKeys.all });
-      queryClient.invalidateQueries({ queryKey: wantingListKeys.detail(slug) });
-    },
-  });
-}
-
-/**
- * Delete a wanting list (authenticated)
- */
-export function useDeleteWantingList() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (slug: string) => wantingListApi.deleteList(slug),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wantingListKeys.all });
-    },
-  });
-}
-
-/**
- * Toggle wanting list status (authenticated)
- */
-export function useToggleWantingListStatus() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (slug: string) => wantingListApi.toggleStatus(slug),
-    onSuccess: (_, slug) => {
-      queryClient.invalidateQueries({ queryKey: wantingListKeys.all });
-      queryClient.invalidateQueries({ queryKey: wantingListKeys.detail(slug) });
-    },
-  });
 }
 
 // ============================================================================

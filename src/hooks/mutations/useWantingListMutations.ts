@@ -9,7 +9,7 @@ export const useCreateWantingList = () => {
 
   return useMutation({
     mutationFn: (data: WantingListCreateData) => wantingListApi.createList(data),
-    onSuccess: (response) => {
+    onSuccess: () => {
       // Invalidate and refetch wanting lists
       queryClient.invalidateQueries({ queryKey: wantingListKeys.lists() });
       queryClient.invalidateQueries({ queryKey: wantingListKeys.statistics() });
@@ -29,7 +29,7 @@ export const useUpdateWantingList = () => {
   return useMutation({
     mutationFn: ({ slug, data }: { slug: string; data: WantingListUpdateData }) => 
       wantingListApi.updateList(slug, data),
-    onSuccess: (response, { slug }) => {
+    onSuccess: (_, { slug }) => {
       // Invalidate and refetch wanting lists
       queryClient.invalidateQueries({ queryKey: wantingListKeys.lists() });
       queryClient.invalidateQueries({ queryKey: wantingListKeys.detail(slug) });
@@ -68,7 +68,7 @@ export const useToggleWantingListStatus = () => {
 
   return useMutation({
     mutationFn: (slug: string) => wantingListApi.toggleStatus(slug),
-    onSuccess: (response, slug) => {
+    onSuccess: (_, slug) => {
       // Invalidate and refetch wanting lists
       queryClient.invalidateQueries({ queryKey: wantingListKeys.lists() });
       queryClient.invalidateQueries({ queryKey: wantingListKeys.detail(slug) });
