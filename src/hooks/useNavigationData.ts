@@ -52,7 +52,7 @@ export function useNavigationData() {
     createListingOptions: [
       { name: t('createListing.propertyPost'), path: '/post-property?tab=property', icon: HomeIcon },
       { name: t('createListing.wantedPost'), path: '/my-wanted-listings/list', icon: Search },
-      { name: t('createListing.advertisementPost'), path: '/post-property?tab=advertisement', icon: Megaphone },
+      { name: t('createListing.advertisementPost'), path: '/advertisements', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
       { name: t('createListing.giveYourReview'), path: '/feedback', icon: Star },
       { name: t('createListing.jobPostCreate'), path: '/jobs', icon: Briefcase },

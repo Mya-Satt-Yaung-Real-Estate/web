@@ -9,6 +9,7 @@ const EditWantedList = lazy(() => import('../pages/myWantedListings/edit'));
 const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'));
 const AppointmentList = lazy(() => import('../pages/appointments/list'));
 const EditAppointment = lazy(() => import('../pages/appointments/edit'));
+const MyAdvertisementsList = lazy(() => import('../pages/advertisements/list'));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -70,6 +71,17 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <EditAppointment />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  // Advertisement routes
+  {
+    path: '/advertisements',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyAdvertisementsList />
         </Suspense>
       </ProtectedRoute>
     ),

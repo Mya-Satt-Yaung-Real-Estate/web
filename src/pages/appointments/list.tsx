@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import { Plus, Calendar, Clock, MapPin, DollarSign, User, Phone, Mail, Edit, Trash2, CalendarDays } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ import type { AppointmentFilters, Appointment } from '@/types/appointment';
 export default function AppointmentList() {
   const seo = seoUtils.getPageSEO('appointments');
   const { t, language } = useLanguage();
-  // const navigate = useNavigate();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
