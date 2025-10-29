@@ -127,3 +127,15 @@ export interface CreateAppointmentData {
   advance_amount?: number;
   message?: string;
 }
+
+export interface UpdateAppointmentData {
+  property_listing_type_id: number;
+  prefer_time_id?: number;
+  is_anytime: boolean;
+  date: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  advance_amount?: number;
+  message?: string;
+}

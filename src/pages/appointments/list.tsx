@@ -12,6 +12,7 @@ import { seoUtils } from '@/lib/seo';
 import { useAppointments, usePropertyListingTypes } from '@/hooks/queries/useAppointment';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CreateAppointmentModal } from '@/components/appointments/CreateAppointmentModal';
+import { EditAppointmentModal } from '@/components/appointments/EditAppointmentModal';
 import type { AppointmentFilters, Appointment } from '@/types/appointment';
 
 export default function AppointmentList() {
@@ -19,6 +20,8 @@ export default function AppointmentList() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<AppointmentFilters>({
     status: '' as any,
@@ -266,7 +269,14 @@ export default function AppointmentList() {
                       </div>
                       {appointment.status === 'pending' && (
                         <div className="flex gap-2">
-                          <Button variant="outline" size="icon">
+                          <Button 
+                            variant="outline" 
+                            size="icon"
+                            onClick={() => {
+                              setSelectedAppointmentId(appointment.id);
+                              setIsEditModalOpen(true);
+                            }}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="outline" size="icon" className="text-destructive hover:bg-destructive/10">
@@ -361,6 +371,18 @@ export default function AppointmentList() {
       <CreateAppointmentModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          refetch();
+        }}
+      />
+      
+      <EditAppointmentModal
+        appointmentId={selectedAppointmentId}
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedAppointmentId(null);
+        }}
         onSuccess={() => {
           refetch();
         }}

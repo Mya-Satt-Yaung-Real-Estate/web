@@ -5,7 +5,8 @@ import type {
   AppointmentFilters,
   AppointmentTimeSlotResponse,
   PropertyListingTypeResponse,
-  CreateAppointmentData
+  CreateAppointmentData,
+  UpdateAppointmentData
 } from '@/types/appointment';
 
 export const appointmentApi = {
@@ -32,6 +33,12 @@ export const appointmentApi = {
   // Create appointment
   async createAppointment(data: CreateAppointmentData): Promise<AppointmentResponse> {
     const response = await apiClient.post<AppointmentResponse>('/api/v1/frontend/appointments', data);
+    return response.data;
+  },
+
+  // Update appointment
+  async updateAppointment(id: number, data: UpdateAppointmentData): Promise<AppointmentResponse> {
+    const response = await apiClient.put<AppointmentResponse>(`/api/v1/frontend/appointments/${id}`, data);
     return response.data;
   },
 
