@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Calendar, MapPin, DollarSign, Home, Bed, Bath, Square } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -12,14 +12,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useWantingLists, useDeleteWantingList, useToggleWantingListStatus } from '@/hooks/queries/useWantingList';
-import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 
 export default function MyWantedList() {
   const seo = seoUtils.getPageSEO('myWantedList');
-  const { isAuthenticated } = useAuthStore();
   const { t, language } = useLanguage();
   const [filters, setFilters] = useState({
     search: '',
@@ -39,13 +37,6 @@ export default function MyWantedList() {
   
   const deleteWantingListMutation = useDeleteWantingList();
   const toggleStatusMutation = useToggleWantingListStatus();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated) {
-      window.location.href = '/signin';
-    }
-  }, [isAuthenticated]);
 
   const handleSearch = (value: string) => {
     setFilters(prev => ({ ...prev, search: value }));

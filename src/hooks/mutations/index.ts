@@ -9,3 +9,4 @@
 // ============================================================================
 
 export * from './usePropertyMutations';
+export * from './useWantingListMutations';

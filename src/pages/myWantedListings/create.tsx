@@ -12,17 +12,21 @@ import { seoUtils } from '@/lib/seo';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCreateWantingList } from '@/hooks/mutations';
+import type { WantingListCreateData } from '@/types/wantingList';
 
 export default function CreateWantedList() {
   const navigate = useNavigate();
   const seo = seoUtils.getPageSEO('createWantedList');
   const { t, language } = useLanguage();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Fetch API data
   const { data: regionsData, isLoading: regionsLoading } = useRegions();
   const { data: townshipsData, isLoading: townshipsLoading } = useTownships();
   const { data: propertyTypesData, isLoading: propertyTypesLoading } = usePropertyTypes();
+  
+  // Mutation hook
+  const createWantingListMutation = useCreateWantingList();
   
   const isLoading = regionsLoading || townshipsLoading || propertyTypesLoading;
 
@@ -49,11 +53,65 @@ export default function CreateWantedList() {
     email: '',
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const availableTownships = townships.filter(township => township.region_id === parseInt(formData.prefer_region_id));
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Required fields validation
+    if (!formData.wanted_type) {
+      newErrors.wanted_type = t('validation.required');
+    }
+    if (!formData.property_type_id) {
+      newErrors.property_type_id = t('validation.required');
+    }
+    if (!formData.title.trim()) {
+      newErrors.title = t('validation.required');
+    }
+    if (!formData.prefer_region_id) {
+      newErrors.prefer_region_id = t('validation.required');
+    }
+    if (!formData.prefer_township_id) {
+      newErrors.prefer_township_id = t('validation.required');
+    }
+    if (!formData.name.trim()) {
+      newErrors.name = t('validation.required');
+    }
+    if (!formData.phone.trim()) {
+      newErrors.phone = t('validation.required');
+    }
+
+    // Budget validation
+    if (formData.min_budget && formData.max_budget) {
+      const minBudget = parseInt(formData.min_budget);
+      const maxBudget = parseInt(formData.max_budget);
+      if (minBudget > maxBudget) {
+        newErrors.max_budget = t('validation.budgetRange');
+      }
+    }
+
+    // Area validation
+    if (formData.min_area && formData.max_area) {
+      const minArea = parseInt(formData.min_area);
+      const maxArea = parseInt(formData.max_area);
+      if (minArea > maxArea) {
+        newErrors.max_area = t('validation.areaRange');
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
     
     // Reset township when region changes
     if (field === 'prefer_region_id') {
@@ -61,17 +119,39 @@ export default function CreateWantedList() {
     }
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setIsSubmitting(false);
-      navigate('/my-wanted-listings/list');
-    }, 2000);
+    if (!validateForm()) {
+      return;
+    }
+
+    // Prepare data for API
+    const createData: WantingListCreateData = {
+      wanted_type: formData.wanted_type as 'buyer' | 'renter',
+      property_type_id: parseInt(formData.property_type_id),
+      title: formData.title.trim(),
+      prefer_region_id: parseInt(formData.prefer_region_id),
+      prefer_township_id: parseInt(formData.prefer_township_id),
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      description: formData.description.trim() || undefined,
+      min_budget: formData.min_budget ? parseInt(formData.min_budget) : undefined,
+      max_budget: formData.max_budget ? parseInt(formData.max_budget) : undefined,
+      bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
+      bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
+      min_area: formData.min_area ? parseInt(formData.min_area) : undefined,
+      max_area: formData.max_area ? parseInt(formData.max_area) : undefined,
+      additional_requirement: formData.additional_requirement.trim() || undefined,
+      email: formData.email.trim() || undefined,
+      status: 'published', // Default to published
+    };
+
+    createWantingListMutation.mutate(createData, {
+      onSuccess: () => {
+        navigate('/my-wanted-listings/list');
+      },
+    });
   };
 
   return (
@@ -123,7 +203,7 @@ export default function CreateWantedList() {
                   <div className="space-y-2">
                     <Label htmlFor="wanted_type">{t('createWantedList.iAmA')} <span className="text-red-500">*</span></Label>
                     <Select value={formData.wanted_type} onValueChange={(value) => handleInputChange('wanted_type', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.wanted_type ? 'border-red-500' : ''}>
                         <SelectValue placeholder={t('createWantedList.selectType')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -131,12 +211,15 @@ export default function CreateWantedList() {
                         <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                       </SelectContent>
                     </Select>
+                    {errors.wanted_type && (
+                      <p className="text-sm text-red-500">{errors.wanted_type}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="property_type_id">{t('createWantedList.propertyType')} <span className="text-red-500">*</span></Label>
                     <Select value={formData.property_type_id} onValueChange={(value) => handleInputChange('property_type_id', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.property_type_id ? 'border-red-500' : ''}>
                         <SelectValue placeholder={t('createWantedList.selectPropertyType')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -147,6 +230,9 @@ export default function CreateWantedList() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.property_type_id && (
+                      <p className="text-sm text-red-500">{errors.property_type_id}</p>
+                    )}
                   </div>
                 </div>
 
@@ -157,7 +243,11 @@ export default function CreateWantedList() {
                     placeholder={t('createWantedList.titlePlaceholder')}
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
+                    className={errors.title ? 'border-red-500' : ''}
                   />
+                  {errors.title && (
+                    <p className="text-sm text-red-500">{errors.title}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -186,7 +276,7 @@ export default function CreateWantedList() {
                   <div className="space-y-2">
                     <Label htmlFor="prefer_region_id">{t('createWantedList.region')} <span className="text-red-500">*</span></Label>
                     <Select value={formData.prefer_region_id} onValueChange={(value) => handleInputChange('prefer_region_id', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.prefer_region_id ? 'border-red-500' : ''}>
                         <SelectValue placeholder={t('createWantedList.selectRegion')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -197,6 +287,9 @@ export default function CreateWantedList() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.prefer_region_id && (
+                      <p className="text-sm text-red-500">{errors.prefer_region_id}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -206,7 +299,7 @@ export default function CreateWantedList() {
                       onValueChange={(value) => handleInputChange('prefer_township_id', value)}
                       disabled={!formData.prefer_region_id}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.prefer_township_id ? 'border-red-500' : ''}>
                         <SelectValue placeholder={t('createWantedList.selectTownship')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -217,6 +310,9 @@ export default function CreateWantedList() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.prefer_township_id && (
+                      <p className="text-sm text-red-500">{errors.prefer_township_id}</p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -242,7 +338,11 @@ export default function CreateWantedList() {
                         placeholder="e.g., 50000000"
                         value={formData.min_budget}
                         onChange={(e) => handleInputChange('min_budget', e.target.value)}
+                        className={errors.min_budget ? 'border-red-500' : ''}
                       />
+                      {errors.min_budget && (
+                        <p className="text-sm text-red-500">{errors.min_budget}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -253,7 +353,11 @@ export default function CreateWantedList() {
                         placeholder="e.g., 80000000"
                         value={formData.max_budget}
                         onChange={(e) => handleInputChange('max_budget', e.target.value)}
+                        className={errors.max_budget ? 'border-red-500' : ''}
                       />
+                      {errors.max_budget && (
+                        <p className="text-sm text-red-500">{errors.max_budget}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -305,7 +409,11 @@ export default function CreateWantedList() {
                         placeholder="e.g., 1200"
                         value={formData.min_area}
                         onChange={(e) => handleInputChange('min_area', e.target.value)}
+                        className={errors.min_area ? 'border-red-500' : ''}
                       />
+                      {errors.min_area && (
+                        <p className="text-sm text-red-500">{errors.min_area}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -316,7 +424,11 @@ export default function CreateWantedList() {
                         placeholder="e.g., 2000"
                         value={formData.max_area}
                         onChange={(e) => handleInputChange('max_area', e.target.value)}
+                        className={errors.max_area ? 'border-red-500' : ''}
                       />
+                      {errors.max_area && (
+                        <p className="text-sm text-red-500">{errors.max_area}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -340,7 +452,11 @@ export default function CreateWantedList() {
                       placeholder="Your full name"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
+                      className={errors.name ? 'border-red-500' : ''}
                     />
+                    {errors.name && (
+                      <p className="text-sm text-red-500">{errors.name}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -350,7 +466,11 @@ export default function CreateWantedList() {
                       placeholder="e.g., 09123456789"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
+                      className={errors.phone ? 'border-red-500' : ''}
                     />
+                    {errors.phone && (
+                      <p className="text-sm text-red-500">{errors.phone}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -395,10 +515,10 @@ export default function CreateWantedList() {
                 <div className="flex justify-end gap-4">
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={createWantingListMutation.isPending}
                     className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
                   >
-                    {isSubmitting ? t('createWantedList.creating') : t('createWantedList.createListing')}
+                    {createWantingListMutation.isPending ? t('createWantedList.creating') : t('createWantedList.createListing')}
                   </Button>
                   <Button
                     type="button"
