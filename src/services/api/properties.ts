@@ -13,6 +13,27 @@ import type { Property, SearchFilters, PaginatedResponse } from '@/types';
 
 export const propertyApi = {
   /**
+   * Get current user's properties (authenticated)
+   */
+  getMyProperties: (page = 1, per_page = 12) => {
+    return api.get<{
+      success: boolean;
+      message: string;
+      data: any[];
+      pagination: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+        from: number;
+        to: number;
+        has_more_pages: boolean;
+      };
+    }>(`/api/v1/frontend/my-properties`, {
+      params: { page, per_page },
+    });
+  },
+  /**
    * Get all properties with pagination
    */
   getProperties: (page = 1, limit = 12, filters?: SearchFilters) => {

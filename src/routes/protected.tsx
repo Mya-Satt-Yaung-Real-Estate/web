@@ -13,6 +13,7 @@ const MyAdvertisementsList = lazy(() => import('../pages/advertisements/list'));
 const CreateAdvertisement = lazy(() => import('../pages/advertisements/create'));
 const EditAdvertisement = lazy(() => import('../pages/advertisements/edit'));
 const AdvertisementDetail = lazy(() => import('../pages/advertisements/detail'));
+const MyPropertiesList = lazy(() => import('../pages/properties/list'));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -119,6 +120,17 @@ export const protectedRoutes = [
             </ProtectedRoute>
           ),
         },
+  // Properties routes
+  {
+    path: '/properties',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyPropertiesList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
   // TODO: Add more protected routes here when features are implemented
   // Example:
   // {
