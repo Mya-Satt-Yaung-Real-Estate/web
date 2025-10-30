@@ -3,7 +3,7 @@ import type {
   AdvertisementResponse,
   AdvertisementListResponse,
   AdvertisementFilters,
-  AdvertisementCreateData,
+  CreateAdvertisementData,
   AdvertisementUpdateData,
   AdvertisementCategoryResponse
 } from '@/types/advertisement';
@@ -30,7 +30,7 @@ export const advertisementApi = {
   /**
    * Create new advertisement (authenticated)
    */
-  async createAdvertisement(data: AdvertisementCreateData): Promise<AdvertisementResponse> {
+  async createAdvertisement(data: CreateAdvertisementData): Promise<AdvertisementResponse> {
     const response = await apiClient.post<AdvertisementResponse>('/api/v1/frontend/advertisements', data);
     return response.data;
   },

@@ -10,6 +10,7 @@ const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'))
 const AppointmentList = lazy(() => import('../pages/appointments/list'));
 const EditAppointment = lazy(() => import('../pages/appointments/edit'));
 const MyAdvertisementsList = lazy(() => import('../pages/advertisements/list'));
+const CreateAdvertisement = lazy(() => import('../pages/advertisements/create'));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -75,17 +76,27 @@ export const protectedRoutes = [
       </ProtectedRoute>
     ),
   },
-  // Advertisement routes
-  {
-    path: '/advertisements',
-    element: (
-      <ProtectedRoute>
-        <Suspense fallback={<PageLoader />}>
-          <MyAdvertisementsList />
-        </Suspense>
-      </ProtectedRoute>
-    ),
-  },
+        // Advertisement routes
+        {
+          path: '/advertisements',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<PageLoader />}>
+                <MyAdvertisementsList />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: '/advertisements/create',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<PageLoader />}>
+                <CreateAdvertisement />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
   // TODO: Add more protected routes here when features are implemented
   // Example:
   // {

@@ -129,9 +129,14 @@ export default function MyAdvertisementsList() {
                 {t('advertisements.subtitle')}
               </p>
             </div>
-            <Button className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('advertisements.createNew')}
+            <Button 
+              asChild
+              className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
+            >
+              <Link to="/advertisements/create">
+                <Plus className="h-4 w-4 mr-2" />
+                {t('advertisements.createNew')}
+              </Link>
             </Button>
           </div>
 
@@ -229,9 +234,14 @@ export default function MyAdvertisementsList() {
                     ? t('advertisements.noAdvertisementsMatchFilters') || 'No advertisements match your filters'
                     : t('advertisements.noAdvertisementsDesc')}
                 </p>
-                <Button className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50">
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('advertisements.createNew')}
+                <Button 
+                  asChild
+                  className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50"
+                >
+                  <Link to="/advertisements/create">
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('advertisements.createNew')}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

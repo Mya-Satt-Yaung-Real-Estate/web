@@ -276,6 +276,22 @@ const translations: Translations = {
     'validation.budgetRange': { en: 'Minimum budget must be less than or equal to maximum budget', mm: 'အနည်းဆုံးဘတ်ဂျက်သည် အများဆုံးဘတ်ဂျက်ထက် နည်းရမည် သို့မဟုတ် ညီမျှရမည်' },
     'validation.areaRange': { en: 'Minimum area must be less than or equal to maximum area', mm: 'အနည်းဆုံးဧရိယာသည် အများဆုံးဧရိယာထက် နည်းရမည် သို့မဟုတ် ညီမျှရမည်' },
     
+    // File upload validation
+    'validation.fileRequired': { en: 'Please select a file to upload.', mm: 'တင်ရန်ဖိုင်ကို ရွေးချယ်ပါ။' },
+    'validation.mediaTypeRequired': { en: 'Media type is required.', mm: 'မီဒီယာအမျိုးအစား လိုအပ်ပါသည်။' },
+    'validation.uploadFailed': { en: 'Failed to upload file. Please try again.', mm: 'ဖိုင်တင်ရာတွင် မအောင်မြင်ပါ။ ထပ်မံကြိုးစားကြည့်ပါ။' },
+
+    // Advertisement create - field specific validation
+    'validation.titleEn.required': { en: 'English title is required', mm: 'အင်္ဂလိပ်ခေါင်းစဉ် လိုအပ်ပါသည်' },
+    'validation.titleMm.required': { en: 'Myanmar title is required', mm: 'မြန်မာခေါင်းစဉ် လိုအပ်ပါသည်' },
+    'validation.description.required': { en: 'Description is required', mm: 'ဖော်ပြချက် လိုအပ်ပါသည်' },
+    
+    'validation.address.required': { en: 'Address is required', mm: 'လိပ်စာ လိုအပ်ပါသည်' },
+    'validation.contactName.required': { en: 'Contact name is required', mm: 'ဆက်သွယ်ရန်အမည် လိုအပ်ပါသည်' },
+    'validation.phoneNumbers.required': { en: 'At least one phone number is required', mm: 'ဖုန်းနံပါတ်အနည်းဆုံး တစ်ခု လိုအပ်ပါသည်' },
+    'validation.phoneNumbers.invalid': { en: 'Phone number must be digits only (max 13) with optional + at start', mm: 'ဖုန်းနံပါတ်သည် အစတွင် + ရှိနိုင်ပြီး နံပါတ်များသာ (အများဆုံး 13) ဖြစ်ရမည်' },
+    'validation.media.required': { en: 'Please upload at least one media file', mm: 'အနည်းဆုံး မီဒီယာဖိုင် တစ်ဖိုင် ရှိရပါမည်' },
+    
     // Form Placeholders
     'placeholders.minBudget': { en: 'e.g., 50000000', mm: 'ဥပမာ၊ ၅၀၀၀၀၀၀၀' },
     'placeholders.maxBudget': { en: 'e.g., 80000000', mm: 'ဥပမာ၊ ၈၀၀၀၀၀၀၀' },
@@ -284,8 +300,7 @@ const translations: Translations = {
     'placeholders.fullName': { en: 'Your full name', mm: 'သင့်အမည်အပြည့်အစုံ' },
     'placeholders.phoneNumber': { en: 'e.g., 09123456789', mm: 'ဥပမာ၊ ၀၉၁၂၃၄၅၆၇၈၉' },
     'placeholders.emailAddress': { en: 'your.email@example.com', mm: 'your.email@example.com' },
-  'categories.propertyDeveloper': { en: 'Property Developer', mm: 'အိမ်ခြံမြေဖွံ့ဖြိုးတိုးတက်ရေးကုမ္ပဏီ' },
-  'categories.realEstateConsultant': { en: 'Real Estate Consultant', mm: 'အိမ်ခြံမြေအကြံပေးကုမ္ပဏီ' },
+  
   
   // Listings
   'listings.forSale': { en: 'For Sale', mm: 'ရောင်းချရန်' },
@@ -946,7 +961,47 @@ const translations: Translations = {
   'advertisements.deleteSuccessTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
   'advertisements.errorDesc': { en: 'Something went wrong while loading your advertisements.', mm: 'သင့်ကြော်ငြာများဖွင့်ရာတွင်အမှားတစ်ခုခုဖြစ်ပွားခဲ့သည်။' },
   'advertisements.noAdvertisementsMatchFilters': { en: 'No advertisements match your filters', mm: 'သင့်စစ်ထုတ်မှုနှင့်ကိုက်ညီသောကြော်ငြာများမရှိပါ' },
-  'advertisements.locationNotSpecified': { en: 'Location not specified', mm: 'တည်နေရာမသတ်မှတ်ထားပါ' },
+    'advertisements.locationNotSpecified': { en: 'Location not specified', mm: 'တည်နေရာမသတ်မှတ်ထားပါ' },
+
+    // Advertisement Create Page
+    'createAdvertisement.title': { en: 'Create Advertisement', mm: 'ကြော်ငြာဖန်တီးရန်' },
+    'createAdvertisement.description': { en: 'Create a new advertisement to promote your property or service', mm: 'သင့်ပိုင်ဆိုင်များနှင့်ဝန်ဆောင်မှုများကိုကြော်ငြာရန်ကြော်ငြာအသစ်ဖန်တီးပါ' },
+    'createAdvertisement.back': { en: 'Back', mm: 'နောက်သို့' },
+    'createAdvertisement.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },
+    'createAdvertisement.basicInformation': { en: 'Basic Information', mm: 'အခြေခံအချက်အလက်များ' },
+    'createAdvertisement.titleEn': { en: 'English Title', mm: 'အင်္ဂလိပ်ခေါင်းစဉ်' },
+    'createAdvertisement.titleEnPlaceholder': { en: 'Enter English title', mm: 'အင်္ဂလိပ်ခေါင်းစဉ်ထည့်ပါ' },
+    'createAdvertisement.titleMm': { en: 'Myanmar Title', mm: 'မြန်မာခေါင်းစဉ်' },
+    'createAdvertisement.titleMmPlaceholder': { en: 'Enter Myanmar title', mm: 'မြန်မာခေါင်းစဉ်ထည့်ပါ' },
+    'createAdvertisement.descriptionLabel': { en: 'Description', mm: 'ဖော်ပြချက်' },
+    'createAdvertisement.descriptionPlaceholder': { en: 'Describe your advertisement...', mm: 'သင့်ကြော်ငြာကိုဖော်ပြပါ...' },
+    'createAdvertisement.location': { en: 'Location', mm: 'တည်နေရာ' },
+    'createAdvertisement.region': { en: 'Region', mm: 'တိုင်းဒေသကြီး' },
+    'createAdvertisement.selectRegion': { en: 'Select Region', mm: 'တိုင်းဒေသကြီးရွေးပါ' },
+    'createAdvertisement.township': { en: 'Township', mm: 'မြို့နယ်' },
+    'createAdvertisement.selectTownship': { en: 'Select Township', mm: 'မြို့နယ်ရွေးပါ' },
+    'createAdvertisement.address': { en: 'Address', mm: 'လိပ်စာ' },
+    'createAdvertisement.addressPlaceholder': { en: 'Enter full address', mm: 'အပြည့်အစုံလိပ်စာထည့်ပါ' },
+    'createAdvertisement.contactInformation': { en: 'Contact Information', mm: 'ဆက်သွယ်ရန်အချက်အလက်များ' },
+    'createAdvertisement.contactName': { en: 'Contact Name', mm: 'ဆက်သွယ်ရန်အမည်' },
+    'createAdvertisement.contactNamePlaceholder': { en: 'Enter contact name', mm: 'ဆက်သွယ်ရန်အမည်ထည့်ပါ' },
+    'createAdvertisement.phoneNumbers': { en: 'Phone Numbers', mm: 'ဖုန်းနံပါတ်များ' },
+    'createAdvertisement.addPhoneNumber': { en: 'Add Phone Number', mm: 'ဖုန်းနံပါတ်ထည့်ပါ' },
+    'createAdvertisement.removePhoneNumber': { en: 'Remove', mm: 'ဖယ်ရှားပါ' },
+    'createAdvertisement.email': { en: 'Email Address', mm: 'အီးမေးလ်လိပ်စာ' },
+    'createAdvertisement.emailPlaceholder': { en: 'Enter email address', mm: 'အီးမေးလ်လိပ်စာထည့်ပါ' },
+    'createAdvertisement.media': { en: 'Media Files', mm: 'မီဒီယာဖိုင်များ' },
+    'createAdvertisement.mediaDescription': { en: 'Upload images or videos for your advertisement', mm: 'သင့်ကြော်ငြာအတွက်ပုံများသို့မဟုတ်ဗီဒီယိုများတင်ပါ' },
+    'createAdvertisement.status': { en: 'Status', mm: 'အခြေအနေ' },
+    'createAdvertisement.draft': { en: 'Draft', mm: 'မူကြမ်း' },
+    'createAdvertisement.pending': { en: 'Pending', mm: 'စောင့်ဆိုင်းနေသည်' },
+    'createAdvertisement.createAdvertisement': { en: 'Create Advertisement', mm: 'ကြော်ငြာဖန်တီးရန်' },
+    'createAdvertisement.creating': { en: 'Creating...', mm: 'ဖန်တီးနေသည်...' },
+    'createAdvertisement.cancel': { en: 'Cancel', mm: 'ပယ်ဖျက်ပါ' },
+    'createAdvertisement.successMessage': { en: 'Advertisement created successfully!', mm: 'ကြော်ငြာကိုအောင်မြင်စွာဖန်တီးပြီးပါပြီ!' },
+    'createAdvertisement.successTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
+    'createAdvertisement.errorMessage': { en: 'Failed to create advertisement. Please try again.', mm: 'ကြော်ငြာဖန်တီးရာတွင်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
+    'createAdvertisement.errorTitle': { en: 'Error', mm: 'အမှား' },
 
   // Common translations
   'common.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },

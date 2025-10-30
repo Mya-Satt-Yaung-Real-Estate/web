@@ -91,6 +91,20 @@ export interface AdvertisementFilters {
   page?: number;
 }
 
+export interface CreateAdvertisementData {
+  title_en: string;
+  title_mm: string;
+  description: string;
+  region_id: number;
+  township_id: number;
+  address: string;
+  contact_name: string;
+  phone_numbers: string[];
+  email: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'expired';
+  media_ids: number[];
+}
+
 export interface AdvertisementListData {
   data: Advertisement[];
   pagination?: {

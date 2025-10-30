@@ -39,3 +39,4 @@ export const useAdvertisementCategories = () => {
 export const useAdvertisementStats = () => {
   return useQuery(advertisementQueries.getAdvertisementStats());
 };
+
