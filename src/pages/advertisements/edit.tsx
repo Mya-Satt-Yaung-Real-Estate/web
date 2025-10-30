@@ -59,8 +59,9 @@ export default function EditAdvertisement() {
     form.setValue('title_en', a.title_en);
     form.setValue('title_mm', a.title_mm);
     form.setValue('description', a.description || '');
+    // Set region immediately; defer township until townships for region are available
     form.setValue('region_id', a.location?.region?.id || 0);
-    form.setValue('township_id', a.location?.township?.id || 0);
+    form.setValue('township_id', 0);
     form.setValue('address', a.location?.address || '');
     form.setValue('contact_name', a.contact_info?.contact_name || '');
     const phones = a.contact_info?.phone_numbers || [];
@@ -71,6 +72,26 @@ export default function EditAdvertisement() {
     form.setValue('status', (a.is_published ? 'published' : 'draft') as any);
     form.setValue('media_ids', []);
   }, [advData]);
+
+  // Ensure region/township are set AFTER locations load (prevents missing old values)
+  useEffect(() => {
+    if (!advData?.data) return;
+    if (!regions.length || !townships.length) return;
+    const a = advData.data;
+    const desiredRegion = a.location?.region?.id || 0;
+    const desiredTownship = a.location?.township?.id || 0;
+    // Ensure region matches desired
+    if (form.getValues('region_id') !== desiredRegion) {
+      form.setValue('region_id', desiredRegion);
+    }
+    // Only set township when the available list for the selected region contains the desired township
+    if (watchedRegionId === desiredRegion) {
+      const exists = availableTownships.some(t => t.id === desiredTownship);
+      if (exists && form.getValues('township_id') !== desiredTownship) {
+        form.setValue('township_id', desiredTownship);
+      }
+    }
+  }, [advData, regions.length, townships.length, watchedRegionId, availableTownships.length]);
 
   // Initialize defaults
   useEffect(() => {
@@ -226,7 +247,7 @@ export default function EditAdvertisement() {
                       <Select value={form.watch('township_id') && form.watch('township_id') > 0 ? form.watch('township_id').toString() : undefined} onValueChange={(value) => {
                         const numeric = Number(value);
                         form.setValue('township_id', Number.isFinite(numeric) && numeric > 0 ? numeric : 0);
-                      }} disabled={!watchedRegionId}>
+                      }} disabled={!watchedRegionId || watchedRegionId <= 0}>
                         <SelectTrigger>
                           <SelectValue placeholder={t('createAdvertisement.selectTownship')} />
                         </SelectTrigger>

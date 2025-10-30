@@ -17,6 +17,7 @@ import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useModal } from '@/contexts/ModalContext';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import type { AdvertisementFilters } from '@/types/advertisement';
+import { advertisementApi } from '@/services/api/advertisement';
 
 export default function MyAdvertisementsList() {
   const seo = seoUtils.getPageSEO('advertisements');
@@ -60,17 +61,13 @@ export default function MyAdvertisementsList() {
       confirmText: t('advertisements.delete'),
       cancelText: t('advertisements.cancel') || 'Cancel',
       confirmVariant: 'destructive',
-      onConfirm: () => {
-        return new Promise((resolve) => {
-          // TODO: Implement delete mutation
-          console.log('Delete advertisement:', id);
-          showSuccess(
-            t('advertisements.deleteSuccess') || 'Advertisement deleted successfully!',
-            t('advertisements.deleteSuccessTitle') || 'Success!'
-          );
-          refetch();
-          resolve();
-        });
+      onConfirm: async () => {
+        await advertisementApi.deleteAdvertisement(id);
+        showSuccess(
+          t('advertisements.deleteSuccess') || 'Advertisement deleted successfully!',
+          t('advertisements.deleteSuccessTitle') || 'Success!'
+        );
+        await refetch();
       },
     });
   };
@@ -347,47 +344,43 @@ export default function MyAdvertisementsList() {
                           )}
                         </div>
 
-                        <div className="flex gap-2">
-                          <Button 
-                            asChild
-                            variant="outline" 
-                            size="sm"
-                            className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
-                          >
-                            <Link to={`/advertisements/detail/${advertisement.id}`}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              {t('advertisements.viewDetails')}
-                            </Link>
-                          </Button>
-                          <Button 
-                            asChild={advertisement.verification_status !== 'approved'}
-                            variant="outline" 
-                            size="sm"
-                            disabled={advertisement.verification_status === 'approved'}
-                            className={`flex-1 bg-primary/10 text-primary hover:bg-primary/20 ${
-                              advertisement.verification_status === 'approved' 
-                                ? 'opacity-50 cursor-not-allowed' 
-                                : ''
-                            }`}
-                          >
-                            <Link 
-                              to={advertisement.verification_status === 'approved' ? '#' : `/advertisements/edit/${advertisement.id}`}
-                              className={advertisement.verification_status === 'approved' ? 'pointer-events-none' : ''}
-                            >
-                              <Edit className="h-4 w-4 mr-2" />
-                              {t('advertisements.edit')}
-                            </Link>
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDelete(advertisement.id)}
-                            className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            {t('advertisements.delete')}
-                          </Button>
-                        </div>
+                               <div className="flex gap-2">
+                                 <Button 
+                                   asChild
+                                   variant="outline" 
+                                   size="sm"
+                                   className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
+                                 >
+                                   <Link to={`/advertisements/detail/${advertisement.id}`}>
+                                     <Eye className="h-4 w-4 mr-2" />
+                                     {t('advertisements.viewDetails')}
+                                   </Link>
+                                 </Button>
+                                {advertisement.verification_status === 'pending' && (
+                                  <Button 
+                                    asChild
+                                    variant="outline" 
+                                    size="sm"
+                                    className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
+                                  >
+                                    <Link to={`/advertisements/edit/${advertisement.id}`}>
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      {t('advertisements.edit')}
+                                    </Link>
+                                  </Button>
+                                )}
+                                {advertisement.verification_status === 'pending' && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleDelete(advertisement.id)}
+                                    className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    {t('advertisements.delete')}
+                                  </Button>
+                                )}
+                               </div>
                       </div>
                     </CardContent>
                   </Card>
