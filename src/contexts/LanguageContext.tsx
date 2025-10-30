@@ -994,7 +994,7 @@ const translations: Translations = {
     'createAdvertisement.mediaDescription': { en: 'Upload images or videos for your advertisement', mm: 'သင့်ကြော်ငြာအတွက်ပုံများသို့မဟုတ်ဗီဒီယိုများတင်ပါ' },
     'createAdvertisement.status': { en: 'Status', mm: 'အခြေအနေ' },
     'createAdvertisement.draft': { en: 'Draft', mm: 'မူကြမ်း' },
-    'createAdvertisement.pending': { en: 'Pending', mm: 'စောင့်ဆိုင်းနေသည်' },
+    'createAdvertisement.published': { en: 'Published', mm: 'ထုတ်ဝေပြီး' },
     'createAdvertisement.createAdvertisement': { en: 'Create Advertisement', mm: 'ကြော်ငြာဖန်တီးရန်' },
     'createAdvertisement.creating': { en: 'Creating...', mm: 'ဖန်တီးနေသည်...' },
     'createAdvertisement.cancel': { en: 'Cancel', mm: 'ပယ်ဖျက်ပါ' },

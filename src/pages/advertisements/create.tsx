@@ -324,17 +324,31 @@ export default function CreateAdvertisement() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FormField 
-                    name="contact_name" 
-                    label={t('createAdvertisement.contactName')} 
-                    error={errors.contact_name} 
-                    required
-                  >
-                    <Input
-                      {...form.register('contact_name')}
-                      placeholder={t('createAdvertisement.contactNamePlaceholder')}
-                    />
-                  </FormField>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField 
+                      name="contact_name" 
+                      label={t('createAdvertisement.contactName')} 
+                      error={errors.contact_name} 
+                      required
+                    >
+                      <Input
+                        {...form.register('contact_name')}
+                        placeholder={t('createAdvertisement.contactNamePlaceholder')}
+                      />
+                    </FormField>
+                    <FormField 
+                      name="email" 
+                      label={t('createAdvertisement.email')} 
+                      error={errors.email}
+                    >
+                      <Input
+                        {...form.register('email')}
+                        type="email"
+                        placeholder={t('createAdvertisement.emailPlaceholder')}
+                        autoComplete="email"
+                      />
+                    </FormField>
+                  </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium">
@@ -383,17 +397,7 @@ export default function CreateAdvertisement() {
                     )}
                   </div>
 
-                  <FormField 
-                    name="email" 
-                    label={t('createAdvertisement.email')} 
-                    error={errors.email}
-                  >
-                    <Input
-                      {...form.register('email')}
-                      type="email"
-                      placeholder={t('createAdvertisement.emailPlaceholder')}
-                    />
-                  </FormField>
+                  
                 </CardContent>
               </Card>
 
@@ -438,14 +442,14 @@ export default function CreateAdvertisement() {
                   >
                     <Select 
                       value={form.watch('status') || 'draft'} 
-                      onValueChange={(value) => form.setValue('status', value as any)}
+                      onValueChange={(value) => form.setValue('status', value as 'draft' | 'published')}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="draft">{t('createAdvertisement.draft')}</SelectItem>
-                        <SelectItem value="pending">{t('createAdvertisement.pending')}</SelectItem>
+                        <SelectItem value="published">{t('createAdvertisement.published')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormField>

@@ -130,10 +130,35 @@ export function MediaUpload({
     e.preventDefault();
   }, []);
 
-  const removeFile = (fileId: number) => {
-    const newFiles = uploadedFiles.filter(file => file.id !== fileId);
-    setUploadedFiles(newFiles);
-    onUploadComplete(newFiles.map(file => file.id));
+  const removeFile = async (fileId: number) => {
+    try {
+      // Call delete API before removing locally
+      const token = useAuthStore.getState().token;
+      const response = await fetch(`${CONFIG.api.baseUrl}/api/v1/media/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = (errorData && errorData.message) ? errorData.message : 'Failed to delete media';
+        setErrorText(message);
+        onUploadError(message);
+        return;
+      }
+
+      const newFiles = uploadedFiles.filter(file => file.id !== fileId);
+      setUploadedFiles(newFiles);
+      setErrorText('');
+      onUploadComplete(newFiles.map(file => file.id));
+    } catch (e: any) {
+      const message = e?.message || 'Failed to delete media';
+      setErrorText(message);
+      onUploadError(message);
+    }
   };
 
 
@@ -231,10 +256,12 @@ export function MediaUpload({
                   </CardContent>
                 </Card>
                 <Button
+                  type="button"
                   size="sm"
                   variant="destructive"
                   className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     removeFile(file.id);
                   }}

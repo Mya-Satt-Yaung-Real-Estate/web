@@ -101,7 +101,7 @@ export interface CreateAdvertisementData {
   contact_name: string;
   phone_numbers: string[];
   email: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'expired';
+  status: 'draft' | 'published' | 'approved' | 'rejected' | 'expired';
   media_ids: number[];
 }
 

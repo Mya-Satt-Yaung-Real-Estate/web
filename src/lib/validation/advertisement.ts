@@ -28,7 +28,7 @@ export const createAdvertisementSchema = (t: (key: string) => string) => z.objec
       .min(1, t('validation.phoneNumbers.required'))
   ),
   email: z.string().email(t('validation.email')).optional().or(z.literal('')),
-  status: z.enum(['draft', 'pending', 'approved', 'rejected', 'expired']).default('draft'),
+  status: z.enum(['draft', 'published', 'approved', 'rejected', 'expired']).default('draft'),
   media_ids: z.preprocess(
     (val) => (val === undefined || val === null ? [] : val),
     z.array(z.number()).min(1, t('validation.media.required'))
