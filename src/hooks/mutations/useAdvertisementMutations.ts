@@ -19,3 +19,20 @@ export const useCreateAdvertisement = () => {
   });
 };
 
+/**
+ * Update advertisement mutation hook
+ */
+export const useUpdateAdvertisement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: CreateAdvertisementData }) =>
+      advertisementApi.updateAdvertisement(id, data),
+    onSuccess: (_res, vars) => {
+      queryClient.invalidateQueries({ queryKey: advertisementKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: advertisementKeys.detail(vars.id) });
+      queryClient.invalidateQueries({ queryKey: advertisementKeys.stats() });
+    },
+  });
+};
+

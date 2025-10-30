@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, Video, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,6 +24,13 @@ interface MediaUploadProps {
   maxFiles?: number;
   acceptedTypes?: string[];
   className?: string;
+  initialFiles?: Array<{
+    id: number;
+    url: string;
+    filename: string;
+    type: 'image' | 'video';
+    size?: number;
+  }>;
 }
 
 export function MediaUpload({
@@ -31,7 +38,8 @@ export function MediaUpload({
   onUploadError,
   maxFiles = 5,
   acceptedTypes = ['image/*', 'video/*'],
-  className = ''
+  className = '',
+  initialFiles
 }: MediaUploadProps) {
   const [uploadedFiles, setUploadedFiles] = useState<MediaFile[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -39,6 +47,22 @@ export function MediaUpload({
   const [errorText, setErrorText] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
+
+  // Initialize with existing files (e.g., edit mode)
+  useEffect(() => {
+    if (initialFiles && initialFiles.length > 0 && uploadedFiles.length === 0) {
+      const normalized: MediaFile[] = initialFiles.map(f => ({
+        id: f.id,
+        url: f.url,
+        filename: f.filename,
+        type: f.type,
+        size: f.size ?? 0,
+        isUploaded: true,
+      }));
+      setUploadedFiles(normalized);
+      onUploadComplete(normalized.map(f => f.id));
+    }
+  }, [initialFiles]);
 
   const handleFileSelect = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -255,19 +279,21 @@ export function MediaUpload({
                     </div>
                   </CardContent>
                 </Card>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="destructive"
-                  className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    removeFile(file.id);
-                  }}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
+                {uploadedFiles.length > 1 && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="destructive"
+                    className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      removeFile(file.id);
+                    }}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                )}
               </div>
             ))}
           </div>

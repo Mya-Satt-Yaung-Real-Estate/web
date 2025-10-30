@@ -4,7 +4,6 @@ import type {
   AdvertisementListResponse,
   AdvertisementFilters,
   CreateAdvertisementData,
-  AdvertisementUpdateData,
   AdvertisementCategoryResponse
 } from '@/types/advertisement';
 
@@ -38,7 +37,7 @@ export const advertisementApi = {
   /**
    * Update advertisement (authenticated)
    */
-  async updateAdvertisement(id: number, data: AdvertisementUpdateData): Promise<AdvertisementResponse> {
+  async updateAdvertisement(id: number, data: CreateAdvertisementData): Promise<AdvertisementResponse> {
     const response = await apiClient.put<AdvertisementResponse>(`/api/v1/frontend/advertisements/${id}`, data);
     return response.data;
   },
