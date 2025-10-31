@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Eye, Calendar, MapPin, Star, Heart, ThumbsUp, MessageSquare, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -13,11 +13,12 @@ import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { propertyApi } from '@/services/api/properties';
-import { useQuery } from '@tanstack/react-query';
+import { useMyProperties } from '@/hooks/queries/useProperties';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useModal } from '@/contexts/ModalContext';
+import type { Property } from '@/types/properties';
 
 export default function MyPropertiesList() {
   const seo = seoUtils.getPageSEO('properties');
@@ -28,11 +29,19 @@ export default function MyPropertiesList() {
   const [regionId, setRegionId] = useState<string>('all');
   const [townshipId, setTownshipId] = useState<string>('all');
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['my-properties', currentPage],
-    queryFn: () => propertyApi.getMyProperties(currentPage, 12).then(r => r.data),
-    staleTime: 5 * 60 * 1000,
-  });
+  const filters = useMemo(() => {
+    const filterParams: Record<string, any> = {
+      page: currentPage,
+      per_page: 12,
+    };
+    if (search) filterParams.search = search;
+    if (status !== 'all') filterParams.status = status;
+    if (regionId !== 'all') filterParams.region_id = Number(regionId);
+    if (townshipId !== 'all') filterParams.township_id = Number(townshipId);
+    return filterParams;
+  }, [search, status, regionId, townshipId, currentPage]);
+
+  const { data, isLoading, error, refetch } = useMyProperties(filters);
 
   const { data: regionsResp } = useRegions();
   const { data: townshipsResp } = useTownships();
@@ -52,7 +61,7 @@ export default function MyPropertiesList() {
       cancelText: t('advertisements.cancel') || 'Cancel',
       confirmVariant: 'destructive',
       onConfirm: async () => {
-        await propertyApi.deleteProperty(String(id));
+        await propertyApi.deleteMyProperty(id);
         showSuccess(
           t('properties.deleteSuccess') || 'Property deleted successfully!',
           t('properties.deleteSuccessTitle') || 'Success!'
@@ -64,14 +73,14 @@ export default function MyPropertiesList() {
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
-  const getTitle = (property: any) => (language === 'mm' ? property.title_mm : property.title_en);
-  const getLocation = (property: any) => {
+  const getTitle = (property: Property) => (language === 'mm' ? property.title_mm : property.title_en);
+  const getLocation = (property: Property) => {
     const region = language === 'mm' ? property.location?.region?.name_mm : property.location?.region?.name_en;
     const township = language === 'mm' ? property.location?.township?.name_mm : property.location?.township?.name_en;
     return region && township ? `${region}, ${township}` : t('advertisements.locationNotSpecified');
   };
-  const getPropertyType = (property: any) => (language === 'mm' ? property.property_type?.name_mm : property.property_type?.name_en) || '';
-  const getListingType = (property: any) => (language === 'mm' ? property.listing_type?.name_mm : property.listing_type?.name_en) || '';
+  const getPropertyType = (property: Property) => (language === 'mm' ? property.property_type?.name_mm : property.property_type?.name_en) || '';
+  const getListingType = (property: Property) => (language === 'mm' ? property.listing_type?.name_mm : property.listing_type?.name_en) || '';
 
   const getVerificationStatusColor = (verificationStatus: string) => {
     if (verificationStatus === 'approved') return 'bg-green-500/10 text-green-600 border-green-500/20';
@@ -95,7 +104,7 @@ export default function MyPropertiesList() {
               <p className="text-muted-foreground mt-2">{t('properties.subtitle')}</p>
             </div>
             <Button asChild className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105">
-              <Link to="/create-listing">
+              <Link to="/properties/create">
                 <Plus className="h-4 w-4 mr-2" />
                 {t('properties.createNew')}
               </Link>
@@ -195,7 +204,7 @@ export default function MyPropertiesList() {
                 </Button>
               </CardContent>
             </Card>
-          ) : !data?.data || data.data.length === 0 ? (
+          ) : !data?.data?.data || data.data.data.length === 0 ? (
             <Card className="glass border-border/50">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <h3 className="text-lg font-semibold mb-2">{t('properties.noProperties')}</h3>
@@ -211,16 +220,16 @@ export default function MyPropertiesList() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {data.data
-                  .filter((p: any) => {
+                {data.data.data
+                  .filter((p: Property) => {
                     if (!search) return true;
                     const title = getTitle(p) || '';
                     return title.toLowerCase().includes(search.toLowerCase());
                   })
-                  .filter((p: any) => (status === 'all' ? true : (p.status || '').toLowerCase() === status))
-                  .filter((p: any) => (regionId === 'all' ? true : String(p.location?.region?.id) === regionId))
-                  .filter((p: any) => (townshipId === 'all' ? true : String(p.location?.township?.id) === townshipId))
-                  .map((property: any) => (
+                  .filter((p: Property) => (status === 'all' ? true : (p.status || '').toLowerCase() === status))
+                  .filter((p: Property) => (regionId === 'all' ? true : String(p.location?.region?.id) === regionId))
+                  .filter((p: Property) => (townshipId === 'all' ? true : String(p.location?.township?.id) === townshipId))
+                  .map((property: Property) => (
                     <Card key={property.id} className="group hover:shadow-xl transition-all border-border/50 backdrop-blur-sm h-full flex flex-col overflow-hidden">
                       {/* Image Section */}
                       <div className="relative h-48 overflow-hidden">
@@ -370,9 +379,9 @@ export default function MyPropertiesList() {
                   ))}
               </div>
 
-              {data.pagination && data.pagination.last_page > 1 && (
+              {data?.data?.pagination && data.data.pagination.last_page > 1 && (
                 <div className="flex justify-center">
-                  <Pagination currentPage={currentPage} totalPages={data.pagination.last_page} onPageChange={handlePageChange} />
+                  <Pagination currentPage={currentPage} totalPages={data.data.pagination.last_page} onPageChange={handlePageChange} />
                 </div>
               )}
             </>

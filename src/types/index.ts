@@ -176,3 +176,24 @@ export type {
   WantingListStatus,
   WantingListUser,
 } from './wantingList';
+
+// Export property types
+export type {
+  Property,
+  PropertyType,
+  ListingType,
+  PropertyCondition,
+  PropertyRegion,
+  PropertyTownship,
+  PropertyLocation,
+  PropertyContactInfo,
+  PropertyStats,
+  PropertyDates,
+  PropertyMedia,
+  PropertyPagination,
+  PropertyResponse,
+  PropertyListResponse,
+  PropertyFilters,
+  PropertyStatistics,
+  PropertyStatisticsResponse,
+} from './properties';

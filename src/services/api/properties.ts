@@ -5,7 +5,8 @@
  */
 
 import { api } from './client';
-import type { Property, SearchFilters, PaginatedResponse } from '@/types';
+import type { SearchFilters, PaginatedResponse } from '@/types';
+import type { Property, PropertyListResponse, PropertyResponse, PropertyFilters } from '@/types/properties';
 
 // ============================================================================
 // PROPERTY API FUNCTIONS
@@ -13,26 +14,31 @@ import type { Property, SearchFilters, PaginatedResponse } from '@/types';
 
 export const propertyApi = {
   /**
-   * Get current user's properties (authenticated)
+   * Get current user's properties with filters (authenticated)
    */
-  getMyProperties: (page = 1, per_page = 12) => {
-    return api.get<{
-      success: boolean;
-      message: string;
-      data: any[];
-      pagination: {
-        current_page: number;
-        per_page: number;
-        total: number;
-        last_page: number;
-        from: number;
-        to: number;
-        has_more_pages: boolean;
-      };
-    }>(`/api/v1/frontend/my-properties`, {
-      params: { page, per_page },
+  getMyProperties: (filters: PropertyFilters = {}) => {
+    return api.get<PropertyListResponse>(`/api/v1/frontend/my-properties`, {
+      params: filters,
     });
   },
+
+  /**
+   * Create a new property (authenticated)
+   */
+  createMyProperty: (payload: any) => {
+    return api.post<PropertyResponse>(
+      '/api/v1/frontend/my-properties',
+      payload
+    );
+  },
+
+  /**
+   * Delete property (frontend my-properties)
+   */
+  deleteMyProperty: (id: string | number) => {
+    return api.delete<{ success: boolean; message?: string }>(`/api/v1/frontend/my-properties/${id}`);
+  },
+
   /**
    * Get all properties with pagination
    */

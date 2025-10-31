@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, Video, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
@@ -122,7 +121,7 @@ export function MediaUpload({
           url: responseData.data.url,
           filename: responseData.data.filename,
           type: file.type.startsWith('video/') ? 'video' as const : 'image' as const,
-          size: responseData.data.size,
+          size: responseData.data.size ?? file.size,
           isUploaded: true,
         };
       });
@@ -186,8 +185,8 @@ export function MediaUpload({
   };
 
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+  const formatFileSize = (bytes: number | undefined | null) => {
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -258,42 +257,41 @@ export function MediaUpload({
               <div key={file.id} className="relative group">
                 <Card className="overflow-hidden">
                   <CardContent className="p-2">
-                    {file.type === 'image' ? (
-                      <ImageWithFallback
-                        src={file.url}
-                        alt={file.filename}
-                        className="w-full h-24 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="w-full h-24 bg-muted flex items-center justify-center rounded">
-                        <Video className="h-8 w-8 text-muted-foreground" />
+                    <div className="relative">
+                      {file.type === 'image' ? (
+                        <ImageWithFallback
+                          src={file.url}
+                          alt={file.filename}
+                          className="w-full max-w-[400px] aspect-square object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-full max-w-[400px] aspect-square bg-muted flex items-center justify-center rounded">
+                          <Video className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      {uploadedFiles.length > 1 && (
+                        <button
+                          type="button"
+                          className="absolute top-1 right-1 h-7 w-7 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90 text-red-500 hover:text-red-600 transition-colors shadow-md"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeFile(file.id);
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                    {file.size !== undefined && file.size !== null && file.size > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground">
+                          {formatFileSize(file.size)}
+                        </p>
                       </div>
                     )}
-                    <div className="mt-2 space-y-1">
-                      <p className="text-xs font-medium truncate" title={file.filename}>
-                        {file.filename}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatFileSize(file.size)}
-                      </p>
-                    </div>
                   </CardContent>
                 </Card>
-                {uploadedFiles.length > 1 && (
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      removeFile(file.id);
-                    }}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                )}
               </div>
             ))}
           </div>

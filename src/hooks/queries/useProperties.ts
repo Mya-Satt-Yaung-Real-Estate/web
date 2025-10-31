@@ -5,8 +5,11 @@
  */
 
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { listingTypeApi } from '@/services/api/listingTypes';
+import { propertyApi } from '@/services/api/properties';
 import { propertyKeys, propertyQueries } from '@/services/queries/properties';
 import type { SearchFilters } from '@/types';
+import type { PropertyFilters } from '@/types/properties';
 
 // ============================================================================
 // QUERY HOOKS
@@ -81,5 +84,27 @@ export function usePropertyStats() {
     queryKey: propertyKeys.stats(),
     queryFn: propertyQueries.getPropertyStats,
     staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
+
+/**
+ * Get property listing types
+ */
+export function useListingTypes() {
+  return useQuery({
+    queryKey: ['property-listing-types'],
+    queryFn: listingTypeApi.getListingTypes,
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
+/**
+ * Get user's properties with filters (authenticated)
+ */
+export function useMyProperties(filters: PropertyFilters = {}) {
+  return useQuery({
+    queryKey: ['my-properties', filters],
+    queryFn: () => propertyApi.getMyProperties(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }

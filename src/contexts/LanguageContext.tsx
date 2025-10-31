@@ -239,6 +239,7 @@ const translations: Translations = {
     
     'validation.propertyType.required': { en: 'Please select a property type', mm: 'အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
     'validation.propertyType.invalid': { en: 'Please select a valid property type', mm: 'မှန်ကန်သော အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
+    'validation.propertyCondition.required': { en: 'Please select a property condition', mm: 'အိမ်ခြံမြေအခြေအနေကို ရွေးချယ်ပါ' },
     
     'validation.title.required': { en: 'Title is required', mm: 'ခေါင်းစဉ်လိုအပ်ပါသည်' },
     'validation.title.minLength': { en: 'Title must be at least 10 characters', mm: 'ခေါင်းစဉ်သည် အနည်းဆုံး ၁၀ လုံးရှိရပါမည်' },
@@ -264,12 +265,17 @@ const translations: Translations = {
     
     'validation.bedrooms.integer': { en: 'Number of bedrooms must be a whole number', mm: 'အိပ်ခန်းအရေအတွက်သည် ကိန်းပြည့်ဖြစ်ရပါမည်' },
     'validation.bedrooms.positive': { en: 'Number of bedrooms must be 0 or greater', mm: 'အိပ်ခန်းအရေအတွက်သည် ၀ သို့မဟုတ် ပိုကြီးရပါမည်' },
+    'validation.bedrooms.required': { en: 'Number of bedrooms is required', mm: 'အိပ်ခန်းအရေအတွက် လိုအပ်ပါသည်' },
     
     'validation.bathrooms.integer': { en: 'Number of bathrooms must be a whole number', mm: 'ရေချိုးခန်းအရေအတွက်သည် ကိန်းပြည့်ဖြစ်ရပါမည်' },
     'validation.bathrooms.positive': { en: 'Number of bathrooms must be 0 or greater', mm: 'ရေချိုးခန်းအရေအတွက်သည် ၀ သို့မဟုတ် ပိုကြီးရပါမည်' },
+    'validation.bathrooms.required': { en: 'Number of bathrooms is required', mm: 'ရေချိုးခန်းအရေအတွက် လိုအပ်ပါသည်' },
     
     'validation.area.positive': { en: 'Area must be a positive number', mm: 'ဧရိယာသည် အပေါင်းကိန်းဖြစ်ရပါမည်' },
     'validation.area.range': { en: 'Maximum area must be greater than minimum area', mm: 'အများဆုံးဧရိယာသည် အနည်းဆုံးဧရိယာထက် ကြီးရပါမည်' },
+    'validation.area.required': { en: 'Area is required', mm: 'ဧရိယာ လိုအပ်ပါသည်' },
+    
+    'validation.price.required': { en: 'Price is required', mm: 'ဈေးနှုန်း လိုအပ်ပါသည်' },
     
     // Legacy validation messages (keeping for backward compatibility)
     'validation.required': { en: 'is required', mm: 'ဖြည့်ရန် လိုအပ်ပါသည်' },
@@ -291,6 +297,7 @@ const translations: Translations = {
     'validation.phoneNumbers.required': { en: 'At least one phone number is required', mm: 'ဖုန်းနံပါတ်အနည်းဆုံး တစ်ခု လိုအပ်ပါသည်' },
     'validation.phoneNumbers.invalid': { en: 'Phone number must be digits only (max 13) with optional + at start', mm: 'ဖုန်းနံပါတ်သည် အစတွင် + ရှိနိုင်ပြီး နံပါတ်များသာ (အများဆုံး 13) ဖြစ်ရမည်' },
     'validation.media.required': { en: 'Please upload at least one media file', mm: 'အနည်းဆုံး မီဒီယာဖိုင် တစ်ဖိုင် ရှိရပါမည်' },
+    'validation.maxLength': { en: 'Maximum length exceeded', mm: 'အများဆုံးအရှည် ကျော်လွန်သွားပါသည်' },
     
     // Form Placeholders
     'placeholders.minBudget': { en: 'e.g., 50000000', mm: 'ဥပမာ၊ ၅၀၀၀၀၀၀၀' },
@@ -986,6 +993,55 @@ const translations: Translations = {
   'properties.confirmDeleteMessage': { en: 'Are you sure you want to delete this property? This action cannot be undone.', mm: 'ဤအိမ်ခြံမြေကိုဖျက်ရန် သေချာပါသလား? ဤလုပ်ဆောင်ချက်ကို ပြန်လည်မလုပ်နိုင်ပါ။' },
   'properties.deleteSuccess': { en: 'Property deleted successfully!', mm: 'အိမ်ခြံမြေကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ!' },
   'properties.deleteSuccessTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
+
+  // Create Property
+  'createProperty.title': { en: 'Create Property', mm: 'အိမ်ခြံမြေ ဖန်တီးရန်' },
+  'createProperty.description': { en: 'Post your property with details and media', mm: 'သင့်အိမ်ခြံမြေကို ဖော်ပြချက်နှင့် မီဒီယာများနှင့်တင်ရန်' },
+  'createProperty.back': { en: 'Back', mm: 'နောက်သို့' },
+  'createProperty.basicInformation': { en: 'Basic Information', mm: 'အခြေခံအချက်အလက်' },
+  'createProperty.propertyType': { en: 'Property Type', mm: 'အိမ်ခြံမြေအမျိုးအစား' },
+  'createProperty.selectPropertyType': { en: 'Select property type', mm: 'အမျိုးအစားရွေးချယ်ရန်' },
+  'createProperty.listingType': { en: 'Listing Type', mm: 'စာရင်းအမျိုးအစား' },
+  'createProperty.selectListingType': { en: 'Select listing type', mm: 'စာရင်းအမျိုးအစားရွေးချယ်ရန်' },
+  'createProperty.titleEn': { en: 'English Title', mm: 'အင်္ဂလိပ်ခေါင်းစဉ်' },
+  'createProperty.titleMm': { en: 'Myanmar Title', mm: 'မြန်မာခေါင်းစဉ်' },
+  'createProperty.descriptionLabel': { en: 'Description', mm: 'ဖော်ပြချက်' },
+  'createProperty.location': { en: 'Location', mm: 'တည်နေရာ' },
+  'createProperty.region': { en: 'Region', mm: 'ဒေသ' },
+  'createProperty.selectRegion': { en: 'Select region', mm: 'ဒေသရွေးချယ်ရန်' },
+  'createProperty.township': { en: 'Township', mm: 'မြို့နယ်' },
+  'createProperty.selectTownship': { en: 'မြို့နယ်ရွေးချယ်ရန်', mm: 'မြို့နယ်ရွေးချယ်ရန်' },
+  'createProperty.address': { en: 'Address', mm: 'လိပ်စာ' },
+  'createProperty.price': { en: 'Price (MMK)', mm: 'စျေးနှုန်း (ကျပ်)' },
+  'createProperty.areaSqft': { en: 'Area (sqft)', mm: 'ဧရိယာ (စတုရန်းပေ)' },
+  'createProperty.length': { en: 'Length (ft)', mm: 'အလျား (ပေ)' },
+  'createProperty.width': { en: 'Width (ft)', mm: 'အနံ (ပေ)' },
+  'createProperty.bedrooms': { en: 'Bedrooms', mm: 'အိပ်ခန်း' },
+  'createProperty.bathrooms': { en: 'Bathrooms', mm: 'ရေချိုးခန်း' },
+  'createProperty.propertyCondition': { en: 'Property Condition', mm: 'အိမ်ခြံမြေအခြေအနေ' },
+  'createProperty.selectCondition': { en: 'Select condition', mm: 'အခြေအနေရွေးချယ်ရန်' },
+  'createProperty.status': { en: 'Status', mm: 'အခြေအနေ' },
+  'createProperty.publishStatus': { en: 'Publish Status', mm: 'ထုတ်ဝေအခြေအနေ' },
+  'createProperty.tanTanTan': { en: 'Tan Tan Tan', mm: 'တန်တန်တန်' },
+  'createProperty.tanTanTanDesc': { en: 'Mark this property as Tan Tan Tan', mm: 'ဤအိမ်ခြံမြေကို တန်တန်တန် အဖြစ်မှတ်သားပါ' },
+  'createProperty.isTrending': { en: 'Premium (Is Trending)', mm: 'ပရီမီယံ (ရေပန်းစားနေသည်)' },
+  'createProperty.bankInstallment': { en: 'Bank Installment', mm: 'ဘဏ်အရစ်ကျ' },
+  'createProperty.bankInstallmentDesc': { en: 'Bank installment available for this property', mm: 'ဤအိမ်ခြံမြေအတွက် ဘဏ်အရစ်ကျ ရရှိနိုင်သည်' },
+  'createProperty.features': { en: 'Features', mm: 'အင်္ဂါရပ်များ' },
+  'createProperty.premiumWarning': { en: '⚠️ Extra charges will apply for premium listing', mm: '⚠️ ပရီမီယံစာရင်းအတွက် အပိုကုန်ကျစရိတ်ကျသင့်မည်' },
+  'createProperty.mapLocationChoose': { en: 'Please choose exactly location on map', mm: 'မြေပုံပေါ်တွင် တည်နေရာကို တိကျစွာ ရွေးချယ်ပါ' },
+  'createProperty.mapLocationReview': { en: 'Review or change location on map', mm: 'မြေပုံပေါ်တွင် တည်နေရာကို စစ်ဆေးရန် သို့မဟုတ် ပြောင်းလဲရန်' },
+  'createProperty.mapLocationCurrent': { en: 'Current location', mm: 'လက်ရှိတည်နေရာ' },
+  'createProperty.latitude': { en: 'latitude', mm: 'လတ္တီတွဒ်' },
+  'createProperty.longitude': { en: 'longitude', mm: 'လောင်ဂျီတွဒ်' },
+  'createProperty.contactInformation': { en: 'Contact Information', mm: 'ဆက်သွယ်ရန်' },
+  'createProperty.ownerName': { en: 'Owner Name', mm: 'ပိုင်ရှင်အမည်' },
+  'createProperty.email': { en: 'Email', mm: 'အီးမေးလ်' },
+  'createProperty.create': { en: 'Create Property', mm: 'အိမ်ခြံမြေ ဖန်တီးရန်' },
+  'createProperty.successMessage': { en: 'Property created successfully!', mm: 'အိမ်ခြံမြေကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!' },
+  'createProperty.successTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
+  'createProperty.errorMessage': { en: 'Failed to create property.', mm: 'အိမ်ခြံမြေဖန်တီးရာတွင် မအောင်မြင်ပါ။' },
+  'createProperty.errorTitle': { en: 'Error', mm: 'အမှား' },
 
     // Advertisement Create Page
     'createAdvertisement.title': { en: 'Create Advertisement', mm: 'ကြော်ငြာဖန်တီးရန်' },
