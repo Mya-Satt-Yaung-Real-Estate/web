@@ -108,3 +108,15 @@ export function useMyProperties(filters: PropertyFilters = {}) {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
+
+/**
+ * Get my property by slug (authenticated)
+ */
+export function useMyProperty(slug: string) {
+  return useQuery({
+    queryKey: ['my-property', slug],
+    queryFn: () => propertyApi.getMyProperty(slug),
+    enabled: !!slug,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+}

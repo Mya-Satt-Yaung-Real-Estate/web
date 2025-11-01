@@ -15,6 +15,7 @@ const EditAdvertisement = lazy(() => import('../pages/advertisements/edit'));
 const AdvertisementDetail = lazy(() => import('../pages/advertisements/detail'));
 const MyPropertiesList = lazy(() => import('../pages/properties/list'));
 const CreateProperty = lazy(() => import('../pages/properties/create'));
+const EditProperty = lazy(() => import('../pages/properties/edit'));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -138,6 +139,16 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <CreateProperty />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/properties/edit/:slug',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditProperty />
         </Suspense>
       </ProtectedRoute>
     ),

@@ -53,18 +53,40 @@ export function MediaUpload({
 
   // Initialize with existing files (e.g., edit mode)
   useEffect(() => {
-    if (initialFiles && initialFiles.length > 0 && uploadedFiles.length === 0) {
-      const normalized: MediaFile[] = initialFiles.map(f => ({
-        id: f.id,
-        url: f.url,
-        filename: f.filename,
-        type: f.type,
-        size: f.size ?? 0,
-        isUploaded: true,
-      }));
-      setUploadedFiles(normalized);
-      onUploadComplete(normalized.map(f => f.id));
+    if (initialFiles && initialFiles.length > 0) {
+      // Only initialize if we don't have files yet, or if initialFiles changed
+      if (uploadedFiles.length === 0) {
+        // First time initialization
+        const normalized: MediaFile[] = initialFiles.map(f => ({
+          id: f.id,
+          url: f.url,
+          filename: f.filename,
+          type: f.type,
+          size: f.size ?? 0,
+          isUploaded: true,
+        }));
+        setUploadedFiles(normalized);
+        onUploadComplete(normalized.map(f => f.id));
+      } else {
+        // Check if initialFiles has changed
+        const currentIds = uploadedFiles.map(f => f.id).sort().join(',');
+        const initialIds = initialFiles.map(f => f.id).sort().join(',');
+        
+        if (currentIds !== initialIds) {
+          const normalized: MediaFile[] = initialFiles.map(f => ({
+            id: f.id,
+            url: f.url,
+            filename: f.filename,
+            type: f.type,
+            size: f.size ?? 0,
+            isUploaded: true,
+          }));
+          setUploadedFiles(normalized);
+          onUploadComplete(normalized.map(f => f.id));
+        }
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFiles]);
 
   // Notify parent of loading state changes

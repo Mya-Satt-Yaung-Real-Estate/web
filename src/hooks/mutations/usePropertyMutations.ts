@@ -47,6 +47,25 @@ export function useUpdateProperty() {
 }
 
 /**
+ * Update my property mutation by slug (authenticated)
+ */
+export function useUpdateMyProperty() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ slug, data }: { slug: string; data: any }) => 
+      propertyApi.updateMyProperty(slug, data),
+    onSuccess: (data, variables) => {
+      // Update the specific property in cache
+      queryClient.setQueryData(['my-property', variables.slug], data);
+      // Invalidate properties list
+      queryClient.invalidateQueries({ queryKey: propertyKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['my-properties'] });
+    },
+  });
+}
+
+/**
  * Delete property mutation
  */
 export function useDeleteProperty() {

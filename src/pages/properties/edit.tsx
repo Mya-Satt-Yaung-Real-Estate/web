@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MapPin, Home, Phone, Image, CheckCircle, CheckCircle2, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,19 +15,25 @@ import { useModal } from '@/contexts/ModalContext';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useListingTypes } from '@/hooks/queries/useProperties';
+import { useMyProperty } from '@/hooks/queries/useProperties';
+import { useUpdateMyProperty } from '@/hooks/mutations/usePropertyMutations';
 import { MediaUpload } from '@/components/MediaUpload';
 import { MapLocationPicker } from '@/components/MapLocationPicker';
-import { propertyApi } from '@/services/api/properties';
 import { pointSettingsApi } from '@/services/api/pointSettings';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { createPropertySchema } from '@/lib/validation/property';
 import { FormField } from '@/components/forms';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default function CreateProperty() {
+export default function EditProperty() {
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const seo = seoUtils.getPageSEO('createProperty');
+  const seo = seoUtils.getPageSEO('editProperty');
   const { t, language } = useLanguage();
   const { showSuccess, showError } = useModal();
+
+  // Fetch property data
+  const { data: propertyData, isLoading: propertyLoading, error: propertyError } = useMyProperty(slug || '');
 
   // Lookups
   const { data: regionsResp } = useRegions();
@@ -39,19 +45,119 @@ export default function CreateProperty() {
   const propertyTypes = propertyTypesResp?.data || [];
   const listingTypes = listingTypesResp?.data || [];
 
-  // Form validation (same pattern as advertisements)
+  // Form validation
   const { form, errors } = useFormValidation(createPropertySchema);
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>(['']);
   const [phoneErrors, setPhoneErrors] = useState<string[]>(['']);
 
   const [mediaIds, setMediaIds] = useState<number[]>([]);
   const [isMediaLoading, setIsMediaLoading] = useState(false);
+  const [initialMediaFiles, setInitialMediaFiles] = useState<Array<{
+    id: number;
+    url: string;
+    filename: string;
+    type: 'image' | 'video';
+    size?: number;
+  }>>([]);
   
   // Confirmation dialog state
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pointSettings, setPointSettings] = useState<any>(null);
   const [loadingPointSettings, setLoadingPointSettings] = useState(false);
   const [pendingSubmitData, setPendingSubmitData] = useState<any>(null);
+
+  // Mutation hook
+  const updatePropertyMutation = useUpdateMyProperty();
+
+  // Track if form has been initialized to prevent overwriting user changes
+  const formInitializedRef = useRef(false);
+
+  const property = propertyData?.data?.data;
+
+  // Pre-fill form when property data is loaded
+  useEffect(() => {
+    if (property && !formInitializedRef.current && regions.length > 0 && townships.length > 0 && propertyTypes.length > 0 && listingTypes.length > 0) {
+      // Basic Information - set as numbers for form validation, but Select will convert to string
+      if (property.property_type?.id) {
+        form.setValue('property_type_id', property.property_type.id, { shouldValidate: false });
+      }
+      if (property.listing_type?.id) {
+        form.setValue('listing_type_id', property.listing_type.id, { shouldValidate: false });
+      }
+      if (property.property_condition?.value) {
+        form.setValue('property_condition', property.property_condition.value, { shouldValidate: false });
+      }
+      form.setValue('title_en', property.title_en || '', { shouldValidate: false });
+      form.setValue('title_mm', property.title_mm || '', { shouldValidate: false });
+      form.setValue('description', property.description || '', { shouldValidate: false });
+
+      // Location - set region first, then township will be set in the separate useEffect
+      if (property.location?.region?.id) {
+        form.setValue('region_id', property.location.region.id, { shouldValidate: false });
+      }
+      form.setValue('address', property.location?.address || '', { shouldValidate: false });
+      form.setValue('latitude', property.location?.latitude ? Number(property.location.latitude) : undefined, { shouldValidate: false });
+      form.setValue('longitude', property.location?.longitude ? Number(property.location.longitude) : undefined, { shouldValidate: false });
+
+      // Price and details
+      const priceNum = property.price ? Number(property.price) : undefined;
+      const areaNum = property.area_sqft ? Number(property.area_sqft) : undefined;
+      if (priceNum !== undefined && !isNaN(priceNum)) {
+        form.setValue('price', priceNum, { shouldValidate: false });
+      }
+      form.setValue('bedrooms', property.bedrooms ?? 0, { shouldValidate: false });
+      form.setValue('bathrooms', property.bathrooms ?? 0, { shouldValidate: false });
+      const lengthNum = property.length ? Number(property.length) : undefined;
+      const widthNum = property.width ? Number(property.width) : undefined;
+      if (lengthNum !== undefined && !isNaN(lengthNum)) {
+        form.setValue('length', lengthNum, { shouldValidate: false });
+      }
+      if (widthNum !== undefined && !isNaN(widthNum)) {
+        form.setValue('width', widthNum, { shouldValidate: false });
+      }
+      if (areaNum !== undefined && !isNaN(areaNum)) {
+        form.setValue('area_sqft', areaNum, { shouldValidate: false });
+      }
+
+      // Contact
+      form.setValue('owner_name', property.contact_info?.owner_name || '', { shouldValidate: false });
+      form.setValue('email', property.contact_info?.email || '', { shouldValidate: false });
+      
+      // Phone numbers
+      const phones = property.contact_info?.phone_numbers || [];
+      if (phones.length > 0) {
+        setPhoneNumbers(phones);
+        form.setValue('phone_numbers', phones, { shouldValidate: false });
+      }
+
+      // Media - check if media exists in response (structure: media.images array)
+      const propertyWithMedia = property as any;
+      const mediaArray = propertyWithMedia.media?.images || propertyWithMedia.media || [];
+      if (Array.isArray(mediaArray) && mediaArray.length > 0) {
+        const mediaFiles = mediaArray.map((m: any) => ({
+          id: m.id,
+          url: m.url || m.medium_url || m.small_url || m.thumbnail_url,
+          filename: m.filename || m.original_filename || 'file',
+          type: (m.type === 'video' || m.media_type === 'video') ? 'video' : 'image' as 'image' | 'video',
+          size: m.size || 0
+        }));
+        setInitialMediaFiles(mediaFiles);
+        const ids = mediaArray.map((m: any) => m.id);
+        setMediaIds(ids);
+        form.setValue('media_ids', ids, { shouldValidate: false });
+      }
+
+      // Status and flags
+      if (property.status) {
+        form.setValue('status', property.status as 'draft' | 'published', { shouldValidate: false });
+      }
+      form.setValue('tan_tan_tan', property.tan_tan_tan || false, { shouldValidate: false });
+      form.setValue('is_trending', property.is_trending || false, { shouldValidate: false });
+      form.setValue('bank_installment_available', property.bank_installment_available || false, { shouldValidate: false });
+
+      formInitializedRef.current = true;
+    }
+  }, [property, form, regions, townships, propertyTypes, listingTypes]);
 
   // Initialize default values to avoid undefined for arrays
   useEffect(() => {
@@ -106,7 +212,6 @@ export default function CreateProperty() {
         setLoadingPointSettings(true);
         try {
           const response = await pointSettingsApi.getPointSettings();
-          // response.data is the API wrapper, response.data.data is the actual PointSettings
           if (response.data && response.data.data) {
             setPointSettings(response.data.data);
           }
@@ -125,23 +230,21 @@ export default function CreateProperty() {
 
   const onSubmit = async (data: any) => {
     console.log('Form submitted with data:', data);
-    console.log('Form errors:', form.formState.errors);
-    console.log('Media IDs:', mediaIds);
     try {
       const payload = {
         ...data,
         media_ids: mediaIds,
       };
       console.log('Submitting payload:', payload);
-      await propertyApi.createMyProperty(payload);
+      await updatePropertyMutation.mutateAsync({ slug: slug!, data: payload });
       setShowConfirmDialog(false);
-      showSuccess(t('createProperty.successMessage') || 'Property created successfully!', t('createProperty.successTitle') || 'Success!');
+      showSuccess(t('editProperty.successMessage') || 'Property updated successfully!', t('editProperty.successTitle') || 'Success!');
       navigate('/properties');
     } catch (err: any) {
       console.error('Submit error:', err);
       setShowConfirmDialog(false);
-      const msg = err?.response?.data?.message || err?.message || t('createProperty.errorMessage');
-      showError(msg, t('createProperty.errorTitle') || 'Error');
+      const msg = err?.response?.data?.message || err?.message || t('editProperty.errorMessage');
+      showError(msg, t('editProperty.errorTitle') || 'Error');
     }
   };
 
@@ -163,12 +266,19 @@ export default function CreateProperty() {
       return;
     }
     
-    // Store the form data for later submission
-    const formData = form.getValues();
-    setPendingSubmitData(formData);
+    // Check if premium status changed - if so, show confirmation dialog
+    const currentIsTrending = property?.is_trending || false;
+    const newIsTrending = form.watch('is_trending') || false;
     
-    // Show confirmation dialog
-    setShowConfirmDialog(true);
+    if (newIsTrending && !currentIsTrending) {
+      // Premium is being added, show confirmation dialog
+      const formData = form.getValues();
+      setPendingSubmitData(formData);
+      setShowConfirmDialog(true);
+    } else {
+      // No premium change or removing premium, submit directly
+      onSubmit(form.getValues());
+    }
   };
 
   const handleConfirmSubmit = () => {
@@ -179,10 +289,78 @@ export default function CreateProperty() {
 
   const watchedRegionId = form.watch('region_id');
   const availableTownships = watchedRegionId ? townships.filter((ts: any) => Number(ts.region_id) === Number(watchedRegionId)) : [];
+  
+  // Additional effect to set township after region changes and availableTownships updates
+  useEffect(() => {
+    if (property && formInitializedRef.current && property.location?.township?.id && watchedRegionId) {
+      const currentTownshipId = form.watch('township_id');
+      const expectedTownshipId = property.location.township.id;
+      
+      // Only set if not already set or if it's different
+      if (!currentTownshipId || Number(currentTownshipId) !== Number(expectedTownshipId)) {
+        // Check if township is available in filtered list for the selected region
+        const isAvailable = availableTownships.some((ts: any) => Number(ts.id) === Number(expectedTownshipId));
+        if (isAvailable && availableTownships.length > 0) {
+          form.setValue('township_id', expectedTownshipId, { shouldValidate: false });
+        }
+      }
+    }
+  }, [watchedRegionId, availableTownships, property, form]);
+
+  // Loading state
+  if (propertyLoading) {
+    return (
+      <>
+        <SEOHead seo={seo} path={`/properties/edit/${slug}`} />
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-8">
+              <Skeleton className="h-10 w-64" />
+              <Skeleton className="h-10 w-24" />
+            </div>
+            <div className="space-y-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i} className="shadow-lg">
+                  <CardHeader>
+                    <Skeleton className="h-6 w-48" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Error state
+  if (propertyError || !property) {
+    return (
+      <>
+        <SEOHead seo={seo} path={`/properties/edit/${slug}`} />
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Card className="shadow-lg">
+              <CardContent className="py-12 text-center">
+                <p className="text-red-500 mb-4">{t('editProperty.notFound') || 'Property not found'}</p>
+                <Button onClick={() => navigate('/properties')}>{t('common.back') || 'Back'}</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
-      <SEOHead seo={seo} path="/properties/create" />
+      <SEOHead seo={seo} path={`/properties/edit/${slug}`} />
 
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -190,15 +368,15 @@ export default function CreateProperty() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                {t('createProperty.title') || 'Create Property'}
+                {t('editProperty.title') || 'Edit Property'}
               </h1>
               <p className="text-muted-foreground mt-2">
-                {t('createProperty.description') || 'Post your property with details and media'}
+                {t('editProperty.description') || 'Update your property details and media'}
               </p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="hover:bg-primary/10">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('createProperty.back') || 'Back'}
+              {t('editProperty.back') || 'Back'}
             </Button>
           </div>
 
@@ -214,7 +392,10 @@ export default function CreateProperty() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="property_type_id" label={t('createProperty.propertyType')} error={errors.property_type_id} required>
-                    <Select value={form.watch('property_type_id') ? String(form.watch('property_type_id')) : undefined} onValueChange={(v) => form.setValue('property_type_id', Number(v))}>
+                    <Select 
+                      value={form.watch('property_type_id') ? String(form.watch('property_type_id')) : ''} 
+                      onValueChange={(v) => form.setValue('property_type_id', Number(v))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectPropertyType')} />
                       </SelectTrigger>
@@ -226,7 +407,10 @@ export default function CreateProperty() {
                     </Select>
                   </FormField>
                   <FormField name="listing_type_id" label={t('createProperty.listingType')} error={errors.listing_type_id} required>
-                    <Select value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : undefined} onValueChange={(v) => form.setValue('listing_type_id', Number(v))}>
+                    <Select 
+                      value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : ''} 
+                      onValueChange={(v) => form.setValue('listing_type_id', Number(v))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectListingType')} />
                       </SelectTrigger>
@@ -238,7 +422,10 @@ export default function CreateProperty() {
                     </Select>
                   </FormField>
                   <FormField name="property_condition" label={t('createProperty.propertyCondition')} error={errors.property_condition} required>
-                    <Select value={form.watch('property_condition') || ''} onValueChange={(v) => form.setValue('property_condition', v as 'ready' | 'some' | 'no')}>
+                    <Select 
+                      value={form.watch('property_condition') || ''} 
+                      onValueChange={(v) => form.setValue('property_condition', v as 'ready' | 'some' | 'no')}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectCondition')} />
                       </SelectTrigger>
@@ -277,7 +464,13 @@ export default function CreateProperty() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField name="region_id" label={t('createProperty.region')} error={errors.region_id} required>
-                    <Select value={form.watch('region_id') ? String(form.watch('region_id')) : undefined} onValueChange={(v) => { form.setValue('region_id', Number(v)); form.setValue('township_id', undefined as any); }}>
+                    <Select 
+                      value={form.watch('region_id') ? String(form.watch('region_id')) : ''} 
+                      onValueChange={(v) => { 
+                        form.setValue('region_id', Number(v)); 
+                        form.setValue('township_id', undefined as any); 
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectRegion')} />
                       </SelectTrigger>
@@ -289,7 +482,10 @@ export default function CreateProperty() {
                     </Select>
                   </FormField>
                   <FormField name="township_id" label={t('createProperty.township')} error={errors.township_id} required>
-                    <Select value={form.watch('township_id') ? String(form.watch('township_id')) : undefined} onValueChange={(v) => form.setValue('township_id', Number(v))}>
+                    <Select 
+                      value={form.watch('township_id') ? String(form.watch('township_id')) : ''} 
+                      onValueChange={(v) => form.setValue('township_id', Number(v))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectTownship')} />
                       </SelectTrigger>
@@ -380,6 +576,7 @@ export default function CreateProperty() {
                       onLoadingChange={(isLoading) => setIsMediaLoading(isLoading)}
                       maxFiles={8}
                       className="min-h-[360px]"
+                      initialFiles={initialMediaFiles}
                     />
                     {/* Hidden input to register media_ids field for validation */}
                     <input type="hidden" {...form.register('media_ids')} />
@@ -551,9 +748,9 @@ export default function CreateProperty() {
               <Button 
                 type="submit" 
                 className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50"
-                disabled={isMediaLoading}
+                disabled={isMediaLoading || updatePropertyMutation.isPending}
               >
-                {t('createProperty.create') || 'Create Property'}
+                {updatePropertyMutation.isPending ? (t('common.saving') || 'Saving...') : (t('editProperty.update') || 'Update Property')}
               </Button>
               <Button type="button" variant="outline" onClick={() => navigate(-1)}>
                 {t('createAdvertisement.cancel')}
@@ -563,13 +760,12 @@ export default function CreateProperty() {
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
+      {/* Confirmation Dialog - Only shown when adding premium */}
       <Dialog 
         open={showConfirmDialog} 
         onOpenChange={(open) => {
           setShowConfirmDialog(open);
           if (!open) {
-            // Reset when dialog closes
             setPointSettings(null);
             setPendingSubmitData(null);
           }
@@ -583,10 +779,10 @@ export default function CreateProperty() {
               </div>
               <div>
                 <DialogTitle className="text-lg font-semibold text-left">
-                  {t('createProperty.confirmTitle') || 'Confirm Property Upload'}
+                  {t('editProperty.confirmTitle') || 'Confirm Premium Upgrade'}
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground mt-1">
-                  {t('createProperty.confirmDescription') || 'Please review the upload fees before submitting your property.'}
+                  {t('editProperty.confirmDescription') || 'You are adding premium status. Additional fees will apply.'}
                 </DialogDescription>
               </div>
             </div>
@@ -605,18 +801,8 @@ export default function CreateProperty() {
               <div className="overflow-hidden border border-border rounded-lg">
                 <table className="w-full border-collapse">
                   <tbody className="divide-y divide-border">
-                    {/* Upload Fee Row */}
-                    <tr className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium text-foreground">
-                        {t('createProperty.uploadFee') || 'Upload Fee'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
-                        {pointSettings.upload_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
-                      </td>
-                    </tr>
-
-                    {/* Premium Fee Row (if premium is selected) */}
-                    {form.watch('is_trending') && pointSettings.premium_property_info && (
+                    {/* Premium Fee Row */}
+                    {pointSettings.premium_property_info && (
                       <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
                         <td className="px-4 py-3 text-sm font-medium text-foreground">
                           <div className="flex items-center gap-2">
@@ -638,22 +824,11 @@ export default function CreateProperty() {
                         {t('createProperty.totalFee') || 'Total'}
                       </td>
                       <td className="px-4 py-4 text-right text-base font-bold text-primary">
-                        {(
-                          (pointSettings.upload_info?.point_amount || 0) +
-                          (form.watch('is_trending') ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
-                        )} {t('createProperty.points') || 'Points'}
+                        {pointSettings.premium_property_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
                       </td>
                     </tr>
                   </tfoot>
                 </table>
-              </div>
-              
-              {/* Validity Period Info */}
-              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
-                <p className="text-xs text-muted-foreground text-center">
-                  <CheckCircle2 className="inline h-3 w-3 mr-1" />
-                  {t('createProperty.uploadFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{pointSettings.upload_info?.days || 0}</span> {t('createProperty.days') || 'days'}
-                </p>
               </div>
             </div>
           ) : null}
@@ -677,7 +852,7 @@ export default function CreateProperty() {
               className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 w-full sm:w-auto"
             >
               <CheckCircle2 className="mr-2 h-4 w-4" />
-              {t('createProperty.confirmSubmit') || 'Confirm & Submit'}
+              {t('editProperty.confirmSubmit') || 'Confirm & Update'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -685,5 +860,4 @@ export default function CreateProperty() {
     </>
   );
 }
-
 

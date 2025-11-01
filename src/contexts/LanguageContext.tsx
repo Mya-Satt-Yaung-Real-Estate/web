@@ -1065,6 +1065,20 @@ const translations: Translations = {
   'createProperty.days': { en: 'days', mm: 'ရက်' },
   'createProperty.confirmSubmit': { en: 'Confirm & Submit', mm: 'အတည်ပြုပြီး တင်သွင်းရန်' },
 
+  // Edit Property Page
+  'editProperty.title': { en: 'Edit Property', mm: 'ပိုင်ဆိုင်မှုကို တည်းဖြတ်ရန်' },
+  'editProperty.description': { en: 'Update your property details and media', mm: 'သင့်ပိုင်ဆိုင်မှုအသေးစိတ်များနှင့် မီဒီယာများကို အပ်ဒိတ်လုပ်ပါ' },
+  'editProperty.back': { en: 'Back', mm: 'နောက်သို့' },
+  'editProperty.update': { en: 'Update Property', mm: 'ပိုင်ဆိုင်မှုကို အပ်ဒိတ်လုပ်ရန်' },
+  'editProperty.successMessage': { en: 'Property updated successfully!', mm: 'ပိုင်ဆိုင်မှု အပ်ဒိတ်လုပ်ခြင်း အောင်မြင်ပါသည်!' },
+  'editProperty.successTitle': { en: 'Success!', mm: 'အောင်မြင်ပါသည်!' },
+  'editProperty.errorMessage': { en: 'Failed to update property', mm: 'ပိုင်ဆိုင်မှု အပ်ဒိတ်လုပ်ရန် မအောင်မြင်ပါ' },
+  'editProperty.errorTitle': { en: 'Error', mm: 'အမှားအယွင်း' },
+  'editProperty.notFound': { en: 'Property not found', mm: 'ပိုင်ဆိုင်မှု မတွေ့ရှိပါ' },
+  'editProperty.confirmTitle': { en: 'Confirm Premium Upgrade', mm: 'ပရီမီယံ အဆင့်မြှင့်တင်ခြင်းကို အတည်ပြုရန်' },
+  'editProperty.confirmDescription': { en: 'You are adding premium status. Additional fees will apply.', mm: 'သင်သည် ပရီမီယံ အဆင့်သတ်မှတ်ခြင်းကို ထည့်သွင်းနေသည်။ အပိုလေးချိန်များ ကုန်ကျပါမည်။' },
+  'editProperty.confirmSubmit': { en: 'Confirm & Update', mm: 'အတည်ပြုပြီး အပ်ဒိတ်လုပ်ရန်' },
+
     // Advertisement Create Page
     'createAdvertisement.title': { en: 'Create Advertisement', mm: 'ကြော်ငြာဖန်တီးရန်' },
     'createAdvertisement.description': { en: 'Create a new advertisement to promote your property or service', mm: 'သင့်ပိုင်ဆိုင်များနှင့်ဝန်ဆောင်မှုများကိုကြော်ငြာရန်ကြော်ငြာအသစ်ဖန်တီးပါ' },

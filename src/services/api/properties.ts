@@ -33,10 +33,24 @@ export const propertyApi = {
   },
 
   /**
-   * Delete property (frontend my-properties)
+   * Get my property by slug (authenticated)
    */
-  deleteMyProperty: (id: string | number) => {
-    return api.delete<{ success: boolean; message?: string }>(`/api/v1/frontend/my-properties/${id}`);
+  getMyProperty: (slug: string) => {
+    return api.get<PropertyResponse>(`/api/v1/frontend/my-properties/${slug}`);
+  },
+
+  /**
+   * Update my property by slug (authenticated)
+   */
+  updateMyProperty: (slug: string, payload: any) => {
+    return api.put<PropertyResponse>(`/api/v1/frontend/my-properties/${slug}`, payload);
+  },
+
+  /**
+   * Delete property by slug (frontend my-properties)
+   */
+  deleteMyProperty: (slug: string) => {
+    return api.delete<{ success: boolean; message?: string }>(`/api/v1/frontend/my-properties/${slug}`);
   },
 
   /**

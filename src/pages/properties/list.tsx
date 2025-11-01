@@ -53,7 +53,7 @@ export default function MyPropertiesList() {
   const { showSuccess } = useModal();
   const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (property: Property) => {
     showConfirm({
       title: t('properties.confirmDeleteTitle') || 'Confirm Delete',
       message: t('properties.confirmDeleteMessage') || 'Are you sure you want to delete this property? This action cannot be undone.',
@@ -61,7 +61,7 @@ export default function MyPropertiesList() {
       cancelText: t('advertisements.cancel') || 'Cancel',
       confirmVariant: 'destructive',
       onConfirm: async () => {
-        await propertyApi.deleteMyProperty(id);
+        await propertyApi.deleteMyProperty(property.slug);
         showSuccess(
           t('properties.deleteSuccess') || 'Property deleted successfully!',
           t('properties.deleteSuccessTitle') || 'Success!'
@@ -355,7 +355,7 @@ export default function MyPropertiesList() {
                                 size="sm"
                                 className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
                               >
-                                <Link to={`/post-property?tab=property&editId=${property.id}`}>
+                                <Link to={`/properties/edit/${property.slug}`}>
                                   <Edit className="h-4 w-4 mr-2" />
                                   {t('properties.edit')}
                                 </Link>
@@ -365,7 +365,7 @@ export default function MyPropertiesList() {
                               <Button 
                                 variant="outline" 
                                 size="sm"
-                                onClick={() => handleDelete(property.id)}
+                                onClick={() => handleDelete(property)}
                                 className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
