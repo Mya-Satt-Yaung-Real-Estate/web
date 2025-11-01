@@ -343,7 +343,7 @@ export default function MyPropertiesList() {
 
                           <div className="flex gap-2">
                             <Button asChild variant="outline" size="sm" className="flex-1 bg-primary/10 text-primary hover:bg-primary/20">
-                              <Link to={`/properties/detail/${property.id}`}>
+                              <Link to={`/properties/detail/${property.slug}`}>
                                 <Eye className="h-4 w-4 mr-2" />
                                 {t('properties.viewDetails')}
                               </Link>
