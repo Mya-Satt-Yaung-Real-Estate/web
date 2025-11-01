@@ -43,6 +43,7 @@ export default function CreateProperty() {
   const [phoneErrors, setPhoneErrors] = useState<string[]>(['']);
 
   const [mediaIds, setMediaIds] = useState<number[]>([]);
+  const [isMediaLoading, setIsMediaLoading] = useState(false);
 
   // Initialize default values to avoid undefined for arrays
   useEffect(() => {
@@ -53,6 +54,11 @@ export default function CreateProperty() {
       form.setValue('media_ids', []);
     }
   }, []);
+
+  // Sync mediaIds state with form when it changes
+  useEffect(() => {
+    form.setValue('media_ids', mediaIds);
+  }, [mediaIds]);
 
   const addPhoneNumber = () => {
     setPhoneNumbers([...phoneNumbers, '']);
@@ -86,18 +92,34 @@ export default function CreateProperty() {
   };
 
   const onSubmit = async (data: any) => {
+    console.log('Form submitted with data:', data);
+    console.log('Form errors:', form.formState.errors);
+    console.log('Media IDs:', mediaIds);
     try {
       const payload = {
         ...data,
         media_ids: mediaIds,
       };
+      console.log('Submitting payload:', payload);
       await propertyApi.createMyProperty(payload);
       showSuccess(t('createProperty.successMessage') || 'Property created successfully!', t('createProperty.successTitle') || 'Success!');
       navigate('/properties');
     } catch (err: any) {
+      console.error('Submit error:', err);
       const msg = err?.response?.data?.message || err?.message || t('createProperty.errorMessage');
       showError(msg, t('createProperty.errorTitle') || 'Error');
     }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    console.log('Form submit event triggered');
+    console.log('Form state before submit:', {
+      isValid: form.formState.isValid,
+      errors: form.formState.errors,
+      values: form.getValues()
+    });
+    // handleSubmit will preventDefault and validate
+    form.handleSubmit(onSubmit)(e);
   };
 
   const watchedRegionId = form.watch('region_id');
@@ -125,7 +147,7 @@ export default function CreateProperty() {
             </Button>
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleFormSubmit} className="space-y-6">
             {/* Basic Information */}
             <Card className="shadow-lg">
               <CardHeader>
@@ -261,7 +283,7 @@ export default function CreateProperty() {
                       form.setValue('longitude', lng);
                     }}
                     buttonVariant="link"
-                    className="p-0 h-auto text-primary hover:text-primary/80 underline"
+                    className="p-0 h-auto text-primary hover:text-primary/80 underline justify-start items-start sm:items-center"
                   />
                 </div>
                 {/* Hidden inputs for latitude and longitude - still submitted to API */}
@@ -285,15 +307,29 @@ export default function CreateProperty() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">{t('createAdvertisement.mediaDescription')}</p>
-                  <MediaUpload 
-                    onUploadComplete={(ids) => setMediaIds(ids)} 
-                    onUploadError={(msg) => showError(msg, t('common.error'))} 
-                    maxFiles={8}
-                    className="min-h-[360px]"
-                  />
-                </div>
+                <FormField 
+                  name="media_ids" 
+                  label="" 
+                  error={errors.media_ids} 
+                  required
+                  className="space-y-2"
+                >
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">{t('createAdvertisement.mediaDescription')}</p>
+                    <MediaUpload 
+                      onUploadComplete={(ids) => {
+                        setMediaIds(ids);
+                        form.setValue('media_ids', ids, { shouldValidate: true });
+                      }} 
+                      onUploadError={(msg) => showError(msg, t('common.error'))} 
+                      onLoadingChange={(isLoading) => setIsMediaLoading(isLoading)}
+                      maxFiles={8}
+                      className="min-h-[360px]"
+                    />
+                    {/* Hidden input to register media_ids field for validation */}
+                    <input type="hidden" {...form.register('media_ids')} />
+                  </div>
+                </FormField>
               </CardContent>
             </Card>
 
@@ -457,7 +493,11 @@ export default function CreateProperty() {
 
             {/* Submit */}
             <div className="flex justify-end gap-4">
-              <Button type="submit" className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50">
+              <Button 
+                type="submit" 
+                className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50"
+                disabled={isMediaLoading}
+              >
                 {t('createProperty.create') || 'Create Property'}
               </Button>
               <Button type="button" variant="outline" onClick={() => navigate(-1)}>

@@ -205,3 +205,4 @@ export interface PropertyStatisticsResponse {
   data: PropertyStatistics;
   status?: number;
 }
+

@@ -46,6 +46,28 @@ export function MapLocationPicker({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLat, setSelectedLat] = useState<number | null>(null);
   const [selectedLng, setSelectedLng] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      // Cleanup: restore body scroll on unmount
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  // Cleanup body scroll when dialog closes
+  useEffect(() => {
+    if (!isOpen && isMobile) {
+      document.body.style.overflow = '';
+    }
+  }, [isOpen, isMobile]);
 
   // Determine if location is already selected
   const currentLat = selectedLat !== null ? selectedLat : (typeof latitude === 'string' ? parseFloat(latitude) : latitude);
@@ -98,6 +120,18 @@ export function MapLocationPicker({
       }
     }
     setIsOpen(true);
+    // Prevent body scroll on mobile when map opens
+    if (window.innerWidth < 640) {
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // Restore body scroll on mobile
+    if (window.innerWidth < 640) {
+      document.body.style.overflow = '';
+    }
   };
 
   return (
@@ -106,14 +140,35 @@ export function MapLocationPicker({
         type="button"
         variant={buttonVariant}
         onClick={handleOpen}
-        className={`${className} text-left`}
+        className={`${className} text-left w-full sm:w-auto flex items-start sm:items-center`}
       >
-        <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-        <span className="break-words sm:break-normal">{displayText}</span>
+        <MapPin className="h-4 w-4 mr-2 flex-shrink-0 mt-0.5 sm:mt-0" />
+        <span className="flex-1 inline-block break-words sm:inline sm:break-normal text-xs sm:text-sm leading-relaxed sm:leading-normal whitespace-normal text-left">
+          {displayText}
+        </span>
       </Button>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent size="2xl" className="max-w-[90vw] h-[90vh] flex flex-col p-0">
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        if (!open) {
+          handleClose();
+        } else {
+          setIsOpen(true);
+        }
+      }}>
+        <DialogContent 
+          size="2xl" 
+          className={`max-w-[90vw] h-[90vh] flex flex-col p-0 ${isMobile ? '!left-[5vw] !top-[5vh] !translate-x-0 !translate-y-0' : ''}`}
+          style={{
+            maxHeight: '90vh'
+          }}
+          onInteractOutside={(e) => {
+            // Prevent closing on mobile when interacting with map
+            const target = e.target as HTMLElement;
+            if (isMobile && target.closest('.leaflet-container')) {
+              e.preventDefault();
+            }
+          }}
+        >
           {/* Header */}
           <div className="px-3 py-2 border-b flex items-center justify-between flex-shrink-0">
             <DialogHeader className="flex-1 py-0">
@@ -122,13 +177,29 @@ export function MapLocationPicker({
           </div>
 
           {/* Map Area */}
-          <div className="flex-1 relative overflow-hidden" style={{ minHeight: '650px' }}>
+          <div 
+            className="flex-1 relative overflow-hidden" 
+            style={{ minHeight: '650px' }}
+            onTouchStart={(e) => {
+              // Prevent dialog movement on mobile when touching map
+              if (isMobile) {
+                e.stopPropagation();
+              }
+            }}
+          >
             {typeof window !== 'undefined' && (
               <MapContainer
                 center={initialCenter}
                 zoom={selectedLat && selectedLng ? 15 : 10}
-                style={{ height: '100%', width: '100%', zIndex: 0, minHeight: '600px' }}
+                style={{ 
+                  height: '100%', 
+                  width: '100%', 
+                  zIndex: 0, 
+                  minHeight: '600px',
+                  touchAction: 'pan-x pan-y'
+                }}
                 scrollWheelZoom={true}
+                zoomControl={true}
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

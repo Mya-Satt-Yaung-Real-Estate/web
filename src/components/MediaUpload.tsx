@@ -6,6 +6,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useAuthStore } from '@/stores/authStore';
 import { CONFIG } from '@/lib/config';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { toast } from 'sonner';
 
 export interface MediaFile {
   id: number;
@@ -20,6 +21,7 @@ export interface MediaFile {
 interface MediaUploadProps {
   onUploadComplete: (mediaIds: number[]) => void;
   onUploadError: (error: string) => void;
+  onLoadingChange?: (isLoading: boolean) => void;
   maxFiles?: number;
   acceptedTypes?: string[];
   className?: string;
@@ -35,6 +37,7 @@ interface MediaUploadProps {
 export function MediaUpload({
   onUploadComplete,
   onUploadError,
+  onLoadingChange,
   maxFiles = 5,
   acceptedTypes = ['image/*', 'video/*'],
   className = '',
@@ -42,6 +45,7 @@ export function MediaUpload({
 }: MediaUploadProps) {
   const [uploadedFiles, setUploadedFiles] = useState<MediaFile[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorText, setErrorText] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +66,12 @@ export function MediaUpload({
       onUploadComplete(normalized.map(f => f.id));
     }
   }, [initialFiles]);
+
+  // Notify parent of loading state changes
+  useEffect(() => {
+    const isLoading = uploading || deleting;
+    onLoadingChange?.(isLoading);
+  }, [uploading, deleting, onLoadingChange]);
 
   const handleFileSelect = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -140,6 +150,7 @@ export function MediaUpload({
     } finally {
       setUploading(false);
       setUploadProgress(0);
+      // Loading state will be updated by useEffect that watches uploading/deleting
     }
   }, [uploadedFiles, maxFiles, onUploadError, onUploadComplete]);
 
@@ -155,6 +166,8 @@ export function MediaUpload({
 
   const removeFile = async (fileId: number) => {
     try {
+      setDeleting(true);
+      
       // Call delete API before removing locally
       const token = useAuthStore.getState().token;
       const response = await fetch(`${CONFIG.api.baseUrl}/api/v1/media/${fileId}`, {
@@ -170,6 +183,7 @@ export function MediaUpload({
         const message = (errorData && errorData.message) ? errorData.message : 'Failed to delete media';
         setErrorText(message);
         onUploadError(message);
+        setDeleting(false);
         return;
       }
 
@@ -177,10 +191,15 @@ export function MediaUpload({
       setUploadedFiles(newFiles);
       setErrorText('');
       onUploadComplete(newFiles.map(file => file.id));
+      
+      // Show success toast
+      toast.success(t('mediaUpload.deleteSuccess') || 'Media deleted successfully');
+      setDeleting(false);
     } catch (e: any) {
       const message = e?.message || 'Failed to delete media';
       setErrorText(message);
       onUploadError(message);
+      setDeleting(false);
     }
   };
 

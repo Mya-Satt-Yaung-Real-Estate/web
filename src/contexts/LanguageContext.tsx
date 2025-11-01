@@ -275,6 +275,9 @@ const translations: Translations = {
     'validation.area.range': { en: 'Maximum area must be greater than minimum area', mm: 'အများဆုံးဧရိယာသည် အနည်းဆုံးဧရိယာထက် ကြီးရပါမည်' },
     'validation.area.required': { en: 'Area is required', mm: 'ဧရိယာ လိုအပ်ပါသည်' },
     
+    'validation.length.invalid': { en: 'Length must be a positive number', mm: 'အလျားသည် အပေါင်းကိန်းဖြစ်ရပါမည်' },
+    'validation.width.invalid': { en: 'Width must be a positive number', mm: 'အနံသည် အပေါင်းကိန်းဖြစ်ရပါမည်' },
+    
     'validation.price.required': { en: 'Price is required', mm: 'ဈေးနှုန်း လိုအပ်ပါသည်' },
     
     // Legacy validation messages (keeping for backward compatibility)
@@ -297,6 +300,9 @@ const translations: Translations = {
     'validation.phoneNumbers.required': { en: 'At least one phone number is required', mm: 'ဖုန်းနံပါတ်အနည်းဆုံး တစ်ခု လိုအပ်ပါသည်' },
     'validation.phoneNumbers.invalid': { en: 'Phone number must be digits only (max 13) with optional + at start', mm: 'ဖုန်းနံပါတ်သည် အစတွင် + ရှိနိုင်ပြီး နံပါတ်များသာ (အများဆုံး 13) ဖြစ်ရမည်' },
     'validation.media.required': { en: 'Please upload at least one media file', mm: 'အနည်းဆုံး မီဒီယာဖိုင် တစ်ဖိုင် ရှိရပါမည်' },
+    
+    // Media Upload
+    'mediaUpload.deleteSuccess': { en: 'Media deleted successfully', mm: 'မီဒီယာကို အောင်မြင်စွာ ဖျက်လိုက်ပါပြီ' },
     'validation.maxLength': { en: 'Maximum length exceeded', mm: 'အများဆုံးအရှည် ကျော်လွန်သွားပါသည်' },
     
     // Form Placeholders
