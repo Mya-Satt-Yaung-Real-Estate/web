@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Home, Phone, Image, CheckCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Home, Phone, Image, CheckCircle, CheckCircle2, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -17,6 +18,7 @@ import { useListingTypes } from '@/hooks/queries/useProperties';
 import { MediaUpload } from '@/components/MediaUpload';
 import { MapLocationPicker } from '@/components/MapLocationPicker';
 import { propertyApi } from '@/services/api/properties';
+import { pointSettingsApi } from '@/services/api/pointSettings';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { createPropertySchema } from '@/lib/validation/property';
 import { FormField } from '@/components/forms';
@@ -44,6 +46,12 @@ export default function CreateProperty() {
 
   const [mediaIds, setMediaIds] = useState<number[]>([]);
   const [isMediaLoading, setIsMediaLoading] = useState(false);
+  
+  // Confirmation dialog state
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pointSettings, setPointSettings] = useState<any>(null);
+  const [loadingPointSettings, setLoadingPointSettings] = useState(false);
+  const [pendingSubmitData, setPendingSubmitData] = useState<any>(null);
 
   // Initialize default values to avoid undefined for arrays
   useEffect(() => {
@@ -91,6 +99,30 @@ export default function CreateProperty() {
     }
   };
 
+  // Fetch point settings when dialog opens
+  useEffect(() => {
+    if (showConfirmDialog && !pointSettings && !loadingPointSettings) {
+      const fetchPointSettings = async () => {
+        setLoadingPointSettings(true);
+        try {
+          const response = await pointSettingsApi.getPointSettings();
+          // response.data is the API wrapper, response.data.data is the actual PointSettings
+          if (response.data && response.data.data) {
+            setPointSettings(response.data.data);
+          }
+        } catch (err: any) {
+          console.error('Failed to fetch point settings:', err);
+          showError(err?.response?.data?.message || err?.message || 'Failed to load fee information', t('common.error') || 'Error');
+          setShowConfirmDialog(false);
+        } finally {
+          setLoadingPointSettings(false);
+        }
+      };
+      fetchPointSettings();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showConfirmDialog]);
+
   const onSubmit = async (data: any) => {
     console.log('Form submitted with data:', data);
     console.log('Form errors:', form.formState.errors);
@@ -102,24 +134,46 @@ export default function CreateProperty() {
       };
       console.log('Submitting payload:', payload);
       await propertyApi.createMyProperty(payload);
+      setShowConfirmDialog(false);
       showSuccess(t('createProperty.successMessage') || 'Property created successfully!', t('createProperty.successTitle') || 'Success!');
       navigate('/properties');
     } catch (err: any) {
       console.error('Submit error:', err);
+      setShowConfirmDialog(false);
       const msg = err?.response?.data?.message || err?.message || t('createProperty.errorMessage');
       showError(msg, t('createProperty.errorTitle') || 'Error');
     }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('Form submit event triggered');
     console.log('Form state before submit:', {
       isValid: form.formState.isValid,
       errors: form.formState.errors,
       values: form.getValues()
     });
-    // handleSubmit will preventDefault and validate
-    form.handleSubmit(onSubmit)(e);
+    
+    // Validate form first
+    const isValid = form.formState.isValid;
+    if (!isValid) {
+      // Trigger validation to show errors
+      form.trigger();
+      return;
+    }
+    
+    // Store the form data for later submission
+    const formData = form.getValues();
+    setPendingSubmitData(formData);
+    
+    // Show confirmation dialog
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmSubmit = () => {
+    if (pendingSubmitData) {
+      onSubmit(pendingSubmitData);
+    }
   };
 
   const watchedRegionId = form.watch('region_id');
@@ -507,6 +561,126 @@ export default function CreateProperty() {
           </form>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog 
+        open={showConfirmDialog} 
+        onOpenChange={(open) => {
+          setShowConfirmDialog(open);
+          if (!open) {
+            // Reset when dialog closes
+            setPointSettings(null);
+            setPendingSubmitData(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader className="pb-4 border-b">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-semibold text-left">
+                  {t('createProperty.confirmTitle') || 'Confirm Property Upload'}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1">
+                  {t('createProperty.confirmDescription') || 'Please review the upload fees before submitting your property.'}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          {loadingPointSettings ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-[3px] border-primary border-t-transparent"></div>
+              <p className="mt-4 text-sm text-muted-foreground font-medium">
+                {t('createProperty.loadingFees') || 'Loading fee information...'}
+              </p>
+            </div>
+          ) : pointSettings ? (
+            <div className="py-4">
+              {/* Fee Summary Table */}
+              <div className="overflow-hidden border border-border rounded-lg">
+                <table className="w-full border-collapse">
+                  <tbody className="divide-y divide-border">
+                    {/* Upload Fee Row */}
+                    <tr className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 text-sm font-medium text-foreground">
+                        {t('createProperty.uploadFee') || 'Upload Fee'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                        {pointSettings.upload_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                      </td>
+                    </tr>
+
+                    {/* Premium Fee Row (if premium is selected) */}
+                    {form.watch('is_trending') && pointSettings.premium_property_info && (
+                      <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
+                        <td className="px-4 py-3 text-sm font-medium text-foreground">
+                          <div className="flex items-center gap-2">
+                            <span>{t('createProperty.premiumFee') || 'Premium Fee'}</span>
+                            <span className="inline-flex items-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-300">
+                              Premium
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                          {pointSettings.premium_property_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-primary/5 border-t-2 border-primary/20">
+                      <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
+                        {t('createProperty.totalFee') || 'Total'}
+                      </td>
+                      <td className="px-4 py-4 text-right text-base font-bold text-primary">
+                        {(
+                          (pointSettings.upload_info?.point_amount || 0) +
+                          (form.watch('is_trending') ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
+                        )} {t('createProperty.points') || 'Points'}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              
+              {/* Validity Period Info */}
+              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
+                <p className="text-xs text-muted-foreground text-center">
+                  <CheckCircle2 className="inline h-3 w-3 mr-1" />
+                  {t('createProperty.uploadFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{pointSettings.upload_info?.days || 0}</span> {t('createProperty.days') || 'days'}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowConfirmDialog(false);
+                setPointSettings(null);
+                setPendingSubmitData(null);
+              }}
+              disabled={loadingPointSettings}
+              className="w-full sm:w-auto"
+            >
+              {t('common.cancel') || 'Cancel'}
+            </Button>
+            <Button 
+              onClick={handleConfirmSubmit}
+              disabled={loadingPointSettings || !pointSettings}
+              className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 w-full sm:w-auto"
+            >
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              {t('createProperty.confirmSubmit') || 'Confirm & Submit'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
