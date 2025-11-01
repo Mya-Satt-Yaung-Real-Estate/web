@@ -58,34 +58,9 @@ export interface AuthState {
 // ============================================================================
 // PROPERTY TYPES
 // ============================================================================
-
-export type PropertyType = 
-  | 'apartment'
-  | 'house'
-  | 'condo'
-  | 'villa'
-  | 'land'
-  | 'commercial';
+// Property types are exported from './properties' to avoid conflicts
 
 export type PropertyStatus = 'available' | 'sold' | 'rented' | 'pending';
-
-export interface Property extends BaseEntity {
-  title: string;
-  description: string;
-  price: number;
-  currency: string;
-  propertyType: PropertyType;
-  status: PropertyStatus;
-  location: string;
-  bedrooms: number;
-  bathrooms: number;
-  area: number;
-  images: string[];
-  isPremium: boolean;
-  isFeatured: boolean;
-  views: number;
-  favorites: number;
-}
 
 // ============================================================================
 // SEARCH & FILTERS

@@ -7,7 +7,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { propertyApi } from '@/services/api/properties';
 import { propertyKeys } from '@/services/queries/properties';
-import type { Property } from '@/types';
+import type { Property } from '@/types/properties';
 
 // ============================================================================
 // MUTATION HOOKS
@@ -35,11 +35,11 @@ export function useUpdateProperty() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Property> }) => 
-      propertyApi.updateProperty(id, data),
+    mutationFn: ({ id, data }: { id: string | number; data: Partial<Property> }) => 
+      propertyApi.updateProperty(String(id), data),
     onSuccess: (data, variables) => {
       // Update the specific property in cache
-      queryClient.setQueryData(propertyKeys.detail(variables.id), data);
+      queryClient.setQueryData(propertyKeys.detail(String(variables.id)), data);
       // Invalidate properties list
       queryClient.invalidateQueries({ queryKey: propertyKeys.lists() });
     },
