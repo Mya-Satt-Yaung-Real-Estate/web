@@ -145,8 +145,10 @@ export default function MyPropertiesList() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('properties.allStatuses')}</SelectItem>
-                      <SelectItem value="draft">{t('advertisements.draft')}</SelectItem>
-                      <SelectItem value="published">{t('createAdvertisement.published')}</SelectItem>
+                      <SelectItem value="draft">{t('createAdvertisement.draft') || 'Draft'}</SelectItem>
+                      <SelectItem value="published">{t('createAdvertisement.published') || 'Published'}</SelectItem>
+                      <SelectItem value="sold">{t('editProperty.sold') || 'Sold'}</SelectItem>
+                      <SelectItem value="rented">{t('editProperty.rented') || 'Rented'}</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -218,7 +220,7 @@ export default function MyPropertiesList() {
                 <h3 className="text-lg font-semibold mb-2">{t('properties.noProperties')}</h3>
                 <p className="text-muted-foreground mb-4">{t('properties.noPropertiesDesc')}</p>
                 <Button asChild className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50">
-                  <Link to="/create-listing">
+                  <Link to="/properties/create">
                     <Plus className="h-4 w-4 mr-2" />
                     {t('properties.createNew')}
                   </Link>

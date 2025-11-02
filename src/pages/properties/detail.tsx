@@ -24,6 +24,11 @@ export default function PropertyDetail() {
   const seo = seoUtils.getPageSEO('properties');
   const { data, isLoading, error } = useMyProperty(slug || '');
 
+  // Scroll to top when component mounts or slug changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [slug]);
+
   // Compute data-dependent hooks unconditionally to keep hook order stable
   const property = (data?.data?.data || data?.data) as any;
   const formatYmd = (val?: string | null) => {
@@ -145,7 +150,7 @@ export default function PropertyDetail() {
               </ol>
             </nav>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="hover:bg-primary/10">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/properties')} className="hover:bg-primary/10">
                 <ArrowLeft className="h-4 w-4 mr-2" /> {t('properties.back') || 'Back'}
               </Button>
             </div>

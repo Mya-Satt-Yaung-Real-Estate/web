@@ -324,7 +324,13 @@ export default function EditProperty() {
       setShowConfirmDialog(false);
       setIsSubmitting(false);
       showSuccess(t('editProperty.successMessage') || 'Property updated successfully!', t('editProperty.successTitle') || 'Success!');
-      navigate('/properties');
+      // Redirect to detail page - will automatically refetch due to refetchOnMount: 'always'
+      if (slug) {
+        navigate(`/properties/detail/${slug}`);
+      } else {
+        // Fallback to list page if slug is not available
+        navigate('/properties');
+      }
     } catch (err: any) {
       console.error('Submit error:', err);
       setIsSubmitting(false);
@@ -369,8 +375,13 @@ export default function EditProperty() {
     // Check if premium is being added
     const isAddingPremium = newIsTrending && !currentIsTrending;
     
-    if (isStatusChangingToPublished || isAddingPremium) {
-      // Status changing to published or premium being added, show confirmation dialog
+    // Only show confirmation dialog if:
+    // 1. Status is changing from draft to published, OR
+    // 2. Premium is being added AND status is published (not draft)
+    const shouldShowConfirmDialog = isStatusChangingToPublished || (isAddingPremium && (originalStatus === 'published' || newStatus === 'published'));
+    
+    if (shouldShowConfirmDialog) {
+      // Status changing to published or premium being added to published property, show confirmation dialog
       setPendingSubmitData(formData);
       
       // Fetch point settings for fee information
@@ -1037,8 +1048,10 @@ export default function EditProperty() {
                       </tr>
                     )}
                     
-                    {/* Premium Fee - Show when adding premium */}
-                    {pendingSubmitData?.is_trending && !property?.is_trending && pointSettings.premium_property_info && (
+                    {/* Premium Fee - Show when adding premium OR when publishing draft with premium */}
+                    {((pendingSubmitData?.is_trending && !property?.is_trending) || 
+                      (originalStatus === 'draft' && pendingSubmitData?.status === 'published' && pendingSubmitData?.is_trending)) 
+                      && pointSettings.premium_property_info && (
                       <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
                         <td className="px-4 py-3 text-sm font-medium text-foreground">
                           <div className="flex items-center gap-2">
@@ -1063,7 +1076,7 @@ export default function EditProperty() {
                         <td className="px-4 py-4 text-right text-base font-bold text-primary">
                           {(
                             (originalStatus === 'draft' && pendingSubmitData?.status === 'published' ? (pointSettings.upload_info?.point_amount || 0) : 0) +
-                            (pendingSubmitData?.is_trending && !property?.is_trending ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
+                            ((pendingSubmitData?.is_trending && !property?.is_trending) || (originalStatus === 'draft' && pendingSubmitData?.status === 'published' && pendingSubmitData?.is_trending) ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
                           )} {t('createProperty.points') || 'Points'}
                         </td>
                       </tr>

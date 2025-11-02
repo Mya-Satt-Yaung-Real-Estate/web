@@ -136,11 +136,18 @@ export default function CreateProperty() {
         media_ids: mediaIds,
       };
       console.log('Submitting payload:', payload);
-      await propertyApi.createMyProperty(payload);
+      const response = await propertyApi.createMyProperty(payload);
       setShowConfirmDialog(false);
       setIsSubmitting(false);
       showSuccess(t('createProperty.successMessage') || 'Property created successfully!', t('createProperty.successTitle') || 'Success!');
-      navigate('/properties');
+      // Redirect to detail page using slug from response
+      const propertySlug = response.data?.data?.slug;
+      if (propertySlug) {
+        navigate(`/properties/detail/${propertySlug}`);
+      } else {
+        // Fallback to list page if slug is not available
+        navigate('/properties');
+      }
     } catch (err: any) {
       console.error('Submit error:', err);
       setIsSubmitting(false);
@@ -222,7 +229,7 @@ export default function CreateProperty() {
                 {t('createProperty.description') || 'Post your property with details and media'}
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="hover:bg-primary/10">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/properties')} className="hover:bg-primary/10">
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('createProperty.back') || 'Back'}
             </Button>
@@ -563,7 +570,7 @@ export default function CreateProperty() {
               >
                 {t('createProperty.create') || 'Create Property'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+              <Button type="button" variant="outline" onClick={() => navigate('/properties')}>
                 {t('createAdvertisement.cancel')}
               </Button>
             </div>
