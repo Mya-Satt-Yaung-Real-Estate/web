@@ -44,7 +44,7 @@ export default function PropertyDetail() {
   const canEdit = !!property; // Allow edit if property exists (authenticated user's own property)
   
   // Confirm modal and toasts
-  const { showSuccess } = useModal();
+  const { showSuccess, showError } = useModal();
   const queryClient = useQueryClient();
   const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
@@ -57,10 +57,19 @@ export default function PropertyDetail() {
       cancelText: t('properties.cancel') || 'Cancel',
       confirmVariant: 'destructive',
       onConfirm: async () => {
-        await propertyApi.deleteMyProperty(property.slug);
-        queryClient.invalidateQueries({ queryKey: ['my-properties'] });
-        showSuccess(t('properties.deleteSuccess') || 'Property deleted successfully!', t('properties.deleteSuccessTitle') || 'Success!');
-        navigate('/properties');
+        try {
+          await propertyApi.deleteMyProperty(property.slug);
+          // Invalidate all property-related queries to refetch data
+          queryClient.invalidateQueries({ queryKey: ['my-properties'] });
+          queryClient.invalidateQueries({ queryKey: ['my-property', property.slug] });
+          showSuccess(t('properties.deleteSuccess') || 'Property deleted successfully!', t('properties.deleteSuccessTitle') || 'Success!');
+          // Redirect to list page - it will automatically refetch due to invalidated queries
+          navigate('/properties');
+        } catch (err: any) {
+          console.error('Delete error:', err);
+          const msg = err?.response?.data?.message || err?.message || t('properties.deleteError') || 'Failed to delete property';
+          showError(msg, t('common.error') || 'Error');
+        }
       },
     });
   };
