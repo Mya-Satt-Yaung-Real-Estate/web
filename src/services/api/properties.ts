@@ -47,6 +47,13 @@ export const propertyApi = {
   },
 
   /**
+   * Update property status by slug (authenticated)
+   */
+  updateMyPropertyStatus: (slug: string, status: 'draft' | 'published' | 'sold' | 'rented') => {
+    return api.patch<PropertyResponse>(`/api/v1/frontend/my-properties/${slug}/status`, { status });
+  },
+
+  /**
    * Delete property by slug (frontend my-properties)
    */
   deleteMyProperty: (slug: string) => {

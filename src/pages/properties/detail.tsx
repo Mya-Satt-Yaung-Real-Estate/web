@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Eye, Heart, Edit, Phone, Trash2, Bath, Bed, Ruler, ThumbsUp, MessageCircle, Square, Star } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Eye, Heart, Edit, Phone, Trash2, Bath, Bed, Ruler, ThumbsUp, MessageCircle, Square, Star, CheckCircle2, FileText } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { SEOHead } from '@/components/seo/SEOHead';
@@ -8,10 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { useModal } from '@/contexts/ModalContext';
 import { propertyApi } from '@/services/api/properties';
+import { pointSettingsApi } from '@/services/api/pointSettings';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMyProperty } from '@/hooks/queries/useProperties';
 import { MediaGallery } from '@/components/MediaGallery';
@@ -48,6 +51,13 @@ export default function PropertyDetail() {
   const queryClient = useQueryClient();
   const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
+  // Status change dialog state
+  const [showStatusChangeDialog, setShowStatusChangeDialog] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<'draft' | 'published' | 'sold' | 'rented' | null>(null);
+  const [pointSettings, setPointSettings] = useState<any>(null);
+  const [loadingPointSettings, setLoadingPointSettings] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
   const handleDelete = () => {
     if (!property?.slug) return;
     showConfirm({
@@ -73,6 +83,105 @@ export default function PropertyDetail() {
       },
     });
   };
+
+  // Handle status change
+  const handleStatusChange = async (newStatus: 'draft' | 'published' | 'sold' | 'rented') => {
+    if (!property?.slug) return;
+    
+    const currentStatus = property.status as 'draft' | 'published' | 'sold' | 'rented';
+    
+    // Only allow: draft → published, published → sold, published → rented
+    if (currentStatus === 'draft' && newStatus === 'published') {
+      // Draft → Published: Show confirmation dialog
+      setPendingStatus(newStatus);
+      setShowStatusChangeDialog(true);
+      // Fetch point settings
+      setLoadingPointSettings(true);
+      try {
+        const response = await pointSettingsApi.getPointSettings();
+        if (response.data && response.data.data) {
+          setPointSettings(response.data.data);
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch point settings:', err);
+        showError(err?.response?.data?.message || err?.message || 'Failed to load fee information', t('common.error') || 'Error');
+        setLoadingPointSettings(false);
+        setShowStatusChangeDialog(false);
+        return;
+      }
+      setLoadingPointSettings(false);
+    } else if (currentStatus === 'published' && (newStatus === 'sold' || newStatus === 'rented')) {
+      // Published → Sold/Rented: Only allow if verification status is approved
+      if (property?.verification_status !== 'approved') {
+        showError(
+          t('editProperty.propertyMustBeApproved') || 'Property must be approved before changing status to sold or rented',
+          t('common.error') || 'Error'
+        );
+        return;
+      }
+      // Update directly
+      await updateStatus(newStatus);
+    } else {
+      // Block all other transitions
+      showError(
+        t('editProperty.invalidStatusChange') || 'This status change is not allowed',
+        t('common.error') || 'Error'
+      );
+    }
+  };
+
+  // Update status
+  const updateStatus = async (newStatus: 'draft' | 'published' | 'sold' | 'rented') => {
+    if (!property?.slug) return;
+    
+    setIsUpdatingStatus(true);
+    try {
+      // Use dedicated status update endpoint
+      await propertyApi.updateMyPropertyStatus(property.slug, newStatus);
+      
+      // Refetch property data
+      queryClient.invalidateQueries({ queryKey: ['my-property', property.slug] });
+      queryClient.invalidateQueries({ queryKey: ['my-properties'] });
+      
+      showSuccess(
+        t('properties.statusUpdateSuccess') || 'Status updated successfully!',
+        t('properties.statusUpdateSuccessTitle') || 'Success!'
+      );
+      
+      setShowStatusChangeDialog(false);
+      setPendingStatus(null);
+      setPointSettings(null);
+    } catch (err: any) {
+      console.error('Status update error:', err);
+      const msg = err?.response?.data?.message || err?.message || t('properties.statusUpdateError') || 'Failed to update status';
+      showError(msg, t('common.error') || 'Error');
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  // Fetch point settings when dialog opens
+  useEffect(() => {
+    if (showStatusChangeDialog && !pointSettings && !loadingPointSettings && pendingStatus === 'published') {
+      const fetchPointSettings = async () => {
+        setLoadingPointSettings(true);
+        try {
+          const response = await pointSettingsApi.getPointSettings();
+          if (response.data && response.data.data) {
+            setPointSettings(response.data.data);
+          }
+        } catch (err: any) {
+          console.error('Failed to fetch point settings:', err);
+          showError(err?.response?.data?.message || err?.message || 'Failed to load fee information', t('common.error') || 'Error');
+          setShowStatusChangeDialog(false);
+        } finally {
+          setLoadingPointSettings(false);
+        }
+      };
+      fetchPointSettings();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showStatusChangeDialog]);
 
   // Badge color helpers
   const getVerificationBadgeClass = (status?: string) => {
@@ -165,6 +274,29 @@ export default function PropertyDetail() {
             </div>
           </div>
 
+          {/* Warning Message for Sold/Rented Properties */}
+          {property?.verification_status === 'approved' && (property?.status === 'sold' || property?.status === 'rented') && (
+            <div className="mb-6 rounded-lg border border-orange-500/50 bg-orange-50/50 dark:bg-orange-950/20 shadow-lg">
+              <div className="px-5 pt-5 pb-5">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500/20">
+                      <span className="text-orange-600 dark:text-orange-400 text-lg">ℹ️</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 py-1">
+                    <p className="text-sm font-medium text-orange-900 dark:text-orange-200">
+                      {property?.status === 'sold' 
+                        ? (t('editProperty.alreadySoldMessage') || 'This property is already sold. You cannot edit or update this property.')
+                        : (t('editProperty.alreadyRentedMessage') || 'This property is already rented. You cannot edit or update this property.')
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Header: Row 2 - Title + Actions */}
           <div className="flex items-start justify-between mb-6 py-2">
             <div className="flex-1">
@@ -181,27 +313,76 @@ export default function PropertyDetail() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {canEdit && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="bg-primary/10 text-primary hover:bg-primary/20">
-                      <Edit className="h-4 w-4 mr-2" />
-                      {t('properties.actions') || 'Actions'}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link to={`/properties/edit/${property.slug}`}>
+              {canEdit && !(property?.verification_status === 'approved' && (property?.status === 'sold' || property?.status === 'rented')) && (
+                <>
+                  {/* Change Status Dropdown */}
+                  <Select
+                    value={property?.status || ''}
+                    onValueChange={(v) => handleStatusChange(v as 'draft' | 'published' | 'sold' | 'rented')}
+                    disabled={isUpdatingStatus || property?.status === 'sold' || property?.status === 'rented'}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder={t('properties.status') || 'Status'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem 
+                        value="draft"
+                        disabled={property?.status === 'published' || property?.status === 'sold' || property?.status === 'rented'}
+                      >
+                        {t('createAdvertisement.draft') || 'Draft'}
+                      </SelectItem>
+                      <SelectItem 
+                        value="published"
+                        disabled={property?.status === 'published' || property?.status === 'sold' || property?.status === 'rented'}
+                      >
+                        {t('createAdvertisement.published') || 'Published'}
+                      </SelectItem>
+                      <SelectItem 
+                        value="sold"
+                        disabled={
+                          property?.status === 'draft' || 
+                          property?.status === 'sold' || 
+                          property?.status === 'rented' ||
+                          (property?.status === 'published' && property?.verification_status !== 'approved')
+                        }
+                      >
+                        {t('editProperty.sold') || 'Sold'}
+                      </SelectItem>
+                      <SelectItem 
+                        value="rented"
+                        disabled={
+                          property?.status === 'draft' || 
+                          property?.status === 'sold' || 
+                          property?.status === 'rented' ||
+                          (property?.status === 'published' && property?.verification_status !== 'approved')
+                        }
+                      >
+                        {t('editProperty.rented') || 'Rented'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="bg-primary/10 text-primary hover:bg-primary/20">
                         <Edit className="h-4 w-4 mr-2" />
-                        {t('properties.edit') || 'Edit'}
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-600">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      {t('properties.delete') || 'Delete'}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        {t('properties.actions') || 'Actions'}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link to={`/properties/edit/${property.slug}`}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          {t('properties.edit') || 'Edit'}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-600">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        {t('properties.delete') || 'Delete'}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
               )}
             </div>
           </div>
@@ -511,6 +692,133 @@ export default function PropertyDetail() {
         confirmVariant={confirmOptions?.confirmVariant}
         isLoading={isConfirmLoading}
       />
+
+      {/* Status Change Confirmation Dialog - Only for draft to published */}
+      <Dialog
+        open={showStatusChangeDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowStatusChangeDialog(false);
+            setPendingStatus(null);
+            setPointSettings(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader className="pb-4 border-b">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-semibold text-left">
+                  {t('editProperty.confirmPublishTitle') || 'Confirm Publishing Property'}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1">
+                  {t('editProperty.confirmPublishDescription') || 'You are publishing this property. Upload fees will apply.'}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          {loadingPointSettings ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-[3px] border-primary border-t-transparent"></div>
+              <p className="mt-4 text-sm text-muted-foreground font-medium">
+                {t('createProperty.loadingFees') || 'Loading fee information...'}
+              </p>
+            </div>
+          ) : pointSettings ? (
+            <div className="py-4">
+              <div className="overflow-hidden border border-border rounded-lg">
+                <table className="w-full border-collapse">
+                  <tbody className="divide-y divide-border">
+                    {/* Upload Fee */}
+                    <tr className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 text-sm font-medium text-foreground">
+                        {t('createProperty.uploadFee') || 'Upload Fee'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                        {pointSettings.upload_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                      </td>
+                    </tr>
+                    
+                    {/* Premium Fee - Show if property has premium */}
+                    {property?.is_trending && pointSettings.premium_property_info && (
+                      <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
+                        <td className="px-4 py-3 text-sm font-medium text-foreground">
+                          <div className="flex items-center gap-2">
+                            <span>{t('createProperty.premiumFee') || 'Premium Fee'}</span>
+                            <span className="inline-flex items-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-300">
+                              Premium
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                          {pointSettings.premium_property_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-primary/5 border-t-2 border-primary/20">
+                      <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
+                        {t('createProperty.totalFee') || 'Total'}
+                      </td>
+                      <td className="px-4 py-4 text-right text-base font-bold text-primary">
+                        {(
+                          (pointSettings.upload_info?.point_amount || 0) +
+                          (property?.is_trending ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
+                        )} {t('createProperty.points') || 'Points'}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              
+              {/* Validity Period Info */}
+              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
+                <p className="text-xs text-muted-foreground text-center">
+                  <CheckCircle2 className="inline h-3 w-3 mr-1" />
+                  {t('createProperty.uploadFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{pointSettings.upload_info?.days || 0}</span> {t('createProperty.days') || 'days'}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowStatusChangeDialog(false);
+                setPointSettings(null);
+                setPendingStatus(null);
+              }}
+              disabled={loadingPointSettings || isUpdatingStatus}
+              className="w-full sm:w-auto"
+            >
+              {t('common.cancel') || 'Cancel'}
+            </Button>
+            <Button 
+              onClick={() => pendingStatus && updateStatus(pendingStatus)}
+              disabled={loadingPointSettings || isUpdatingStatus || !pointSettings}
+              className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 w-full sm:w-auto"
+            >
+              {isUpdatingStatus ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  {t('editProperty.updating') || 'Updating...'}
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  {t('createProperty.confirmSubmit') || 'Confirm & Publish'}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
