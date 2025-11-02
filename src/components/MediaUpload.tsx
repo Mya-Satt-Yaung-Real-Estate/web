@@ -32,6 +32,7 @@ interface MediaUploadProps {
     type: 'image' | 'video';
     size?: number;
   }>;
+  disabled?: boolean;
 }
 
 export function MediaUpload({
@@ -41,7 +42,8 @@ export function MediaUpload({
   maxFiles = 5,
   acceptedTypes = ['image/*', 'video/*'],
   className = '',
-  initialFiles
+  initialFiles,
+  disabled = false
 }: MediaUploadProps) {
   const [uploadedFiles, setUploadedFiles] = useState<MediaFile[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -238,12 +240,16 @@ export function MediaUpload({
     <div className={`space-y-4 ${className}`}>
       {/* Upload Area */}
       <Card
-        className={`border-2 border-dashed transition-colors cursor-pointer hover:border-primary/50 ${
-          uploading ? 'border-primary' : 'border-muted-foreground/25'
+        className={`border-2 border-dashed transition-colors ${
+          disabled 
+            ? 'cursor-not-allowed opacity-50 border-muted-foreground/25' 
+            : uploading 
+              ? 'border-primary cursor-pointer' 
+              : 'cursor-pointer hover:border-primary/50 border-muted-foreground/25'
         }`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onClick={() => fileInputRef.current?.click()}
+        onDrop={disabled ? undefined : handleDrop}
+        onDragOver={disabled ? undefined : handleDragOver}
+        onClick={disabled ? undefined : () => fileInputRef.current?.click()}
       >
         <CardContent className="flex flex-col items-center justify-center py-8">
           {uploading ? (
@@ -282,6 +288,7 @@ export function MediaUpload({
         accept={acceptedTypes.join(',')}
         onChange={(e) => handleFileSelect(e.target.files)}
         className="hidden"
+        disabled={disabled}
       />
 
       {/* Inline Error Message */}
@@ -310,7 +317,7 @@ export function MediaUpload({
                           <Video className="h-8 w-8 text-muted-foreground" />
                         </div>
                       )}
-                      {uploadedFiles.length > 1 && (
+                      {uploadedFiles.length > 1 && !disabled && (
                         <button
                           type="button"
                           className="absolute top-1 right-1 h-7 w-7 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90 text-red-500 hover:text-red-600 transition-colors shadow-md"

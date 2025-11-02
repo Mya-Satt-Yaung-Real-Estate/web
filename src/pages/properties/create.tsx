@@ -52,6 +52,8 @@ export default function CreateProperty() {
   const [pointSettings, setPointSettings] = useState<any>(null);
   const [loadingPointSettings, setLoadingPointSettings] = useState(false);
   const [pendingSubmitData, setPendingSubmitData] = useState<any>(null);
+  const [confirmStatus, setConfirmStatus] = useState<'draft' | 'published'>('published');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize default values to avoid undefined for arrays
   useEffect(() => {
@@ -127,6 +129,7 @@ export default function CreateProperty() {
     console.log('Form submitted with data:', data);
     console.log('Form errors:', form.formState.errors);
     console.log('Media IDs:', mediaIds);
+    setIsSubmitting(true);
     try {
       const payload = {
         ...data,
@@ -135,10 +138,12 @@ export default function CreateProperty() {
       console.log('Submitting payload:', payload);
       await propertyApi.createMyProperty(payload);
       setShowConfirmDialog(false);
+      setIsSubmitting(false);
       showSuccess(t('createProperty.successMessage') || 'Property created successfully!', t('createProperty.successTitle') || 'Success!');
       navigate('/properties');
     } catch (err: any) {
       console.error('Submit error:', err);
+      setIsSubmitting(false);
       setShowConfirmDialog(false);
       const msg = err?.response?.data?.message || err?.message || t('createProperty.errorMessage');
       showError(msg, t('createProperty.errorTitle') || 'Error');
@@ -167,13 +172,34 @@ export default function CreateProperty() {
     const formData = form.getValues();
     setPendingSubmitData(formData);
     
+    // Reset status to published by default
+    setConfirmStatus('published');
+    
+    // Fetch point settings
+    setLoadingPointSettings(true);
+    try {
+      const response = await pointSettingsApi.getPointSettings();
+      setPointSettings(response.data.data);
+    } catch (error) {
+      console.error('Failed to fetch point settings:', error);
+      showError(t('createProperty.errorFetchingFees') || 'Failed to fetch fee information. Please try again.', t('common.error') || 'Error');
+      setLoadingPointSettings(false);
+      return;
+    }
+    setLoadingPointSettings(false);
+    
     // Show confirmation dialog
     setShowConfirmDialog(true);
   };
 
   const handleConfirmSubmit = () => {
     if (pendingSubmitData) {
-      onSubmit(pendingSubmitData);
+      // Add status to the submission data
+      const dataWithStatus = {
+        ...pendingSubmitData,
+        status: confirmStatus,
+      };
+      onSubmit(dataWithStatus);
     }
   };
 
@@ -450,34 +476,16 @@ export default function CreateProperty() {
               </CardContent>
             </Card>
 
-            {/* Status */}
+            {/* Features */}
             <Card className="shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CheckCircle className="h-5 w-5 text-primary" />
-                  {t('createProperty.status') || 'Status'}
+                  {t('createProperty.features') || 'Features'}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Publish Status */}
-                <FormField name="status" label={t('createProperty.publishStatus') || 'Publish Status'} error={errors.status}>
-                  <Select value={form.watch('status') || 'published'} onValueChange={(v) => form.setValue('status', v as 'draft' | 'published')}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">{t('createAdvertisement.draft') || 'Draft'}</SelectItem>
-                      <SelectItem value="published">{t('createAdvertisement.published') || 'Published'}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormField>
-
-                {/* Toggles Section */}
-                <div className="space-y-4 pt-2">
-                  <div className="text-sm font-medium text-foreground mb-3">
-                    {t('createProperty.features') || 'Features'}
-                  </div>
-                  
+              <CardContent>
+                <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Tan Tan Tan */}
                     <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors">
@@ -592,71 +600,138 @@ export default function CreateProperty() {
             </div>
           </DialogHeader>
           
-          {loadingPointSettings ? (
-            <div className="py-12 text-center">
-              <div className="inline-block animate-spin rounded-full h-10 w-10 border-[3px] border-primary border-t-transparent"></div>
-              <p className="mt-4 text-sm text-muted-foreground font-medium">
-                {t('createProperty.loadingFees') || 'Loading fee information...'}
-              </p>
+          {/* Status Selection */}
+          <div className="py-4 border-b border-border">
+            <label className="text-sm font-medium text-foreground mb-3 block">
+              {t('createProperty.selectPublishStatus') || 'Choose how you want to publish:'}
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmStatus('published')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  confirmStatus === 'published'
+                    ? 'border-primary bg-primary/10 shadow-md'
+                    : 'border-border hover:border-primary/50 bg-background'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <CheckCircle2 className={`h-5 w-5 ${confirmStatus === 'published' ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`font-medium ${confirmStatus === 'published' ? 'text-primary' : 'text-foreground'}`}>
+                    {t('createAdvertisement.published') || 'Published'}
+                  </span>
+                  <span className="text-xs text-muted-foreground text-center">
+                    {t('createProperty.publishedDesc') || 'Publish now (charges apply)'}
+                  </span>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmStatus('draft')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  confirmStatus === 'draft'
+                    ? 'border-primary bg-primary/10 shadow-md'
+                    : 'border-border hover:border-primary/50 bg-background'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <FileText className={`h-5 w-5 ${confirmStatus === 'draft' ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`font-medium ${confirmStatus === 'draft' ? 'text-primary' : 'text-foreground'}`}>
+                    {t('createAdvertisement.draft') || 'Draft'}
+                  </span>
+                  <span className="text-xs text-muted-foreground text-center">
+                    {t('createProperty.draftDesc') || 'Save as draft (no charges)'}
+                  </span>
+                </div>
+              </button>
             </div>
-          ) : pointSettings ? (
-            <div className="py-4">
-              {/* Fee Summary Table */}
-              <div className="overflow-hidden border border-border rounded-lg">
-                <table className="w-full border-collapse">
-                  <tbody className="divide-y divide-border">
-                    {/* Upload Fee Row */}
-                    <tr className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium text-foreground">
-                        {t('createProperty.uploadFee') || 'Upload Fee'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
-                        {pointSettings.upload_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
-                      </td>
-                    </tr>
+          </div>
 
-                    {/* Premium Fee Row (if premium is selected) */}
-                    {form.watch('is_trending') && pointSettings.premium_property_info && (
-                      <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
-                        <td className="px-4 py-3 text-sm font-medium text-foreground">
-                          <div className="flex items-center gap-2">
-                            <span>{t('createProperty.premiumFee') || 'Premium Fee'}</span>
-                            <span className="inline-flex items-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-300">
-                              Premium
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
-                          {pointSettings.premium_property_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                  <tfoot>
-                    <tr className="bg-primary/5 border-t-2 border-primary/20">
-                      <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
-                        {t('createProperty.totalFee') || 'Total'}
-                      </td>
-                      <td className="px-4 py-4 text-right text-base font-bold text-primary">
-                        {(
-                          (pointSettings.upload_info?.point_amount || 0) +
-                          (form.watch('is_trending') ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
-                        )} {t('createProperty.points') || 'Points'}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-              
-              {/* Validity Period Info */}
-              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
-                <p className="text-xs text-muted-foreground text-center">
-                  <CheckCircle2 className="inline h-3 w-3 mr-1" />
-                  {t('createProperty.uploadFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{pointSettings.upload_info?.days || 0}</span> {t('createProperty.days') || 'days'}
-                </p>
+          {/* Fee Information - Only show if Published is selected */}
+          {confirmStatus === 'published' && (
+            <>
+              {loadingPointSettings ? (
+                <div className="py-12 text-center">
+                  <div className="inline-block animate-spin rounded-full h-10 w-10 border-[3px] border-primary border-t-transparent"></div>
+                  <p className="mt-4 text-sm text-muted-foreground font-medium">
+                    {t('createProperty.loadingFees') || 'Loading fee information...'}
+                  </p>
+                </div>
+              ) : pointSettings ? (
+                <div className="py-4">
+                  <div className="overflow-hidden border border-border rounded-lg">
+                    <table className="w-full border-collapse">
+                      <tbody className="divide-y divide-border">
+                        <tr className="hover:bg-muted/30 transition-colors">
+                          <td className="px-4 py-3 text-sm font-medium text-foreground">
+                            {t('createProperty.uploadFee') || 'Upload Fee'}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                            {pointSettings.upload_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                          </td>
+                        </tr>
+                        {form.watch('is_trending') && pointSettings.premium_property_info && (
+                          <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
+                            <td className="px-4 py-3 text-sm font-medium text-foreground">
+                              <div className="flex items-center gap-2">
+                                <span>{t('createProperty.premiumFee') || 'Premium Fee'}</span>
+                                <span className="inline-flex items-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-300">
+                                  Premium
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                              {pointSettings.premium_property_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                      <tfoot>
+                        <tr className="bg-primary/5 border-t-2 border-primary/20">
+                          <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
+                            {t('createProperty.totalFee') || 'Total'}
+                          </td>
+                          <td className="px-4 py-4 text-right text-base font-bold text-primary">
+                            {(
+                              (pointSettings.upload_info?.point_amount || 0) +
+                              (form.watch('is_trending') ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
+                            )} {t('createProperty.points') || 'Points'}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                  
+                  {/* Validity Period Info */}
+                  <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
+                    <p className="text-xs text-muted-foreground text-center">
+                      <CheckCircle2 className="inline h-3 w-3 mr-1" />
+                      {t('createProperty.uploadFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{pointSettings.upload_info?.days || 0}</span> {t('createProperty.days') || 'days'}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </>
+          )}
+
+          {/* Draft Info */}
+          {confirmStatus === 'draft' && (
+            <div className="py-4">
+              <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
+                <div className="flex items-start gap-3">
+                  <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground mb-1">
+                      {t('createProperty.draftInfo') || 'Saving as Draft'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('createProperty.draftInfoDesc') || 'Your property will be saved as a draft. No points will be charged. You can publish it later from your property list.'}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          ) : null}
+          )}
 
           <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
             <Button 
@@ -665,19 +740,36 @@ export default function CreateProperty() {
                 setShowConfirmDialog(false);
                 setPointSettings(null);
                 setPendingSubmitData(null);
+                setConfirmStatus('published');
+                setIsSubmitting(false);
               }}
-              disabled={loadingPointSettings}
+              disabled={loadingPointSettings || isSubmitting}
               className="w-full sm:w-auto"
             >
               {t('common.cancel') || 'Cancel'}
             </Button>
             <Button 
               onClick={handleConfirmSubmit}
-              disabled={loadingPointSettings || !pointSettings}
+              disabled={loadingPointSettings || isSubmitting || (confirmStatus === 'published' && !pointSettings)}
               className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 w-full sm:w-auto"
             >
-              <CheckCircle2 className="mr-2 h-4 w-4" />
-              {t('createProperty.confirmSubmit') || 'Confirm & Submit'}
+              {isSubmitting ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  {confirmStatus === 'published' 
+                    ? (t('createProperty.submitting') || 'Publishing...')
+                    : (t('createProperty.saving') || 'Saving...')
+                  }
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  {confirmStatus === 'published' 
+                    ? (t('createProperty.confirmSubmit') || 'Confirm & Publish')
+                    : (t('createProperty.confirmSaveDraft') || 'Save as Draft')
+                  }
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -65,6 +65,8 @@ export default function EditProperty() {
   const [pointSettings, setPointSettings] = useState<any>(null);
   const [loadingPointSettings, setLoadingPointSettings] = useState(false);
   const [pendingSubmitData, setPendingSubmitData] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalStatus, setOriginalStatus] = useState<'draft' | 'published' | null>(null);
 
   // Mutation hook
   const updatePropertyMutation = useUpdateMyProperty();
@@ -73,6 +75,9 @@ export default function EditProperty() {
   const formInitializedRef = useRef(false);
 
   const property = propertyData?.data?.data;
+
+  // Check if property is published and approved - if so, restrict editing
+  const isPublishedAndApproved = property?.status === 'published' && property?.verification_status === 'approved';
 
   // Reset form initialization when slug changes (navigating to different property)
   useEffect(() => {
@@ -195,10 +200,15 @@ export default function EditProperty() {
           form.setValue('media_ids', ids, { shouldValidate: false });
         }
 
-        // Status and flags
-        if (property.status) {
-          form.setValue('status', property.status as 'draft' | 'published', { shouldValidate: false, shouldDirty: false });
-        }
+          // Status and flags
+          if (property.status) {
+            const status = property.status as 'draft' | 'published' | 'sold' | 'rented';
+            form.setValue('status', status as any, { shouldValidate: false, shouldDirty: false });
+            // Only track original status if it's draft or published (not sold/rented)
+            if (status === 'draft' || status === 'published') {
+              setOriginalStatus(status);
+            }
+          }
         form.setValue('tan_tan_tan', property.tan_tan_tan || false, { shouldValidate: false, shouldDirty: false });
         form.setValue('is_trending', property.is_trending || false, { shouldValidate: false, shouldDirty: false });
         form.setValue('bank_installment_available', property.bank_installment_available || false, { shouldValidate: false, shouldDirty: false });
@@ -297,6 +307,7 @@ export default function EditProperty() {
 
   const onSubmit = async (data: any) => {
     console.log('Form submitted with data:', data);
+    setIsSubmitting(true);
     try {
       const payload = {
         ...data,
@@ -305,10 +316,12 @@ export default function EditProperty() {
       console.log('Submitting payload:', payload);
       await updatePropertyMutation.mutateAsync({ slug: slug!, data: payload });
       setShowConfirmDialog(false);
+      setIsSubmitting(false);
       showSuccess(t('editProperty.successMessage') || 'Property updated successfully!', t('editProperty.successTitle') || 'Success!');
       navigate('/properties');
     } catch (err: any) {
       console.error('Submit error:', err);
+      setIsSubmitting(false);
       setShowConfirmDialog(false);
       const msg = err?.response?.data?.message || err?.message || t('editProperty.errorMessage');
       showError(msg, t('editProperty.errorTitle') || 'Error');
@@ -333,18 +346,40 @@ export default function EditProperty() {
       return;
     }
     
-    // Check if premium status changed - if so, show confirmation dialog
+    const formData = form.getValues();
+    const newStatus = formData.status as 'draft' | 'published';
     const currentIsTrending = property?.is_trending || false;
-    const newIsTrending = form.watch('is_trending') || false;
+    const newIsTrending = formData.is_trending || false;
     
-    if (newIsTrending && !currentIsTrending) {
-      // Premium is being added, show confirmation dialog
-      const formData = form.getValues();
+    // Check if status changed from draft to published - show confirmation dialog
+    const isStatusChangingToPublished = originalStatus === 'draft' && newStatus === 'published';
+    
+    // Check if premium is being added
+    const isAddingPremium = newIsTrending && !currentIsTrending;
+    
+    if (isStatusChangingToPublished || isAddingPremium) {
+      // Status changing to published or premium being added, show confirmation dialog
       setPendingSubmitData(formData);
+      
+      // Fetch point settings for fee information
+      setLoadingPointSettings(true);
+      try {
+        const response = await pointSettingsApi.getPointSettings();
+        if (response.data && response.data.data) {
+          setPointSettings(response.data.data);
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch point settings:', err);
+        showError(err?.response?.data?.message || err?.message || 'Failed to load fee information', t('common.error') || 'Error');
+        setLoadingPointSettings(false);
+        return;
+      }
+      setLoadingPointSettings(false);
+      
       setShowConfirmDialog(true);
     } else {
-      // No premium change or removing premium, submit directly
-      onSubmit(form.getValues());
+      // No status change to published and no premium addition, submit directly
+      onSubmit(formData);
     }
   };
 
@@ -461,6 +496,26 @@ export default function EditProperty() {
             </Button>
           </div>
 
+          {/* Warning Message for Published and Approved Properties */}
+          {isPublishedAndApproved && (
+            <div className="mb-6 rounded-lg border border-orange-500/50 bg-yellow-50/50 dark:bg-yellow-950/20 shadow-lg">
+              <div className="px-5 pt-5 pb-5">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500/20">
+                      <span className="text-yellow-600 dark:text-yellow-400 text-lg">⚠️</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 py-1">
+                    <p className="text-sm font-medium text-orange-900 dark:text-yellow-200">
+                      {t('editProperty.restrictedEditing') || 'This property is published and approved. You can only change the status to Sold or Rented.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleFormSubmit} className="space-y-6">
             {/* Basic Information */}
             <Card className="shadow-lg">
@@ -476,6 +531,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('property_type_id') ? String(form.watch('property_type_id')) : ''} 
                       onValueChange={(v) => form.setValue('property_type_id', Number(v), { shouldDirty: true })}
+                      disabled={isPublishedAndApproved}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectPropertyType')} />
@@ -491,6 +547,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : ''} 
                       onValueChange={(v) => form.setValue('listing_type_id', Number(v), { shouldDirty: true })}
+                      disabled={isPublishedAndApproved}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectListingType')} />
@@ -506,6 +563,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('property_condition') || ''} 
                       onValueChange={(v) => form.setValue('property_condition', v as 'ready' | 'some' | 'no', { shouldDirty: true })}
+                      disabled={isPublishedAndApproved}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectCondition')} />
@@ -521,15 +579,15 @@ export default function EditProperty() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField name="title_en" label={t('createProperty.titleEn')} error={errors.title_en} required>
-                    <Input {...form.register('title_en')} />
+                    <Input {...form.register('title_en')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <FormField name="title_mm" label={t('createProperty.titleMm')} error={errors.title_mm} required>
-                    <Input {...form.register('title_mm')} />
+                    <Input {...form.register('title_mm')} disabled={isPublishedAndApproved} />
                   </FormField>
                 </div>
 
                 <FormField name="description" label={t('createProperty.descriptionLabel')} error={errors.description} required>
-                  <Textarea rows={4} {...form.register('description')} />
+                  <Textarea rows={4} {...form.register('description')} disabled={isPublishedAndApproved} />
                 </FormField>
               </CardContent>
             </Card>
@@ -551,6 +609,7 @@ export default function EditProperty() {
                         form.setValue('region_id', Number(v), { shouldDirty: true }); 
                         form.setValue('township_id', undefined as any, { shouldDirty: true }); 
                       }}
+                      disabled={isPublishedAndApproved}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectRegion')} />
@@ -566,6 +625,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('township_id') ? String(form.watch('township_id')) : ''} 
                       onValueChange={(v) => form.setValue('township_id', Number(v), { shouldDirty: true })}
+                      disabled={isPublishedAndApproved}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectTownship')} />
@@ -579,45 +639,47 @@ export default function EditProperty() {
                   </FormField>
                 </div>
                 <FormField name="address" label={t('createProperty.address')} error={errors.address} required>
-                  <Input {...form.register('address')} />
+                  <Input {...form.register('address')} disabled={isPublishedAndApproved} />
                 </FormField>
                 {/* Price, Bedrooms, Bathrooms as a row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="price" label={t('createProperty.price')} error={errors.price} required>
-                    <Input type="number" placeholder={t('createProperty.price')} {...form.register('price')} />
+                    <Input type="number" placeholder={t('createProperty.price')} {...form.register('price')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <FormField name="bedrooms" label={t('createProperty.bedrooms')} error={errors.bedrooms} required>
-                    <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} />
+                    <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <FormField name="bathrooms" label={t('createProperty.bathrooms')} error={errors.bathrooms} required>
-                    <Input type="number" placeholder={t('createProperty.bathrooms')} {...form.register('bathrooms')} />
+                    <Input type="number" placeholder={t('createProperty.bathrooms')} {...form.register('bathrooms')} disabled={isPublishedAndApproved} />
                   </FormField>
                 </div>
                 {/* Length, Width, Area as a row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="length" label={t('createProperty.length')} error={errors.length}>
-                    <Input placeholder={t('createProperty.length')} type="number" {...form.register('length')} />
+                    <Input placeholder={t('createProperty.length')} type="number" {...form.register('length')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <FormField name="width" label={t('createProperty.width')} error={errors.width}>
-                    <Input placeholder={t('createProperty.width')} type="number" {...form.register('width')} />
+                    <Input placeholder={t('createProperty.width')} type="number" {...form.register('width')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <FormField name="area_sqft" label={t('createProperty.areaSqft')} error={errors.area_sqft} required>
-                    <Input type="number" placeholder={t('createProperty.areaSqft')} {...form.register('area_sqft')} />
+                    <Input type="number" placeholder={t('createProperty.areaSqft')} {...form.register('area_sqft')} disabled={isPublishedAndApproved} />
                   </FormField>
                 </div>
                 {/* Map Location Picker Link - at bottom of Location card */}
-                <div className="pt-2 border-t">
-                  <MapLocationPicker
-                    latitude={form.watch('latitude')}
-                    longitude={form.watch('longitude')}
-                    onLocationSelect={(lat, lng) => {
-                      form.setValue('latitude', lat);
-                      form.setValue('longitude', lng);
-                    }}
-                    buttonVariant="link"
-                    className="p-0 h-auto text-primary hover:text-primary/80 underline justify-start items-start sm:items-center"
-                  />
-                </div>
+                {!isPublishedAndApproved && (
+                  <div className="pt-2 border-t">
+                    <MapLocationPicker
+                      latitude={form.watch('latitude')}
+                      longitude={form.watch('longitude')}
+                      onLocationSelect={(lat, lng) => {
+                        form.setValue('latitude', lat);
+                        form.setValue('longitude', lng);
+                      }}
+                      buttonVariant="link"
+                      className="p-0 h-auto text-primary hover:text-primary/80 underline justify-start items-start sm:items-center"
+                    />
+                  </div>
+                )}
                 {/* Hidden inputs for latitude and longitude - still submitted to API */}
                 <Input 
                   type="hidden" 
@@ -658,6 +720,7 @@ export default function EditProperty() {
                       maxFiles={8}
                       className="min-h-[360px]"
                       initialFiles={initialMediaFiles}
+                      disabled={isPublishedAndApproved}
                     />
                     {/* Hidden input to register media_ids field for validation */}
                     <input type="hidden" {...form.register('media_ids')} />
@@ -677,10 +740,10 @@ export default function EditProperty() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="owner_name" label={t('createProperty.ownerName')} error={errors.owner_name} required>
-                    <Input {...form.register('owner_name')} />
+                    <Input {...form.register('owner_name')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <FormField name="email" label={t('createProperty.email')} error={errors.email}>
-                    <Input type="email" autoComplete="email" {...form.register('email')} />
+                    <Input type="email" autoComplete="email" {...form.register('email')} disabled={isPublishedAndApproved} />
                   </FormField>
                   <div className="space-y-1">
                     <label className="text-sm font-medium">
@@ -694,8 +757,9 @@ export default function EditProperty() {
                         inputMode="tel" 
                         autoComplete="tel" 
                         className="flex-1"
+                        disabled={isPublishedAndApproved}
                       />
-                      <Button type="button" variant="outline" size="sm" onClick={addPhoneNumber} className="whitespace-nowrap">
+                      <Button type="button" variant="outline" size="sm" onClick={addPhoneNumber} className="whitespace-nowrap" disabled={isPublishedAndApproved}>
                         + Add More
                       </Button>
                     </div>
@@ -717,8 +781,9 @@ export default function EditProperty() {
                             className="flex-1" 
                             inputMode="tel" 
                             autoComplete="tel" 
+                            disabled={isPublishedAndApproved}
                           />
-                          <Button type="button" variant="outline" size="sm" onClick={() => removePhoneNumber(idx + 1)} className="px-3">×</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => removePhoneNumber(idx + 1)} className="px-3" disabled={isPublishedAndApproved}>×</Button>
                         </div>
                         {phoneErrors[idx + 1] && <p className="text-xs text-red-500">{phoneErrors[idx + 1]}</p>}
                       </div>
@@ -739,15 +804,52 @@ export default function EditProperty() {
               <CardContent className="space-y-6">
                 {/* Publish Status */}
                 <FormField name="status" label={t('createProperty.publishStatus') || 'Publish Status'} error={errors.status}>
-                  <Select value={form.watch('status') || 'published'} onValueChange={(v) => form.setValue('status', v as 'draft' | 'published')}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">{t('createAdvertisement.draft') || 'Draft'}</SelectItem>
-                      <SelectItem value="published">{t('createAdvertisement.published') || 'Published'}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {isPublishedAndApproved ? (
+                    <>
+                      <Select 
+                        value={form.watch('status') || 'published'} 
+                        onValueChange={(v) => form.setValue('status', v as any)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="published">{t('createAdvertisement.published') || 'Published'}</SelectItem>
+                          <SelectItem value="sold">{t('editProperty.sold') || 'Sold'}</SelectItem>
+                          <SelectItem value="rented">{t('editProperty.rented') || 'Rented'}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {t('editProperty.restrictedEditing') || '⚠️ This property is published and approved. You can only change the status to Sold or Rented.'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Select 
+                        value={form.watch('status') || 'published'} 
+                        onValueChange={(v) => form.setValue('status', v as 'draft' | 'published')}
+                        disabled={originalStatus === 'published'} // Disable if already published
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem 
+                            value="draft"
+                            disabled={originalStatus === 'published'} // Disable draft option if already published
+                          >
+                            {t('createAdvertisement.draft') || 'Draft'}
+                          </SelectItem>
+                          <SelectItem value="published">{t('createAdvertisement.published') || 'Published'}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {originalStatus === 'published' && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {t('editProperty.cannotDowngradeStatus') || '⚠️ Cannot change from Published to Draft'}
+                        </p>
+                      )}
+                    </>
+                  )}
                 </FormField>
 
                 {/* Toggles Section */}
@@ -775,6 +877,7 @@ export default function EditProperty() {
                         checked={form.watch('tan_tan_tan') || false}
                         onCheckedChange={(checked) => form.setValue('tan_tan_tan', checked)}
                         className="ml-4"
+                        disabled={isPublishedAndApproved}
                       />
                     </div>
 
@@ -796,6 +899,7 @@ export default function EditProperty() {
                         checked={form.watch('is_trending') || false}
                         onCheckedChange={(checked) => form.setValue('is_trending', checked)}
                         className="ml-4 mt-0.5"
+                        disabled={isPublishedAndApproved}
                       />
                     </div>
 
@@ -817,6 +921,7 @@ export default function EditProperty() {
                         checked={form.watch('bank_installment_available') || false}
                         onCheckedChange={(checked) => form.setValue('bank_installment_available', checked)}
                         className="ml-4"
+                        disabled={isPublishedAndApproved}
                       />
                     </div>
                   </div>
@@ -841,7 +946,7 @@ export default function EditProperty() {
         </div>
       </div>
 
-      {/* Confirmation Dialog - Only shown when adding premium */}
+      {/* Confirmation Dialog - Shown when changing status to published or adding premium */}
       <Dialog 
         open={showConfirmDialog} 
         onOpenChange={(open) => {
@@ -849,6 +954,7 @@ export default function EditProperty() {
           if (!open) {
             setPointSettings(null);
             setPendingSubmitData(null);
+            setIsSubmitting(false);
           }
         }}
       >
@@ -860,10 +966,16 @@ export default function EditProperty() {
               </div>
               <div>
                 <DialogTitle className="text-lg font-semibold text-left">
-                  {t('editProperty.confirmTitle') || 'Confirm Premium Upgrade'}
+                  {originalStatus === 'draft' && pendingSubmitData?.status === 'published'
+                    ? (t('editProperty.confirmPublishTitle') || 'Confirm Publishing Property')
+                    : (t('editProperty.confirmTitle') || 'Confirm Property Update')
+                  }
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground mt-1">
-                  {t('editProperty.confirmDescription') || 'You are adding premium status. Additional fees will apply.'}
+                  {originalStatus === 'draft' && pendingSubmitData?.status === 'published'
+                    ? (t('editProperty.confirmPublishDescription') || 'You are publishing this property. Upload fees will apply.')
+                    : (t('editProperty.confirmDescription') || 'Please review the fees before updating your property.')
+                  }
                 </DialogDescription>
               </div>
             </div>
@@ -878,12 +990,23 @@ export default function EditProperty() {
             </div>
           ) : pointSettings ? (
             <div className="py-4">
-              {/* Fee Summary Table */}
               <div className="overflow-hidden border border-border rounded-lg">
                 <table className="w-full border-collapse">
                   <tbody className="divide-y divide-border">
-                    {/* Premium Fee Row */}
-                    {pointSettings.premium_property_info && (
+                    {/* Upload Fee - Only show when changing from draft to published */}
+                    {originalStatus === 'draft' && pendingSubmitData?.status === 'published' && (
+                      <tr className="hover:bg-muted/30 transition-colors">
+                        <td className="px-4 py-3 text-sm font-medium text-foreground">
+                          {t('createProperty.uploadFee') || 'Upload Fee'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                          {pointSettings.upload_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                        </td>
+                      </tr>
+                    )}
+                    
+                    {/* Premium Fee - Show when adding premium */}
+                    {pendingSubmitData?.is_trending && !property?.is_trending && pointSettings.premium_property_info && (
                       <tr className="hover:bg-muted/30 transition-colors bg-yellow-50/30 dark:bg-yellow-950/10">
                         <td className="px-4 py-3 text-sm font-medium text-foreground">
                           <div className="flex items-center gap-2">
@@ -899,18 +1022,33 @@ export default function EditProperty() {
                       </tr>
                     )}
                   </tbody>
-                  <tfoot>
-                    <tr className="bg-primary/5 border-t-2 border-primary/20">
-                      <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
-                        {t('createProperty.totalFee') || 'Total'}
-                      </td>
-                      <td className="px-4 py-4 text-right text-base font-bold text-primary">
-                        {pointSettings.premium_property_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
-                      </td>
-                    </tr>
-                  </tfoot>
+                  {(originalStatus === 'draft' && pendingSubmitData?.status === 'published') || (pendingSubmitData?.is_trending && !property?.is_trending) ? (
+                    <tfoot>
+                      <tr className="bg-primary/5 border-t-2 border-primary/20">
+                        <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
+                          {t('createProperty.totalFee') || 'Total'}
+                        </td>
+                        <td className="px-4 py-4 text-right text-base font-bold text-primary">
+                          {(
+                            (originalStatus === 'draft' && pendingSubmitData?.status === 'published' ? (pointSettings.upload_info?.point_amount || 0) : 0) +
+                            (pendingSubmitData?.is_trending && !property?.is_trending ? (pointSettings.premium_property_info?.point_amount || 0) : 0)
+                          )} {t('createProperty.points') || 'Points'}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  ) : null}
                 </table>
               </div>
+              
+              {/* Validity Period Info - Only show when publishing */}
+              {originalStatus === 'draft' && pendingSubmitData?.status === 'published' && (
+                <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
+                  <p className="text-xs text-muted-foreground text-center">
+                    <CheckCircle2 className="inline h-3 w-3 mr-1" />
+                    {t('createProperty.uploadFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{pointSettings.upload_info?.days || 0}</span> {t('createProperty.days') || 'days'}
+                  </p>
+                </div>
+              )}
             </div>
           ) : null}
 
@@ -921,19 +1059,29 @@ export default function EditProperty() {
                 setShowConfirmDialog(false);
                 setPointSettings(null);
                 setPendingSubmitData(null);
+                setIsSubmitting(false);
               }}
-              disabled={loadingPointSettings}
+              disabled={loadingPointSettings || isSubmitting}
               className="w-full sm:w-auto"
             >
               {t('common.cancel') || 'Cancel'}
             </Button>
             <Button 
               onClick={handleConfirmSubmit}
-              disabled={loadingPointSettings || !pointSettings}
+              disabled={loadingPointSettings || isSubmitting || !pointSettings}
               className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 w-full sm:w-auto"
             >
-              <CheckCircle2 className="mr-2 h-4 w-4" />
-              {t('editProperty.confirmSubmit') || 'Confirm & Update'}
+              {isSubmitting ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  {t('editProperty.updating') || 'Updating...'}
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  {t('editProperty.confirmSubmit') || 'Confirm & Update'}
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
