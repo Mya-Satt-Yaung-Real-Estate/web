@@ -161,7 +161,7 @@ export default function PropertyDetail() {
                 <span>{property.code}</span>
                 {property.is_trending && (
                   <span className="inline-flex items-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-300">
-                    Premium
+                    {t('premium.badge') || 'Premium'}
                   </span>
                 )}
               </div>

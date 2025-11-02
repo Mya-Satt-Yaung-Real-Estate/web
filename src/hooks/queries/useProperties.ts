@@ -118,5 +118,7 @@ export function useMyProperty(slug: string) {
     queryFn: () => propertyApi.getMyProperty(slug),
     enabled: !!slug,
     staleTime: 10 * 60 * 1000, // 10 minutes
+    // Always refetch on mount to ensure fresh data when navigating to edit page
+    refetchOnMount: 'always',
   });
 }

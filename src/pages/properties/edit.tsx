@@ -32,7 +32,7 @@ export default function EditProperty() {
   const { t, language } = useLanguage();
   const { showSuccess, showError } = useModal();
 
-  // Fetch property data
+  // Fetch property data - will refetch on mount due to refetchOnMount: 'always' in useMyProperty hook
   const { data: propertyData, isLoading: propertyLoading, error: propertyError } = useMyProperty(slug || '');
 
   // Lookups
@@ -74,90 +74,157 @@ export default function EditProperty() {
 
   const property = propertyData?.data?.data;
 
+  // Reset form initialization when slug changes (navigating to different property)
+  useEffect(() => {
+    formInitializedRef.current = false;
+  }, [slug]);
+
   // Pre-fill form when property data is loaded
   useEffect(() => {
-    if (property && !formInitializedRef.current && regions.length > 0 && townships.length > 0 && propertyTypes.length > 0 && listingTypes.length > 0) {
-      // Basic Information - set as numbers for form validation, but Select will convert to string
-      if (property.property_type?.id) {
-        form.setValue('property_type_id', property.property_type.id, { shouldValidate: false });
-      }
-      if (property.listing_type?.id) {
-        form.setValue('listing_type_id', property.listing_type.id, { shouldValidate: false });
-      }
-      if (property.property_condition?.value) {
-        form.setValue('property_condition', property.property_condition.value, { shouldValidate: false });
-      }
-      form.setValue('title_en', property.title_en || '', { shouldValidate: false });
-      form.setValue('title_mm', property.title_mm || '', { shouldValidate: false });
-      form.setValue('description', property.description || '', { shouldValidate: false });
-
-      // Location - set region first, then township will be set in the separate useEffect
-      if (property.location?.region?.id) {
-        form.setValue('region_id', property.location.region.id, { shouldValidate: false });
-      }
-      form.setValue('address', property.location?.address || '', { shouldValidate: false });
-      form.setValue('latitude', property.location?.latitude ? Number(property.location.latitude) : undefined, { shouldValidate: false });
-      form.setValue('longitude', property.location?.longitude ? Number(property.location.longitude) : undefined, { shouldValidate: false });
-
-      // Price and details
-      const priceNum = property.price ? Number(property.price) : undefined;
-      const areaNum = property.area_sqft ? Number(property.area_sqft) : undefined;
-      if (priceNum !== undefined && !isNaN(priceNum)) {
-        form.setValue('price', priceNum, { shouldValidate: false });
-      }
-      form.setValue('bedrooms', property.bedrooms ?? 0, { shouldValidate: false });
-      form.setValue('bathrooms', property.bathrooms ?? 0, { shouldValidate: false });
-      const lengthNum = property.length ? Number(property.length) : undefined;
-      const widthNum = property.width ? Number(property.width) : undefined;
-      if (lengthNum !== undefined && !isNaN(lengthNum)) {
-        form.setValue('length', lengthNum, { shouldValidate: false });
-      }
-      if (widthNum !== undefined && !isNaN(widthNum)) {
-        form.setValue('width', widthNum, { shouldValidate: false });
-      }
-      if (areaNum !== undefined && !isNaN(areaNum)) {
-        form.setValue('area_sqft', areaNum, { shouldValidate: false });
-      }
-
-      // Contact
-      form.setValue('owner_name', property.contact_info?.owner_name || '', { shouldValidate: false });
-      form.setValue('email', property.contact_info?.email || '', { shouldValidate: false });
-      
-      // Phone numbers
-      const phones = property.contact_info?.phone_numbers || [];
-      if (phones.length > 0) {
-        setPhoneNumbers(phones);
-        form.setValue('phone_numbers', phones, { shouldValidate: false });
-      }
-
-      // Media - check if media exists in response (structure: media.images array)
-      const propertyWithMedia = property as any;
-      const mediaArray = propertyWithMedia.media?.images || propertyWithMedia.media || [];
-      if (Array.isArray(mediaArray) && mediaArray.length > 0) {
-        const mediaFiles = mediaArray.map((m: any) => ({
-          id: m.id,
-          url: m.url || m.medium_url || m.small_url || m.thumbnail_url,
-          filename: m.filename || m.original_filename || 'file',
-          type: (m.type === 'video' || m.media_type === 'video') ? 'video' : 'image' as 'image' | 'video',
-          size: m.size || 0
-        }));
-        setInitialMediaFiles(mediaFiles);
-        const ids = mediaArray.map((m: any) => m.id);
-        setMediaIds(ids);
-        form.setValue('media_ids', ids, { shouldValidate: false });
-      }
-
-      // Status and flags
-      if (property.status) {
-        form.setValue('status', property.status as 'draft' | 'published', { shouldValidate: false });
-      }
-      form.setValue('tan_tan_tan', property.tan_tan_tan || false, { shouldValidate: false });
-      form.setValue('is_trending', property.is_trending || false, { shouldValidate: false });
-      form.setValue('bank_installment_available', property.bank_installment_available || false, { shouldValidate: false });
-
-      formInitializedRef.current = true;
+    // Check if all required data is available
+    const hasProperty = !!property;
+    const hasLookupData = regions.length > 0 && townships.length > 0 && propertyTypes.length > 0 && listingTypes.length > 0;
+    const shouldInitialize = hasProperty && !formInitializedRef.current && hasLookupData;
+    const isLoading = propertyLoading || !propertyData;
+    
+    // Don't initialize if still loading
+    if (isLoading) {
+      console.log('Waiting for property data to load...');
+      return;
     }
-  }, [property, form, regions, townships, propertyTypes, listingTypes]);
+    
+    if (shouldInitialize) {
+      console.log('Initializing form with property data:', property);
+      console.log('Lookup data available - regions:', regions.length, 'townships:', townships.length, 'propertyTypes:', propertyTypes.length, 'listingTypes:', listingTypes.length);
+      
+      // Use setTimeout to ensure React has processed all state updates before setting form values
+      const initTimer = setTimeout(() => {
+        // Basic Information - set as numbers for form validation, but Select will convert to string
+        const propertyTypeId = property.property_type?.id || (property as any).property_type_id;
+        const listingTypeId = property.listing_type?.id || (property as any).listing_type_id;
+        const propertyCondition = property.property_condition?.value || (property as any).property_condition;
+        
+        if (propertyTypeId) {
+          console.log('Setting property_type_id:', propertyTypeId);
+          form.setValue('property_type_id', Number(propertyTypeId), { shouldValidate: false, shouldDirty: false });
+        }
+        if (listingTypeId) {
+          console.log('Setting listing_type_id:', listingTypeId);
+          form.setValue('listing_type_id', Number(listingTypeId), { shouldValidate: false, shouldDirty: false });
+        }
+        if (propertyCondition) {
+          console.log('Setting property_condition:', propertyCondition);
+          form.setValue('property_condition', propertyCondition, { shouldValidate: false, shouldDirty: false });
+        }
+        form.setValue('title_en', property.title_en || '', { shouldValidate: false });
+        form.setValue('title_mm', property.title_mm || '', { shouldValidate: false });
+        form.setValue('description', property.description || '', { shouldValidate: false });
+
+        // Location - set region first, township will be set after region and townships are ready
+        const regionId = property.location?.region?.id || (property as any).region_id;
+        if (regionId) {
+          console.log('Setting region_id:', regionId);
+          form.setValue('region_id', Number(regionId), { shouldValidate: false, shouldDirty: false });
+          
+          // Set township after a delay to ensure region is processed and townships are filtered
+          setTimeout(() => {
+            const townshipId = property.location?.township?.id || (property as any).township_id;
+            if (townshipId) {
+              // Filter townships for the selected region
+              const filteredTownships = townships.filter((ts: any) => Number(ts.region_id) === Number(regionId));
+              const townshipExists = filteredTownships.some((ts: any) => Number(ts.id) === Number(townshipId));
+              
+              if (townshipExists && filteredTownships.length > 0) {
+                console.log('Setting township_id:', townshipId, 'for region:', regionId);
+                form.setValue('township_id', Number(townshipId), { shouldValidate: false, shouldDirty: false });
+              } else {
+                console.log('Township not found in filtered list for region:', regionId, 'townshipId:', townshipId);
+              }
+            }
+          }, 100);
+        }
+        form.setValue('address', property.location?.address || '', { shouldValidate: false });
+        form.setValue('latitude', property.location?.latitude ? Number(property.location.latitude) : undefined, { shouldValidate: false });
+        form.setValue('longitude', property.location?.longitude ? Number(property.location.longitude) : undefined, { shouldValidate: false });
+
+        // Price and details
+        const priceNum = property.price ? Number(property.price) : undefined;
+        const areaNum = property.area_sqft ? Number(property.area_sqft) : undefined;
+        if (priceNum !== undefined && !isNaN(priceNum)) {
+          form.setValue('price', priceNum, { shouldValidate: false });
+        }
+        form.setValue('bedrooms', property.bedrooms ?? 0, { shouldValidate: false });
+        form.setValue('bathrooms', property.bathrooms ?? 0, { shouldValidate: false });
+        const lengthNum = property.length ? Number(property.length) : undefined;
+        const widthNum = property.width ? Number(property.width) : undefined;
+        if (lengthNum !== undefined && !isNaN(lengthNum)) {
+          form.setValue('length', lengthNum, { shouldValidate: false });
+        }
+        if (widthNum !== undefined && !isNaN(widthNum)) {
+          form.setValue('width', widthNum, { shouldValidate: false });
+        }
+        if (areaNum !== undefined && !isNaN(areaNum)) {
+          form.setValue('area_sqft', areaNum, { shouldValidate: false });
+        }
+
+        // Contact
+        form.setValue('owner_name', property.contact_info?.owner_name || '', { shouldValidate: false });
+        form.setValue('email', property.contact_info?.email || '', { shouldValidate: false });
+        
+        // Phone numbers
+        const phones = property.contact_info?.phone_numbers || [];
+        if (phones.length > 0) {
+          setPhoneNumbers(phones);
+          form.setValue('phone_numbers', phones, { shouldValidate: false });
+        }
+
+        // Media - check if media exists in response (structure: media.images array)
+        const propertyWithMedia = property as any;
+        const mediaArray = propertyWithMedia.media?.images || propertyWithMedia.media || [];
+        if (Array.isArray(mediaArray) && mediaArray.length > 0) {
+          const mediaFiles = mediaArray.map((m: any) => ({
+            id: m.id,
+            url: m.url || m.medium_url || m.small_url || m.thumbnail_url,
+            filename: m.filename || m.original_filename || 'file',
+            type: (m.type === 'video' || m.media_type === 'video') ? 'video' : 'image' as 'image' | 'video',
+            size: m.size || 0
+          }));
+          setInitialMediaFiles(mediaFiles);
+          const ids = mediaArray.map((m: any) => m.id);
+          setMediaIds(ids);
+          form.setValue('media_ids', ids, { shouldValidate: false });
+        }
+
+        // Status and flags
+        if (property.status) {
+          form.setValue('status', property.status as 'draft' | 'published', { shouldValidate: false, shouldDirty: false });
+        }
+        form.setValue('tan_tan_tan', property.tan_tan_tan || false, { shouldValidate: false, shouldDirty: false });
+        form.setValue('is_trending', property.is_trending || false, { shouldValidate: false, shouldDirty: false });
+        form.setValue('bank_installment_available', property.bank_installment_available || false, { shouldValidate: false, shouldDirty: false });
+
+        formInitializedRef.current = true;
+        console.log('Form initialized. Current form values:', form.getValues());
+        
+        // Force a re-render after a short delay to ensure Select components update
+        setTimeout(() => {
+          // Trigger a validation check which will also trigger re-renders of watched components
+          form.trigger();
+          // Force update by resetting form state
+          const currentValues = form.getValues();
+          console.log('Final form values after initialization:', currentValues);
+        }, 150);
+      }, 50);
+      
+      return () => {
+        clearTimeout(initTimer);
+      };
+    } else if (hasProperty && !hasLookupData && !formInitializedRef.current) {
+      console.log('Property loaded but lookup data not ready yet. Waiting...');
+      console.log('Property:', !!property, 'Regions:', regions.length, 'Townships:', townships.length, 'PropertyTypes:', propertyTypes.length, 'ListingTypes:', listingTypes.length);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [property, regions, townships, propertyTypes, listingTypes, slug, propertyLoading, propertyData]);
 
   // Initialize default values to avoid undefined for arrays
   useEffect(() => {
@@ -291,21 +358,35 @@ export default function EditProperty() {
   const availableTownships = watchedRegionId ? townships.filter((ts: any) => Number(ts.region_id) === Number(watchedRegionId)) : [];
   
   // Additional effect to set township after region changes and availableTownships updates
+  // Only run during initial form setup, not after user interactions
   useEffect(() => {
-    if (property && formInitializedRef.current && property.location?.township?.id && watchedRegionId) {
+    if (property && formInitializedRef.current && !propertyLoading && !form.formState.isDirty) {
+      const expectedTownshipId = property.location?.township?.id || (property as any).township_id;
       const currentTownshipId = form.watch('township_id');
-      const expectedTownshipId = property.location.township.id;
+      const expectedRegionId = property.location?.region?.id || (property as any).region_id;
       
-      // Only set if not already set or if it's different
-      if (!currentTownshipId || Number(currentTownshipId) !== Number(expectedTownshipId)) {
-        // Check if township is available in filtered list for the selected region
-        const isAvailable = availableTownships.some((ts: any) => Number(ts.id) === Number(expectedTownshipId));
-        if (isAvailable && availableTownships.length > 0) {
-          form.setValue('township_id', expectedTownshipId, { shouldValidate: false });
+      // Only proceed if we have both region and township IDs
+      if (expectedRegionId && expectedTownshipId && watchedRegionId && Number(watchedRegionId) === Number(expectedRegionId)) {
+        // Only set if township is not already set correctly
+        if (!currentTownshipId || Number(currentTownshipId) !== Number(expectedTownshipId)) {
+          // Wait for townships to be filtered for the selected region
+          if (availableTownships.length > 0) {
+            // Check if township is available in filtered list for the selected region
+            const isAvailable = availableTownships.some((ts: any) => Number(ts.id) === Number(expectedTownshipId));
+            if (isAvailable) {
+              console.log('Auto-setting township_id:', expectedTownshipId, 'for region:', watchedRegionId);
+              form.setValue('township_id', Number(expectedTownshipId), { shouldValidate: false, shouldDirty: false });
+            } else {
+              console.log('Township not available in filtered list. Expected:', expectedTownshipId, 'Available:', availableTownships.map((t: any) => t.id));
+            }
+          } else {
+            console.log('Waiting for townships to be filtered for region:', watchedRegionId);
+          }
         }
       }
     }
-  }, [watchedRegionId, availableTownships, property, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedRegionId, availableTownships, propertyLoading, property]);
 
   // Loading state
   if (propertyLoading) {
@@ -394,7 +475,7 @@ export default function EditProperty() {
                   <FormField name="property_type_id" label={t('createProperty.propertyType')} error={errors.property_type_id} required>
                     <Select 
                       value={form.watch('property_type_id') ? String(form.watch('property_type_id')) : ''} 
-                      onValueChange={(v) => form.setValue('property_type_id', Number(v))}
+                      onValueChange={(v) => form.setValue('property_type_id', Number(v), { shouldDirty: true })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectPropertyType')} />
@@ -409,7 +490,7 @@ export default function EditProperty() {
                   <FormField name="listing_type_id" label={t('createProperty.listingType')} error={errors.listing_type_id} required>
                     <Select 
                       value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : ''} 
-                      onValueChange={(v) => form.setValue('listing_type_id', Number(v))}
+                      onValueChange={(v) => form.setValue('listing_type_id', Number(v), { shouldDirty: true })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectListingType')} />
@@ -424,7 +505,7 @@ export default function EditProperty() {
                   <FormField name="property_condition" label={t('createProperty.propertyCondition')} error={errors.property_condition} required>
                     <Select 
                       value={form.watch('property_condition') || ''} 
-                      onValueChange={(v) => form.setValue('property_condition', v as 'ready' | 'some' | 'no')}
+                      onValueChange={(v) => form.setValue('property_condition', v as 'ready' | 'some' | 'no', { shouldDirty: true })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectCondition')} />
@@ -467,8 +548,8 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('region_id') ? String(form.watch('region_id')) : ''} 
                       onValueChange={(v) => { 
-                        form.setValue('region_id', Number(v)); 
-                        form.setValue('township_id', undefined as any); 
+                        form.setValue('region_id', Number(v), { shouldDirty: true }); 
+                        form.setValue('township_id', undefined as any, { shouldDirty: true }); 
                       }}
                     >
                       <SelectTrigger>
@@ -484,7 +565,7 @@ export default function EditProperty() {
                   <FormField name="township_id" label={t('createProperty.township')} error={errors.township_id} required>
                     <Select 
                       value={form.watch('township_id') ? String(form.watch('township_id')) : ''} 
-                      onValueChange={(v) => form.setValue('township_id', Number(v))}
+                      onValueChange={(v) => form.setValue('township_id', Number(v), { shouldDirty: true })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectTownship')} />

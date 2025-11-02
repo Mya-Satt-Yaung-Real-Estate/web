@@ -56,9 +56,10 @@ export function useUpdateMyProperty() {
     mutationFn: ({ slug, data }: { slug: string; data: any }) => 
       propertyApi.updateMyProperty(slug, data),
     onSuccess: (data, variables) => {
-      // Update the specific property in cache
+      // Update the specific property in cache with the response data
+      // The response should match the structure expected by useMyProperty hook
       queryClient.setQueryData(['my-property', variables.slug], data);
-      // Invalidate properties list
+      // Invalidate properties list (but not the current property query to avoid refetch)
       queryClient.invalidateQueries({ queryKey: propertyKeys.lists() });
       queryClient.invalidateQueries({ queryKey: ['my-properties'] });
     },

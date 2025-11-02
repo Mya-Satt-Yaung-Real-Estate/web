@@ -1086,6 +1086,7 @@ const translations: Translations = {
   'properties.actions': { en: 'Actions', mm: 'လုပ်ဆောင်ချက်များ' },
   'properties.media': { en: 'Media', mm: 'မီဒီယာ' },
   'properties.backToList': { en: 'Back to List', mm: 'စာရင်းသို့ ပြန်သွားရန်' },
+  'properties.back': { en: 'Back', mm: 'ပြန်သွားရန်' },
   'properties.verificationStatus': { en: 'Verification', mm: 'အတည်ပြုခြင်း' },
   'properties.stats': { en: 'Statistics', mm: 'စာရင်းအင်း' },
   'properties.flags': { en: 'Flags', mm: 'အမှတ်အသားများ' },
