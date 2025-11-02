@@ -243,7 +243,7 @@ export default function PropertyDetail() {
                         {property.is_trending && (
                           <Badge variant="outline" className="bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border-yellow-500/50">
                             <Star className="h-3 w-3 mr-1" />
-                            {t('properties.trending') || 'Trending'}
+                            {t('premium.badge') || 'Premium'}
                           </Badge>
                         )}
                         {property.tan_tan_tan && (

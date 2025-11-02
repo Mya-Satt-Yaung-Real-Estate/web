@@ -78,6 +78,12 @@ export default function EditProperty() {
 
   // Check if property is published and approved - if so, restrict editing
   const isPublishedAndApproved = property?.status === 'published' && property?.verification_status === 'approved';
+  
+  // Check if property is sold or rented - if so, disable all editing
+  const isSoldOrRented = property?.status === 'sold' || property?.status === 'rented';
+  
+  // Combined check for restricted editing
+  const isEditingRestricted = isPublishedAndApproved || isSoldOrRented;
 
   // Reset form initialization when slug changes (navigating to different property)
   useEffect(() => {
@@ -346,6 +352,12 @@ export default function EditProperty() {
       return;
     }
     
+    // If sold or rented, prevent any changes
+    if (isSoldOrRented) {
+      showError(t('editProperty.cannotEditSoldRented') || 'Cannot edit sold or rented properties', t('common.error') || 'Error');
+      return;
+    }
+    
     const formData = form.getValues();
     const newStatus = formData.status as 'draft' | 'published';
     const currentIsTrending = property?.is_trending || false;
@@ -496,8 +508,8 @@ export default function EditProperty() {
             </Button>
           </div>
 
-          {/* Warning Message for Published and Approved Properties */}
-          {isPublishedAndApproved && (
+          {/* Warning Message for Restricted Editing */}
+          {isEditingRestricted && (
             <div className="mb-6 rounded-lg border border-orange-500/50 bg-yellow-50/50 dark:bg-yellow-950/20 shadow-lg">
               <div className="px-5 pt-5 pb-5">
                 <div className="flex items-center gap-4">
@@ -508,7 +520,10 @@ export default function EditProperty() {
                   </div>
                   <div className="flex-1 py-1">
                     <p className="text-sm font-medium text-orange-900 dark:text-yellow-200">
-                      {t('editProperty.restrictedEditing') || 'This property is published and approved. You can only change the status to Sold or Rented.'}
+                      {isSoldOrRented 
+                        ? (t('editProperty.soldRentedRestricted') || 'This property is sold or rented. Editing is not allowed.')
+                        : (t('editProperty.restrictedEditing') || 'This property is published and approved. You can only change the status to Sold or Rented.')
+                      }
                     </p>
                   </div>
                 </div>
@@ -531,7 +546,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('property_type_id') ? String(form.watch('property_type_id')) : ''} 
                       onValueChange={(v) => form.setValue('property_type_id', Number(v), { shouldDirty: true })}
-                      disabled={isPublishedAndApproved}
+                      disabled={isEditingRestricted}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectPropertyType')} />
@@ -547,7 +562,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : ''} 
                       onValueChange={(v) => form.setValue('listing_type_id', Number(v), { shouldDirty: true })}
-                      disabled={isPublishedAndApproved}
+                      disabled={isEditingRestricted}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectListingType')} />
@@ -563,7 +578,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('property_condition') || ''} 
                       onValueChange={(v) => form.setValue('property_condition', v as 'ready' | 'some' | 'no', { shouldDirty: true })}
-                      disabled={isPublishedAndApproved}
+                      disabled={isEditingRestricted}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectCondition')} />
@@ -579,15 +594,15 @@ export default function EditProperty() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField name="title_en" label={t('createProperty.titleEn')} error={errors.title_en} required>
-                    <Input {...form.register('title_en')} disabled={isPublishedAndApproved} />
+                    <Input {...form.register('title_en')} disabled={isEditingRestricted} />
                   </FormField>
                   <FormField name="title_mm" label={t('createProperty.titleMm')} error={errors.title_mm} required>
-                    <Input {...form.register('title_mm')} disabled={isPublishedAndApproved} />
+                    <Input {...form.register('title_mm')} disabled={isEditingRestricted} />
                   </FormField>
                 </div>
 
                 <FormField name="description" label={t('createProperty.descriptionLabel')} error={errors.description} required>
-                  <Textarea rows={4} {...form.register('description')} disabled={isPublishedAndApproved} />
+                  <Textarea rows={4} {...form.register('description')} disabled={isEditingRestricted} />
                 </FormField>
               </CardContent>
             </Card>
@@ -609,7 +624,7 @@ export default function EditProperty() {
                         form.setValue('region_id', Number(v), { shouldDirty: true }); 
                         form.setValue('township_id', undefined as any, { shouldDirty: true }); 
                       }}
-                      disabled={isPublishedAndApproved}
+                      disabled={isEditingRestricted}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectRegion')} />
@@ -625,7 +640,7 @@ export default function EditProperty() {
                     <Select 
                       value={form.watch('township_id') ? String(form.watch('township_id')) : ''} 
                       onValueChange={(v) => form.setValue('township_id', Number(v), { shouldDirty: true })}
-                      disabled={isPublishedAndApproved}
+                      disabled={isEditingRestricted}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('createProperty.selectTownship')} />
@@ -639,34 +654,34 @@ export default function EditProperty() {
                   </FormField>
                 </div>
                 <FormField name="address" label={t('createProperty.address')} error={errors.address} required>
-                  <Input {...form.register('address')} disabled={isPublishedAndApproved} />
+                  <Input {...form.register('address')} disabled={isEditingRestricted} />
                 </FormField>
                 {/* Price, Bedrooms, Bathrooms as a row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="price" label={t('createProperty.price')} error={errors.price} required>
-                    <Input type="number" placeholder={t('createProperty.price')} {...form.register('price')} disabled={isPublishedAndApproved} />
+                    <Input type="number" placeholder={t('createProperty.price')} {...form.register('price')} disabled={isEditingRestricted} />
                   </FormField>
                   <FormField name="bedrooms" label={t('createProperty.bedrooms')} error={errors.bedrooms} required>
-                    <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} disabled={isPublishedAndApproved} />
+                    <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} disabled={isEditingRestricted} />
                   </FormField>
                   <FormField name="bathrooms" label={t('createProperty.bathrooms')} error={errors.bathrooms} required>
-                    <Input type="number" placeholder={t('createProperty.bathrooms')} {...form.register('bathrooms')} disabled={isPublishedAndApproved} />
+                    <Input type="number" placeholder={t('createProperty.bathrooms')} {...form.register('bathrooms')} disabled={isEditingRestricted} />
                   </FormField>
                 </div>
                 {/* Length, Width, Area as a row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="length" label={t('createProperty.length')} error={errors.length}>
-                    <Input placeholder={t('createProperty.length')} type="number" {...form.register('length')} disabled={isPublishedAndApproved} />
+                    <Input placeholder={t('createProperty.length')} type="number" {...form.register('length')} disabled={isEditingRestricted} />
                   </FormField>
                   <FormField name="width" label={t('createProperty.width')} error={errors.width}>
-                    <Input placeholder={t('createProperty.width')} type="number" {...form.register('width')} disabled={isPublishedAndApproved} />
+                    <Input placeholder={t('createProperty.width')} type="number" {...form.register('width')} disabled={isEditingRestricted} />
                   </FormField>
                   <FormField name="area_sqft" label={t('createProperty.areaSqft')} error={errors.area_sqft} required>
-                    <Input type="number" placeholder={t('createProperty.areaSqft')} {...form.register('area_sqft')} disabled={isPublishedAndApproved} />
+                    <Input type="number" placeholder={t('createProperty.areaSqft')} {...form.register('area_sqft')} disabled={isEditingRestricted} />
                   </FormField>
                 </div>
                 {/* Map Location Picker Link - at bottom of Location card */}
-                {!isPublishedAndApproved && (
+                {!isEditingRestricted && (
                   <div className="pt-2 border-t">
                     <MapLocationPicker
                       latitude={form.watch('latitude')}
@@ -720,7 +735,7 @@ export default function EditProperty() {
                       maxFiles={8}
                       className="min-h-[360px]"
                       initialFiles={initialMediaFiles}
-                      disabled={isPublishedAndApproved}
+                      disabled={isEditingRestricted}
                     />
                     {/* Hidden input to register media_ids field for validation */}
                     <input type="hidden" {...form.register('media_ids')} />
@@ -740,10 +755,10 @@ export default function EditProperty() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField name="owner_name" label={t('createProperty.ownerName')} error={errors.owner_name} required>
-                    <Input {...form.register('owner_name')} disabled={isPublishedAndApproved} />
+                    <Input {...form.register('owner_name')} disabled={isEditingRestricted} />
                   </FormField>
                   <FormField name="email" label={t('createProperty.email')} error={errors.email}>
-                    <Input type="email" autoComplete="email" {...form.register('email')} disabled={isPublishedAndApproved} />
+                    <Input type="email" autoComplete="email" {...form.register('email')} disabled={isEditingRestricted} />
                   </FormField>
                   <div className="space-y-1">
                     <label className="text-sm font-medium">
@@ -757,9 +772,9 @@ export default function EditProperty() {
                         inputMode="tel" 
                         autoComplete="tel" 
                         className="flex-1"
-                        disabled={isPublishedAndApproved}
+                        disabled={isEditingRestricted}
                       />
-                      <Button type="button" variant="outline" size="sm" onClick={addPhoneNumber} className="whitespace-nowrap" disabled={isPublishedAndApproved}>
+                      <Button type="button" variant="outline" size="sm" onClick={addPhoneNumber} className="whitespace-nowrap" disabled={isEditingRestricted}>
                         + Add More
                       </Button>
                     </div>
@@ -781,9 +796,9 @@ export default function EditProperty() {
                             className="flex-1" 
                             inputMode="tel" 
                             autoComplete="tel" 
-                            disabled={isPublishedAndApproved}
+                            disabled={isEditingRestricted}
                           />
-                          <Button type="button" variant="outline" size="sm" onClick={() => removePhoneNumber(idx + 1)} className="px-3" disabled={isPublishedAndApproved}>×</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => removePhoneNumber(idx + 1)} className="px-3" disabled={isEditingRestricted}>×</Button>
                         </div>
                         {phoneErrors[idx + 1] && <p className="text-xs text-red-500">{phoneErrors[idx + 1]}</p>}
                       </div>
@@ -804,7 +819,24 @@ export default function EditProperty() {
               <CardContent className="space-y-6">
                 {/* Publish Status */}
                 <FormField name="status" label={t('createProperty.publishStatus') || 'Publish Status'} error={errors.status}>
-                  {isPublishedAndApproved ? (
+                  {isSoldOrRented ? (
+                    <>
+                      <Select 
+                        value={form.watch('status') || ''} 
+                        disabled={true}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">{t('createAdvertisement.draft') || 'Draft'}</SelectItem>
+                          <SelectItem value="published">{t('createAdvertisement.published') || 'Published'}</SelectItem>
+                          <SelectItem value="sold">{t('editProperty.sold') || 'Sold'}</SelectItem>
+                          <SelectItem value="rented">{t('editProperty.rented') || 'Rented'}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : isPublishedAndApproved ? (
                     <>
                       <Select 
                         value={form.watch('status') || 'published'} 
@@ -877,7 +909,7 @@ export default function EditProperty() {
                         checked={form.watch('tan_tan_tan') || false}
                         onCheckedChange={(checked) => form.setValue('tan_tan_tan', checked)}
                         className="ml-4"
-                        disabled={isPublishedAndApproved}
+                        disabled={isEditingRestricted}
                       />
                     </div>
 
@@ -899,7 +931,7 @@ export default function EditProperty() {
                         checked={form.watch('is_trending') || false}
                         onCheckedChange={(checked) => form.setValue('is_trending', checked)}
                         className="ml-4 mt-0.5"
-                        disabled={isPublishedAndApproved}
+                        disabled={isEditingRestricted}
                       />
                     </div>
 
@@ -921,7 +953,7 @@ export default function EditProperty() {
                         checked={form.watch('bank_installment_available') || false}
                         onCheckedChange={(checked) => form.setValue('bank_installment_available', checked)}
                         className="ml-4"
-                        disabled={isPublishedAndApproved}
+                        disabled={isEditingRestricted}
                       />
                     </div>
                   </div>

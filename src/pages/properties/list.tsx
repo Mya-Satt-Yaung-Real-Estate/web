@@ -89,6 +89,14 @@ export default function MyPropertiesList() {
     return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
   };
 
+  const getStatusColor = (status: string) => {
+    if (status === 'published') return 'bg-green-500/10 text-green-600 border-green-500/20';
+    if (status === 'draft') return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
+    if (status === 'sold') return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+    if (status === 'rented') return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
+    return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+  };
+
   return (
     <>
       <SEOHead seo={seo} path="/properties" />
@@ -243,12 +251,12 @@ export default function MyPropertiesList() {
                           <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center" />
                         )}
 
-                        {/* Overlay Badges */}
+                        {/* Overlay Badges - Left Side */}
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
-                          {property.is_featured && (
+                          {property.is_trending && (
                             <Badge variant="outline" className="bg-yellow-500/90 text-yellow-900 border-yellow-500/50 backdrop-blur-sm">
                               <Star className="h-3 w-3 mr-1" />
-                              {t('premium.badge')}
+                              {t('premium.badge') || 'Premium'}
                             </Badge>
                           )}
                           {property.tan_tan_tan && (
@@ -258,11 +266,27 @@ export default function MyPropertiesList() {
                           )}
                         </div>
 
-                        {/* Verification Status Badge */}
-                        <div className="absolute top-3 right-3">
-                          <Badge variant="outline" className={`${getVerificationStatusColor(property.verification_status)} backdrop-blur-sm`}>
-                            {t(`advertisements.${property.verification_status}`) || property.verification_status}
-                          </Badge>
+                        {/* Status and Verification Badges - Right Side */}
+                        <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
+                          {/* Property Status Badge */}
+                          {property.status && (
+                            <Badge variant="outline" className={`${getStatusColor(property.status)} backdrop-blur-sm`}>
+                              {property.status === 'published' && (t('createAdvertisement.published') || 'Published')}
+                              {property.status === 'draft' && (t('createAdvertisement.draft') || 'Draft')}
+                              {property.status === 'sold' && (t('editProperty.sold') || 'Sold')}
+                              {property.status === 'rented' && (t('editProperty.rented') || 'Rented')}
+                            </Badge>
+                          )}
+                          
+                          {/* Verification Status Badge */}
+                          {property.verification_status && (
+                            <Badge variant="outline" className={`${getVerificationStatusColor(property.verification_status)} backdrop-blur-sm`}>
+                              {property.verification_status === 'pending' 
+                                ? (t('properties.verificationPending') || 'Verification Pending')
+                                : (t(`advertisements.${property.verification_status}`) || property.verification_status)
+                              }
+                            </Badge>
+                          )}
                         </div>
 
                         {/* Bottom Types Row */}

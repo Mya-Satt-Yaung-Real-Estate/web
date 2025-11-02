@@ -115,7 +115,7 @@ export const createPropertySchema = (t: (key: string) => string) => z.object({
     (v) => (v === '' || v === undefined || v === null ? undefined : v),
     z.string().email(t('validation.email.invalid')).optional()
   ),
-  status: z.enum(['draft', 'published']).default('published'),
+  status: z.enum(['draft', 'published', 'sold', 'rented']).default('published'),
   tan_tan_tan: z.boolean().default(false),
   is_trending: z.boolean().default(false),
   bank_installment_available: z.boolean().default(false),
