@@ -75,6 +75,14 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade-og-image.jpg',
     url: 'https://jadeproperty.com/public-wanted-list',
     type: 'website'
+  },
+  loanCalculator: {
+    title: 'Loan Calculator - Calculate Monthly Payments | Jade Property',
+    description: 'Calculate your monthly loan payments, total costs, and affordability for property loans. Free loan calculator with EMI schedule and payment breakdown.',
+    keywords: 'loan calculator, mortgage calculator, EMI calculator, property loan, home loan calculator, Myanmar property loan',
+    image: '/assets/jade-og-image.jpg',
+    url: 'https://jadeproperty.com/loan-calculator',
+    type: 'website'
   }
 };
 

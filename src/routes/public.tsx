@@ -26,6 +26,7 @@ const LegacyDetail = lazy(() => import('../pages/LegacyDetail').then(module => (
 
 // Calculator pages
 const YarPyatCalculator = lazy(() => import('../pages/calculators/yarpyatCalculator').then(module => ({ default: module.YarPyatCalculator })));
+const LoanCalculator = lazy(() => import('../pages/calculators/loanCalculator').then(module => ({ default: module.LoanCalculator })));
 
 // Public Wanting List pages
 const PublicWantedList = lazy(() => import('../pages/publicWantedListings/list').then(module => ({ default: module.default })));
@@ -166,6 +167,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <YarPyatCalculator />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/loan-calculator',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <LoanCalculator />
       </Suspense>
     ),
   },
