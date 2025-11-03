@@ -42,24 +42,38 @@ export default function AppointmentList() {
 
   const getTimeDisplay = (appointment: Appointment) => {
     if (appointment.is_anytime) {
-      return t('appointments.anytime') || 'Anytime';
+      return t('appointments.anytime') || 'Any time (Flexible time)';
     }
-    // Use prefer_time_range from API first
+    // Use prefer_time.start_time and prefer_time.end_time from API to show 24-hour format
+    if (appointment.prefer_time?.start_time && appointment.prefer_time?.end_time) {
+      // Format time in 24-hour format (HH:mm)
+      // API returns time in format "HH:mm:ss", we just need "HH:mm"
+      const format24Hour = (timeString: string) => {
+        // Extract hours and minutes from "HH:mm:ss" format
+        const [hours, minutes] = timeString.split(':');
+        return `${hours}:${minutes}`;
+      };
+      const start = format24Hour(appointment.prefer_time.start_time);
+      const end = format24Hour(appointment.prefer_time.end_time);
+      return `${start} - ${end}`;
+    }
+    // Fallback to prefer_start_time and prefer_end_time if prefer_time object is not available
+    if (appointment.prefer_start_time && appointment.prefer_end_time) {
+      const format24Hour = (timeString: string) => {
+        const [hours, minutes] = timeString.split(':');
+        return `${hours}:${minutes}`;
+      };
+      const start = format24Hour(appointment.prefer_start_time);
+      const end = format24Hour(appointment.prefer_end_time);
+      return `${start} - ${end}`;
+    }
+    // Fallback to prefer_time_range if start/end times are not available
     if (appointment.prefer_time_range) {
       return appointment.prefer_time_range;
     }
-    if (appointment.prefer_start_time && appointment.prefer_end_time) {
-      const start = new Date(`2000-01-01T${appointment.prefer_start_time}`).toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      });
-      const end = new Date(`2000-01-01T${appointment.prefer_end_time}`).toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      });
-      return `${start} - ${end}`;
+    // Fallback to prefer_time name if available
+    if (appointment.prefer_time?.name) {
+      return appointment.prefer_time.name;
     }
     return appointment.prefer_time_name || appointment.display_time_range || t('appointments.notSpecified') || 'Not specified';
   };

@@ -201,7 +201,7 @@ const translations: Translations = {
   'appointments.errorLoading': { en: 'Error Loading Appointments', mm: 'ချိန်းဆိုမှုများကိုဖွင့်ရာတွင်အမှား' },
   'appointments.errorLoadingDesc': { en: 'Failed to load appointments. Please try again.', mm: 'ချိန်းဆိုမှုများကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
   'appointments.tryAgain': { en: 'Try Again', mm: 'ထပ်ကြိုးစားပါ' },
-  'appointments.anytime': { en: 'Anytime', mm: 'မည်သည့်အချိန်မဆို' },
+  'appointments.anytime': { en: 'Any time (Flexible time)', mm: 'မည်သည့်အချိန်မဆို (လိုက်လျောညီထွေသောအချိန်)' },
   'appointments.notSpecified': { en: 'Not specified', mm: 'မဖော်ပြထား' },
   'appointments.scheduledDate': { en: 'Scheduled', mm: 'ချိန်းဆိုထားသော' },
   'appointments.scheduledTime': { en: 'Scheduled Time', mm: 'ချိန်းဆိုထားသောအချိန်' },
