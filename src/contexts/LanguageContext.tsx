@@ -244,9 +244,9 @@ const translations: Translations = {
     'validation.title.required': { en: 'Title is required', mm: 'ခေါင်းစဉ်လိုအပ်ပါသည်' },
     'validation.title.minLength': { en: 'Title must be at least 10 characters', mm: 'ခေါင်းစဉ်သည် အနည်းဆုံး ၁၀ လုံးရှိရပါမည်' },
     
-    'validation.region.required': { en: 'Please select a region', mm: 'တိုင်းဒေသကြီးကို ရွေးချယ်ပါ' },
+    'validation.region.required': { en: 'region is required', mm: 'တိုင်းဒေသကြီး ဖြည့်ရန် လိုအပ်ပါသည်' },
     
-    'validation.township.required': { en: 'Please select a township', mm: 'မြို့နယ်ကို ရွေးချယ်ပါ' },
+    'validation.township.required': { en: 'township is required', mm: 'မြို့နယ် ဖြည့်ရန် လိုအပ်ပါသည်' },
     
     'validation.name.required': { en: 'Full name is required', mm: 'အမည်အပြည့်အစုံ လိုအပ်ပါသည်' },
     'validation.name.minLength': { en: 'Name must be at least 2 characters', mm: 'အမည်သည် အနည်းဆုံး ၂ လုံးရှိရပါမည်' },

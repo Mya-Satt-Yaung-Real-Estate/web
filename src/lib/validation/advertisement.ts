@@ -6,11 +6,11 @@ export const createAdvertisementSchema = (t: (key: string) => string) => z.objec
   description: z.string().min(1, t('validation.description.required')).max(2000, t('validation.maxLength')),
   region_id: z.preprocess(
     (val) => (val === '' || val === undefined || val === null ? 0 : val),
-    z.coerce.number().min(1, t('validation.required'))
+    z.coerce.number().min(1, t('validation.region.required'))
   ),
   township_id: z.preprocess(
     (val) => (val === '' || val === undefined || val === null ? 0 : val),
-    z.coerce.number().min(1, t('validation.required'))
+    z.coerce.number().min(1, t('validation.township.required'))
   ),
   address: z.string().min(1, t('validation.address.required')).max(500, t('validation.maxLength')),
   contact_name: z.string().min(1, t('validation.contactName.required')).max(100, t('validation.maxLength')),
