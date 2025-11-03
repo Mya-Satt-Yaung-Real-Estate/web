@@ -4,7 +4,7 @@ import { PageLoader } from './components/shared';
 // Lazy load public page components
 const Home = lazy(() => import('../pages/Home').then(module => ({ default: module.Home })));
 const About = lazy(() => import('../pages/About').then(module => ({ default: module.About })));
-const Companies = lazy(() => import('../pages/Companies').then(module => ({ default: module.Companies })));
+const Companies = lazy(() => import('../pages/companies').then(module => ({ default: module.Companies })));
 const CompanyDetail = lazy(() => import('../pages/companies/detail').then(module => ({ default: module.default })));
 const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.default })));
 const Contact = lazy(() => import('../pages/Contact').then(module => ({ default: module.default })));

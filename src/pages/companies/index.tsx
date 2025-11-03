@@ -1,18 +1,18 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { SEOHead } from '../components/seo/SEOHead';
-import { ImageWithFallback } from '../components/ImageWithFallback';
-import { seoUtils } from '../lib/seo';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { ImageWithFallback } from '@/components/ImageWithFallback';
+import { seoUtils } from '@/lib/seo';
 import { Building2, MapPin, Phone, Mail, Star, Eye, Home, Search, Globe } from 'lucide-react';
-import { useCompanies } from '../hooks/queries/useCompanies';
-import { useCompanyTypes } from '../hooks/queries/useCompanyTypes';
-import type { Company, CompanyType } from '../types';
+import { useCompanies } from '@/hooks/queries/useCompanies';
+import { useCompanyTypes } from '@/hooks/queries/useCompanyTypes';
+import type { Company, CompanyType } from '@/types';
 
 export function Companies() {
   const { t, language } = useLanguage();
@@ -356,3 +356,4 @@ export function Companies() {
     </>
   );
 }
+
