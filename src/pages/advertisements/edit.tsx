@@ -44,9 +44,7 @@ export default function EditAdvertisement() {
 
   // Local state
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>(['']);
-  const [phoneErrors, setPhoneErrors] = useState<string[]>(['']);
-  // Media IDs are managed through form state, kept here for potential future use
-  const [mediaIds, setMediaIds] = useState<number[]>([]);
+  const [phoneErrors, setPhoneErrors] = useState<string[]>([]);
   const [isFormInitialized, setIsFormInitialized] = useState(false);
 
   const isLoading = advLoading || regionsLoading || townshipsLoading;
@@ -95,7 +93,6 @@ export default function EditAdvertisement() {
     
     // Extract and set existing media IDs
     const existingMediaIds = (a.media?.images || []).map((img: any) => img.id);
-    setMediaIds(existingMediaIds);
     form.setValue('media_ids', existingMediaIds, { shouldValidate: false, shouldDirty: false });
     
     // Set region first
@@ -155,14 +152,12 @@ export default function EditAdvertisement() {
   }, []);
 
   const handleMediaUploadComplete = useCallback((ids: number[]) => {
-    console.log('handleMediaUploadComplete called with ids:', ids);
-    setMediaIds(ids);
-    // Update form value and trigger validation if needed
+    // Update form value - this is the source of truth for submission
     form.setValue('media_ids', ids, { 
       shouldValidate: true,
       shouldDirty: true 
     });
-    // Also trigger touch to ensure field is marked as touched
+    // Trigger validation to clear any errors
     form.trigger('media_ids');
   }, [form]);
   const handleMediaError = (error: string) => {
