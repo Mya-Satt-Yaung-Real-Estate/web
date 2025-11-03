@@ -722,7 +722,7 @@
   'contact.phoneLabel': { en: 'Phone Number', mm: 'ဖုန်းနံပါတ်' },
   'contact.phonePlaceholder': { en: 'Enter your phone number', mm: 'သင့်ဖုန်းနံပါတ်ကိုရိုက်ထည့်ပါ' },
   'contact.categoryLabel': { en: 'Inquiry Category', mm: 'မေးမြန်းမှုအမျိုးအစား' },
-  'contact.categoryPlaceholder': { en: 'Select a category', mm: 'အမျိုးအစားတစ်ခုရွေးချယ်ပါ' },
+  'contact.categoryPlaceholder': { en: 'Select a subject', mm: 'အမျိုးအစားတစ်ခုရွေးချယ်ပါ' },
   'contact.messageLabel': { en: 'Message', mm: 'မက်ဆေ့ဂ်' },
   'contact.messagePlaceholder': { en: 'Tell us how we can help you...', mm: 'ကျွန်ုပ်တို့ဘယ်လိုကူညီနိုင်မလဲပြောပြပါ...' },
   'contact.submitButton': { en: 'Send Message', mm: 'မက်ဆေ့ဂ်ပို့ရန်' },

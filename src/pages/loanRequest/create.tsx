@@ -538,8 +538,8 @@ export default function CreateLoanRequest() {
 
           {/* Disclaimer */}
           <Card className="border-amber-200/50 bg-amber-50/50 dark:bg-amber-950/20">
-            <CardContent className="p-6">
-              <p className="text-sm text-muted-foreground">
+            <CardContent className="pt-8 px-6 pb-6">
+              <p className="text-sm text-muted-foreground text-center">
                 <strong>{t('loanRequest.importantNotice') || 'Important Notice'}:</strong> {t('loanRequest.disclaimer') || 'This is a loan request form and does not constitute a loan approval. All applications are subject to bank/financial institution approval and their terms and conditions. Interest rates and loan terms are indicative and may vary based on credit evaluation, property valuation, and lender policies.'}
               </p>
             </CardContent>

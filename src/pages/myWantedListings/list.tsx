@@ -272,18 +272,14 @@ export default function MyWantedList() {
 {t('myWantedList.view')}
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              asChild={listing.status?.verification_status !== 'approved'}
-                              disabled={listing.status?.verification_status === 'approved'}
-                            >
-                              <Link 
-                                to={listing.status?.verification_status === 'approved' ? '#' : `/my-wanted-listings/edit/${listing.slug}`}
-                                className={listing.status?.verification_status === 'approved' ? 'opacity-50 cursor-not-allowed' : ''}
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
+                            {listing.status?.verification_status !== 'approved' && (
+                              <DropdownMenuItem asChild>
+                                <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
+                                  <Edit className="h-4 w-4 mr-2" />
 {t('myWantedList.edit')}
-                              </Link>
-                            </DropdownMenuItem>
+                                </Link>
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem 
                               onClick={() => handleDelete(listing.slug)}
                               className="text-red-600 focus:text-red-600"
@@ -358,25 +354,19 @@ export default function MyWantedList() {
                               {t('myWantedList.viewDetails')}
                             </Link>
                           </Button>
-                          <Button 
-                            asChild={listing.status?.verification_status !== 'approved'}
-                            variant="outline" 
-                            size="sm"
-                            disabled={listing.status?.verification_status === 'approved'}
-                            className={`flex-1 bg-primary/10 text-primary hover:bg-primary/20 ${
-                              listing.status?.verification_status === 'approved' 
-                                ? 'opacity-50 cursor-not-allowed' 
-                                : ''
-                            }`}
-                          >
-                            <Link 
-                              to={listing.status?.verification_status === 'approved' ? '#' : `/my-wanted-listings/edit/${listing.slug}`}
-                              className={listing.status?.verification_status === 'approved' ? 'pointer-events-none' : ''}
+                          {listing.status?.verification_status !== 'approved' && (
+                            <Button 
+                              asChild
+                              variant="outline" 
+                              size="sm"
+                              className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
                             >
-                              <Edit className="h-4 w-4 mr-2" />
-                              {t('myWantedList.edit')}
-                            </Link>
-                          </Button>
+                              <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                {t('myWantedList.edit')}
+                              </Link>
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>
