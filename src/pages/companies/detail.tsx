@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useCompanyBySlug, useCompanyProperties } from '@/hooks/queries/useCompanies';
+import { useCompanyBySlug, useCompanyProperties, useCompanyAdvertisements } from '@/hooks/queries/useCompanies';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,7 @@ import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ShareModal } from '@/components/ui/ShareModal';
 import type { Property } from '@/types/properties';
+import type { Advertisement } from '@/types/advertisement';
 import { 
   ArrowLeft, 
   ArrowRight,
@@ -35,7 +36,10 @@ import {
   Square,
   Share2,
   Grid3x3,
-  List
+  List,
+  Megaphone,
+  BarChart3,
+  Calendar
 } from 'lucide-react';
 
 export default function CompanyDetail() {
@@ -45,28 +49,42 @@ export default function CompanyDetail() {
   const seo = seoUtils.getPageSEO('companies');
   const [activeTab, setActiveTab] = useState('properties');
   const [propertiesPage, setPropertiesPage] = useState(1);
+  const [advertisementsPage, setAdvertisementsPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [advertisementsViewMode, setAdvertisementsViewMode] = useState<'grid' | 'list'>('grid');
   const [allProperties, setAllProperties] = useState<Property[]>([]);
+  const [allAdvertisements, setAllAdvertisements] = useState<Advertisement[]>([]);
   
   const { data: companyData, isLoading, error } = useCompanyBySlug(slug || '');
-  const { data: propertiesData, isLoading: propertiesLoading, isFetching } = useCompanyProperties(
+  const { data: propertiesData, isLoading: propertiesLoading, isFetching: propertiesFetching } = useCompanyProperties(
     slug || '', 
     { per_page: 12, page: propertiesPage }
+  );
+  const { data: advertisementsData, isLoading: advertisementsLoading, isFetching: advertisementsFetching } = useCompanyAdvertisements(
+    slug || '',
+    { per_page: 12, page: advertisementsPage }
   );
 
   // Reset properties when company changes
   useEffect(() => {
     setAllProperties([]);
     setPropertiesPage(1);
+    setAllAdvertisements([]);
+    setAdvertisementsPage(1);
   }, [slug]);
 
-  // Reset properties when switching to properties tab
+  // Reset data when switching tabs
   const prevTab = useRef(activeTab);
   useEffect(() => {
     if (prevTab.current !== 'properties' && activeTab === 'properties') {
       // Switching TO properties tab - reset and reload
       setAllProperties([]);
       setPropertiesPage(1);
+    }
+    if (prevTab.current !== 'advertisements' && activeTab === 'advertisements') {
+      // Switching TO advertisements tab - reset and reload
+      setAllAdvertisements([]);
+      setAdvertisementsPage(1);
     }
     prevTab.current = activeTab;
   }, [activeTab]);
@@ -88,6 +106,24 @@ export default function CompanyDetail() {
       }
     }
   }, [propertiesData, propertiesPage, activeTab]);
+
+  // Accumulate advertisements when new page data arrives
+  useEffect(() => {
+    if (advertisementsData?.data?.data && activeTab === 'advertisements') {
+      const newAdvertisements = advertisementsData.data.data;
+      if (advertisementsPage === 1) {
+        // First page - replace
+        setAllAdvertisements(newAdvertisements);
+      } else {
+        // Subsequent pages - append (filter duplicates by id)
+        setAllAdvertisements(prev => {
+          const existingIds = new Set(prev.map((a: Advertisement) => a.id));
+          const uniqueNew = newAdvertisements.filter((a: Advertisement) => !existingIds.has(a.id));
+          return [...prev, ...uniqueNew];
+        });
+      }
+    }
+  }, [advertisementsData, advertisementsPage, activeTab]);
 
   if (isLoading) {
     return (
@@ -168,12 +204,32 @@ export default function CompanyDetail() {
   const getListingType = (property: Property) => (language === 'mm' ? property.listing_type?.name_mm : property.listing_type?.name_en) || '';
 
   const properties = allProperties;
-  const pagination = propertiesData?.data?.pagination;
+  const propertiesPagination = propertiesData?.data?.pagination;
   
-  const handleLoadMore = () => {
-    if (pagination && propertiesPage < pagination.last_page) {
+  const advertisements = allAdvertisements;
+  const advertisementsPagination = advertisementsData?.data?.pagination;
+  
+  const handleLoadMoreProperties = () => {
+    if (propertiesPagination && propertiesPage < propertiesPagination.last_page) {
       setPropertiesPage(prev => prev + 1);
     }
+  };
+
+  const handleLoadMoreAdvertisements = () => {
+    if (advertisementsPagination && advertisementsPage < advertisementsPagination.last_page) {
+      setAdvertisementsPage(prev => prev + 1);
+    }
+  };
+
+  // Advertisement helper functions
+  const getAdvertisementTitle = (advertisement: Advertisement) => (language === 'mm' ? advertisement.title_mm : advertisement.title_en);
+  const getAdvertisementLocation = (advertisement: Advertisement) => {
+    const region = language === 'mm' ? advertisement.location?.region?.name_mm : advertisement.location?.region?.name_en;
+    const township = language === 'mm' ? advertisement.location?.township?.name_mm : advertisement.location?.township?.name_en;
+    if (region && township) return `${township}, ${region}`;
+    if (region) return region;
+    if (township) return township;
+    return '';
   };
 
   return (
@@ -701,16 +757,16 @@ export default function CompanyDetail() {
                       )}
 
                       {/* Load More Button */}
-                      {pagination && propertiesPage < pagination.last_page && (
+                      {propertiesPagination && propertiesPage < propertiesPagination.last_page && (
                         <div className="flex justify-center mt-6">
                           <Button
                             variant="outline"
                             size="lg"
-                            onClick={handleLoadMore}
-                            disabled={isFetching || propertiesLoading}
+                            onClick={handleLoadMoreProperties}
+                            disabled={propertiesFetching || propertiesLoading}
                             className="min-w-[200px]"
                           >
-                            {isFetching || propertiesLoading ? (
+                            {propertiesFetching || propertiesLoading ? (
                               <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
                                 {t('forms.loadMore')}...
@@ -736,11 +792,281 @@ export default function CompanyDetail() {
 
                 {/* Advertisements Tab */}
                 <TabsContent value="advertisements" className="mt-6">
-                  <div className="text-center py-12">
-                    <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-lg font-semibold mb-2">{t('companies.comingSoon')}</h3>
-                    <p className="text-muted-foreground">{t('companies.comingSoonAds')}</p>
-                  </div>
+                  {/* View All Link and Toggle Buttons */}
+                  {advertisements.length > 0 && !advertisementsLoading && (
+                    <div className="flex items-center justify-between mb-4">
+                      <Link to="/search-all?type=advertisement">
+                        <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10">
+                          {t('ads.viewAll')}
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <div className="inline-flex items-center gap-1 p-1 bg-muted/50 rounded-lg border border-border/50">
+                        <Button
+                          variant={advertisementsViewMode === 'grid' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setAdvertisementsViewMode('grid')}
+                          className="h-8 px-3"
+                        >
+                          <Grid3x3 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant={advertisementsViewMode === 'list' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setAdvertisementsViewMode('list')}
+                          className="h-8 px-3"
+                        >
+                          <List className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {advertisementsLoading && advertisementsPage === 1 ? (
+                    advertisementsViewMode === 'grid' ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[...Array(6)].map((_, i) => (
+                          <Card key={i} className="overflow-hidden">
+                            <div className="h-48 bg-gray-200 animate-pulse" />
+                            <CardContent className="p-4 space-y-3">
+                              <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                              <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {[...Array(6)].map((_, i) => (
+                          <Card key={i} className="overflow-hidden">
+                            <div className="flex flex-col sm:flex-row gap-4 p-4">
+                              <div className="w-full sm:w-64 h-48 sm:h-40 bg-gray-200 rounded-lg animate-pulse" />
+                              <div className="flex-1 space-y-3">
+                                <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                                <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                                <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )
+                  ) : advertisements.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Megaphone className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                      <h3 className="text-lg font-semibold mb-2">{t('advertisements.noResults')}</h3>
+                      <p className="text-muted-foreground">{t('advertisements.noResultsDesc') || "This company hasn't posted any advertisements yet."}</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Grid View */}
+                      {advertisementsViewMode === 'grid' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                          {advertisements.map((advertisement: Advertisement) => (
+                            <Card 
+                              key={advertisement.id} 
+                              className="group hover:shadow-2xl transition-all border-2 border-border/50 backdrop-blur-sm h-full flex flex-col overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
+                              onClick={() => navigate(`/advertisements/detail/${advertisement.id}`)}
+                            >
+                              {/* Image Section */}
+                              <div className={`relative h-48 overflow-hidden ${
+                                advertisement.media?.primary_image ? '' : 'bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center'
+                              }`}>
+                                <ImageWithFallback
+                                  src={advertisement.media?.primary_image?.url || '/jade.png'}
+                                  alt={getAdvertisementTitle(advertisement)}
+                                  className={`group-hover:scale-105 transition-transform duration-300 ${
+                                    advertisement.media?.primary_image ? 'w-full h-full object-cover' : 'max-w-[80%] max-h-[80%] object-contain'
+                                  }`}
+                                />
+
+                                {/* Featured Badge */}
+                                {advertisement.is_featured && (
+                                  <div className="absolute top-3 left-3">
+                                    <Badge variant="outline" className="bg-yellow-500/90 text-yellow-900 border-yellow-500/50 backdrop-blur-sm text-xs">
+                                      <Star className="h-3 w-3 mr-1" />
+                                      {t('advertisements.featured')}
+                                    </Badge>
+                                  </div>
+                                )}
+                              </div>
+
+                              <CardHeader className="space-y-3 pb-4">
+                                <div className="space-y-2">
+                                  <h3 className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2">
+                                    {getAdvertisementTitle(advertisement)}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {advertisement.description}
+                                  </p>
+                                </div>
+                              </CardHeader>
+
+                              <CardContent className="flex-1 flex flex-col justify-between space-y-4">
+                                {/* Location */}
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                                  <span className="line-clamp-1">
+                                    {getAdvertisementLocation(advertisement) || t('advertisements.locationNotSpecified')}
+                                  </span>
+                                </div>
+
+                                {/* Statistics */}
+                                <div className="grid grid-cols-2 gap-4 py-2 border-t border-border/50">
+                                  <div className="text-center">
+                                    <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                                      <BarChart3 className="h-4 w-4 text-primary" />
+                                      <span className="font-medium">{advertisement.stats?.view_count ?? 0}</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">{t('advertisements.views')}</p>
+                                  </div>
+                                  <div className="text-center">
+                                    <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                                      <Heart className="h-4 w-4 text-red-500" />
+                                      <span className="font-medium">{advertisement.stats?.favorite_count ?? 0}</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">{t('advertisements.favorites')}</p>
+                                  </div>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Calendar className="h-3.5 w-3.5" />
+                                    <span>
+                                      {t('advertisements.created')} {new Date(advertisement.dates?.created_at || Date.now()).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* List View */}
+                      {advertisementsViewMode === 'list' && (
+                        <div className="space-y-4 mb-6">
+                        {advertisements.map((advertisement: Advertisement) => (
+                          <Card 
+                            key={advertisement.id} 
+                            className="group hover:shadow-xl transition-all border-2 border-border/50 backdrop-blur-sm overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
+                            onClick={() => navigate(`/advertisements/detail/${advertisement.id}`)}
+                          >
+                            <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-6">
+                              {/* Image Section */}
+                              <div className="flex flex-col w-full sm:w-64 flex-shrink-0 gap-2">
+                                <div className={`relative w-full h-48 sm:h-40 overflow-hidden rounded-lg ${
+                                  advertisement.media?.primary_image ? '' : 'bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center'
+                                }`}>
+                                  <ImageWithFallback
+                                    src={advertisement.media?.primary_image?.url || '/jade.png'}
+                                    alt={getAdvertisementTitle(advertisement)}
+                                    className={`group-hover:scale-105 transition-transform duration-300 ${
+                                      advertisement.media?.primary_image ? 'w-full h-full object-cover' : 'max-w-[80%] max-h-[80%] object-contain'
+                                    }`}
+                                  />
+
+                                  {/* Featured Badge */}
+                                  {advertisement.is_featured && (
+                                    <div className="absolute top-2 left-2">
+                                      <Badge variant="outline" className="bg-yellow-500/90 text-yellow-900 border-yellow-500/50 backdrop-blur-sm text-xs">
+                                        <Star className="h-3 w-3 mr-1" />
+                                        {t('advertisements.featured')}
+                                      </Badge>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Content Section */}
+                              <div className="flex-1 flex flex-col min-w-0">
+                                <div className="space-y-3">
+                                  {/* Title, Badges, and Statistics */}
+                                  <div className="flex items-start justify-between gap-4">
+                                    <div className="flex-1 space-y-2">
+                                      <h3 className="text-lg sm:text-xl font-semibold group-hover:text-primary transition-colors line-clamp-2">
+                                        {getAdvertisementTitle(advertisement)}
+                                      </h3>
+                                      <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {advertisement.description}
+                                      </p>
+                                    </div>
+
+                                    {/* Statistics - Top Right */}
+                                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-shrink-0">
+                                      <div className="flex items-center gap-1">
+                                        <BarChart3 className="h-3.5 w-3.5 text-primary" />
+                                        <span>{advertisement.stats?.view_count ?? 0}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <Heart className="h-3.5 w-3.5 text-red-500" />
+                                        <span>{advertisement.stats?.favorite_count ?? 0}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Location */}
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                                    <span className="line-clamp-1">
+                                      {getAdvertisementLocation(advertisement) || t('advertisements.locationNotSpecified')}
+                                    </span>
+                                  </div>
+
+                                  {/* Address */}
+                                  {advertisement.location?.address && (
+                                    <div className="pt-2 border-t border-border/50">
+                                      <div className="flex items-start gap-2">
+                                        <MapPin className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                                        <div className="flex-1">
+                                          <span className="text-xs text-muted-foreground block mb-1">{t('properties.address')}:</span>
+                                          <span className="text-sm">{advertisement.location.address}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Footer */}
+                                  <div className="pt-2 border-t border-border/50">
+                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                      <Calendar className="h-3.5 w-3.5" />
+                                      <span>
+                                        {t('advertisements.created')} {new Date(advertisement.dates?.created_at || Date.now()).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                        </div>
+                      )}
+
+                      {/* Load More Button */}
+                      {advertisementsPagination && advertisementsPage < advertisementsPagination.last_page && (
+                        <div className="flex justify-center mt-6">
+                          <Button
+                            variant="outline"
+                            size="lg"
+                            onClick={handleLoadMoreAdvertisements}
+                            disabled={advertisementsFetching || advertisementsLoading}
+                            className="min-w-[200px]"
+                          >
+                            {advertisementsFetching || advertisementsLoading ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                                {t('forms.loadMore')}...
+                              </>
+                            ) : (
+                              t('forms.loadMore')
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </TabsContent>
               </Tabs>
             </CardContent>

@@ -58,3 +58,15 @@ export function useCompanyProperties(slug: string, params?: { per_page?: number;
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
+
+/**
+ * Get company advertisements by slug
+ */
+export function useCompanyAdvertisements(slug: string, params?: { per_page?: number; page?: number }) {
+  return useQuery({
+    queryKey: companiesKeys.advertisementsList(slug, params),
+    queryFn: () => companiesQueries.getCompanyAdvertisements(slug, params),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}

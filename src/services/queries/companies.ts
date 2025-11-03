@@ -21,6 +21,9 @@ export const companiesKeys = {
   properties: (slug: string) => [...companiesKeys.detailBySlug(slug), 'properties'] as const,
   propertiesList: (slug: string, params?: { per_page?: number; page?: number }) => 
     [...companiesKeys.properties(slug), params] as const,
+  advertisements: (slug: string) => [...companiesKeys.detailBySlug(slug), 'advertisements'] as const,
+  advertisementsList: (slug: string, params?: { per_page?: number; page?: number }) => 
+    [...companiesKeys.advertisements(slug), params] as const,
 } as const;
 
 // ============================================================================
@@ -54,5 +57,12 @@ export const companiesQueries = {
    */
   getCompanyProperties: (slug: string, params?: { per_page?: number; page?: number }) => {
     return companiesApi.getCompanyProperties(slug, params);
+  },
+
+  /**
+   * Get company advertisements by slug
+   */
+  getCompanyAdvertisements: (slug: string, params?: { per_page?: number; page?: number }) => {
+    return companiesApi.getCompanyAdvertisements(slug, params);
   },
 };
