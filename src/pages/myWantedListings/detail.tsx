@@ -260,12 +260,12 @@ export default function WantingListDetail() {
 
           {/* Property Summary - Horizontal Row */}
           <Card className="border-border/50 mb-8">
-            <CardContent className="p-6">
+            <CardContent className="!pt-6 pb-6 px-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Property Overview */}
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Home className="h-4 w-4 text-primary" />
+                  <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center">
+                    <Home className="h-4 w-4 text-green-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm">{t('myWantedList.propertyType')}</h3>
@@ -275,7 +275,7 @@ export default function WantingListDetail() {
 
                 {/* Location */}
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
                     <MapPin className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
@@ -286,10 +286,10 @@ export default function WantingListDetail() {
 
                 {/* Budget */}
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center">
                     <DollarSign className="h-4 w-4 text-green-600" />
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <h3 className="font-semibold text-sm">{t('myWantedList.budgetRange')}</h3>
                     <p className="text-sm text-muted-foreground">
                       {wantingList.budget?.budget_range || 
@@ -426,15 +426,25 @@ export default function WantingListDetail() {
                   )}
                 </div>
 
-                <div className="flex gap-3">
-                  <Button className="flex-1 gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50">
-                    <Phone className="h-3 w-3 mr-2" />
-                    {t('myWantedList.callNow')}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button 
+                    asChild
+                    className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50"
+                  >
+                    <a href={`tel:${wantingList.contact?.phone || ''}`}>
+                      <Phone className="h-3 w-3 mr-2" />
+                      {t('myWantedList.callNow')}
+                    </a>
                   </Button>
-                  <Button variant="outline" className="flex-1">
-                    <Share2 className="h-3 w-3 mr-2" />
-                    {t('myWantedList.share')}
-                  </Button>
+                  <ShareModal
+                    title={wantingList.title}
+                    url={window.location.href}
+                  >
+                    <Button variant="outline" className="w-full">
+                      <Share2 className="h-3 w-3 mr-2" />
+                      {t('myWantedList.share')}
+                    </Button>
+                  </ShareModal>
                 </div>
               </CardContent>
             </Card>
