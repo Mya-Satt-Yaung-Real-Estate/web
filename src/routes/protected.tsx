@@ -17,6 +17,7 @@ const MyPropertiesList = lazy(() => import('../pages/properties/list'));
 const CreateProperty = lazy(() => import('../pages/properties/create'));
 const EditProperty = lazy(() => import('../pages/properties/edit'));
 const PropertyDetail = lazy(() => import('../pages/properties/detail'));
+const CreateLoanRequest = lazy(() => import('../pages/loanRequest/create').then(module => ({ default: module.default })));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -160,6 +161,17 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <PropertyDetail />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  // Loan Request routes
+  {
+    path: '/loan-request',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <CreateLoanRequest />
         </Suspense>
       </ProtectedRoute>
     ),
