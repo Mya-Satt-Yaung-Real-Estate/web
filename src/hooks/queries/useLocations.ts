@@ -7,6 +7,7 @@ export const useRegions = () => {
     queryKey: ['regions'],
     queryFn: locationApi.getRegions,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false, // Don't auto-refetch, regions don't change often
   });
 };
 
@@ -16,6 +17,7 @@ export const useTownships = () => {
     queryKey: ['townships'],
     queryFn: locationApi.getTownships,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false, // Don't auto-refetch, townships don't change often
   });
 };
 

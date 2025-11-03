@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MapPin, User, Phone, Image, Plus, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,9 +27,11 @@ export default function EditAdvertisement() {
   const { t, language } = useLanguage();
 
   // Fetch existing advertisement and locations
-  const { data: advData, isLoading: advLoading } = useAdvertisement(advId);
-  const { data: regionsData, isLoading: regionsLoading } = useRegions();
-  const { data: townshipsData, isLoading: townshipsLoading } = useTownships();
+  // useAdvertisement will automatically refetch on mount (refetchOnMount: 'always')
+  // Regions and townships use cache (refetchOnMount: false) - they don't change often
+  const { data: advData, isLoading: advLoading, isFetching: advFetching } = useAdvertisement(advId);
+  const { data: regionsData, isLoading: regionsLoading, isFetching: regionsFetching } = useRegions();
+  const { data: townshipsData, isLoading: townshipsLoading, isFetching: townshipsFetching } = useTownships();
 
   // Mutation
   const updateMutation = useUpdateAdvertisement();
@@ -43,68 +45,126 @@ export default function EditAdvertisement() {
   // Local state
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>(['']);
   const [phoneErrors, setPhoneErrors] = useState<string[]>(['']);
+  // Media IDs are managed through form state, kept here for potential future use
   const [mediaIds, setMediaIds] = useState<number[]>([]);
+  const [isFormInitialized, setIsFormInitialized] = useState(false);
 
   const isLoading = advLoading || regionsLoading || townshipsLoading;
+  const isFetching = advFetching || regionsFetching || townshipsFetching;
   const regions = regionsData?.data || [];
   const townships = townshipsData?.data || [];
 
   const watchedRegionId = form.watch('region_id');
   const availableTownships = townships.filter(t => t.region_id === watchedRegionId);
 
-  // Prefill when advertisement data is ready
-  useEffect(() => {
-    if (!advData?.data) return;
-    const a = advData.data;
-    form.setValue('title_en', a.title_en);
-    form.setValue('title_mm', a.title_mm);
-    form.setValue('description', a.description || '');
-    // Set region immediately; defer township until townships for region are available
-    form.setValue('region_id', a.location?.region?.id || 0);
-    form.setValue('township_id', 0);
-    form.setValue('address', a.location?.address || '');
-    form.setValue('contact_name', a.contact_info?.contact_name || '');
-    const phones = a.contact_info?.phone_numbers || [];
-    setPhoneNumbers(phones.length ? phones : ['']);
-    setPhoneErrors(Array(phones.length || 1).fill(''));
-    form.setValue('phone_numbers', phones);
-    form.setValue('email', a.contact_info?.email || '');
-    form.setValue('status', (a.is_published ? 'published' : 'draft') as any);
-    form.setValue('media_ids', []);
-  }, [advData]);
+  // Memoize initial files to prevent unnecessary re-renders of MediaUpload
+  const initialMediaFiles = useMemo(() => {
+    return (advData?.data?.media?.images || []).map(img => ({
+      id: img.id,
+      url: img.url,
+      filename: img.filename,
+      type: 'image' as const,
+      size: 0,
+    }));
+  }, [advData?.data?.media?.images]);
 
-  // Ensure region/township are set AFTER locations load (prevents missing old values)
+  // Prefill form when all required data is ready and loading/fetching is complete (only once)
   useEffect(() => {
+    // Wait for all data to be loaded and refetch complete
+    if (isLoading || isFetching) return;
     if (!advData?.data) return;
     if (!regions.length || !townships.length) return;
+    if (isFormInitialized) return; // Prevent re-initialization
+    
     const a = advData.data;
     const desiredRegion = a.location?.region?.id || 0;
     const desiredTownship = a.location?.township?.id || 0;
-    // Ensure region matches desired
-    if (form.getValues('region_id') !== desiredRegion) {
-      form.setValue('region_id', desiredRegion);
+    
+    // Set basic fields
+    form.setValue('title_en', a.title_en, { shouldValidate: false, shouldDirty: false });
+    form.setValue('title_mm', a.title_mm, { shouldValidate: false, shouldDirty: false });
+    form.setValue('description', a.description || '', { shouldValidate: false, shouldDirty: false });
+    form.setValue('address', a.location?.address || '', { shouldValidate: false, shouldDirty: false });
+    form.setValue('contact_name', a.contact_info?.contact_name || '', { shouldValidate: false, shouldDirty: false });
+    const phones = a.contact_info?.phone_numbers || [];
+    setPhoneNumbers(phones.length ? phones : ['']);
+    setPhoneErrors(Array(phones.length || 1).fill(''));
+    form.setValue('phone_numbers', phones, { shouldValidate: false, shouldDirty: false });
+    form.setValue('email', a.contact_info?.email || '', { shouldValidate: false, shouldDirty: false });
+    form.setValue('status', (a.is_published ? 'published' : 'draft') as any, { shouldValidate: false, shouldDirty: false });
+    
+    // Extract and set existing media IDs
+    const existingMediaIds = (a.media?.images || []).map((img: any) => img.id);
+    setMediaIds(existingMediaIds);
+    form.setValue('media_ids', existingMediaIds, { shouldValidate: false, shouldDirty: false });
+    
+    // Set region first
+    if (desiredRegion) {
+      form.setValue('region_id', desiredRegion, { shouldValidate: false, shouldDirty: false });
+      
+      // Set township after region with a delay to ensure region value has propagated
+      if (desiredTownship) {
+        const townshipsForRegion = townships.filter(t => t.region_id === desiredRegion);
+        const townshipExists = townshipsForRegion.some(t => t.id === desiredTownship);
+        
+        if (townshipExists) {
+          const timer = setTimeout(() => {
+            form.setValue('township_id', desiredTownship, { shouldValidate: false, shouldDirty: false });
+            setIsFormInitialized(true);
+          }, 150);
+          
+          return () => clearTimeout(timer);
+        } else {
+          setIsFormInitialized(true);
+        }
+      } else {
+        setIsFormInitialized(true);
+      }
+    } else {
+      setIsFormInitialized(true);
     }
-    // Only set township when the available list for the selected region contains the desired township
-    if (watchedRegionId === desiredRegion) {
-      const exists = availableTownships.some(t => t.id === desiredTownship);
-      if (exists && form.getValues('township_id') !== desiredTownship) {
-        form.setValue('township_id', desiredTownship);
+  }, [isLoading, isFetching, advData?.data, regions.length, townships.length, townships, form, isFormInitialized]);
+
+  // Watch for region changes and set township when region is set correctly
+  useEffect(() => {
+    if (!advData?.data || !townships.length) return;
+    if (!isFormInitialized) return; // Wait for initial setup
+    
+    const a = advData.data;
+    const desiredRegion = a.location?.region?.id || 0;
+    const desiredTownship = a.location?.township?.id || 0;
+    const currentRegionId = form.getValues('region_id');
+    const currentTownshipId = form.getValues('township_id');
+    
+    // If region matches but township doesn't, set township
+    if (currentRegionId === desiredRegion && desiredTownship && currentTownshipId !== desiredTownship) {
+      const townshipsForRegion = townships.filter(t => t.region_id === desiredRegion);
+      const townshipExists = townshipsForRegion.some(t => t.id === desiredTownship);
+      
+      if (townshipExists) {
+        form.setValue('township_id', desiredTownship, { shouldValidate: false, shouldDirty: false });
       }
     }
-  }, [advData, regions.length, townships.length, watchedRegionId, availableTownships.length]);
+  }, [watchedRegionId, townships, advData?.data, form, isFormInitialized]);
 
-  // Initialize defaults
+  // Initialize defaults (only for fields that don't come from API)
   useEffect(() => {
     if (!form.getValues('phone_numbers')) form.setValue('phone_numbers', []);
     if (!form.getValues('media_ids')) form.setValue('media_ids', []);
-    if (!form.getValues('region_id')) form.setValue('region_id', 0);
-    if (!form.getValues('township_id')) form.setValue('township_id', 0);
+    // Don't reset region_id and township_id here - they will be set from API data
   }, []);
 
-  const handleMediaUploadComplete = (ids: number[]) => {
+  const handleMediaUploadComplete = useCallback((ids: number[]) => {
+    console.log('handleMediaUploadComplete called with ids:', ids);
     setMediaIds(ids);
-    form.setValue('media_ids', ids);
-  };
+    // Update form value and trigger validation if needed
+    form.setValue('media_ids', ids, { 
+      shouldValidate: true,
+      shouldDirty: true 
+    });
+    // Also trigger touch to ensure field is marked as touched
+    form.trigger('media_ids');
+  }, [form]);
   const handleMediaError = (error: string) => {
     showError(error, t('createAdvertisement.errorTitle'));
   };
@@ -141,6 +201,9 @@ export default function EditAdvertisement() {
   };
 
   const onSubmit = (data: any) => {
+    // Use form value for media_ids to ensure we have the latest value (after removals/additions)
+    const currentMediaIds = form.getValues('media_ids') || [];
+    
     const payload: CreateAdvertisementData = {
       title_en: data.title_en,
       title_mm: data.title_mm,
@@ -152,7 +215,7 @@ export default function EditAdvertisement() {
       phone_numbers: data.phone_numbers || [],
       email: data.email || '',
       status: data.status || 'draft',
-      media_ids: mediaIds,
+      media_ids: currentMediaIds,
     };
 
     updateMutation.mutate({ id: advId, data: payload }, {
@@ -230,7 +293,10 @@ export default function EditAdvertisement() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField name="region_id" label={t('createAdvertisement.region')} error={errors.region_id} required>
-                      <Select value={form.watch('region_id') && form.watch('region_id') > 0 ? form.watch('region_id').toString() : undefined} onValueChange={(v) => handleRegionChange(v)}>
+                      <Select 
+                        value={form.watch('region_id') ? form.watch('region_id').toString() : ''} 
+                        onValueChange={(v) => handleRegionChange(v)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder={t('createAdvertisement.selectRegion')} />
                         </SelectTrigger>
@@ -244,10 +310,14 @@ export default function EditAdvertisement() {
                       </Select>
                     </FormField>
                     <FormField name="township_id" label={t('createAdvertisement.township')} error={errors.township_id} required>
-                      <Select value={form.watch('township_id') && form.watch('township_id') > 0 ? form.watch('township_id').toString() : undefined} onValueChange={(value) => {
-                        const numeric = Number(value);
-                        form.setValue('township_id', Number.isFinite(numeric) && numeric > 0 ? numeric : 0);
-                      }} disabled={!watchedRegionId || watchedRegionId <= 0}>
+                      <Select 
+                        value={form.watch('township_id') ? form.watch('township_id').toString() : ''} 
+                        onValueChange={(value) => {
+                          const numeric = Number(value);
+                          form.setValue('township_id', Number.isFinite(numeric) && numeric > 0 ? numeric : 0);
+                        }} 
+                        disabled={!watchedRegionId || watchedRegionId <= 0}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder={t('createAdvertisement.selectTownship')} />
                         </SelectTrigger>
@@ -324,13 +394,7 @@ export default function EditAdvertisement() {
                       onUploadComplete={handleMediaUploadComplete} 
                       onUploadError={handleMediaError} 
                       maxFiles={5}
-                      initialFiles={(advData?.data?.media?.images || []).map(img => ({
-                        id: img.id,
-                        url: img.url,
-                        filename: img.filename,
-                        type: 'image' as const,
-                        size: 0,
-                      }))}
+                      initialFiles={initialMediaFiles}
                     />
                     {errors.media_ids && (<p className="text-sm text-red-500">{errors.media_ids.message}</p>)}
                   </div>

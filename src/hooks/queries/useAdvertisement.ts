@@ -23,7 +23,11 @@ export const useUserAdvertisements = (filters: AdvertisementFilters = {}) => {
  * Get a single advertisement by ID (authenticated)
  */
 export const useAdvertisement = (id: number) => {
-  return useQuery(advertisementQueries.getAdvertisementById(id));
+  return useQuery({
+    ...advertisementQueries.getAdvertisementById(id),
+    refetchOnMount: 'always', // Always refetch to ensure fresh data for edit page
+    staleTime: 0, // Consider data stale immediately to force refetch
+  });
 };
 
 /**
