@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Upload, X, Video, Loader2 } from 'lucide-react';
+import { Upload, X, Loader2, Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
@@ -313,8 +313,12 @@ export function MediaUpload({
                           className="w-full max-w-[400px] aspect-square object-cover rounded"
                         />
                       ) : (
-                        <div className="w-full max-w-[400px] aspect-square bg-muted flex items-center justify-center rounded">
-                          <Video className="h-8 w-8 text-muted-foreground" />
+                        <div className="w-full max-w-[400px] aspect-square bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center rounded relative">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg">
+                              <Play className="h-6 w-6 md:h-8 md:w-8 text-white ml-0.5" fill="white" />
+                            </div>
+                          </div>
                         </div>
                       )}
                       {uploadedFiles.length > 1 && !disabled && (

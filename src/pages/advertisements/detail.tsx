@@ -186,9 +186,10 @@ export default function AdvertisementDetail() {
                 <MediaGallery
                   images={images.map((img: any) => ({
                     id: img.id,
-                    filename: img.filename,
-                    url: img.url,
-                    thumbnail_url: (img as any).thumbnail_url || undefined,
+                    filename: img.filename || img.original_filename || 'image',
+                    url: img.url || img.medium_url || img.small_url || img.thumbnail_url,
+                    thumbnail_url: img.thumbnail_url || img.small_url || img.url,
+                    type: img.type || 'image',
                   }))}
                   title={t('createAdvertisement.media')}
                   cardClassName="w-full"
