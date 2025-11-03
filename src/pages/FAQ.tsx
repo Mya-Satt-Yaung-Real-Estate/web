@@ -35,9 +35,9 @@ const FAQItem = ({ faq, isOpen, onToggle }: FAQItemProps) => {
       <Button
         variant="ghost"
         onClick={onToggle}
-        className="w-full justify-between p-4 text-left transition-all outline-none hover:bg-transparent hover:text-inherit"
+        className="w-full justify-between items-center p-4 transition-all outline-none hover:bg-transparent hover:text-inherit text-left"
       >
-        <span className="text-sm font-medium pr-4">{question}</span>
+        <span className="text-sm font-medium pr-4 flex-1">{question}</span>
         {isOpen ? (
           <ChevronUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         ) : (
