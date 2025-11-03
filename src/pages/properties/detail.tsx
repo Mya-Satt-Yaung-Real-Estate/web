@@ -58,6 +58,12 @@ export default function PropertyDetail() {
   const [loadingPointSettings, setLoadingPointSettings] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
+  // Renewal dialog state
+  const [showRenewalDialog, setShowRenewalDialog] = useState(false);
+  const [renewalPointSettings, setRenewalPointSettings] = useState<any>(null);
+  const [loadingRenewalPointSettings, setLoadingRenewalPointSettings] = useState(false);
+  const [isRenewing, setIsRenewing] = useState(false);
+
   const handleDelete = () => {
     if (!property?.slug) return;
     showConfirm({
@@ -183,6 +189,54 @@ export default function PropertyDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showStatusChangeDialog]);
 
+  // Handle renewal button click
+  const handleRenewClick = async () => {
+    if (!property?.slug) return;
+    
+    setShowRenewalDialog(true);
+    setLoadingRenewalPointSettings(true);
+    try {
+      const response = await pointSettingsApi.getPointSettings();
+      if (response.data && response.data.data) {
+        setRenewalPointSettings(response.data.data);
+      }
+    } catch (err: any) {
+      console.error('Failed to fetch point settings:', err);
+      showError(err?.response?.data?.message || err?.message || 'Failed to load fee information', t('common.error') || 'Error');
+      setShowRenewalDialog(false);
+    } finally {
+      setLoadingRenewalPointSettings(false);
+    }
+  };
+
+  // Handle renewal confirmation
+  const handleRenewConfirm = async () => {
+    if (!property?.slug) return;
+    
+    setIsRenewing(true);
+    try {
+      await propertyApi.renewMyProperty(property.slug);
+      
+      // Refetch property data
+      queryClient.invalidateQueries({ queryKey: ['my-property', property.slug] });
+      queryClient.invalidateQueries({ queryKey: ['my-properties'] });
+      
+      showSuccess(
+        t('properties.renewalSuccess') || 'Property renewed successfully!',
+        t('properties.renewalSuccessTitle') || 'Success!'
+      );
+      
+      setShowRenewalDialog(false);
+      setRenewalPointSettings(null);
+    } catch (err: any) {
+      console.error('Renewal error:', err);
+      const msg = err?.response?.data?.message || err?.message || t('properties.renewalError') || 'Failed to renew property';
+      showError(msg, t('common.error') || 'Error');
+    } finally {
+      setIsRenewing(false);
+    }
+  };
+
   // Badge color helpers
   const getVerificationBadgeClass = (status?: string) => {
     switch (status) {
@@ -305,6 +359,11 @@ export default function PropertyDetail() {
               </h1>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>{property.code}</span>
+                {property.is_expired && (
+                  <span className="inline-flex items-center rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-700 dark:text-red-300">
+                    {t('properties.expired') || 'Expired'}
+                  </span>
+                )}
                 {property.is_trending && (
                   <span className="inline-flex items-center rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-300">
                     {t('premium.badge') || 'Premium'}
@@ -315,6 +374,29 @@ export default function PropertyDetail() {
             <div className="flex items-center gap-2">
               {canEdit && !(property?.verification_status === 'approved' && (property?.status === 'sold' || property?.status === 'rented')) && (
                 <>
+                  {/* Renew Button - Show if property is expired */}
+                  {property?.is_expired && (
+                    <Button 
+                      onClick={handleRenewClick}
+                      disabled={isRenewing}
+                      variant="default"
+                      size="sm"
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      {isRenewing ? (
+                        <>
+                          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                          {t('properties.renewing') || 'Renewing...'}
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          {t('properties.renew') || 'Renew'}
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
                   {/* Change Status Dropdown */}
                   <Select
                     value={property?.status || ''}
@@ -813,6 +895,111 @@ export default function PropertyDetail() {
                 <>
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                   {t('createProperty.confirmSubmit') || 'Confirm & Publish'}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Renewal Confirmation Dialog */}
+      <Dialog
+        open={showRenewalDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowRenewalDialog(false);
+            setRenewalPointSettings(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader className="pb-4 border-b">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500/10 text-orange-500">
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-semibold text-left">
+                  {t('properties.confirmRenewalTitle') || 'Confirm Property Renewal'}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1">
+                  {t('properties.confirmRenewalDescription') || 'You are renewing this property. Renewal fees will apply.'}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          {loadingRenewalPointSettings ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-[3px] border-orange-500 border-t-transparent"></div>
+              <p className="mt-4 text-sm text-muted-foreground font-medium">
+                {t('createProperty.loadingFees') || 'Loading fee information...'}
+              </p>
+            </div>
+          ) : renewalPointSettings ? (
+            <div className="py-4">
+              <div className="overflow-hidden border border-border rounded-lg">
+                <table className="w-full border-collapse">
+                  <tbody className="divide-y divide-border">
+                    {/* Renewal Fee */}
+                    <tr className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 text-sm font-medium text-foreground">
+                        {t('properties.renewalFee') || 'Renewal Fee'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold text-foreground">
+                        {renewalPointSettings.renewal_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-orange-500/5 border-t-2 border-orange-500/20">
+                      <td className="px-4 py-4 text-right text-sm font-semibold text-foreground">
+                        {t('createProperty.totalFee') || 'Total'}
+                      </td>
+                      <td className="px-4 py-4 text-right text-base font-bold text-orange-500">
+                        {renewalPointSettings.renewal_info?.point_amount || 0} {t('createProperty.points') || 'Points'}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              
+              {/* Validity Period Info */}
+              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
+                <p className="text-xs text-muted-foreground text-center">
+                  <CheckCircle2 className="inline h-3 w-3 mr-1" />
+                  {t('properties.renewalFeeDesc') || 'Valid for'} <span className="font-medium text-foreground">{renewalPointSettings.renewal_info?.days || 0}</span> {t('createProperty.days') || 'days'}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowRenewalDialog(false);
+                setRenewalPointSettings(null);
+              }}
+              disabled={loadingRenewalPointSettings || isRenewing}
+              className="w-full sm:w-auto"
+            >
+              {t('common.cancel') || 'Cancel'}
+            </Button>
+            <Button 
+              onClick={handleRenewConfirm}
+              disabled={loadingRenewalPointSettings || isRenewing || !renewalPointSettings}
+              className="bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 w-full sm:w-auto"
+            >
+              {isRenewing ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  {t('properties.renewing') || 'Renewing...'}
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  {t('properties.confirmRenewal') || 'Confirm & Renew'}
                 </>
               )}
             </Button>

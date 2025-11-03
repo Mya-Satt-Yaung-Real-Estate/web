@@ -138,4 +138,13 @@ export const propertyApi = {
       rented: number;
     }>('/properties/stats');
   },
+
+  /**
+   * Renew expired property
+   */
+  renewMyProperty: (slug: string, notes?: string) => {
+    return api.post<PropertyResponse>(`/api/v1/frontend/my-properties/${slug}/renew`, {
+      notes: notes || '',
+    });
+  },
 };
