@@ -1135,6 +1135,8 @@ const translations: Translations = {
   'properties.bankInstallmentAvailable': { en: 'Bank Installment Available', mm: 'ဘဏ်အရစ်ကျ ရရှိနိုင်သည်' },
   'properties.description': { en: 'Description', mm: 'ဖော်ပြချက်' },
   'properties.location': { en: 'Location', mm: 'တည်နေရာ' },
+  'properties.map': { en: 'Map', mm: 'မြေပုံ' },
+  'properties.mapLocation': { en: 'Property Location', mm: 'အိမ်ခြံမြေတည်နေရာ' },
   'properties.region': { en: 'Region', mm: 'ဒေသကြီး' },
   'properties.township': { en: 'Township', mm: 'မြို့နယ်' },
   'properties.address': { en: 'Address', mm: 'လိပ်စာ' },

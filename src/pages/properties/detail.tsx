@@ -734,6 +734,32 @@ export default function PropertyDetail() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Google Map - Show if latitude and longitude are available */}
+              {property.location?.latitude && property.location?.longitude && (
+                <Card className="shadow-lg overflow-hidden">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <MapPin className="h-5 w-5 text-primary" /> {t('properties.map') || 'Map'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <div className="h-96 w-full">
+                      <iframe
+                        src={`https://www.google.com/maps?q=${property.location.latitude},${property.location.longitude}&z=15&output=embed`}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title={t('properties.mapLocation') || 'Property Location'}
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
             {/* Right: Contact Information */}
             <div className="space-y-6">
@@ -760,6 +786,122 @@ export default function PropertyDetail() {
               </Card>
             </div>
           </div>
+
+          {/* Comments Section */}
+          {property?.comments && Array.isArray(property.comments) && property.comments.length > 0 && (() => {
+            // Calculate total count including replies
+            const totalComments = property.comments.reduce((total: number, comment: any) => {
+              const replyCount = comment.replies && Array.isArray(comment.replies) ? comment.replies.length : 0;
+              return total + 1 + replyCount; // 1 for the comment itself + replies
+            }, 0);
+            
+            return (
+            <Card className="shadow-lg mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <MessageCircle className="h-5 w-5 text-primary" /> {t('properties.comments') || 'Comments'} ({totalComments})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {property.comments.map((comment: any) => (
+                    <div key={comment.id} className="space-y-4">
+                      {/* Main Comment */}
+                      <div className="flex gap-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary to-[#4a9b82]">
+                          {comment.profile_link ? (
+                            <img
+                              src={comment.profile_link}
+                              alt={comment.user_name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `
+                                    <div class="w-full h-full flex items-center justify-center text-white text-sm font-medium">
+                                      ${comment.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                                    </div>
+                                  `;
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-white text-sm font-medium">
+                              {comment.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-foreground">{comment.user_name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {comment.created_at ? new Date(comment.created_at).toLocaleDateString(language === 'mm' ? 'my-MM' : 'en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              }) : '-'}
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground whitespace-pre-wrap">{comment.comment}</p>
+                        </div>
+                      </div>
+
+                      {/* Replies */}
+                      {comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0 && (
+                        <div className="ml-12 space-y-4 border-l-2 border-border/50 pl-4">
+                          {comment.replies.map((reply: any) => (
+                            <div key={reply.id} className="flex gap-3">
+                              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary to-[#4a9b82]">
+                                {reply.profile_link ? (
+                                  <img
+                                    src={reply.profile_link}
+                                    alt={reply.user_name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                      const parent = target.parentElement;
+                                      if (parent) {
+                                        parent.innerHTML = `
+                                          <div class="w-full h-full flex items-center justify-center text-white text-xs font-medium">
+                                            ${reply.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                                          </div>
+                                        `;
+                                      }
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-white text-xs font-medium">
+                                    {reply.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-sm text-foreground">{reply.user_name}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {reply.created_at ? new Date(reply.created_at).toLocaleDateString(language === 'mm' ? 'my-MM' : 'en-US', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric'
+                                    }) : '-'}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-foreground whitespace-pre-wrap">{reply.comment}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            );
+          })()}
         </div>
       </div>
       {/* Confirm Modal */}
