@@ -50,7 +50,7 @@ export function useNavigationData() {
     ],
     
     createListingOptions: [
-      { name: t('createListing.propertyPost'), path: '/properties', icon: HomeIcon },
+      { name: t('createListing.propertyPost'), path: '/my-properties', icon: HomeIcon },
       { name: t('createListing.wantedPost'), path: '/my-wanted-listings/list', icon: Search },
       { name: t('createListing.advertisementPost'), path: '/advertisements', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },

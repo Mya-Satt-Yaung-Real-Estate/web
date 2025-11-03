@@ -80,7 +80,7 @@ export default function PropertyDetail() {
           queryClient.invalidateQueries({ queryKey: ['my-property', property.slug] });
           showSuccess(t('properties.deleteSuccess') || 'Property deleted successfully!', t('properties.deleteSuccessTitle') || 'Success!');
           // Redirect to list page - it will automatically refetch due to invalidated queries
-          navigate('/properties');
+          navigate('/my-properties');
         } catch (err: any) {
           console.error('Delete error:', err);
           const msg = err?.response?.data?.message || err?.message || t('properties.deleteError') || 'Failed to delete property';
@@ -293,7 +293,7 @@ export default function PropertyDetail() {
             <ArrowLeft className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">{t('properties.errorTitle') || 'Error'}</h3>
             <p className="text-muted-foreground mb-4">{t('properties.errorDesc') || 'Failed to load property details.'}</p>
-            <Button onClick={() => navigate('/properties')} variant="outline">
+            <Button onClick={() => navigate('/my-properties')} variant="outline">
               {t('properties.backToList') || 'Back to List'}
             </Button>
           </CardContent>
@@ -313,7 +313,7 @@ export default function PropertyDetail() {
             <nav className="text-sm text-muted-foreground">
               <ol className="flex items-center gap-1">
                 <li>
-                  <Link to="/properties" className="text-primary hover:text-primary/80 transition-colors">
+                  <Link to="/my-properties" className="text-primary hover:text-primary/80 transition-colors">
                     {t('properties.title') || 'Properties'}
                   </Link>
                 </li>
@@ -322,7 +322,7 @@ export default function PropertyDetail() {
               </ol>
             </nav>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/properties')} className="hover:bg-primary/10">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/my-properties')} className="hover:bg-primary/10">
                 <ArrowLeft className="h-4 w-4 mr-2" /> {t('properties.back') || 'Back'}
               </Button>
             </div>
@@ -453,7 +453,7 @@ export default function PropertyDetail() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
-                        <Link to={`/properties/edit/${property.slug}`}>
+                        <Link to={`/my-properties/edit/${property.slug}`}>
                           <Edit className="h-4 w-4 mr-2" />
                           {t('properties.edit') || 'Edit'}
                         </Link>

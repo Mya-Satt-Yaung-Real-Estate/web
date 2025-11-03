@@ -123,9 +123,9 @@ export const protectedRoutes = [
             </ProtectedRoute>
           ),
         },
-  // Properties routes
+  // Properties routes (authenticated - my properties)
   {
-    path: '/properties',
+    path: '/my-properties',
     element: (
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
@@ -135,7 +135,7 @@ export const protectedRoutes = [
     ),
   },
   {
-    path: '/properties/create',
+    path: '/my-properties/create',
     element: (
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
@@ -145,7 +145,7 @@ export const protectedRoutes = [
     ),
   },
   {
-    path: '/properties/edit/:slug',
+    path: '/my-properties/edit/:slug',
     element: (
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
@@ -155,7 +155,7 @@ export const protectedRoutes = [
     ),
   },
   {
-    path: '/properties/detail/:slug',
+    path: '/my-properties/:slug',
     element: (
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>

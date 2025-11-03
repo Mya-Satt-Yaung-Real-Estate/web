@@ -510,7 +510,7 @@ export default function CompanyDetail() {
                             <Card 
                               key={property.id} 
                               className="group hover:shadow-2xl transition-all border-2 border-border/50 backdrop-blur-sm h-full flex flex-col overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
-                              onClick={() => navigate(`/properties/detail/${property.slug}`)}
+                              onClick={() => navigate(`/my-properties/${property.slug}`)}
                             >
                               {/* Image Section */}
                               <div className={`relative h-48 overflow-hidden ${

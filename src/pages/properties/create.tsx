@@ -143,10 +143,10 @@ export default function CreateProperty() {
       // Redirect to detail page using slug from response
       const propertySlug = response.data?.data?.slug;
       if (propertySlug) {
-        navigate(`/properties/detail/${propertySlug}`);
+        navigate(`/my-properties/${propertySlug}`);
       } else {
         // Fallback to list page if slug is not available
-        navigate('/properties');
+        navigate('/my-properties');
       }
     } catch (err: any) {
       console.error('Submit error:', err);
@@ -229,7 +229,7 @@ export default function CreateProperty() {
                 {t('createProperty.description') || 'Post your property with details and media'}
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/properties')} className="hover:bg-primary/10">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/my-properties')} className="hover:bg-primary/10">
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('createProperty.back') || 'Back'}
             </Button>
@@ -570,7 +570,7 @@ export default function CreateProperty() {
               >
                 {t('createProperty.create') || 'Create Property'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => navigate('/properties')}>
+              <Button type="button" variant="outline" onClick={() => navigate('/my-properties')}>
                 {t('createAdvertisement.cancel')}
               </Button>
             </div>

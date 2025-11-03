@@ -326,10 +326,10 @@ export default function EditProperty() {
       showSuccess(t('editProperty.successMessage') || 'Property updated successfully!', t('editProperty.successTitle') || 'Success!');
       // Redirect to detail page - will automatically refetch due to refetchOnMount: 'always'
       if (slug) {
-        navigate(`/properties/detail/${slug}`);
+        navigate(`/my-properties/${slug}`);
       } else {
         // Fallback to list page if slug is not available
-        navigate('/properties');
+        navigate('/my-properties');
       }
     } catch (err: any) {
       console.error('Submit error:', err);
@@ -488,7 +488,7 @@ export default function EditProperty() {
             <Card className="shadow-lg">
               <CardContent className="py-12 text-center">
                 <p className="text-red-500 mb-4">{t('editProperty.notFound') || 'Property not found'}</p>
-                <Button onClick={() => navigate('/properties')}>{t('common.back') || 'Back'}</Button>
+                <Button onClick={() => navigate('/my-properties')}>{t('common.back') || 'Back'}</Button>
               </CardContent>
             </Card>
           </div>

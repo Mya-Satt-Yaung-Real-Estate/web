@@ -112,7 +112,7 @@ export default function MyPropertiesList() {
               <p className="text-muted-foreground mt-2">{t('properties.subtitle')}</p>
             </div>
             <Button asChild className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105">
-              <Link to="/properties/create">
+              <Link to="/my-properties/create">
                 <Plus className="h-4 w-4 mr-2" />
                 {t('properties.createNew')}
               </Link>
@@ -220,7 +220,7 @@ export default function MyPropertiesList() {
                 <h3 className="text-lg font-semibold mb-2">{t('properties.noProperties')}</h3>
                 <p className="text-muted-foreground mb-4">{t('properties.noPropertiesDesc')}</p>
                 <Button asChild className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50">
-                  <Link to="/properties/create">
+                  <Link to="/my-properties/create">
                     <Plus className="h-4 w-4 mr-2" />
                     {t('properties.createNew')}
                   </Link>
@@ -369,7 +369,7 @@ export default function MyPropertiesList() {
 
                           <div className="flex gap-2">
                             <Button asChild variant="outline" size="sm" className="flex-1 bg-primary/10 text-primary hover:bg-primary/20">
-                              <Link to={`/properties/detail/${property.slug}`}>
+                              <Link to={`/my-properties/${property.slug}`}>
                                 <Eye className="h-4 w-4 mr-2" />
                                 {t('properties.viewDetails')}
                               </Link>
@@ -381,7 +381,7 @@ export default function MyPropertiesList() {
                                 size="sm"
                                 className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
                               >
-                                <Link to={`/properties/edit/${property.slug}`}>
+                                <Link to={`/my-properties/edit/${property.slug}`}>
                                   <Edit className="h-4 w-4 mr-2" />
                                   {t('properties.edit')}
                                 </Link>
