@@ -41,3 +41,18 @@ export const useUpdateAppointment = () => {
     },
   });
 };
+
+/**
+ * Delete appointment mutation hook
+ */
+export const useDeleteAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => appointmentApi.deleteAppointment(id),
+    onSuccess: () => {
+      // Invalidate and refetch appointments list
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
+    },
+  });
+};

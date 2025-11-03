@@ -42,6 +42,11 @@ export const appointmentApi = {
     return response.data;
   },
 
+  // Delete appointment
+  async deleteAppointment(id: number): Promise<void> {
+    await apiClient.delete(`/api/v1/frontend/appointments/${id}`);
+  },
+
   // Get appointment time slots
   async getTimeSlots(): Promise<AppointmentTimeSlotResponse> {
     const response = await apiClient.get<AppointmentTimeSlotResponse>('/api/v1/frontend/appointment-time-slots');

@@ -10,13 +10,19 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useAppointments, usePropertyListingTypes } from '@/hooks/queries/useAppointment';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useModal } from '@/contexts/ModalContext';
+import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { CreateAppointmentModal } from '@/components/appointments/CreateAppointmentModal';
 import { EditAppointmentModal } from '@/components/appointments/EditAppointmentModal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useDeleteAppointment } from '@/hooks/mutations/useAppointmentMutations';
 import type { AppointmentFilters, Appointment } from '@/types/appointment';
 
 export default function AppointmentList() {
   const seo = seoUtils.getPageSEO('appointments');
   const { t, language } = useLanguage();
+  const { showSuccess, showError } = useModal();
+  const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -26,6 +32,9 @@ export default function AppointmentList() {
     status: '' as any,
     property_listing_type_id: undefined,
   });
+
+  // Delete mutation
+  const deleteAppointmentMutation = useDeleteAppointment();
 
   // API hooks
   const { data: appointmentsData, isLoading, error, refetch } = useAppointments({
@@ -134,6 +143,31 @@ export default function AppointmentList() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleDelete = (id: number) => {
+    showConfirm({
+      title: t('appointments.deleteConfirm') || 'Delete Appointment',
+      message: t('appointments.deleteMessage') || 'Are you sure you want to delete this appointment? This action cannot be undone.',
+      confirmText: t('appointments.delete') || 'Delete',
+      cancelText: t('appointments.cancel') || 'Cancel',
+      confirmVariant: 'destructive',
+      onConfirm: async () => {
+        deleteAppointmentMutation.mutate(id, {
+          onSuccess: () => {
+            showSuccess(
+              t('appointments.deleteSuccess') || 'Appointment deleted successfully!',
+              t('appointments.deleteSuccessTitle') || 'Success!'
+            );
+            refetch();
+          },
+          onError: (error: any) => {
+            const errorMessage = error?.response?.data?.message || error?.message || t('appointments.deleteError') || 'Failed to delete appointment';
+            showError(errorMessage, t('appointments.deleteErrorTitle') || 'Error');
+          },
+        });
+      },
+    });
   };
 
   return (
@@ -292,7 +326,12 @@ export default function AppointmentList() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" className="text-destructive hover:bg-destructive/10">
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="text-destructive hover:bg-destructive/10"
+                            onClick={() => handleDelete(appointment.id)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -411,6 +450,19 @@ export default function AppointmentList() {
         onSuccess={() => {
           refetch();
         }}
+      />
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={hideConfirm}
+        onConfirm={handleConfirm}
+        title={confirmOptions?.title || ''}
+        message={confirmOptions?.message || ''}
+        confirmText={confirmOptions?.confirmText}
+        cancelText={confirmOptions?.cancelText}
+        confirmVariant={confirmOptions?.confirmVariant}
+        isLoading={isConfirmLoading}
       />
     </>
   );
