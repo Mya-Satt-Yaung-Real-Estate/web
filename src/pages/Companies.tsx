@@ -196,7 +196,7 @@ export function Companies() {
                           <div className="flex items-center gap-2 mb-2">
                             <CardTitle className="text-xl">{company.name}</CardTitle>
                           {company.verification_status === 'approved' && (
-                              <Badge className="bg-primary/10 text-primary border-primary/20">
+                              <Badge className="bg-primary text-white border-primary shadow-md font-semibold">
                                 {t('companies.verified')}
                               </Badge>
                             )}
