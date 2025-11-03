@@ -479,6 +479,7 @@ export default function PropertyDetail() {
                     filename: img.filename || img.original_filename || 'image',
                     url: img.url || img.medium_url || img.small_url || img.thumbnail_url,
                     thumbnail_url: img.thumbnail_url || img.small_url || img.url,
+                    type: img.type || 'image',
                   }))}
                   title={t('properties.media') || 'Media'}
                   cardClassName="w-full"
