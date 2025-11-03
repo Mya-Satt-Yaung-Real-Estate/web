@@ -130,6 +130,7 @@ export type {
   Township,
   CompaniesResponse,
   CompanyTypeResponse,
+  CompanyDetailResponse,
   CompanyFilters,
 } from './company';
 

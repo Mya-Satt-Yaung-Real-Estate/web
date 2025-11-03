@@ -46,3 +46,15 @@ export function useCompanyBySlug(slug: string) {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
+
+/**
+ * Get company properties by slug
+ */
+export function useCompanyProperties(slug: string, params?: { per_page?: number; page?: number }) {
+  return useQuery({
+    queryKey: companiesKeys.propertiesList(slug, params),
+    queryFn: () => companiesQueries.getCompanyProperties(slug, params),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}

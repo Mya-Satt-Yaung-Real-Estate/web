@@ -5,6 +5,7 @@ import { PageLoader } from './components/shared';
 const Home = lazy(() => import('../pages/Home').then(module => ({ default: module.Home })));
 const About = lazy(() => import('../pages/About').then(module => ({ default: module.About })));
 const Companies = lazy(() => import('../pages/Companies').then(module => ({ default: module.Companies })));
+const CompanyDetail = lazy(() => import('../pages/companies/detail').then(module => ({ default: module.default })));
 const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.default })));
 const Contact = lazy(() => import('../pages/Contact').then(module => ({ default: module.default })));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
@@ -53,6 +54,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <Companies />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/companies/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <CompanyDetail />
       </Suspense>
     ),
   },

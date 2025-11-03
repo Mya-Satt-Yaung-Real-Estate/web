@@ -194,7 +194,12 @@ export function Companies() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <CardTitle className="text-xl">{company.name}</CardTitle>
+                            <CardTitle 
+                              className="text-xl cursor-pointer hover:text-primary transition-colors"
+                              onClick={() => company.slug && navigate(`/companies/${company.slug}`)}
+                            >
+                              {company.name}
+                            </CardTitle>
                           {company.verification_status === 'approved' && (
                               <Badge className="bg-primary text-white border-primary shadow-md font-semibold">
                                 {t('companies.verified')}
@@ -264,12 +269,12 @@ export function Companies() {
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Globe className="h-4 w-4 text-primary flex-shrink-0" />
                           <a 
-                            href={`${window.location.origin}/${company.slug}`}
+                            href={`${window.location.origin}/companies/${company.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-primary hover:underline"
                           >
-                            {`${window.location.origin}/${company.slug}`}
+                            {`${window.location.origin}/companies/${company.slug}`}
                           </a>
                         </div>
                       )}
@@ -278,17 +283,17 @@ export function Companies() {
                     {/* Action Buttons */}
                     <div className="flex gap-2 pt-2">
                       <Button 
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={() => company.slug && navigate(`/companies/${company.slug}`)}
+                      >
+                        View Details
+                      </Button>
+                      <Button 
                         className="flex-1 gradient-primary"
                         onClick={() => navigate('/modules', { state: { companyId: company.id, companyName: company.name } })}
                       >
                           {t('companies.viewProperties')}
-                        </Button>
-                      <Button 
-                        variant="outline" 
-                        className="flex-1"
-                        onClick={() => window.location.href = `mailto:${company.email}`}
-                      >
-                          {t('companies.contact')}
                         </Button>
                       </div>
                     </CardContent>

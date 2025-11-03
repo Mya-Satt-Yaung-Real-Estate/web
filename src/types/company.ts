@@ -42,6 +42,7 @@ export interface Company {
   property_count: number;
   view_count: number;
   contact_count: number;
+  wanted_count?: number;
   company_profile: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -61,6 +62,12 @@ export interface CompanyTypeResponse {
   success: boolean;
   message: string;
   data: CompanyType[];
+}
+
+export interface CompanyDetailResponse {
+  success: boolean;
+  message: string;
+  data: Company;
 }
 
 // ============================================================================
