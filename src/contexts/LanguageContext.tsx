@@ -1351,6 +1351,22 @@ const translations: Translations = {
     'loanRequest.importantNotice': { en: 'Important Notice', mm: 'အရေးကြီးသတိပေးချက်' },
     'loanRequest.disclaimer': { en: 'This is a loan request form and does not constitute a loan approval. All applications are subject to bank/financial institution approval and their terms and conditions. Interest rates and loan terms are indicative and may vary based on credit evaluation, property valuation, and lender policies.', mm: 'ဤသည် ချေးငွေတောင်းဆိုမှုပုံစံဖြစ်ပြီး ချေးငွေခွင့်ပြုချက်မဟုတ်ပါ။ လျှောက်လွှာအားလုံးသည် ဘဏ်/ဘဏ္ဍာရေးအဖွဲ့အစည်း၏ ခွင့်ပြုချက်နှင့် ၎င်းတို့၏ စည်းမျဉ်းများနှင့် လိုက်နာရမည့်အချက်များကို ခံယူရပါမည်။ အတိုးနှုန်းနှင့် ချေးငွေစည်းမျဉ်းများသည် အညွှန်းများသာဖြစ်ပြီး အကြွေးစစ်ဆေးမှု၊ အိမ်ခြံမြေတန်ဖိုးကောက်ယူမှု၊ နှင့် ချေးငွေပေးသောသူများ၏ မူဝါဒများအပေါ် မူတည်၍ ကွဲပြားနိုင်ပါသည်။' },
 
+  // Legacy Detail translations
+  'legacyDetail.backToLegacy': { en: 'Back to Legacy Team', mm: 'Legacy Team သို့ပြန်သွားရန်' },
+  'legacyDetail.teamMemberNotFound': { en: 'Team Member Not Found', mm: 'အဖွဲ့ဝင်ကိုမတွေ့ရှိပါ' },
+  'legacyDetail.notFoundMessage': { en: "The team member you're looking for doesn't exist or has been removed.", mm: 'သင်ရှာဖွေနေသော အဖွဲ့ဝင်မရှိတော့ပါ သို့မဟုတ် ဖယ်ရှားပြီးဖြစ်ပါသည်။' },
+  'legacyDetail.location': { en: 'Location', mm: 'တည်နေရာ' },
+  'legacyDetail.specialization': { en: 'Specialization', mm: 'ကျွမ်းကျင်မှု' },
+  'legacyDetail.experience': { en: 'Experience', mm: 'အတွေ့အကြုံ' },
+  'legacyDetail.years': { en: 'years', mm: 'နှစ်' },
+  'legacyDetail.education': { en: 'Education', mm: 'ပညာရေး' },
+  'legacyDetail.languages': { en: 'Languages', mm: 'ဘာသာစကားများ' },
+  'legacyDetail.services': { en: 'Services', mm: 'ဝန်ဆောင်မှုများ' },
+  'legacyDetail.certifications': { en: 'Certifications', mm: 'လက်မှတ်များ' },
+  'legacyDetail.about': { en: 'About', mm: 'အကြောင်း' },
+  'legacyDetail.contactInformation': { en: 'Contact Information', mm: 'ဆက်သွယ်ရန်အချက်အလက်' },
+  'legacyDetail.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
+
   // Common translations
   'common.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },
   'common.error': { en: 'Error', mm: 'အမှား' },
