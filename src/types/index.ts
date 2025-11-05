@@ -173,3 +173,15 @@ export type {
   PropertyStatistics,
   PropertyStatisticsResponse,
 } from './properties';
+
+// Export AI Assistant types
+export type {
+  AiMessage,
+  AiMessageDisplay,
+  AiToolResult,
+  AiProperty,
+  AiPropertySearchResult,
+  AiChatRequest,
+  AiChatResponse,
+  AiChatApiResponse,
+} from './aiAssistant';

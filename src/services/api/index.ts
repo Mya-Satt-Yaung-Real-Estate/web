@@ -25,3 +25,4 @@ export { companiesApi } from './companies';
 export { companyTypesApi } from './companyTypes';
 export { wantingListApi } from './wantingList';
 export { loanRequestApi } from './loanRequest';
+export { aiAssistantApi } from './aiAssistant';

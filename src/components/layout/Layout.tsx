@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
+import { AiTriggerButton } from '@/components/features/aiAssistant';
 
 interface LayoutProps {
   children: ReactNode;
@@ -14,6 +15,7 @@ export function Layout({ children }: LayoutProps) {
         {children}
       </main>
       <Footer />
+      <AiTriggerButton />
     </div>
   );
 }

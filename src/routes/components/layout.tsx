@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Navigation } from '../../components/layout/Navigation';
 import { Footer } from '../../components/layout/Footer';
+import { AiTriggerButton } from '@/components/features/aiAssistant';
 
 export function Layout() {
   return (
@@ -10,6 +11,7 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <AiTriggerButton />
     </div>
   );
 }
