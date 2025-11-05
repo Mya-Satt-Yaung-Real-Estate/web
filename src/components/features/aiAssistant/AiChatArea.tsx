@@ -29,8 +29,8 @@ export function AiChatArea({ messages, isLoading, onQuickAction }: AiChatAreaPro
   }, [messages, isLoading]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-hidden bg-gradient-to-b from-gray-50/30 via-white to-white">
-      <ScrollArea className="h-full w-full">
+    <div className="flex-1 min-h-0 overflow-hidden bg-gradient-to-b from-gray-50/30 via-white to-white flex flex-col">
+      <ScrollArea className="w-full flex-1">
         <div className="p-4 md:p-5 lg:p-6">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-8">
