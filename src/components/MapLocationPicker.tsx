@@ -157,9 +157,9 @@ export function MapLocationPicker({
       }}>
         <DialogContent 
           size="2xl" 
-          className={`max-w-[90vw] h-[90vh] flex flex-col p-0 ${isMobile ? '!left-[5vw] !top-[5vh] !translate-x-0 !translate-y-0' : ''}`}
+          className={`max-w-[70vw] h-[70vh] flex flex-col !p-0 ${isMobile ? '!left-[15vw] !top-[15vh] !translate-x-0 !translate-y-0' : ''}`}
           style={{
-            maxHeight: '90vh'
+            maxHeight: '70vh'
           }}
           onInteractOutside={(e) => {
             // Prevent closing on mobile when interacting with map
@@ -170,16 +170,16 @@ export function MapLocationPicker({
           }}
         >
           {/* Header */}
-          <div className="px-3 py-2 border-b flex items-center justify-between flex-shrink-0">
+          <div className="px-3 py-1 sm:py-1.5 border-b flex items-center justify-between flex-shrink-0">
             <DialogHeader className="flex-1 py-0">
-              <DialogTitle className="text-base leading-tight">Select Property Location</DialogTitle>
+              <DialogTitle className="text-sm font-medium leading-tight">Select Property Location</DialogTitle>
             </DialogHeader>
           </div>
 
           {/* Map Area */}
           <div 
             className="flex-1 relative overflow-hidden" 
-            style={{ minHeight: '650px' }}
+            style={{ minHeight: '400px' }}
             onTouchStart={(e) => {
               // Prevent dialog movement on mobile when touching map
               if (isMobile) {
@@ -195,7 +195,7 @@ export function MapLocationPicker({
                   height: '100%', 
                   width: '100%', 
                   zIndex: 0, 
-                  minHeight: '600px',
+                  minHeight: '400px',
                   touchAction: 'pan-x pan-y'
                 }}
                 scrollWheelZoom={true}
@@ -233,13 +233,14 @@ export function MapLocationPicker({
           </div>
 
           {/* Footer */}
-          <div className="px-3 py-2 border-t flex-shrink-0">
+          <div className="px-3 py-1 sm:py-1.5 border-t flex-shrink-0">
             <DialogFooter className="gap-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsOpen(false)}
                 size="sm"
+                className="h-8 text-xs"
               >
                 Cancel
               </Button>
@@ -248,6 +249,7 @@ export function MapLocationPicker({
                 onClick={handleConfirm}
                 disabled={selectedLat === null || selectedLng === null}
                 size="sm"
+                className="h-8 text-xs"
               >
                 Confirm Location
               </Button>
