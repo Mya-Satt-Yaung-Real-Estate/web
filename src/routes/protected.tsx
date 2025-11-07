@@ -9,14 +9,14 @@ const EditWantedList = lazy(() => import('../pages/myWantedListings/edit'));
 const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'));
 const AppointmentList = lazy(() => import('../pages/appointments/list'));
 const EditAppointment = lazy(() => import('../pages/appointments/edit'));
-const MyAdvertisementsList = lazy(() => import('../pages/advertisements/list'));
-const CreateAdvertisement = lazy(() => import('../pages/advertisements/create'));
-const EditAdvertisement = lazy(() => import('../pages/advertisements/edit'));
-const AdvertisementDetail = lazy(() => import('../pages/advertisements/detail'));
-const MyPropertiesList = lazy(() => import('../pages/properties/list'));
-const CreateProperty = lazy(() => import('../pages/properties/create'));
-const EditProperty = lazy(() => import('../pages/properties/edit'));
-const PropertyDetail = lazy(() => import('../pages/properties/detail'));
+const MyAdvertisementsList = lazy(() => import('../pages/myAdvertisements/list'));
+const CreateAdvertisement = lazy(() => import('../pages/myAdvertisements/create'));
+const EditAdvertisement = lazy(() => import('../pages/myAdvertisements/edit'));
+const AdvertisementDetail = lazy(() => import('../pages/myAdvertisements/detail'));
+const MyPropertiesList = lazy(() => import('../pages/myProperties/list'));
+const CreateProperty = lazy(() => import('../pages/myProperties/create'));
+const EditProperty = lazy(() => import('../pages/myProperties/edit'));
+const PropertyDetail = lazy(() => import('../pages/myProperties/detail'));
 const CreateLoanRequest = lazy(() => import('../pages/loanRequest/create').then(module => ({ default: module.default })));
 
 // Protected routes configuration
