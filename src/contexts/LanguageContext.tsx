@@ -1138,6 +1138,7 @@ const translations: Translations = {
   'createProperty.addFeatures': { en: 'Add Features (Optional)', mm: 'အင်္ဂါရပ်များ ထည့်ရန် (ရွေးချယ်ရန်)' },
   'createProperty.featurePlaceholder': { en: 'Type a feature and press Enter or click Add', mm: 'အင်္ဂါရပ်တစ်ခုကို ရိုက်ထည့်ပြီး Enter နှိပ်ပါ သို့မဟုတ် Add ကို နှိပ်ပါ' },
   'createProperty.premiumWarning': { en: '⚠️ Extra charges will apply for premium listing', mm: '⚠️ ပရီမီယံစာရင်းအတွက် အပိုကုန်ကျစရိတ်ကျသင့်မည်' },
+  'createProperty.premiumFeatureRestriction': { en: 'This features are only available for Gold and Silver members', mm: 'ပရီမီယံအင်္ဂါရပ်များကို Gold နှင့် Silver အဖွဲ့ဝင်များအတွက်သာ ရရှိနိုင်ပါသည်' },
   'createProperty.mapLocationChoose': { en: 'Please choose exactly location on map', mm: 'မြေပုံပေါ်တွင် တည်နေရာကို တိကျစွာ ရွေးချယ်ပါ' },
   'createProperty.mapLocationReview': { en: 'Review or change location on map', mm: 'မြေပုံပေါ်တွင် တည်နေရာကို စစ်ဆေးရန် သို့မဟုတ် ပြောင်းလဲရန်' },
   'createProperty.mapLocationCurrent': { en: 'Current location', mm: 'လက်ရှိတည်နေရာ' },

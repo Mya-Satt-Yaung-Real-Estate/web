@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MapPin, Home, Phone, Image, CheckCircle, CheckCircle2, FileText, Sparkles, X, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
+import { useAuthStore } from '@/stores/authStore';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useListingTypes } from '@/hooks/queries/useProperties';
@@ -32,6 +33,7 @@ export default function EditProperty() {
   const seo = seoUtils.getPageSEO('editProperty');
   const { t, language } = useLanguage();
   const { showSuccess, showError } = useModal();
+  const { user } = useAuthStore();
 
   // Fetch property data - will refetch on mount due to refetchOnMount: 'always' in useMyProperty hook
   const { data: propertyData, isLoading: propertyLoading, error: propertyError } = useMyProperty(slug || '');
@@ -69,6 +71,28 @@ export default function EditProperty() {
   const [pendingSubmitData, setPendingSubmitData] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [originalStatus, setOriginalStatus] = useState<'draft' | 'published' | null>(null);
+
+  // Check if user has access to premium features
+  const hasPremiumAccess = useMemo(() => {
+    if (!user?.member_level || !pointSettings?.authorize_member_level?.premium_feature) {
+      return false;
+    }
+    const userLevel = (user.member_level as string).toLowerCase();
+    const allowedLevels = pointSettings.authorize_member_level.premium_feature.map((level: string) => level.toLowerCase());
+    return allowedLevels.includes(userLevel);
+  }, [user?.member_level, pointSettings?.authorize_member_level?.premium_feature]);
+
+  // Reset premium features if user doesn't have access
+  useEffect(() => {
+    if (!hasPremiumAccess) {
+      if (form.watch('tan_tan_tan')) {
+        form.setValue('tan_tan_tan', false);
+      }
+      if (form.watch('is_trending')) {
+        form.setValue('is_trending', false);
+      }
+    }
+  }, [hasPremiumAccess, form]);
 
   // Mutation hook
   const updatePropertyMutation = useUpdateMyProperty();
@@ -324,7 +348,28 @@ export default function EditProperty() {
     }
   };
 
-  // Fetch point settings when dialog opens
+  // Fetch point settings on page load to check authorization
+  useEffect(() => {
+    if (!pointSettings && !loadingPointSettings) {
+      const fetchPointSettings = async () => {
+        setLoadingPointSettings(true);
+        try {
+          const response = await pointSettingsApi.getPointSettings();
+          if (response.data && response.data.data) {
+            setPointSettings(response.data.data);
+          }
+        } catch (err: any) {
+          console.error('Failed to fetch point settings:', err);
+        } finally {
+          setLoadingPointSettings(false);
+        }
+      };
+      fetchPointSettings();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch point settings when dialog opens (if not already loaded)
   useEffect(() => {
     if (showConfirmDialog && !pointSettings && !loadingPointSettings) {
       const fetchPointSettings = async () => {
@@ -1005,46 +1050,58 @@ export default function EditProperty() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Tan Tan Tan */}
-                    <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors">
+                    <div className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${!hasPremiumAccess ? 'opacity-60 border-border bg-card/30' : 'border-border bg-card/50 hover:bg-card'}`}>
                       <div className="flex-1">
                         <label
                           htmlFor="tan_tan_tan"
-                          className="text-sm font-medium leading-none block cursor-pointer mb-1"
+                          className={`text-sm font-medium leading-none block mb-1 ${!hasPremiumAccess ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                           {t('createProperty.tanTanTan') || 'Tan Tan Tan'}
                         </label>
-                        <p className="text-xs text-muted-foreground">
-                          {t('createProperty.tanTanTanDesc') || 'Mark this property as Tan Tan Tan'}
-                        </p>
+                        {!hasPremiumAccess ? (
+                          <p className="text-xs text-red-500 font-medium">
+                            {t('createProperty.premiumFeatureRestriction') || 'Premium features are only available for Gold and Silver members'}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">
+                            {t('createProperty.tanTanTanDesc') || 'Mark this property as Tan Tan Tan'}
+                          </p>
+                        )}
                       </div>
                       <Switch
                         id="tan_tan_tan"
                         checked={form.watch('tan_tan_tan') || false}
                         onCheckedChange={(checked) => form.setValue('tan_tan_tan', checked)}
                         className="ml-4"
-                        disabled={isEditingRestricted}
+                        disabled={isEditingRestricted || !hasPremiumAccess}
                       />
                     </div>
 
                     {/* Premium */}
-                    <div className={`flex items-start justify-between p-4 rounded-lg border transition-colors ${form.watch('is_trending') ? 'border-yellow-500/50 bg-yellow-50/50 dark:bg-yellow-950/20' : 'border-border bg-card/50 hover:bg-card'}`}>
+                    <div className={`flex items-start justify-between p-4 rounded-lg border transition-colors ${!hasPremiumAccess ? 'opacity-60 border-border bg-card/30' : form.watch('is_trending') ? 'border-yellow-500/50 bg-yellow-50/50 dark:bg-yellow-950/20' : 'border-border bg-card/50 hover:bg-card'}`}>
                       <div className="flex-1">
                         <label
                           htmlFor="is_trending"
-                          className="text-sm font-medium leading-none block cursor-pointer mb-1"
+                          className={`text-sm font-medium leading-none block mb-1 ${!hasPremiumAccess ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                           {t('createProperty.isTrending') || 'Premium (Is Trending)'}
                         </label>
-                        <p className={`text-xs ${form.watch('is_trending') ? 'text-yellow-700 dark:text-yellow-400 font-medium' : 'text-muted-foreground'}`}>
-                          {t('createProperty.premiumWarning') || '⚠️ Extra charges will apply for premium listing'}
-                        </p>
+                        {!hasPremiumAccess ? (
+                          <p className="text-xs text-red-500 font-medium">
+                            {t('createProperty.premiumFeatureRestriction') || 'Premium features are only available for Gold and Silver members'}
+                          </p>
+                        ) : (
+                          <p className={`text-xs ${form.watch('is_trending') ? 'text-yellow-700 dark:text-yellow-400 font-medium' : 'text-muted-foreground'}`}>
+                            {t('createProperty.premiumWarning') || '⚠️ Extra charges will apply for premium listing'}
+                          </p>
+                        )}
                       </div>
                       <Switch
                         id="is_trending"
                         checked={form.watch('is_trending') || false}
                         onCheckedChange={(checked) => form.setValue('is_trending', checked)}
                         className="ml-4 mt-0.5"
-                        disabled={isEditingRestricted}
+                        disabled={isEditingRestricted || !hasPremiumAccess}
                       />
                     </div>
 
