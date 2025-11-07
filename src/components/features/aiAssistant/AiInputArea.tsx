@@ -3,6 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send } from 'lucide-react';
 
+const GRADIENT_COLOR = 'linear-gradient(to right, oklch(0.558 0.288 302.321) 0%, oklch(0.546 0.245 262.881) 100%)';
+const GRADIENT_COLOR_START = 'oklch(0.558 0.288 302.321)';
+
 interface AiInputAreaProps {
   onSend: (message: string) => void;
   isLoading: boolean;
@@ -51,8 +54,19 @@ export function AiInputArea({ onSend, isLoading, disabled }: AiInputAreaProps) {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask me about properties..."
-              className="min-h-[48px] max-h-[120px] resize-none py-2.5 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl shadow-sm transition-all text-sm"
+              placeholder="Ask me anything about properties..."
+              className="min-h-[48px] max-h-[120px] resize-none py-2.5 border-gray-200 rounded-xl shadow-sm transition-all text-sm"
+              style={{
+                '--tw-ring-color': GRADIENT_COLOR_START,
+              } as React.CSSProperties & { '--tw-ring-color': string }}
+              onFocus={(e) => {
+                e.target.style.borderColor = GRADIENT_COLOR_START;
+                e.target.style.boxShadow = `0 0 0 2px ${GRADIENT_COLOR_START}40`;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '';
+                e.target.style.boxShadow = '';
+              }}
               disabled={isLoading || disabled}
               rows={1}
             />
@@ -60,7 +74,11 @@ export function AiInputArea({ onSend, isLoading, disabled }: AiInputAreaProps) {
           <Button
             onClick={handleSend}
             disabled={!message.trim() || isLoading || disabled}
-            className="h-[48px] w-[48px] rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            className="h-[48px] w-[48px] rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 text-white"
+            style={{
+              background: GRADIENT_COLOR,
+              opacity: (!message.trim() || isLoading || disabled) ? 0.5 : 1,
+            }}
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -70,7 +88,7 @@ export function AiInputArea({ onSend, isLoading, disabled }: AiInputAreaProps) {
           </Button>
         </div>
         <p className="text-xs text-gray-400 text-center mt-1.5">
-          AI can make mistakes. Check important info.
+          AI responses are generated and may not always be accurate
         </p>
       </div>
     </div>

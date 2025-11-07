@@ -7,31 +7,32 @@ interface AiAssistantHeaderProps {
 
 export function AiAssistantHeader({ onClose }: AiAssistantHeaderProps) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 h-[60px] flex-shrink-0 border-b border-gray-200 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent backdrop-blur-sm">
+    <div 
+      className="flex items-center justify-between px-4 py-3 flex-shrink-0"
+      style={{
+        background: 'linear-gradient(to right, oklch(0.558 0.288 302.321) 0%, oklch(0.546 0.245 262.881) 100%)'
+      }}
+    >
       <div className="flex items-center gap-2.5">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/20 rounded-full blur-md animate-pulse opacity-75" />
-          <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md">
-            <Sparkles className="w-4 h-4 text-white" />
+        <Sparkles className="w-5 h-5 text-white" />
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-white">Jad's AI Assistant</h2>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-300/80 text-white border border-purple-200/50">
+              Alpha
+            </span>
           </div>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <h2 className="text-base font-semibold text-gray-900">Jade's AI Assistant</h2>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600 border border-green-200">
-            Online
-          </span>
+          <p className="text-xs text-white/80 mt-0.5">Powered by Advanced Jade AI</p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="h-8 w-8 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onClose}
+        className="h-8 w-8 hover:bg-white/20 rounded-lg transition-colors text-white"
+      >
+        <X className="w-4 h-4" />
+      </Button>
     </div>
   );
 }

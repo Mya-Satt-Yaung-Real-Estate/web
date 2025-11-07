@@ -56,6 +56,7 @@ export interface AiMessageDisplay {
   content: string;
   timestamp: Date;
   tools?: AiToolResult[];
+  isWelcome?: boolean;
 }
 
 
