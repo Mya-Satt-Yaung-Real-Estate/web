@@ -1,36 +1,37 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { PageLoader } from './components/shared';
+import { lazyWithRetry } from '../utils/lazyWithRetry';
 
-// Lazy load public page components
-const Home = lazy(() => import('../pages/Home').then(module => ({ default: module.Home })));
-const About = lazy(() => import('../pages/About').then(module => ({ default: module.About })));
-const AboutApp = lazy(() => import('../pages/AboutApp').then(module => ({ default: module.AboutApp })));
-const Companies = lazy(() => import('../pages/companies').then(module => ({ default: module.Companies })));
-const CompanyDetail = lazy(() => import('../pages/companies/detail').then(module => ({ default: module.default })));
-const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.default })));
-const Contact = lazy(() => import('../pages/Contact').then(module => ({ default: module.default })));
-const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
-const Feedback = lazy(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
-const SignIn = lazy(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
+// Lazy load public page components with retry mechanism
+const Home = lazyWithRetry(() => import('../pages/Home').then(module => ({ default: module.Home })));
+const About = lazyWithRetry(() => import('../pages/About').then(module => ({ default: module.About })));
+const AboutApp = lazyWithRetry(() => import('../pages/AboutApp').then(module => ({ default: module.AboutApp })));
+const Companies = lazyWithRetry(() => import('../pages/companies').then(module => ({ default: module.Companies })));
+const CompanyDetail = lazyWithRetry(() => import('../pages/companies/detail').then(module => ({ default: module.default })));
+const FAQ = lazyWithRetry(() => import('../pages/FAQ').then(module => ({ default: module.default })));
+const Contact = lazyWithRetry(() => import('../pages/Contact').then(module => ({ default: module.default })));
+const PrivacyPolicy = lazyWithRetry(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
+const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
 
 // Knowledge pages
-const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub').then(module => ({ default: module.KnowledgeHub })));
-const KnowledgeDetail = lazy(() => import('../pages/KnowledgeDetail').then(module => ({ default: module.default })));
+const KnowledgeHub = lazyWithRetry(() => import('../pages/KnowledgeHub').then(module => ({ default: module.KnowledgeHub })));
+const KnowledgeDetail = lazyWithRetry(() => import('../pages/KnowledgeDetail').then(module => ({ default: module.default })));
 
 // News pages
-const NewsAndUpdates = lazy(() => import('../pages/NewsAndUpdates').then(module => ({ default: module.default })));
-const NewsDetail = lazy(() => import('../pages/NewsDetail').then(module => ({ default: module.default })));
+const NewsAndUpdates = lazyWithRetry(() => import('../pages/NewsAndUpdates').then(module => ({ default: module.default })));
+const NewsDetail = lazyWithRetry(() => import('../pages/NewsDetail').then(module => ({ default: module.default })));
 
 // Legacy pages
-const Legacy = lazy(() => import('../pages/Legacy').then(module => ({ default: module.default })));
-const LegacyDetail = lazy(() => import('../pages/LegacyDetail').then(module => ({ default: module.default })));
+const Legacy = lazyWithRetry(() => import('../pages/Legacy').then(module => ({ default: module.default })));
+const LegacyDetail = lazyWithRetry(() => import('../pages/LegacyDetail').then(module => ({ default: module.default })));
 
 // Calculator pages
-const YarPyatCalculator = lazy(() => import('../pages/calculators/yarpyatCalculator').then(module => ({ default: module.YarPyatCalculator })));
-const LoanCalculator = lazy(() => import('../pages/calculators/loanCalculator').then(module => ({ default: module.LoanCalculator })));
+const YarPyatCalculator = lazyWithRetry(() => import('../pages/calculators/yarpyatCalculator').then(module => ({ default: module.YarPyatCalculator })));
+const LoanCalculator = lazyWithRetry(() => import('../pages/calculators/loanCalculator').then(module => ({ default: module.LoanCalculator })));
 
 // Public Wanting List pages
-const PublicWantedList = lazy(() => import('../pages/publicWantedListings/list').then(module => ({ default: module.default })));
+const PublicWantedList = lazyWithRetry(() => import('../pages/publicWantedListings/list').then(module => ({ default: module.default })));
 
 // Public routes configuration
 export const publicRoutes = [

@@ -1,27 +1,28 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { PageLoader } from './components/shared';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { lazyWithRetry } from '../utils/lazyWithRetry';
 
-// Lazy load protected page components
-const MyWantedList = lazy(() => import('../pages/myWantedListings/list'));
-const CreateWantedList = lazy(() => import('../pages/myWantedListings/create'));
-const EditWantedList = lazy(() => import('../pages/myWantedListings/edit'));
-const WantingListDetail = lazy(() => import('../pages/myWantedListings/detail'));
-const AppointmentList = lazy(() => import('../pages/appointments/list'));
-const EditAppointment = lazy(() => import('../pages/appointments/edit'));
-const MyAdvertisementsList = lazy(() => import('../pages/myAdvertisements/list'));
-const CreateAdvertisement = lazy(() => import('../pages/myAdvertisements/create'));
-const EditAdvertisement = lazy(() => import('../pages/myAdvertisements/edit'));
-const AdvertisementDetail = lazy(() => import('../pages/myAdvertisements/detail'));
-const MyPropertiesList = lazy(() => import('../pages/myProperties/list'));
-const CreateProperty = lazy(() => import('../pages/myProperties/create'));
-const EditProperty = lazy(() => import('../pages/myProperties/edit'));
-const PropertyDetail = lazy(() => import('../pages/myProperties/detail'));
-const CreateLoanRequest = lazy(() => import('../pages/loanRequest/create').then(module => ({ default: module.default })));
-const Settings = lazy(() => import('../pages/Settings').then(module => ({ default: module.Settings })));
-const Profile = lazy(() => import('../pages/Profile').then(module => ({ default: module.Profile })));
-const EditProfile = lazy(() => import('../pages/EditProfile').then(module => ({ default: module.EditProfile })));
-const Favorites = lazy(() => import('../pages/Favorites').then(module => ({ default: module.Favorites })));
+// Lazy load protected page components with retry mechanism
+const MyWantedList = lazyWithRetry(() => import('../pages/myWantedListings/list'));
+const CreateWantedList = lazyWithRetry(() => import('../pages/myWantedListings/create'));
+const EditWantedList = lazyWithRetry(() => import('../pages/myWantedListings/edit'));
+const WantingListDetail = lazyWithRetry(() => import('../pages/myWantedListings/detail'));
+const AppointmentList = lazyWithRetry(() => import('../pages/appointments/list'));
+const EditAppointment = lazyWithRetry(() => import('../pages/appointments/edit'));
+const MyAdvertisementsList = lazyWithRetry(() => import('../pages/myAdvertisements/list'));
+const CreateAdvertisement = lazyWithRetry(() => import('../pages/myAdvertisements/create'));
+const EditAdvertisement = lazyWithRetry(() => import('../pages/myAdvertisements/edit'));
+const AdvertisementDetail = lazyWithRetry(() => import('../pages/myAdvertisements/detail'));
+const MyPropertiesList = lazyWithRetry(() => import('../pages/myProperties/list'));
+const CreateProperty = lazyWithRetry(() => import('../pages/myProperties/create'));
+const EditProperty = lazyWithRetry(() => import('../pages/myProperties/edit'));
+const PropertyDetail = lazyWithRetry(() => import('../pages/myProperties/detail'));
+const CreateLoanRequest = lazyWithRetry(() => import('../pages/loanRequest/create').then(module => ({ default: module.default })));
+const Settings = lazyWithRetry(() => import('../pages/Settings').then(module => ({ default: module.Settings })));
+const Profile = lazyWithRetry(() => import('../pages/Profile').then(module => ({ default: module.Profile })));
+const EditProfile = lazyWithRetry(() => import('../pages/EditProfile').then(module => ({ default: module.EditProfile })));
+const Favorites = lazyWithRetry(() => import('../pages/Favorites').then(module => ({ default: module.Favorites })));
 
 // Protected routes configuration
 export const protectedRoutes = [
