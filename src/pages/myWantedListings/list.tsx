@@ -272,12 +272,12 @@ export default function MyWantedList() {
 {t('myWantedList.view')}
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
-                                <Edit className="h-4 w-4 mr-2" />
+                              <DropdownMenuItem asChild>
+                                <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
+                                  <Edit className="h-4 w-4 mr-2" />
 {t('myWantedList.edit')}
-                              </Link>
-                            </DropdownMenuItem>
+                                </Link>
+                              </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleDelete(listing.slug)}
                               className="text-red-600 focus:text-red-600"
@@ -352,17 +352,17 @@ export default function MyWantedList() {
                               {t('myWantedList.viewDetails')}
                             </Link>
                           </Button>
-                          <Button 
-                            asChild
-                            variant="outline" 
-                            size="sm"
-                            className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
-                          >
-                            <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
-                              <Edit className="h-4 w-4 mr-2" />
-                              {t('myWantedList.edit')}
-                            </Link>
-                          </Button>
+                            <Button 
+                              asChild
+                              variant="outline" 
+                              size="sm"
+                              className="flex-1 bg-primary/10 text-primary hover:bg-primary/20"
+                            >
+                              <Link to={`/my-wanted-listings/edit/${listing.slug}`}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                {t('myWantedList.edit')}
+                              </Link>
+                            </Button>
                         </div>
                       </div>
                     </CardContent>

@@ -53,36 +53,45 @@ const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
-// Calculate EMI helper function
-const calculateEMI = (principal: number, monthlyRate: number, numberOfPayments: number): number => {
-  if (principal <= 0 || monthlyRate <= 0 || numberOfPayments <= 0) {
+// Calculate EMI helper function (Simple Interest)
+const calculateEMI = (principal: number, annualRate: number, years: number, numberOfPayments: number): number => {
+  if (principal <= 0 || annualRate <= 0 || numberOfPayments <= 0) {
     return 0;
   }
   
-  const factor = Math.pow(1 + monthlyRate, numberOfPayments);
-  return (principal * monthlyRate * factor) / (factor - 1);
+  // Simple Interest: Total Interest = Principal × Annual Rate × Years
+  const totalInterest = principal * (annualRate / 100) * years;
+  // Total Payment = Principal + Total Interest
+  const totalPayment = principal + totalInterest;
+  // Monthly Payment = Total Payment ÷ Total Months
+  return totalPayment / numberOfPayments;
 };
 
-// Generate EMI schedule helper function
+// Generate EMI schedule helper function (Simple Interest - Equal payments)
 const generateEMISchedule = (
   principal: number,
-  monthlyRate: number,
+  totalInterest: number,
   numberOfPayments: number,
   emi: number
 ): EMIScheduleItem[] => {
   const schedule: EMIScheduleItem[] = [];
-  let balance = principal;
+  // Balance starts at total payment (principal + total interest)
+  const totalPayment = principal + totalInterest;
+  let balance = totalPayment;
+  
+  // Equal monthly principal and interest
+  const monthlyPrincipal = principal / numberOfPayments;
+  const monthlyInterest = totalInterest / numberOfPayments;
 
   for (let month = 1; month <= numberOfPayments; month++) {
-    const interestPayment = balance * monthlyRate;
-    const principalPayment = emi - interestPayment;
-    balance -= principalPayment;
+    // Balance decreases by monthly payment (total payment reducing)
+    balance -= emi;
 
     schedule.push({
       month,
       emi: emi,
-      principal: principalPayment,
-      interest: interestPayment,
+      principal: monthlyPrincipal,
+      interest: monthlyInterest,
       balance: Math.max(0, balance),
     });
   }
@@ -107,11 +116,10 @@ export function LoanCalculator() {
   // Memoized calculation results
   const calculationResults = useMemo<CalculationResults>(() => {
     const principal = loanAmount - downPayment;
-    const monthlyRate = interestRate / 100 / 12;
     const numberOfPayments = loanTenure * 12;
 
     // Validation
-    if (principal <= 0 || monthlyRate <= 0 || numberOfPayments <= 0) {
+    if (principal <= 0 || interestRate <= 0 || numberOfPayments <= 0) {
       return {
         monthlyPayment: 0,
         totalPayment: 0,
@@ -121,10 +129,15 @@ export function LoanCalculator() {
       };
     }
 
-    const emi = calculateEMI(principal, monthlyRate, numberOfPayments);
-    const totalPaid = emi * numberOfPayments;
-    const totalInt = totalPaid - principal;
-    const schedule = generateEMISchedule(principal, monthlyRate, numberOfPayments, emi);
+    // Simple Interest Calculation
+    // Total Interest = Principal × Annual Interest Rate × Years
+    const totalInt = principal * (interestRate / 100) * loanTenure;
+    // Total Payment = Principal + Total Interest
+    const totalPaid = principal + totalInt;
+    // Monthly Payment = Total Payment ÷ Total Months
+    const emi = calculateEMI(principal, interestRate, loanTenure, numberOfPayments);
+    // Generate schedule with equal principal and interest
+    const schedule = generateEMISchedule(principal, totalInt, numberOfPayments, emi);
 
     return {
       monthlyPayment: emi,
