@@ -21,6 +21,7 @@ const CreateLoanRequest = lazy(() => import('../pages/loanRequest/create').then(
 const Settings = lazy(() => import('../pages/Settings').then(module => ({ default: module.Settings })));
 const Profile = lazy(() => import('../pages/Profile').then(module => ({ default: module.Profile })));
 const EditProfile = lazy(() => import('../pages/EditProfile').then(module => ({ default: module.EditProfile })));
+const Favorites = lazy(() => import('../pages/Favorites').then(module => ({ default: module.Favorites })));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -206,6 +207,16 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <EditProfile />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/favorites',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <Favorites />
         </Suspense>
       </ProtectedRoute>
     ),

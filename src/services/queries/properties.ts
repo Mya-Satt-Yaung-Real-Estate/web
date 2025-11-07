@@ -51,6 +51,13 @@ export const propertyQueries = {
   /**
    * Get user's favorite properties
    */
+  getFavorites: (params?: { per_page?: number; page?: number }) => {
+    return propertyApi.getFavorites(params);
+  },
+
+  /**
+   * Get user's favorite properties
+   */
   getFavoriteProperties: () => {
     return propertyApi.getFavoriteProperties();
   },

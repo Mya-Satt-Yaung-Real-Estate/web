@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
   Menu, User, LogOut, Globe, X, ChevronDown,
-  Star, Award, Heart, Eye, History as HistoryIcon,
+  Star, Award, Heart, Eye,
   Settings, Info, MessageSquare
 } from 'lucide-react';
 
@@ -225,10 +225,6 @@ export function MobileNavigation() {
                     <DropdownMenuItem onClick={() => navigate('/recent-views')}>
                       <Eye className="mr-2 h-4 w-4" />
                       {t('services.recentViews')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/history')}>
-                      <HistoryIcon className="mr-2 h-4 w-4" />
-                      {t('services.history')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/settings')}>
                       <Settings className="mr-2 h-4 w-4" />

@@ -42,6 +42,17 @@ export function useInfiniteProperties(filters?: SearchFilters) {
 }
 
 /**
+ * Get user's favorite properties
+ */
+export function useFavorites(params?: { per_page?: number; page?: number }) {
+  return useQuery({
+    queryKey: [...propertyKeys.favorites(), params],
+    queryFn: () => propertyQueries.getFavorites(params),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+}
+
+/**
  * Get property by ID
  */
 export function useProperty(id: string) {

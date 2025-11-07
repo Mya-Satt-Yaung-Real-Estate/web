@@ -107,21 +107,50 @@ export const propertyApi = {
   },
 
   /**
-   * Get user's favorite properties
+   * Get user's favorite properties (frontend endpoint)
+   */
+  getFavorites: (params?: { per_page?: number; page?: number }) => {
+    return api.get<{
+      success: boolean;
+      message: string;
+      data: Property[];
+      pagination: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+        from: number;
+        to: number;
+        has_more_pages: boolean;
+      };
+    }>('/api/v1/frontend/favorites', {
+      params,
+    });
+  },
+
+  /**
+   * Get user's favorite properties (legacy endpoint)
    */
   getFavoriteProperties: () => {
     return api.get<Property[]>('/properties/favorites');
   },
 
   /**
-   * Add property to favorites
+   * Toggle favorite status for a property (frontend endpoint)
+   */
+  toggleFavorite: (slug: string) => {
+    return api.post<{ success: boolean; message: string; data: { is_favorited: boolean } }>(`/api/v1/frontend/properties/${slug}/favorite`);
+  },
+
+  /**
+   * Add property to favorites (legacy endpoint)
    */
   addToFavorites: (propertyId: string) => {
     return api.post<{ success: boolean }>(`/properties/${propertyId}/favorite`);
   },
 
   /**
-   * Remove property from favorites
+   * Remove property from favorites (legacy endpoint)
    */
   removeFromFavorites: (propertyId: string) => {
     return api.delete<{ success: boolean }>(`/properties/${propertyId}/favorite`);

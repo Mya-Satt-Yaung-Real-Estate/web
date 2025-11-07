@@ -68,6 +68,7 @@ export interface PropertyDates {
   published_at: string;
   expires_at: string | null;
   verified_at: string | null;
+  created_at?: string;
 }
 
 export interface PropertyMedia {
@@ -124,6 +125,9 @@ export interface Property {
   is_rented: boolean;
   is_expired: boolean;
   primary_image: PropertyMedia | null;
+  media?: {
+    primary_image: PropertyMedia | null;
+  };
 }
 
 // ============================================================================
