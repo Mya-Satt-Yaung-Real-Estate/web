@@ -4,6 +4,7 @@ import { PageLoader } from './components/shared';
 // Lazy load public page components
 const Home = lazy(() => import('../pages/Home').then(module => ({ default: module.Home })));
 const About = lazy(() => import('../pages/About').then(module => ({ default: module.About })));
+const AboutApp = lazy(() => import('../pages/AboutApp').then(module => ({ default: module.AboutApp })));
 const Companies = lazy(() => import('../pages/companies').then(module => ({ default: module.Companies })));
 const CompanyDetail = lazy(() => import('../pages/companies/detail').then(module => ({ default: module.default })));
 const FAQ = lazy(() => import('../pages/FAQ').then(module => ({ default: module.default })));
@@ -47,6 +48,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <About />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/about-app',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AboutApp />
       </Suspense>
     ),
   },
