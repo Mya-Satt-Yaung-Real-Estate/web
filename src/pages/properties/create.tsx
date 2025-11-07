@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Home, Phone, Image, CheckCircle, CheckCircle2, FileText } from 'lucide-react';
+import { ArrowLeft, MapPin, Home, Phone, Image, CheckCircle, CheckCircle2, FileText, Sparkles, X, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
@@ -46,6 +47,7 @@ export default function CreateProperty() {
 
   const [mediaIds, setMediaIds] = useState<number[]>([]);
   const [isMediaLoading, setIsMediaLoading] = useState(false);
+  const [featureInput, setFeatureInput] = useState<string>('');
   
   // Confirmation dialog state
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -62,6 +64,9 @@ export default function CreateProperty() {
     }
     if (!form.getValues('media_ids')) {
       form.setValue('media_ids', []);
+    }
+    if (!form.getValues('features')) {
+      form.setValue('features', []);
     }
   }, []);
 
@@ -98,6 +103,29 @@ export default function CreateProperty() {
       form.setError('phone_numbers', { type: 'manual', message: t('validation.phoneNumbers.invalid') as string });
     } else {
       form.clearErrors('phone_numbers');
+    }
+  };
+
+  const handleAddFeature = () => {
+    const trimmedValue = featureInput.trim();
+    if (trimmedValue === '') return;
+    
+    const currentFeatures = form.watch('features') || [];
+    if (!currentFeatures.includes(trimmedValue)) {
+      form.setValue('features', [...currentFeatures, trimmedValue]);
+    }
+    setFeatureInput('');
+  };
+
+  const handleRemoveFeature = (featureToRemove: string) => {
+    const currentFeatures = form.watch('features') || [];
+    form.setValue('features', currentFeatures.filter((f: string) => f !== featureToRemove));
+  };
+
+  const handleFeatureInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddFeature();
     }
   };
 
@@ -480,6 +508,69 @@ export default function CreateProperty() {
                     ))}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+
+            {/* Property Features */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  {t('createProperty.propertyFeatures') || 'Feature & Amenities'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FormField 
+                  name="features" 
+                  label="" 
+                  error={errors.features}
+                  className="space-y-3"
+                >
+                  <div className="space-y-3">
+                    {/* Input field with Add button */}
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        placeholder={t('createProperty.featurePlaceholder') || 'Type a feature and press Enter or click Add'}
+                        value={featureInput}
+                        onChange={(e) => setFeatureInput(e.target.value)}
+                        onKeyDown={handleFeatureInputKeyDown}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleAddFeature}
+                        className="whitespace-nowrap"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        {t('common.add') || 'Add'}
+                      </Button>
+                    </div>
+                    
+                    {/* Badges display */}
+                    {form.watch('features') && (form.watch('features') || []).length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {(form.watch('features') || []).map((feature: string) => (
+                          <Badge
+                            key={feature}
+                            variant="outline"
+                            className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-3 py-1"
+                          >
+                            {feature}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFeature(feature)}
+                              className="ml-2 hover:bg-primary/20 rounded-full p-0.5 transition-colors"
+                            >
+                              <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </FormField>
               </CardContent>
             </Card>
 

@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Eye, Heart, Edit, Phone, Trash2, Bath, Bed, Ruler, ThumbsUp, MessageCircle, Square, Star, CheckCircle2, FileText } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Eye, Heart, Edit, Phone, Trash2, Bath, Bed, Ruler, ThumbsUp, MessageCircle, Square, Star, CheckCircle2, FileText, Sparkles } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { SEOHead } from '@/components/seo/SEOHead';
@@ -696,6 +696,31 @@ export default function PropertyDetail() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Features & Amenities */}
+          {property?.features && Array.isArray(property.features) && property.features.length > 0 && (
+            <Card className="shadow-lg mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  {t('createProperty.propertyFeatures') || 'Feature & Amenities'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {property.features.map((feature: string) => (
+                    <Badge
+                      key={feature}
+                      variant="outline"
+                      className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-3 py-1"
+                    >
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Full-width Description */}
           <Card className="shadow-lg mb-6">

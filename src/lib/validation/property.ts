@@ -7,7 +7,7 @@ export const createPropertySchema = (t: (key: string) => string) => z.object({
   ),
   listing_type_id: z.preprocess(
     (val) => (val === '' || val === undefined || val === null ? 0 : val),
-    z.coerce.number().min(1, t('validation.required'))
+    z.coerce.number().min(1, t('validation.listingType.required'))
   ),
   property_condition: z.any()
     .refine((val) => {
@@ -122,6 +122,10 @@ export const createPropertySchema = (t: (key: string) => string) => z.object({
   media_ids: z.preprocess(
     (val) => (val === undefined || val === null ? [] : val),
     z.array(z.number()).min(1, t('validation.media.required'))
+  ),
+  features: z.preprocess(
+    (val) => (val === undefined || val === null ? [] : val),
+    z.array(z.string()).optional()
   ),
 });
 

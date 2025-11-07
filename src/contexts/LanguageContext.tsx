@@ -244,6 +244,7 @@ const translations: Translations = {
     
     'validation.propertyType.required': { en: 'Please select a property type', mm: 'အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
     'validation.propertyType.invalid': { en: 'Please select a valid property type', mm: 'မှန်ကန်သော အိမ်ခြံမြေအမျိုးအစားကို ရွေးချယ်ပါ' },
+    'validation.listingType.required': { en: 'Please select a listing type', mm: 'ကြော်ငြာအမျိုးအစားကို ရွေးချယ်ပါ' },
     'validation.propertyCondition.required': { en: 'Please select a property condition', mm: 'အိမ်ခြံမြေအခြေအနေကို ရွေးချယ်ပါ' },
     
     'validation.title.required': { en: 'Title is required', mm: 'ခေါင်းစဉ်လိုအပ်ပါသည်' },
@@ -1133,6 +1134,9 @@ const translations: Translations = {
   'createProperty.bankInstallment': { en: 'Bank Installment', mm: 'ဘဏ်အရစ်ကျ' },
   'createProperty.bankInstallmentDesc': { en: 'Bank installment available for this property', mm: 'ဤအိမ်ခြံမြေအတွက် ဘဏ်အရစ်ကျ ရရှိနိုင်သည်' },
   'createProperty.features': { en: 'Features', mm: 'အင်္ဂါရပ်များ' },
+  'createProperty.propertyFeatures': { en: 'Feature & Amenities', mm: 'အင်္ဂါရပ်နှင့် အဆောက်အဦး' },
+  'createProperty.addFeatures': { en: 'Add Features (Optional)', mm: 'အင်္ဂါရပ်များ ထည့်ရန် (ရွေးချယ်ရန်)' },
+  'createProperty.featurePlaceholder': { en: 'Type a feature and press Enter or click Add', mm: 'အင်္ဂါရပ်တစ်ခုကို ရိုက်ထည့်ပြီး Enter နှိပ်ပါ သို့မဟုတ် Add ကို နှိပ်ပါ' },
   'createProperty.premiumWarning': { en: '⚠️ Extra charges will apply for premium listing', mm: '⚠️ ပရီမီယံစာရင်းအတွက် အပိုကုန်ကျစရိတ်ကျသင့်မည်' },
   'createProperty.mapLocationChoose': { en: 'Please choose exactly location on map', mm: 'မြေပုံပေါ်တွင် တည်နေရာကို တိကျစွာ ရွေးချယ်ပါ' },
   'createProperty.mapLocationReview': { en: 'Review or change location on map', mm: 'မြေပုံပေါ်တွင် တည်နေရာကို စစ်ဆေးရန် သို့မဟုတ် ပြောင်းလဲရန်' },
@@ -1370,6 +1374,7 @@ const translations: Translations = {
   // Common translations
   'common.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },
   'common.error': { en: 'Error', mm: 'အမှား' },
+  'common.add': { en: 'Add', mm: 'ထည့်ရန်' },
 };
 
 interface LanguageContextType {
