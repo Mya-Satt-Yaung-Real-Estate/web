@@ -10,3 +10,5 @@
 
 export * from './usePropertyMutations';
 export * from './useWantingListMutations';
+export * from './useChangePassword';
+export * from './useUpdateProfile';

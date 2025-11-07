@@ -18,6 +18,9 @@ const CreateProperty = lazy(() => import('../pages/myProperties/create'));
 const EditProperty = lazy(() => import('../pages/myProperties/edit'));
 const PropertyDetail = lazy(() => import('../pages/myProperties/detail'));
 const CreateLoanRequest = lazy(() => import('../pages/loanRequest/create').then(module => ({ default: module.default })));
+const Settings = lazy(() => import('../pages/Settings').then(module => ({ default: module.Settings })));
+const Profile = lazy(() => import('../pages/Profile').then(module => ({ default: module.Profile })));
+const EditProfile = lazy(() => import('../pages/EditProfile').then(module => ({ default: module.EditProfile })));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -83,47 +86,47 @@ export const protectedRoutes = [
       </ProtectedRoute>
     ),
   },
-        // Advertisement routes
-        {
-          path: '/advertisements',
-          element: (
-            <ProtectedRoute>
-              <Suspense fallback={<PageLoader />}>
-                <MyAdvertisementsList />
-              </Suspense>
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: '/advertisements/create',
-          element: (
-            <ProtectedRoute>
-              <Suspense fallback={<PageLoader />}>
-                <CreateAdvertisement />
-              </Suspense>
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: '/advertisements/edit/:id',
-          element: (
-            <ProtectedRoute>
-              <Suspense fallback={<PageLoader />}>
-                <EditAdvertisement />
-              </Suspense>
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: '/advertisements/detail/:id',
-          element: (
-            <ProtectedRoute>
-              <Suspense fallback={<PageLoader />}>
-                <AdvertisementDetail />
-              </Suspense>
-            </ProtectedRoute>
-          ),
-        },
+  // Advertisement routes
+  {
+    path: '/advertisements',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyAdvertisementsList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/advertisements/create',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <CreateAdvertisement />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/advertisements/edit/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditAdvertisement />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/advertisements/detail/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <AdvertisementDetail />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
   // Properties routes (authenticated - my properties)
   {
     path: '/my-properties',
@@ -172,6 +175,37 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <CreateLoanRequest />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  // Settings route
+  {
+    path: '/settings',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <Settings />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <Profile />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/profile/edit',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditProfile />
         </Suspense>
       </ProtectedRoute>
     ),

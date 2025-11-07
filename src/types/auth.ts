@@ -68,6 +68,10 @@ interface CompanyUser extends BaseUser {
     company_type_mm: string;
     business_address: string;
   };
+  // Company-specific fields at root level
+  company_type_id?: number;
+  region_id?: number;
+  township_id?: number;
 }
 
 // Union type for User
@@ -86,6 +90,10 @@ export interface ExtendedUser {
   member_since: string;
   profile_image_url: string | null;
   current_point: number;
+  // Company-specific fields at root level
+  company_type_id?: number;
+  region_id?: number;
+  township_id?: number;
   achievements: {
     verify_account: boolean;
     top_seller: number;
