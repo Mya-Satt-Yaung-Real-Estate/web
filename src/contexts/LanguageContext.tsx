@@ -446,6 +446,11 @@ const translations: Translations = {
   'favorites.confirmRemoveTitle': { en: 'Remove from Favorites', mm: 'အကြိုက်ဆုံးများမှ ဖယ်ရှားရန်' },
   'favorites.confirmRemoveMessage': { en: 'Are you sure you want to remove this property from your favorites?', mm: 'ဤအိမ်ခြံမြေကို သင့်အကြိုက်ဆုံးများမှ ဖယ်ရှားလိုပါသလား?' },
   'favorites.remove': { en: 'Remove', mm: 'ဖယ်ရှားရန်' },
+  
+  // Notifications
+  'notifications.clearAllTitle': { en: 'Clear All Notifications', mm: 'အကြောင်းကြားချက်အားလုံးကို ရှင်းလင်းရန်' },
+  'notifications.clearAllMessage': { en: 'Are you sure you want to clear all notifications? This action cannot be undone.', mm: 'အကြောင်းကြားချက်အားလုံးကို ရှင်းလင်းလိုပါသလား? ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြုလုပ်နိုင်မည်မဟုတ်ပါ။' },
+  'notifications.clearAll': { en: 'Clear All', mm: 'အားလုံးရှင်းလင်းရန်' },
   'services.recentViews': { en: 'Recent Views', mm: 'မကြာသေးမီကြည့်ရှုမှုများ' },
   'services.recentViewsDesc': { en: 'Recently viewed properties', mm: 'မကြာသေးမီကြည့်ရှုခဲ့သောအိမ်ခြံမြေများ' },
   'services.profile': { en: 'Profile', mm: 'ပရိုဖိုင်' },

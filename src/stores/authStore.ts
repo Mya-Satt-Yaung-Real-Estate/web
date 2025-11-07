@@ -175,9 +175,18 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       partialize: (state) => ({ token: state.token }), // Only persist token
+      onRehydrateStorage: () => (state) => {
+        // After rehydration, check auth if token exists
+        if (state?.token) {
+          // Use setTimeout to ensure rehydration is complete
+          setTimeout(() => {
+            state.checkAuth();
+          }, 0);
+        } else {
+          // No token, set loading to false
+          state?.setLoading(false);
+        }
+      },
     }
   )
 );
-
-// Initialize auth check on store creation
-useAuthStore.getState().checkAuth();

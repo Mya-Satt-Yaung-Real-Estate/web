@@ -63,6 +63,7 @@ class ApiClient {
       
       const response = await fetch(url, {
         ...fetchOptions,
+        credentials: 'include', // Include cookies for Sanctum authentication
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { AlertTriangle, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
@@ -35,17 +36,17 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isLoading = false,
   size = 'md',
 }) => {
-  if (!isOpen) return null;
-
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
-  return (
+  if (!isOpen) return null;
+
+  const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
       onClick={handleBackdropClick}
     >
       {/* Backdrop */}
@@ -57,6 +58,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           'relative w-full mx-4 bg-white rounded-lg shadow-xl border border-border/50',
           sizeClasses[size]
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border/50">
@@ -84,7 +86,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <div className="flex justify-end gap-3 p-6 border-t border-border/50 bg-gray-50/50">
           <Button
             variant="outline"
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             disabled={isLoading}
             className="min-w-[80px]"
           >
@@ -92,7 +97,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </Button>
           <Button
             variant={confirmVariant}
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.stopPropagation();
+              onConfirm();
+            }}
             disabled={isLoading}
             className="min-w-[80px]"
           >
@@ -109,4 +117,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       </div>
     </div>
   );
+
+  // Render modal in a portal to ensure it appears above all other elements
+  return typeof window !== 'undefined' && document.body
+    ? createPortal(modalContent, document.body)
+    : null;
 };

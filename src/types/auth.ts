@@ -90,6 +90,7 @@ export interface ExtendedUser {
   member_since: string;
   profile_image_url: string | null;
   current_point: number;
+  unread_notification_count?: number; // Unread notification count from profile
   // Company-specific fields at root level
   company_type_id?: number;
   region_id?: number;
