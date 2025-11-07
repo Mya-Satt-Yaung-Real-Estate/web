@@ -108,7 +108,7 @@ export function useDeleteNotification() {
       
       return { wasUnread };
     },
-    onSuccess: async (_, __, context) => {
+    onSuccess: async () => {
       // Invalidate and refetch to ensure consistency
       await queryClient.invalidateQueries({ 
         queryKey: notificationKeys.all,
