@@ -237,14 +237,12 @@ export default function WantingListDetail() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    {verificationStatus === 'pending' && (
-                      <DropdownMenuItem asChild>
-                        <Link to={`/my-wanted-listings/edit/${id}`}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          {t('myWantedList.edit')}
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem asChild>
+                      <Link to={`/my-wanted-listings/edit/${id}`}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        {t('myWantedList.edit')}
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={handleDelete}
                       className="text-red-600 focus:text-red-600"
