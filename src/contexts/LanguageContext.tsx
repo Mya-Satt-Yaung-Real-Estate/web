@@ -351,6 +351,9 @@ const translations: Translations = {
   'listings.installment': { en: 'Installment', mm: 'အရစ်ကျ' },
   'listings.sqft': { en: 'sqft', mm: 'စတုရန်းပေ' },
   'listings.views': { en: 'views', mm: 'ကြည့်ရှုမှုများ' },
+  'listings.beds': { en: 'Beds', mm: 'အိပ်ခန်း' },
+  'listings.baths': { en: 'Baths', mm: 'ရေချိုးခန်း' },
+  'listings.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
   
   // Create Listing
   'createListing.title': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },
@@ -869,6 +872,11 @@ const translations: Translations = {
   'search.properties': { en: 'Properties', mm: 'အိမ်ခြံမြေများ' },
   'search.premium': { en: 'Premium', mm: 'ပရီမီယံ' },
   'search.tanTanTan': { en: 'Tan Tan Tan', mm: 'တန်တန်တန်' },
+  'search.wanted': { en: 'Wanted', mm: 'လိုချင်သော' },
+  'search.wantedFound': { en: 'Wanted found {count} result', mm: 'လိုချင်သော {count} ရလဒ်တွေ့ရှိပါသည်' },
+  'search.wantedFoundPlural': { en: 'Wanted found {count} results', mm: 'လိုချင်သော {count} ရလဒ်များတွေ့ရှိပါသည်' },
+  'search.errorLoading': { en: 'Error loading wanted listings. Please try again.', mm: 'လိုချင်သောစာရင်းများကိုဖွင့်ရာတွင်အမှား။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
+  'search.noWantedListings': { en: 'No wanted listings found.', mm: 'လိုချင်သောစာရင်းများမတွေ့ရှိပါ။' },
   'search.errorLoadingProperties': { en: 'Failed to load properties. Please try again later.', mm: 'အိမ်ခြံမြေများကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
   'search.noResultsFound': { en: 'No results found', mm: 'ရလဒ်များမတွေ့ပါ' },
   'search.tryAdjustingFilters': { en: 'Try adjusting your search or filters', mm: 'သင့်ရှာဖွေမှု သို့မဟုတ် စစ်ထုတ်မှုများကို ပြင်ဆင်ကြည့်ပါ' },

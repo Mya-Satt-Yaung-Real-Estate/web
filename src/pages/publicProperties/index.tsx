@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList } from './components';
+import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, WantedList } from './components';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePublicProperties } from '@/hooks/queries/usePublicProperties';
+import { useWantedLists } from '@/hooks/queries/useWantedLists';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 
 export default function PublicProperties() {
@@ -80,6 +81,9 @@ export default function PublicProperties() {
   const premiumCount = allProperties.filter(p => p.premium).length;
   const tanTanTanCount = allProperties.filter(p => p.tan_tan_tan).length;
   const propertyCount = allProperties.length;
+  
+  const { data: wantedListsData } = useWantedLists({ per_page: 20 });
+  const wantedCount = wantedListsData?.data?.data?.length || 0;
 
   const getResultsText = () => {
     let count = propertyCount;
@@ -87,6 +91,8 @@ export default function PublicProperties() {
       count = premiumCount;
     } else if (activeTab === 'tantantan') {
       count = tanTanTanCount;
+    } else if (activeTab === 'wanted') {
+      count = wantedCount;
     }
     
     const isPlural = count !== 1;
@@ -96,6 +102,9 @@ export default function PublicProperties() {
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'tantantan') {
       const text = isPlural ? t('search.tanTanTanFoundPlural') : t('search.tanTanTanFound');
+      return text.replace('{count}', count.toString());
+    } else if (activeTab === 'wanted') {
+      const text = isPlural ? t('search.wantedFoundPlural') : t('search.wantedFound');
       return text.replace('{count}', count.toString());
     } else {
       const text = isPlural ? t('search.propertyFoundPlural') : t('search.propertyFound');
@@ -116,7 +125,9 @@ export default function PublicProperties() {
                   {activeTab === 'premium' 
                     ? t('search.premium') 
                     : activeTab === 'tantantan' 
-                    ? t('search.tanTanTan') 
+                    ? t('search.tanTanTan')
+                    : activeTab === 'wanted'
+                    ? t('search.wanted')
                     : t('search.properties')}
                 </h1>
                 <p className="text-muted-foreground mt-2">{getResultsText()}</p>
@@ -125,7 +136,7 @@ export default function PublicProperties() {
 
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 max-w-5xl">
+              <TabsList className="grid w-full grid-cols-4 max-w-5xl">
                 <TabsTrigger value="property">
                   {t('search.properties') || 'Properties'} ({propertyCount})
                 </TabsTrigger>
@@ -134,6 +145,9 @@ export default function PublicProperties() {
                 </TabsTrigger>
                 <TabsTrigger value="tantantan">
                   {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
+                </TabsTrigger>
+                <TabsTrigger value="wanted">
+                  {t('search.wanted') || 'Wanted'} ({wantedCount})
                 </TabsTrigger>
               </TabsList>
 
@@ -147,6 +161,10 @@ export default function PublicProperties() {
 
               <TabsContent value="tantantan" className="space-y-4">
                 <TanTanTanPropertiesList filters={filters} />
+              </TabsContent>
+
+              <TabsContent value="wanted" className="space-y-4">
+                <WantedList />
               </TabsContent>
             </Tabs>
         </div>
