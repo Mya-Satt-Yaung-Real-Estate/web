@@ -15,6 +15,7 @@ export { apiClient, api, handleApiError, isNetworkError, isTimeoutError } from '
 // ============================================================================
 
 export { propertyApi } from './properties';
+export { publicPropertyApi } from './publicProperties';
 export { authApi } from './auth';
 export { knowledgeApi } from './knowledge';
 export { legacyApi } from './legacy';

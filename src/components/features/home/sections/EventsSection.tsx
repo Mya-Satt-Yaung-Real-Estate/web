@@ -52,7 +52,7 @@ export const EventsSection = memo(function EventsSection({ events, propertyLocat
               {t('events.subtitle')}
             </p>
           </div>
-          <Link to="/search-all?type=event">
+          <Link to="/search?type=event">
             <Button variant="outline">
               {t('events.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />

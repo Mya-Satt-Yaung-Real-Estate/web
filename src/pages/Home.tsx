@@ -277,7 +277,7 @@ export const Home = memo(function Home() {
                   {t('jobs.subtitle')}
                 </p>
               </div>
-              <Link to="/search-all?type=job">
+              <Link to="/search?type=job">
                 <Button variant="outline">
                   {t('jobs.viewAll')}
                   <ArrowRight className="ml-2 h-4 w-4" />

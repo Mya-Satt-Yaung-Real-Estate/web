@@ -439,7 +439,7 @@ export default function CompanyDetail() {
                   {/* View All Link and Toggle Buttons */}
                   {properties.length > 0 && !propertiesLoading && (
                     <div className="flex items-center justify-between mb-4">
-                      <Link to="/search-all?type=property">
+                      <Link to="/search?type=property">
                         <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10">
                           {t('companies.viewAllProperties')}
                           <ArrowRight className="ml-2 h-4 w-4" />
@@ -795,7 +795,7 @@ export default function CompanyDetail() {
                   {/* View All Link and Toggle Buttons */}
                   {advertisements.length > 0 && !advertisementsLoading && (
                     <div className="flex items-center justify-between mb-4">
-                      <Link to="/search-all?type=advertisement">
+                      <Link to="/search?type=advertisement">
                         <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10">
                           {t('ads.viewAll')}
                           <ArrowRight className="ml-2 h-4 w-4" />

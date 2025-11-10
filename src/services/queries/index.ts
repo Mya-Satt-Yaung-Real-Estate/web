@@ -9,6 +9,7 @@
 // ============================================================================
 
 export * from './properties';
+export * from './publicProperties';
 export * from './auth';
 export * from './knowledge';
 export * from './legacy';

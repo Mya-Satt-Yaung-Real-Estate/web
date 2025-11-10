@@ -174,6 +174,16 @@ export type {
   PropertyStatisticsResponse,
 } from './properties';
 
+// Export public property types
+export type {
+  PublicProperty,
+  PublicPropertyUser,
+  PublicPropertyRegion,
+  PublicPropertyTownship,
+  PublicPropertyListResponse,
+  PublicPropertyFilters,
+} from './publicProperties';
+
 // Export AI Assistant types
 export type {
   AiMessage,

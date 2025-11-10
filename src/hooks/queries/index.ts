@@ -9,6 +9,9 @@
 // ============================================================================
 
 export * from './useProperties';
+export * from './usePublicProperties';
+export * from './usePremiumProperties';
+export * from './useTanTanTanProperties';
 export * from './useAuth';
 export * from './useKnowledge';
 export * from './useLegacy';

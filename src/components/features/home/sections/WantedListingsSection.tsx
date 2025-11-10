@@ -42,7 +42,7 @@ export const WantedListingsSection = memo(function WantedListingsSection({ wante
               Browse active property requests from buyers and renters
             </p>
           </div>
-          <Link to="/search-all?type=wanted">
+          <Link to="/search?type=wanted">
             <Button variant="outline">
               View All Requests
               <ArrowRight className="ml-2 h-4 w-4" />

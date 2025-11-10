@@ -43,7 +43,7 @@ export const PropertyListingsSection = memo(function PropertyListingsSection({ f
               {t('listings.subtitle')}
             </p>
           </div>
-          <Link to="/search-all?type=property">
+          <Link to="/search?type=property">
             <Button variant="outline">
               {t('listings.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />

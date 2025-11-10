@@ -51,7 +51,7 @@ export const PremiumPostsSection = memo(function PremiumPostsSection({ premiumPo
               {t('premium.subtitle')}
             </p>
           </div>
-          <Link to="/search-all?type=premium">
+          <Link to="/search?type=premium">
             <Button variant="outline" className="border-primary/30 hover:bg-primary/5">
               {t('premium.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />

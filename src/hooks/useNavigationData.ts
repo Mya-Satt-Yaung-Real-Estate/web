@@ -36,17 +36,17 @@ export function useNavigationData() {
     ],
     
     propertyCategories: [
-      { name: t('categories.searchAllProperty'), path: '/search-all', icon: Search },
-      { name: t('categories.tantantan'), path: '/search-all?filter=tantantan', icon: Grid3x3 },
-      { name: t('categories.premiumProperties'), path: '/search-all?type=premium', icon: Star },
-      { name: t('listings.forSale'), path: '/search-all?filter=sale', icon: HomeIcon },
-      { name: t('listings.forRent'), path: '/search-all?filter=rent', icon: Building },
-      { name: t('categories.preSale'), path: '/search-all?filter=presale', icon: TrendingUp },
-      { name: t('categories.installment'), path: '/search-all?filter=installment', icon: Calculator },
-      { name: t('categories.buyerPosts'), path: '/search-all?type=wanted&listingType=buyer', icon: Search },
-      { name: t('categories.renterPosts'), path: '/search-all?type=wanted&listingType=renter', icon: Users },
-      { name: t('categories.vacanciesJobs'), path: '/search-all?type=job', icon: Briefcase },
-      { name: t('services.housingEvent'), path: '/search-all?type=event', icon: Calendar },
+      { name: t('categories.searchAllProperty'), path: '/search', icon: Search },
+      { name: t('categories.tantantan'), path: '/search?filter=tantantan', icon: Grid3x3 },
+      { name: t('categories.premiumProperties'), path: '/search?type=premium', icon: Star },
+      { name: t('listings.forSale'), path: '/search?filter=sale', icon: HomeIcon },
+      { name: t('listings.forRent'), path: '/search?filter=rent', icon: Building },
+      { name: t('categories.preSale'), path: '/search?filter=presale', icon: TrendingUp },
+      { name: t('categories.installment'), path: '/search?filter=installment', icon: Calculator },
+      { name: t('categories.buyerPosts'), path: '/search?type=wanted&listingType=buyer', icon: Search },
+      { name: t('categories.renterPosts'), path: '/search?type=wanted&listingType=renter', icon: Users },
+      { name: t('categories.vacanciesJobs'), path: '/search?type=job', icon: Briefcase },
+      { name: t('services.housingEvent'), path: '/search?type=event', icon: Calendar },
     ],
     
     createListingOptions: [
