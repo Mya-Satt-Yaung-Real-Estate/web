@@ -137,16 +137,28 @@ export default function PublicProperties() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
               <TabsList className="grid w-full grid-cols-4 max-w-5xl">
-                <TabsTrigger value="property">
+                <TabsTrigger 
+                  value="property"
+                  className="data-[state=active]:text-primary"
+                >
                   {t('search.properties') || 'Properties'} ({propertyCount})
                 </TabsTrigger>
-                <TabsTrigger value="premium">
+                <TabsTrigger 
+                  value="premium"
+                  className="data-[state=active]:text-primary"
+                >
                   {t('search.premium') || 'Premium'} ({premiumCount})
                 </TabsTrigger>
-                <TabsTrigger value="tantantan">
+                <TabsTrigger 
+                  value="tantantan"
+                  className="data-[state=active]:text-primary"
+                >
                   {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
                 </TabsTrigger>
-                <TabsTrigger value="wanted">
+                <TabsTrigger 
+                  value="wanted"
+                  className="data-[state=active]:text-primary"
+                >
                   {t('search.wanted') || 'Wanted'} ({wantedCount})
                 </TabsTrigger>
               </TabsList>
