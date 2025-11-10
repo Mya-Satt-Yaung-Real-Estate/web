@@ -5,8 +5,6 @@ import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, WantedLis
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { usePublicProperties } from '@/hooks/queries/usePublicProperties';
-import { useWantedLists } from '@/hooks/queries/useWantedLists';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 
 export default function PublicProperties() {
@@ -37,8 +35,9 @@ export default function PublicProperties() {
   };
 
   const getFiltersFromParams = (): PublicPropertyFilters => {
+    const perPageParam = 30;
     const filters: PublicPropertyFilters = {
-      per_page: 20,
+      per_page: perPageParam,
       page: 1,
     };
 
@@ -76,14 +75,13 @@ export default function PublicProperties() {
   };
 
   const filters = getFiltersFromParams();
-  const { data: allPropertiesData } = usePublicProperties(filters);
-  const allProperties = allPropertiesData?.data?.data || [];
-  const premiumCount = allProperties.filter(p => p.premium).length;
-  const tanTanTanCount = allProperties.filter(p => p.tan_tan_tan).length;
-  const propertyCount = allProperties.length;
   
-  const { data: wantedListsData } = useWantedLists({ per_page: 20 });
-  const wantedCount = wantedListsData?.data?.data?.length || 0;
+  // TODO: Replace with API endpoint for tab counts
+  // This will be replaced with: const { data: tabCounts } = useTabCounts();
+  const propertyCount = 100;
+  const premiumCount = 100;
+  const tanTanTanCount = 100;
+  const wantedCount = 100;
 
   const getResultsText = () => {
     let count = propertyCount;
@@ -137,47 +135,60 @@ export default function PublicProperties() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
               <TabsList className="grid w-full grid-cols-4 max-w-5xl">
+                
                 <TabsTrigger 
                   value="property"
                   className="data-[state=active]:text-primary"
                 >
                   {t('search.properties') || 'Properties'} ({propertyCount})
                 </TabsTrigger>
+
                 <TabsTrigger 
                   value="premium"
                   className="data-[state=active]:text-primary"
                 >
                   {t('search.premium') || 'Premium'} ({premiumCount})
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="tantantan"
-                  className="data-[state=active]:text-primary"
-                >
-                  {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
-                </TabsTrigger>
+
                 <TabsTrigger 
                   value="wanted"
                   className="data-[state=active]:text-primary"
                 >
                   {t('search.wanted') || 'Wanted'} ({wantedCount})
                 </TabsTrigger>
+
+                <TabsTrigger 
+                  value="tantantan"
+                  className="data-[state=active]:text-primary"
+                >
+                  {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
+                </TabsTrigger>
+                
               </TabsList>
 
-              <TabsContent value="property" className="space-y-4">
-                <PropertyList filters={filters} />
-              </TabsContent>
+              {activeTab === 'property' && (
+                <TabsContent value="property" className="space-y-4">
+                  <PropertyList filters={filters} />
+                </TabsContent>
+              )}
 
-              <TabsContent value="premium" className="space-y-4">
-                <PremiumPropertiesList filters={filters} />
-              </TabsContent>
+              {activeTab === 'premium' && (
+                <TabsContent value="premium" className="space-y-4">
+                  <PremiumPropertiesList filters={filters} />
+                </TabsContent>
+              )}
 
-              <TabsContent value="tantantan" className="space-y-4">
-                <TanTanTanPropertiesList filters={filters} />
-              </TabsContent>
+              {activeTab === 'tantantan' && (
+                <TabsContent value="tantantan" className="space-y-4">
+                  <TanTanTanPropertiesList filters={filters} />
+                </TabsContent>
+              )}
 
-              <TabsContent value="wanted" className="space-y-4">
-                <WantedList />
-              </TabsContent>
+              {activeTab === 'wanted' && (
+                <TabsContent value="wanted" className="space-y-4">
+                  <WantedList />
+                </TabsContent>
+              )}
             </Tabs>
         </div>
       </div>

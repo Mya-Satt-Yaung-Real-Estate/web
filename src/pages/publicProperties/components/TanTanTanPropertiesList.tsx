@@ -1,5 +1,6 @@
 import { useTanTanTanProperties } from '@/hooks/queries/useTanTanTanProperties';
 import { PropertyCard } from '@/components/features/properties/PropertyCard';
+import { InfiniteScrollList } from '@/components/features/InfiniteScrollList';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { Grid3x3 } from 'lucide-react';
@@ -12,7 +13,14 @@ interface TanTanTanPropertiesListProps {
 
 export function TanTanTanPropertiesList({ filters }: TanTanTanPropertiesListProps) {
   const { t } = useLanguage();
-  const { data, isLoading, error } = useTanTanTanProperties(filters);
+  const { 
+    data, 
+    isLoading, 
+    error, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useTanTanTanProperties(filters);
 
   if (isLoading) {
     return (
@@ -41,7 +49,7 @@ export function TanTanTanPropertiesList({ filters }: TanTanTanPropertiesListProp
     );
   }
 
-  const properties = data?.data?.data || [];
+  const properties = data?.pages.flatMap(page => page.data?.data || []) || [];
 
   if (properties.length === 0) {
     return (
@@ -55,12 +63,34 @@ export function TanTanTanPropertiesList({ filters }: TanTanTanPropertiesListProp
     );
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {properties.map((property) => (
-        <PropertyCard key={property.id} property={property} />
+  const loadingSkeletons = (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+      {[...Array(6)].map((_, i) => (
+        <Card key={`skeleton-${i}`} className="overflow-hidden">
+          <Skeleton className="h-48 w-full" />
+          <div className="p-4 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-10 w-full mt-4" />
+          </div>
+        </Card>
       ))}
     </div>
+  );
+
+  return (
+    <InfiniteScrollList
+      hasNextPage={hasNextPage || false}
+      isFetchingNextPage={isFetchingNextPage}
+      fetchNextPage={fetchNextPage}
+      loadingComponent={loadingSkeletons}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {properties.map((property) => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
+      </div>
+    </InfiniteScrollList>
   );
 }
 

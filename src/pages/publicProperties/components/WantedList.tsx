@@ -1,5 +1,6 @@
 import { useWantedLists } from '@/hooks/queries/useWantedLists';
 import { WantedListingCard } from './WantedListingCard';
+import { InfiniteScrollList } from '@/components/features/InfiniteScrollList';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -7,7 +8,14 @@ import { Search } from 'lucide-react';
 
 export function WantedList() {
   const { t } = useLanguage();
-  const { data, isLoading, error } = useWantedLists({ per_page: 20 });
+  const { 
+    data, 
+    isLoading, 
+    error, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useWantedLists({ per_page: 30 });
 
   if (isLoading) {
     return (
@@ -36,7 +44,7 @@ export function WantedList() {
     );
   }
 
-  const wantedLists = data?.data?.data || [];
+  const wantedLists = data?.pages.flatMap(page => page.data?.data || []) || [];
 
   if (wantedLists.length === 0) {
     return (
@@ -50,12 +58,34 @@ export function WantedList() {
     );
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {wantedLists.map((wanted) => (
-        <WantedListingCard key={wanted.id} wanted={wanted} />
+  const loadingSkeletons = (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+      {[...Array(6)].map((_, i) => (
+        <Card key={`skeleton-${i}`} className="overflow-hidden">
+          <Skeleton className="h-48 w-full" />
+          <div className="p-4 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-10 w-full mt-4" />
+          </div>
+        </Card>
       ))}
     </div>
+  );
+
+  return (
+    <InfiniteScrollList
+      hasNextPage={hasNextPage || false}
+      isFetchingNextPage={isFetchingNextPage}
+      fetchNextPage={fetchNextPage}
+      loadingComponent={loadingSkeletons}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {wantedLists.map((wanted) => (
+          <WantedListingCard key={wanted.id} wanted={wanted} />
+        ))}
+      </div>
+    </InfiniteScrollList>
   );
 }
 
