@@ -5,7 +5,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { PremiumBadge } from './PremiumBadge';
 import { TanTanTanBadge } from './TanTanTanBadge';
 import { InstallmentBadge } from './InstallmentBadge';
-import { MapPin, Bed, Bath, Square, ThumbsUp, MessageCircle, Heart, Eye } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, ThumbsUp, MessageCircle, Heart, Eye, DollarSign } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import type { PublicProperty } from '@/types/publicProperties';
@@ -74,9 +74,9 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <div className="absolute bottom-3 left-3">
-          <span className="text-white px-3 py-1.5 rounded-lg bg-background/20 backdrop-blur-md border border-white/20">
-            {formatPrice(property.price)}
-          </span>
+          <Badge className="bg-background/20 backdrop-blur-md border border-white/20 text-white">
+            {property.code}
+          </Badge>
         </div>
 
         <div className="absolute bottom-3 right-3">
@@ -92,26 +92,31 @@ export function PropertyCard({ property }: PropertyCardProps) {
           {getTitle()}
         </h4>
         
-        <div className="flex items-center gap-1 text-muted-foreground mb-4">
-          <MapPin className="h-4 w-4 flex-shrink-0" />
-          <span className="line-clamp-1">{getLocation()}</span>
-        </div>
-
-        <div className="flex items-center gap-4 text-muted-foreground mb-4">
-          <div className="flex items-center gap-1.5">
-            <Bed className="h-4 w-4" />
-            <span>{property.bedrooms}</span>
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <MapPin className="h-4 w-4 flex-shrink-0" />
+            <span className="line-clamp-1">{getLocation()}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Bath className="h-4 w-4" />
-            <span>{property.bathrooms}</span>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <DollarSign className="h-4 w-4 flex-shrink-0" />
+            <span>{formatPrice(property.price)}</span>
           </div>
-          {property.area_sqft && (
+          <div className="flex items-center gap-4 text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <Square className="h-4 w-4" />
-              <span>{parseFloat(property.area_sqft).toLocaleString()} sqft</span>
+              <Bed className="h-4 w-4" />
+              <span>{property.bedrooms}</span>
             </div>
-          )}
+            <div className="flex items-center gap-1.5">
+              <Bath className="h-4 w-4" />
+              <span>{property.bathrooms}</span>
+            </div>
+            {property.area_sqft && (
+              <div className="flex items-center gap-1.5">
+                <Square className="h-4 w-4" />
+                <span>{parseFloat(property.area_sqft).toLocaleString()} sqft</span>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">

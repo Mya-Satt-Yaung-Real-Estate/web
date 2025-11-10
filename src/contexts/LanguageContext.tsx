@@ -354,6 +354,7 @@ const translations: Translations = {
   'listings.beds': { en: 'Beds', mm: 'အိပ်ခန်း' },
   'listings.baths': { en: 'Baths', mm: 'ရေချိုးခန်း' },
   'listings.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
+  'listings.code': { en: 'Code', mm: 'ကုဒ်' },
   
   // Create Listing
   'createListing.title': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },
