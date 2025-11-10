@@ -348,7 +348,9 @@ const translations: Translations = {
   'listings.viewAll': { en: 'View All Properties', mm: 'အိမ်ခြံမြေအားလုံးကြည့်ရန်' },
   'listings.viewDetails': { en: 'View Details', mm: 'အသေးစိတ်ကြည့်ရန်' },
   'listings.featured': { en: 'Featured', mm: 'အထူးဖြစ်သော' },
+  'listings.installment': { en: 'Installment', mm: 'အရစ်ကျ' },
   'listings.sqft': { en: 'sqft', mm: 'စတုရန်းပေ' },
+  'listings.views': { en: 'views', mm: 'ကြည့်ရှုမှုများ' },
   
   // Create Listing
   'createListing.title': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },

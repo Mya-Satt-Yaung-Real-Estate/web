@@ -45,9 +45,13 @@ export interface PublicProperty {
   bedrooms: number;
   bathrooms: number;
   view_count: number;
+  like_count: number;
+  comment_count: number;
+  favorite_count: number;
   is_featured: boolean;
   tan_tan_tan: boolean;
   premium: boolean;
+  bank_installment_available: boolean;
   code: string;
   property_type: PropertyType;
   property_condition: 'ready' | 'some' | 'no';
@@ -101,4 +105,5 @@ export interface PublicPropertyFilters {
   per_page?: number;
   page?: number;
 }
+
 
