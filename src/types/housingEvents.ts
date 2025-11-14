@@ -64,3 +64,59 @@ export interface HousingEventFilters {
   page?: number;
 }
 
+// Detail page types
+export interface HousingEventDetailRegion {
+  name_en: string;
+  name_mm: string;
+}
+
+export interface HousingEventDetailTownship {
+  name_en: string;
+  name_mm: string;
+}
+
+export interface HousingEventDetailCategory {
+  id: number;
+  name_en: string;
+  name_mm: string;
+}
+
+export interface HousingEventDetailImage {
+  id: number;
+  type: string;
+  file_name: string;
+  url: string;
+}
+
+export interface HousingEventDetail {
+  id: number;
+  name_en: string;
+  name_mm: string;
+  slug: string;
+  tag: string[];
+  date: string;
+  location: string;
+  region: HousingEventDetailRegion;
+  township: HousingEventDetailTownship;
+  is_free: boolean;
+  price: string;
+  need_registration: boolean;
+  registered_user_count: number;
+  accepted_user_count: number;
+  category: HousingEventDetailCategory;
+  description: string;
+  start_time: string;
+  end_time: string;
+  organizer_name: string;
+  contact: string;
+  is_already_registered: boolean;
+  is_online: boolean;
+  images: HousingEventDetailImage | null;
+}
+
+export interface HousingEventDetailResponse {
+  success: boolean;
+  message: string;
+  data: HousingEventDetail;
+}
+

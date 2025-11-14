@@ -41,6 +41,9 @@ const PublicPropertyDetail = lazyWithRetry(() => import('../pages/publicProperty
 // Public Advertisement pages
 const PublicAdvertisementDetail = lazyWithRetry(() => import('../pages/publicAdvertisementDetail').then(module => ({ default: module.default })));
 
+// Public Event pages
+const PublicEventDetail = lazyWithRetry(() => import('../pages/publicEventDetail').then(module => ({ default: module.default })));
+
 // Public routes configuration
 export const publicRoutes = [
   // Basic pages
@@ -234,6 +237,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <PublicAdvertisementDetail />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/events/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicEventDetail />
       </Suspense>
     ),
   },
