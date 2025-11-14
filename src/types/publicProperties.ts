@@ -85,6 +85,7 @@ export interface PublicPropertyFilters {
   listing_type_id?: number;
   tan_tan_tan?: boolean;
   premium?: boolean;
+  installment?: boolean;
 
   // Search and basic filters
   search?: string;

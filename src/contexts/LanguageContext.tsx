@@ -870,6 +870,8 @@ const translations: Translations = {
   'search.premiumFoundPlural': { en: 'Premium found {count} results', mm: 'ပရီမီယံ {count} ရလဒ်များတွေ့ရှိပါသည်' },
   'search.tanTanTanFound': { en: 'Tan Tan Tan found {count} result', mm: 'တန်တန်တန် {count} ရလဒ်တွေ့ရှိပါသည်' },
   'search.tanTanTanFoundPlural': { en: 'Tan Tan Tan found {count} results', mm: 'တန်တန်တန် {count} ရလဒ်များတွေ့ရှိပါသည်' },
+  'search.installmentFound': { en: 'Installment found {count} result', mm: 'အရစ်ကျ {count} ရလဒ်တွေ့ရှိပါသည်' },
+  'search.installmentFoundPlural': { en: 'Installment found {count} results', mm: 'အရစ်ကျ {count} ရလဒ်များတွေ့ရှိပါသည်' },
   'search.properties': { en: 'Properties', mm: 'အိမ်ခြံမြေများ' },
   'search.premium': { en: 'Premium', mm: 'ပရီမီယံ' },
   'search.tanTanTan': { en: 'Tan Tan Tan', mm: 'တန်တန်တန်' },
@@ -885,6 +887,8 @@ const translations: Translations = {
   'search.noPremiumFound': { en: 'No premium properties found', mm: 'ပရီမီယံ အိမ်ခြံမြေများမတွေ့ရှိပါ' },
   'search.errorLoadingTanTanTan': { en: 'Failed to load Tan Tan Tan properties. Please try again later.', mm: 'တန်တန်တန်အိမ်ခြံမြေများကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
   'search.noTanTanTanFound': { en: 'No Tan Tan Tan properties found', mm: 'တန်တန်တန်အိမ်ခြံမြေများမတွေ့ရှိပါ' },
+  'search.errorLoadingInstallment': { en: 'Failed to load installment properties. Please try again later.', mm: 'အရစ်ကျ အိမ်ခြံမြေများကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
+  'search.noInstallmentFound': { en: 'No installment properties found', mm: 'အရစ်ကျ အိမ်ခြံမြေများမတွေ့ရှိပါ' },
 
   // FAQ
   'faq.title': { en: 'Frequently Asked Questions', mm: 'မကြာခဏမေးလေ့ရှိသောမေးခွန်းများ' },
@@ -1659,6 +1663,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
+    // During development/HMR, sometimes components render before providers are ready
+    // Return a fallback context instead of throwing to prevent crashes
+    if (import.meta.env.DEV) {
+      console.warn('useLanguage called outside LanguageProvider, using fallback');
+      return {
+        language: 'en' as Language,
+        setLanguage: () => {},
+        t: (key: string) => key,
+      };
+    }
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;

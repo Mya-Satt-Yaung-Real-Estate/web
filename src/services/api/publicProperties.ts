@@ -27,6 +27,15 @@ export const publicPropertyApi = {
     });
   },
 
+  getInstallmentProperties: (filters: Omit<PublicPropertyFilters, 'installment'> = {}) => {
+    return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/properties', {
+      params: {
+        ...filters,
+        installment: true,
+      },
+    });
+  },
+
   getPropertiesByListingType: (
     listingTypeId: number,
     filters: Omit<PublicPropertyFilters, 'listing_type_id'> = {}
