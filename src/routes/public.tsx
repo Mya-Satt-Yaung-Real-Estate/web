@@ -32,6 +32,7 @@ const LoanCalculator = lazyWithRetry(() => import('../pages/calculators/loanCalc
 
 // Public Wanting List pages
 const PublicWantedList = lazyWithRetry(() => import('../pages/publicWantedListings/list').then(module => ({ default: module.default })));
+const PublicWantedDetail = lazyWithRetry(() => import('../pages/publicWantedDetail').then(module => ({ default: module.default })));
 
 // Public Properties pages
 const PublicProperties = lazyWithRetry(() => import('../pages/publicProperties').then(module => ({ default: module.default })));
@@ -198,6 +199,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <PublicWantedList />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/wanted/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicWantedDetail />
       </Suspense>
     ),
   },

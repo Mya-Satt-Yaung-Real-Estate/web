@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { WantedListResponse } from '@/types/wantedList';
+import type { WantedListResponse, WantedListDetailResponse } from '@/types/wantedList';
 
 export interface WantedListFilters {
   per_page?: number;
@@ -11,6 +11,10 @@ export const wantedListApi = {
     return api.get<WantedListResponse>('/api/v1/frontend/public/wanted-lists', {
       params: filters,
     });
+  },
+
+  getPublicWantedDetail: (slug: string) => {
+    return api.get<WantedListDetailResponse>(`/api/v1/frontend/public/wanted-lists/${slug}`);
   },
 };
 

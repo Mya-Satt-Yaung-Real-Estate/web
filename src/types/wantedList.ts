@@ -68,3 +68,77 @@ export interface WantedListResponse {
   pagination: PropertyPagination;
 }
 
+// Detail page types
+export interface WantedListDetailPreferredLocation {
+  region: {
+    id: number;
+    name_en: string;
+    name_mm: string;
+  };
+  township: {
+    id: number;
+    name_en: string;
+    name_mm: string;
+  };
+}
+
+export interface WantedListDetailBudget {
+  min_budget: string;
+  max_budget: string;
+  budget_range: string;
+}
+
+export interface WantedListDetailSpecifications {
+  bedrooms: number;
+  bathrooms: number;
+  min_area: string;
+  max_area: string;
+  area_range: string;
+}
+
+export interface WantedListDetailContact {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+export interface WantedListDetailStatus {
+  verification_status: 'pending' | 'approved' | 'rejected';
+  status: 'published' | 'draft';
+  is_expired: boolean;
+  is_published: boolean;
+  expires_at: string | null;
+}
+
+export interface WantedListDetailUser {
+  id: number;
+  name: string;
+  email: string;
+  user_type: string;
+  member_level: string;
+}
+
+export interface WantedListDetail {
+  id: number;
+  slug: string;
+  wanted_type: 'buyer' | 'renter';
+  wanted_type_label: string;
+  title: string;
+  description: string;
+  additional_requirement?: string;
+  property_type: WantedListPropertyType;
+  preferred_location: WantedListDetailPreferredLocation;
+  budget: WantedListDetailBudget;
+  specifications: WantedListDetailSpecifications;
+  contact: WantedListDetailContact;
+  status: WantedListDetailStatus;
+  user: WantedListDetailUser;
+  created_at: string;
+}
+
+export interface WantedListDetailResponse {
+  success: boolean;
+  message: string;
+  data: WantedListDetail;
+}
+
