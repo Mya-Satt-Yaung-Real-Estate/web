@@ -8,7 +8,6 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePublicProperty } from '@/hooks/queries/usePublicProperties';
 import { SEOHead } from '@/components/seo/SEOHead';
-import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,6 @@ export default function PublicPropertyDetail() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { isAuthenticated } = useAuthStore();
-  const seo = seoUtils.getPageSEO('properties');
   
   const { data, isLoading, error } = usePublicProperty(slug || '');
   
@@ -151,16 +149,6 @@ export default function PublicPropertyDetail() {
       : (property.property_condition.label_mm || '');
   }, [property?.property_condition, language]);
 
-  // Prepare amenities (static/flexible data since API doesn't provide)
-  const amenities = useMemo(() => {
-    const defaultAmenities = [
-      { icon: '🚗', label: language === 'mm' ? 'ကားပါကင်နေရာ' : 'Parking Space' },
-      { icon: '🔒', label: language === 'mm' ? '၂၄/၇ လုံခြုံရေး' : '24/7 Security' },
-      { icon: '📶', label: language === 'mm' ? 'WiFi' : 'High-Speed WiFi' },
-      { icon: '🏋️', label: language === 'mm' ? 'အားကစားခန်းမ' : 'Fitness Center' },
-    ];
-    return defaultAmenities;
-  }, [language]);
 
   // Map location for MapView - must be called before conditional returns
   const mapLocation = useMemo(() => {
@@ -276,6 +264,7 @@ export default function PublicPropertyDetail() {
         seo={{
           title: title,
           description: description.substring(0, 160),
+          keywords: `${title}, ${locationString}, ${propertyTypeName}, ${listingTypeName}, property, real estate`,
           image: property?.media?.primary_image?.url || property?.media?.images?.[0]?.url || '/jade.png',
         }}
         path={`/properties/${slug}`}
@@ -305,7 +294,6 @@ export default function PublicPropertyDetail() {
                   currentImageIndex={currentImageIndex}
                   setCurrentImageIndex={setCurrentImageIndex}
                   isFavorite={isFavorite}
-                  isLiked={isLiked}
                   onFavorite={handleFavorite}
                   shareUrl={window.location.href}
                   t={t}
@@ -326,7 +314,6 @@ export default function PublicPropertyDetail() {
                   onLike={handleLike}
                   formatTimestamp={formatTimestamp}
                   t={t}
-                  language={language}
                 />
               )}
             </div>

@@ -36,7 +36,6 @@ interface PropertyDetailsCardProps {
   onLike: () => void;
   formatTimestamp: (dateString: string) => string;
   t: (key: string) => string | undefined;
-  language: string;
 }
 
 export function PropertyDetailsCard({
@@ -51,7 +50,6 @@ export function PropertyDetailsCard({
   onLike,
   formatTimestamp,
   t,
-  language,
 }: PropertyDetailsCardProps) {
   return (
     <Card>

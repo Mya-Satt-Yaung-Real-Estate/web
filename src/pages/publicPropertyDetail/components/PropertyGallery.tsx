@@ -18,7 +18,6 @@ import {
   MessageCircle,
   ChevronLeft,
   ChevronRight,
-  TrendingUp,
   Star,
   X,
   Maximize2,
@@ -40,7 +39,6 @@ interface PropertyGalleryProps {
   currentImageIndex: number;
   setCurrentImageIndex: (index: number | ((prev: number) => number)) => void;
   isFavorite: boolean;
-  isLiked: boolean;
   onFavorite: () => void;
   shareUrl: string;
   t: (key: string) => string | undefined;
@@ -53,7 +51,6 @@ export function PropertyGallery({
   currentImageIndex,
   setCurrentImageIndex,
   isFavorite,
-  isLiked,
   onFavorite,
   shareUrl,
   t,
@@ -311,7 +308,7 @@ export function PropertyGallery({
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {galleryImages.map((item, idx) => {
                 const isVideoItem = item.type === 'video';
-                const thumbnailSrc = item.thumbnail_url || item.small_url || item.url;
+                const thumbnailSrc = item.thumbnail_url || item.url;
                 console.log('Rendering thumbnail', idx, thumbnailSrc, 'safeIndex:', safeIndex, 'isVideo:', isVideoItem);
                 return (
                   <div
