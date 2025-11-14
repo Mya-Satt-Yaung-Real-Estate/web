@@ -951,6 +951,19 @@ const translations: Translations = {
   'advertisementDetail.likeError': { en: 'Failed to update like status', mm: 'နှစ်သက်မှုအခြေအနေကိုအပ်ဒိတ်လုပ်ရန်မအောင်မြင်ပါ' },
   'advertisementDetail.signInRequired': { en: 'Please sign in to continue', mm: 'ကျေးဇူးပြု၍ဆက်လုပ်ရန်ဝင်ရောက်ပါ' },
 
+  // Housing Events (Public List)
+  'events.tabLabel': { en: 'Events', mm: 'ပွဲများ' },
+  'events.found': { en: 'Event found {count} result', mm: 'ပွဲ {count} ရလဒ်တွေ့ရှိပါသည်' },
+  'events.foundPlural': { en: 'Events found {count} results', mm: 'ပွဲ {count} ရလဒ်များတွေ့ရှိပါသည်' },
+  'events.errorLoading': { en: 'Failed to load events. Please try again later.', mm: 'ပွဲများကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
+  'events.noResultsFound': { en: 'No events found', mm: 'ပွဲများမတွေ့ရှိပါ' },
+  'events.noResultsMessage': { en: 'Try adjusting your search criteria.', mm: 'သင့်ရှာဖွေမှုစံနှုန်းများကိုညှိပေးပါ။' },
+  'events.viewDetails': { en: 'View Details', mm: 'အသေးစိတ်ကြည့်ရန်' },
+  'events.free': { en: 'Free', mm: 'အခမဲ့' },
+  'events.registered': { en: 'registered', mm: 'မှတ်ပုံတင်ထားသည်' },
+  'events.loadMore': { en: 'Load More', mm: 'ပိုမိုဖွင့်ရန်' },
+  'events.loading': { en: 'Loading...', mm: 'ဖွင့်နေသည်...' },
+
   // FAQ
   'faq.title': { en: 'Frequently Asked Questions', mm: 'မကြာခဏမေးလေ့ရှိသောမေးခွန်းများ' },
   'faq.subtitle': { en: 'Find answers to common questions', mm: 'အများအားဖြင့်မေးလေ့ရှိသောမေးခွန်းများ၏အဖြေများကိုရှာဖွေပါ' },

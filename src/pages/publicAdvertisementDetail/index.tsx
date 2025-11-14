@@ -58,6 +58,7 @@ export default function PublicAdvertisementDetail() {
   const handleLike = () => {
     if (!isAuthenticated) {
       toast.error(t('advertisementDetail.signInRequired') || 'Please sign in to like');
+      navigate('/signin');
       return;
     }
     if (id) {
