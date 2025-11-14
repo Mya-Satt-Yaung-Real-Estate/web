@@ -42,6 +42,20 @@ export const publicPropertyApi = {
   getPublicPropertyBySlug: (slug: string) => {
     return api.get<PublicPropertyDetailResponse>(`/api/v1/frontend/public/properties/${slug}`);
   },
+
+  /**
+   * Toggle favorite status for a public property (frontend endpoint)
+   */
+  toggleFavorite: (slug: string) => {
+    return api.post<{ success: boolean; message: string; data: { is_favorited: boolean; favorite_count?: number } }>(`/api/v1/frontend/properties/${slug}/favorite`);
+  },
+
+  /**
+   * Toggle like status for a public property (frontend endpoint)
+   */
+  toggleLike: (slug: string) => {
+    return api.post<{ success: boolean; message: string; data: { liked: boolean; like_count?: number } }>(`/api/v1/frontend/properties/${slug}/like`);
+  },
 };
 
 

@@ -6,7 +6,10 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePublicProperty } from '@/hooks/queries/usePublicProperties';
+import { publicPropertyApi } from '@/services/api/publicProperties';
+import { publicPropertyKeys } from '@/services/queries/publicProperties';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
@@ -20,6 +23,7 @@ export default function PublicPropertyDetail() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { isAuthenticated } = useAuthStore();
+  const queryClient = useQueryClient();
   
   const { data, isLoading, error } = usePublicProperty(slug || '');
   
@@ -27,6 +31,53 @@ export default function PublicPropertyDetail() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Favorite mutation - must be called before conditional returns
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: (slug: string) => publicPropertyApi.toggleFavorite(slug),
+    onSuccess: (response, slug) => {
+      const isFavorited = response.data?.data?.is_favorited ?? false;
+      setIsFavorite(isFavorited);
+      
+      // Invalidate property detail to refresh favorite status
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(slug) });
+      
+      // Invalidate favorites list if it exists
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      
+      // Show success message
+      toast.success(isFavorited 
+        ? (t('propertyDetail.addedToFavorites') || 'Added to favorites')
+        : (t('propertyDetail.removedFromFavorites') || 'Removed from favorites')
+      );
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error?.message || t('propertyDetail.favoriteError') || 'Failed to update favorite status';
+      toast.error(errorMessage);
+    },
+  });
+
+  // Like mutation - must be called before conditional returns
+  const toggleLikeMutation = useMutation({
+    mutationFn: (slug: string) => publicPropertyApi.toggleLike(slug),
+    onSuccess: (response, slug) => {
+      const isLiked = response.data?.data?.liked ?? false;
+      setIsLiked(isLiked);
+      
+      // Invalidate property detail to refresh like status
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(slug) });
+      
+      // Show success message
+      toast.success(isLiked 
+        ? (t('propertyDetail.liked') || 'Liked!')
+        : (t('propertyDetail.unliked') || 'Unliked')
+      );
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error?.message || t('propertyDetail.likeError') || 'Failed to update like status';
+      toast.error(errorMessage);
+    },
+  });
 
   // Prepare property data - use empty object as fallback to ensure hooks always run
   const property = data?.data?.data || null;
@@ -227,12 +278,8 @@ export default function PublicPropertyDetail() {
       navigate('/signin');
       return;
     }
-    setIsFavorite(!isFavorite);
-    toast.success(isFavorite 
-      ? (t('propertyDetail.removedFromFavorites') || 'Removed from favorites')
-      : (t('propertyDetail.addedToFavorites') || 'Added to favorites')
-    );
-    // TODO: Call API to toggle favorite
+    if (!slug) return;
+    toggleFavoriteMutation.mutate(slug);
   };
 
   const handleLike = () => {
@@ -241,12 +288,8 @@ export default function PublicPropertyDetail() {
       navigate('/signin');
       return;
     }
-    setIsLiked(!isLiked);
-    toast.success(isLiked 
-      ? (t('propertyDetail.unliked') || 'Unliked')
-      : (t('propertyDetail.liked') || 'Liked!')
-    );
-    // TODO: Call API to toggle like
+    if (!slug) return;
+    toggleLikeMutation.mutate(slug);
   };
 
 

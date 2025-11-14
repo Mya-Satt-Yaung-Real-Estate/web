@@ -39,12 +39,14 @@ export function usePublicProperties(filters?: PublicPropertyFilters) {
 
 /**
  * Get public property by slug
+ * Always refetches on mount to ensure fresh data when viewing the detail page
  */
 export function usePublicProperty(slug: string) {
   return useQuery({
     queryKey: publicPropertyKeys.detail(slug),
     queryFn: () => publicPropertyQueries.getPublicPropertyBySlug(slug),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Always consider stale to force refetch
+    refetchOnMount: 'always', // Always refetch on mount to get fresh data
     enabled: !!slug,
   });
 }
