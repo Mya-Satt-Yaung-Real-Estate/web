@@ -4,10 +4,13 @@
  * Displays property details with tabs for Description, Features, and Comments.
  */
 
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import {
   MapPin,
@@ -21,6 +24,11 @@ import {
   Home,
   Sparkles,
   CreditCard,
+  Send,
+  Edit2,
+  Trash2,
+  Reply,
+  X,
 } from 'lucide-react';
 import type { PublicPropertyDetail } from '@/types/publicProperties';
 
@@ -35,6 +43,15 @@ interface PropertyDetailsCardProps {
   isLiked: boolean;
   onLike: () => void;
   formatTimestamp: (dateString: string) => string;
+  isAuthenticated: boolean;
+  onAddComment: (comment: string) => void;
+  onUpdateComment: (commentId: number, comment: string) => void;
+  onDeleteComment: (commentId: number) => void;
+  onReplyToComment: (commentId: number, comment: string) => void;
+  isAddingComment?: boolean;
+  isUpdatingComment?: boolean;
+  isDeletingComment?: boolean;
+  isReplying?: boolean;
   t: (key: string) => string | undefined;
 }
 
@@ -49,8 +66,85 @@ export function PropertyDetailsCard({
   isLiked,
   onLike,
   formatTimestamp,
+  isAuthenticated,
+  onAddComment,
+  onUpdateComment,
+  onDeleteComment,
+  onReplyToComment,
+  isAddingComment = false,
+  isUpdatingComment = false,
+  isDeletingComment = false,
+  isReplying = false,
   t,
 }: PropertyDetailsCardProps) {
+  const [newComment, setNewComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editCommentText, setEditCommentText] = useState('');
+  const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
+  const [editReplyText, setEditReplyText] = useState('');
+  const [replyingToCommentId, setReplyingToCommentId] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState('');
+
+  const handleAddComment = () => {
+    const trimmed = newComment.trim();
+    if (!trimmed) return;
+    onAddComment(trimmed);
+    setNewComment('');
+  };
+
+  const handleStartEdit = (commentId: number, currentText: string) => {
+    setEditingCommentId(commentId);
+    setEditCommentText(currentText);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditCommentText('');
+  };
+
+  const handleSaveEdit = (commentId: number) => {
+    const trimmed = editCommentText.trim();
+    if (!trimmed) return;
+    onUpdateComment(commentId, trimmed);
+    setEditingCommentId(null);
+    setEditCommentText('');
+  };
+
+  const handleStartEditReply = (replyId: number, currentText: string) => {
+    setEditingReplyId(replyId);
+    setEditReplyText(currentText);
+  };
+
+  const handleCancelEditReply = () => {
+    setEditingReplyId(null);
+    setEditReplyText('');
+  };
+
+  const handleSaveEditReply = (replyId: number) => {
+    const trimmed = editReplyText.trim();
+    if (!trimmed) return;
+    onUpdateComment(replyId, trimmed);
+    setEditingReplyId(null);
+    setEditReplyText('');
+  };
+
+  const handleStartReply = (commentId: number) => {
+    setReplyingToCommentId(commentId);
+    setReplyText('');
+  };
+
+  const handleCancelReply = () => {
+    setReplyingToCommentId(null);
+    setReplyText('');
+  };
+
+  const handleSubmitReply = (commentId: number) => {
+    const trimmed = replyText.trim();
+    if (!trimmed) return;
+    onReplyToComment(commentId, trimmed);
+    setReplyingToCommentId(null);
+    setReplyText('');
+  };
   return (
     <Card>
       <CardContent className="p-4 sm:p-6 pt-5 sm:pt-7 space-y-4 sm:space-y-6">
@@ -202,6 +296,33 @@ export function PropertyDetailsCard({
           
           {/* Comments Tab */}
           <TabsContent value="comments" className="space-y-6 pt-4">
+            {/* Add Comment Form */}
+            <div className="space-y-3">
+              <Textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder={t('propertyDetail.writeComment') || 'Write a comment...'}
+                className="min-h-[100px] resize-none"
+                disabled={isAddingComment || !isAuthenticated}
+              />
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleAddComment}
+                  disabled={!newComment.trim() || isAddingComment || !isAuthenticated}
+                  size="sm"
+                >
+                  {isAddingComment ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-2" />
+                  )}
+                  {t('propertyDetail.postComment') || 'Post Comment'}
+                </Button>
+              </div>
+            </div>
+
+            <Separator />
+
             {/* Comments List */}
             <div className="space-y-6">
               {!property.comments || property.comments.length === 0 ? (
@@ -234,8 +355,111 @@ export function PropertyDetailsCard({
                               {formatTimestamp(comment.created_at)}
                             </p>
                           </div>
+                          {comment.is_me && (
+                            <div className="flex gap-2">
+                              {editingCommentId === comment.id ? (
+                                <>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleSaveEdit(comment.id)}
+                                    disabled={isUpdatingComment}
+                                    className="bg-primary/10 text-primary hover:bg-primary/20"
+                                  >
+                                    {t('propertyDetail.save') || 'Save'}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleCancelEdit}
+                                    disabled={isUpdatingComment}
+                                    className="bg-primary/10 text-primary hover:bg-primary/20"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleStartEdit(comment.id, comment.comment)}
+                                    className="bg-primary/10 text-primary hover:bg-primary/20"
+                                  >
+                                    <Edit2 className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => onDeleteComment(comment.id)}
+                                    disabled={isDeletingComment}
+                                    className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        <p className="text-muted-foreground whitespace-pre-wrap">{comment.comment}</p>
+                        {editingCommentId === comment.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              value={editCommentText}
+                              onChange={(e) => setEditCommentText(e.target.value)}
+                              className="min-h-[80px] resize-none"
+                              disabled={isUpdatingComment}
+                            />
+                          </div>
+                        ) : (
+                          <p className="text-muted-foreground whitespace-pre-wrap">{comment.comment}</p>
+                        )}
+                        {isAuthenticated && editingCommentId !== comment.id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleStartReply(comment.id)}
+                            className="bg-primary/10 text-primary hover:bg-primary/20"
+                          >
+                            <Reply className="h-3 w-3 mr-1" />
+                            {t('propertyDetail.reply') || 'Reply'}
+                          </Button>
+                        )}
+
+                        {/* Reply Form */}
+                        {replyingToCommentId === comment.id && (
+                          <div className="mt-3 space-y-2 pl-4 border-l-2 border-border">
+                            <Textarea
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              placeholder={t('propertyDetail.writeReply') || 'Write a reply...'}
+                              className="min-h-[80px] resize-none"
+                              disabled={isReplying}
+                            />
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleSubmitReply(comment.id)}
+                                disabled={!replyText.trim() || isReplying}
+                              >
+                                {isReplying ? (
+                                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                                ) : (
+                                  <Send className="h-4 w-4 mr-2" />
+                                )}
+                                {t('propertyDetail.postReply') || 'Post Reply'}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleCancelReply}
+                                disabled={isReplying}
+                              >
+                                {t('propertyDetail.cancel') || 'Cancel'}
+                              </Button>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Replies */}
                         {comment.replies && comment.replies.length > 0 && (
@@ -256,11 +480,72 @@ export function PropertyDetailsCard({
                                   )}
                                 </div>
                                 <div className="flex-1">
-                                  <p className="mb-1 text-sm">{reply.user_name}</p>
-                                  <p className="text-muted-foreground text-sm mb-1">
-                                    {formatTimestamp(reply.created_at)}
-                                  </p>
-                                  <p className="text-muted-foreground text-sm whitespace-pre-wrap">{reply.comment}</p>
+                                  <div className="flex items-start justify-between">
+                                    <div>
+                                      <p className="mb-1 text-sm">{reply.user_name}</p>
+                                      <p className="text-muted-foreground text-sm mb-1">
+                                        {formatTimestamp(reply.created_at)}
+                                      </p>
+                                    </div>
+                                    {reply.is_me && (
+                                      <div className="flex gap-2">
+                                        {editingReplyId === reply.id ? (
+                                          <>
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => handleSaveEditReply(reply.id)}
+                                              disabled={isUpdatingComment}
+                                              className="bg-primary/10 text-primary hover:bg-primary/20"
+                                            >
+                                              {t('propertyDetail.save') || 'Save'}
+                                            </Button>
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={handleCancelEditReply}
+                                              disabled={isUpdatingComment}
+                                              className="bg-primary/10 text-primary hover:bg-primary/20"
+                                            >
+                                              <X className="h-3 w-3" />
+                                            </Button>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => handleStartEditReply(reply.id, reply.comment)}
+                                              className="bg-primary/10 text-primary hover:bg-primary/20"
+                                            >
+                                              <Edit2 className="h-3 w-3" />
+                                            </Button>
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => onDeleteComment(reply.id)}
+                                              disabled={isDeletingComment}
+                                              className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300"
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                  {editingReplyId === reply.id ? (
+                                    <div className="space-y-2">
+                                      <Textarea
+                                        value={editReplyText}
+                                        onChange={(e) => setEditReplyText(e.target.value)}
+                                        className="min-h-[60px] resize-none text-sm"
+                                        disabled={isUpdatingComment}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <p className="text-muted-foreground text-sm whitespace-pre-wrap">{reply.comment}</p>
+                                  )}
                                 </div>
                               </div>
                             ))}

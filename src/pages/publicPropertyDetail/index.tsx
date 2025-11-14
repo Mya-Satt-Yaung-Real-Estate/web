@@ -79,6 +79,63 @@ export default function PublicPropertyDetail() {
     },
   });
 
+  // Comment mutations - must be called before conditional returns
+  const addCommentMutation = useMutation({
+    mutationFn: ({ slug, comment }: { slug: string; comment: string }) => 
+      publicPropertyApi.addComment(slug, comment),
+    onSuccess: (_response, variables) => {
+      // Invalidate property detail to refresh comments
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(variables.slug) });
+      toast.success(t('propertyDetail.commentAdded') || 'Comment added successfully');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error?.message || t('propertyDetail.commentError') || 'Failed to add comment';
+      toast.error(errorMessage);
+    },
+  });
+
+  const updateCommentMutation = useMutation({
+    mutationFn: ({ slug, commentId, comment }: { slug: string; commentId: number; comment: string }) => 
+      publicPropertyApi.updateComment(slug, commentId, comment),
+    onSuccess: (_response, variables) => {
+      // Invalidate property detail to refresh comments
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(variables.slug) });
+      toast.success(t('propertyDetail.commentUpdated') || 'Comment updated successfully');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error?.message || t('propertyDetail.commentUpdateError') || 'Failed to update comment';
+      toast.error(errorMessage);
+    },
+  });
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: ({ slug, commentId }: { slug: string; commentId: number }) => 
+      publicPropertyApi.deleteComment(slug, commentId),
+    onSuccess: (_response, variables) => {
+      // Invalidate property detail to refresh comments
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(variables.slug) });
+      toast.success(t('propertyDetail.commentDeleted') || 'Comment deleted successfully');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error?.message || t('propertyDetail.commentDeleteError') || 'Failed to delete comment';
+      toast.error(errorMessage);
+    },
+  });
+
+  const replyToCommentMutation = useMutation({
+    mutationFn: ({ slug, commentId, comment }: { slug: string; commentId: number; comment: string }) => 
+      publicPropertyApi.replyToComment(slug, commentId, comment),
+    onSuccess: (_response, variables) => {
+      // Invalidate property detail to refresh comments
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(variables.slug) });
+      toast.success(t('propertyDetail.replyAdded') || 'Reply added successfully');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error?.message || t('propertyDetail.replyError') || 'Failed to add reply';
+      toast.error(errorMessage);
+    },
+  });
+
   // Prepare property data - use empty object as fallback to ensure hooks always run
   const property = data?.data?.data || null;
 
@@ -343,22 +400,49 @@ export default function PublicPropertyDetail() {
                 />
               )}
 
-              {/* Property Details */}
-              {property && (
-                <PropertyDetailsCard
-                  property={property}
-                  title={title}
-                  description={description}
-                  locationString={locationString}
-                  listingTypeName={listingTypeName}
-                  propertyTypeName={propertyTypeName}
-                  propertyConditionLabel={propertyConditionLabel}
-                  isLiked={isLiked}
-                  onLike={handleLike}
-                  formatTimestamp={formatTimestamp}
-                  t={t}
-                />
-              )}
+            {/* Property Details */}
+            {property && slug && (
+              <PropertyDetailsCard
+                property={property}
+                title={title}
+                description={description}
+                locationString={locationString}
+                listingTypeName={listingTypeName}
+                propertyTypeName={propertyTypeName}
+                propertyConditionLabel={propertyConditionLabel}
+                isLiked={isLiked}
+                onLike={handleLike}
+                formatTimestamp={formatTimestamp}
+                isAuthenticated={isAuthenticated}
+                onAddComment={(comment) => {
+                  if (!isAuthenticated) {
+                    toast.error(t('propertyDetail.signInToComment') || 'Please sign in to comment');
+                    navigate('/signin');
+                    return;
+                  }
+                  addCommentMutation.mutate({ slug, comment });
+                }}
+                onUpdateComment={(commentId, comment) => {
+                  updateCommentMutation.mutate({ slug, commentId, comment });
+                }}
+                onDeleteComment={(commentId) => {
+                  deleteCommentMutation.mutate({ slug, commentId });
+                }}
+                onReplyToComment={(commentId, comment) => {
+                  if (!isAuthenticated) {
+                    toast.error(t('propertyDetail.signInToReply') || 'Please sign in to reply');
+                    navigate('/signin');
+                    return;
+                  }
+                  replyToCommentMutation.mutate({ slug, commentId, comment });
+                }}
+                isAddingComment={addCommentMutation.isPending}
+                isUpdatingComment={updateCommentMutation.isPending}
+                isDeletingComment={deleteCommentMutation.isPending}
+                isReplying={replyToCommentMutation.isPending}
+                t={t}
+              />
+            )}
             </div>
 
             {/* Sidebar */}

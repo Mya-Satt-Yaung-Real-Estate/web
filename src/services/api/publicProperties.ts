@@ -56,6 +56,80 @@ export const publicPropertyApi = {
   toggleLike: (slug: string) => {
     return api.post<{ success: boolean; message: string; data: { liked: boolean; like_count?: number } }>(`/api/v1/frontend/properties/${slug}/like`);
   },
+
+  /**
+   * Add a comment to a property (frontend endpoint)
+   */
+  addComment: (slug: string, comment: string) => {
+    return api.post<{ 
+      success: boolean; 
+      message: string; 
+      data: { 
+        id: number; 
+        parent_id: number | null; 
+        comment: string; 
+        user: { 
+          id: number; 
+          name: string; 
+          slug: string; 
+        }; 
+      } 
+    }>(`/api/v1/frontend/property-comments/${slug}`, { comment });
+  },
+
+  /**
+   * Update a comment (frontend endpoint)
+   */
+  updateComment: (slug: string, commentId: number, comment: string) => {
+    return api.put<{ 
+      success: boolean; 
+      message: string; 
+      data: {
+        id: number;
+        user_id: number;
+        property_id: number;
+        parent_id: number | null;
+        comment: string;
+        created_at: string;
+        updated_at: string;
+        user: {
+          id: number;
+          name: string;
+          slug: string;
+        };
+      };
+    }>(`/api/v1/frontend/property-comments/${slug}/comment/${commentId}`, { comment });
+  },
+
+  /**
+   * Delete a comment (frontend endpoint)
+   */
+  deleteComment: (slug: string, commentId: number) => {
+    return api.delete<{ 
+      success: boolean; 
+      message: string; 
+    }>(`/api/v1/frontend/property-comments/${slug}/comment/${commentId}`);
+  },
+
+  /**
+   * Reply to a comment (frontend endpoint)
+   */
+  replyToComment: (slug: string, commentId: number, comment: string) => {
+    return api.post<{ 
+      success: boolean; 
+      message: string; 
+      data: { 
+        id: number; 
+        parent_id: number; 
+        comment: string; 
+        user: { 
+          id: number; 
+          name: string; 
+          slug: string; 
+        }; 
+      } 
+    }>(`/api/v1/frontend/property-comments/${slug}/reply/${commentId}`, { comment });
+  },
 };
 
 
