@@ -63,3 +63,85 @@ export interface PublicAdvertisementFilters {
   page?: number;
 }
 
+// Detail page types
+export interface PublicAdvertisementDetailLocation {
+  region: {
+    id: number;
+    name_en: string;
+    name_mm: string;
+  };
+  township: {
+    id: number;
+    name_en: string;
+    name_mm: string;
+  };
+  address: string;
+}
+
+export interface PublicAdvertisementDetailContactInfo {
+  contact_name: string;
+  phone_numbers: string[];
+  email: string;
+}
+
+export interface PublicAdvertisementDetailStats {
+  view_count: number;
+  contact_count: number;
+  favorite_count: number;
+}
+
+export interface PublicAdvertisementDetailDates {
+  published_at: string;
+  created_at: string;
+  expires_at: string;
+}
+
+export interface PublicAdvertisementDetailUser {
+  id: number;
+  name: string;
+  user_type: string;
+  member_level: string;
+}
+
+export interface PublicAdvertisementDetailMediaImage {
+  id: number;
+  type: string;
+  filename: string;
+  is_primary: boolean;
+  status: string;
+  url: string;
+  small_url: string;
+  medium_url: string;
+  thumbnail_url: string;
+}
+
+export interface PublicAdvertisementDetailMedia {
+  images: PublicAdvertisementDetailMediaImage[];
+  primary_image: PublicAdvertisementDetailMediaImage | null;
+}
+
+export interface PublicAdvertisementDetail {
+  id: number;
+  title_en: string;
+  title_mm: string;
+  description: string;
+  location: PublicAdvertisementDetailLocation;
+  contact_info: PublicAdvertisementDetailContactInfo;
+  is_featured: boolean;
+  is_favorited: boolean;
+  stats: PublicAdvertisementDetailStats;
+  dates: PublicAdvertisementDetailDates;
+  user: PublicAdvertisementDetailUser;
+  age_in_days: number;
+  days_until_expiry: number;
+  is_expiring_soon: boolean;
+  expires_in_text: string;
+  media: PublicAdvertisementDetailMedia;
+}
+
+export interface PublicAdvertisementDetailResponse {
+  success: boolean;
+  message: string;
+  data: PublicAdvertisementDetail;
+}
+

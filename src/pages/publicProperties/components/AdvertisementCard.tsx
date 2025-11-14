@@ -108,13 +108,8 @@ export function AdvertisementCard({ advertisement }: AdvertisementCardProps) {
         <div className="pt-4 border-t border-border/50">
           <Button 
             onClick={() => {
-              // Navigate to advertisement detail if slug exists, otherwise show alert
-              if (advertisement.slug) {
-                navigate(`/advertisements/${advertisement.slug}`);
-              } else {
-                // For now, just show the ID or handle as needed
-                console.log('Advertisement detail not available');
-              }
+              // Navigate to advertisement detail using ID
+              navigate(`/advertisements/${advertisement.id}`);
             }}
             className="w-full gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
             size="sm"
