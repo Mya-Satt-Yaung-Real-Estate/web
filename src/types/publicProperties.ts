@@ -53,6 +53,8 @@ export interface PublicProperty {
   premium: boolean;
   bank_installment_available: boolean;
   code: string;
+  is_favorited?: boolean;
+  is_liked?: boolean;
   property_type: PropertyType;
   property_condition: 'ready' | 'some' | 'no';
   features: string[];

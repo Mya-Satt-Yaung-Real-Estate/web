@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,11 @@ import { InstallmentBadge } from './InstallmentBadge';
 import { MapPin, Bed, Bath, Square, ThumbsUp, MessageCircle, Heart, Eye, DollarSign } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { publicPropertyApi } from '@/services/api/publicProperties';
+import { publicPropertyKeys } from '@/services/queries/publicProperties';
+import { useAuthStore } from '@/stores/authStore';
+import { toast } from 'sonner';
 import type { PublicProperty } from '@/types/publicProperties';
 
 interface PropertyCardProps {
@@ -17,6 +23,70 @@ interface PropertyCardProps {
 export function PropertyCard({ property }: PropertyCardProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+  const queryClient = useQueryClient();
+  
+  const [isLiked, setIsLiked] = useState(property.is_liked ?? false);
+  const [isFavorite, setIsFavorite] = useState(property.is_favorited ?? false);
+  const [likeCount, setLikeCount] = useState(property.like_count);
+  const [favoriteCount, setFavoriteCount] = useState(property.favorite_count);
+
+  const toggleLikeMutation = useMutation({
+    mutationFn: (slug: string) => publicPropertyApi.toggleLike(slug),
+    onSuccess: (response) => {
+      const liked = response.data?.data?.liked ?? false;
+      setIsLiked(liked);
+      setLikeCount(prev => liked ? prev + 1 : Math.max(0, prev - 1));
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.lists() });
+      toast.success(liked 
+        ? (t('propertyDetail.liked') || 'Liked!')
+        : (t('propertyDetail.unliked') || 'Unliked')
+      );
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || error?.message || t('propertyDetail.likeError') || 'Failed to update like');
+    },
+  });
+
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: (slug: string) => publicPropertyApi.toggleFavorite(slug),
+    onSuccess: (response) => {
+      const favorited = response.data?.data?.is_favorited ?? false;
+      setIsFavorite(favorited);
+      setFavoriteCount(prev => favorited ? prev + 1 : Math.max(0, prev - 1));
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      toast.success(favorited 
+        ? (t('propertyDetail.addedToFavorites') || 'Added to favorites')
+        : (t('propertyDetail.removedFromFavorites') || 'Removed from favorites')
+      );
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || error?.message || t('propertyDetail.favoriteError') || 'Failed to update favorite');
+    },
+  });
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error(t('propertyDetail.signInToLike') || 'Please sign in to like');
+      navigate('/signin');
+      return;
+    }
+    toggleLikeMutation.mutate(property.slug);
+  };
+
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error(t('propertyDetail.signInToFavorite') || 'Please sign in to add to favorites');
+      navigate('/signin');
+      return;
+    }
+    toggleFavoriteMutation.mutate(property.slug);
+  };
 
   const getTitle = () => {
     return language === 'mm' ? property.title_mm : property.title_en;
@@ -120,24 +190,30 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors">
-            <ThumbsUp className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{property.like_count.toLocaleString()}</span>
-          </div>
+          <button
+            onClick={handleLike}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
+          >
+            <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+            <span className={isLiked ? 'text-primary' : 'text-muted-foreground'}>{likeCount.toLocaleString()}</span>
+          </button>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors">
             <MessageCircle className="h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">{property.comment_count.toLocaleString()}</span>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors">
-            <Heart className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{property.favorite_count.toLocaleString()}</span>
-          </div>
+          <button
+            onClick={handleFavorite}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
+          >
+            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+            <span className={isFavorite ? 'text-red-500' : 'text-muted-foreground'}>{favoriteCount.toLocaleString()}</span>
+          </button>
         </div>
 
         <Button 
           onClick={() => navigate(`/properties/${property.slug}`)}
           variant="outline"
-          className="w-full mt-auto group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-[#4a9b82] group-hover:text-white group-hover:border-0 group-hover:shadow-lg transition-all"
+          className="w-full mt-auto text-foreground group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-[#4a9b82] group-hover:text-white group-hover:border-0 group-hover:shadow-lg hover:bg-gradient-to-r hover:from-primary hover:to-[#4a9b82] hover:text-white hover:border-0 hover:shadow-lg transition-all"
         >
           {t('listings.viewDetails') || 'View Details'}
         </Button>
