@@ -914,6 +914,16 @@ const translations: Translations = {
   'wantedDetail.errorLoading': { en: 'Error loading wanted listing', mm: 'လိုချင်သောစာရင်းကိုဖွင့်ရာတွင်အမှား' },
   'wantedDetail.errorMessage': { en: 'Failed to load the wanted listing. Please try again later.', mm: 'လိုချင်သောစာရင်းကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
 
+  // Public Advertisements
+  'publicAdvertisements.title': { en: 'Advertisements', mm: 'ကြော်ငြာများ' },
+  'publicAdvertisements.tabLabel': { en: 'Ads', mm: 'ကြော်ငြာများ' },
+  'publicAdvertisements.found': { en: 'Advertisement found {count} result', mm: 'ကြော်ငြာ {count} ရလဒ်တွေ့ရှိပါသည်' },
+  'publicAdvertisements.foundPlural': { en: 'Advertisements found {count} results', mm: 'ကြော်ငြာ {count} ရလဒ်များတွေ့ရှိပါသည်' },
+  'publicAdvertisements.errorLoading': { en: 'Failed to load advertisements. Please try again later.', mm: 'ကြော်ငြာများကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
+  'publicAdvertisements.noResultsFound': { en: 'No advertisements found', mm: 'ကြော်ငြာများမတွေ့ရှိပါ' },
+  'publicAdvertisements.viewDetails': { en: 'View Details', mm: 'အသေးစိတ်ကြည့်ရန်' },
+  'publicAdvertisements.expired': { en: 'Expired', mm: 'သက်တမ်းကုန်ဆုံး' },
+
   // FAQ
   'faq.title': { en: 'Frequently Asked Questions', mm: 'မကြာခဏမေးလေ့ရှိသောမေးခွန်းများ' },
   'faq.subtitle': { en: 'Find answers to common questions', mm: 'အများအားဖြင့်မေးလေ့ရှိသောမေးခွန်းများ၏အဖြေများကိုရှာဖွေပါ' },

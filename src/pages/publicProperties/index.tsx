@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, WantedList } from './components';
+import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, WantedList } from './components';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -82,6 +82,7 @@ export default function PublicProperties() {
   const premiumCount = 100;
   const tanTanTanCount = 100;
   const installmentCount = 100;
+  const advertisementCount = 100;
   const wantedCount = 100;
 
   const getResultsText = () => {
@@ -92,6 +93,8 @@ export default function PublicProperties() {
       count = tanTanTanCount;
     } else if (activeTab === 'installment') {
       count = installmentCount;
+    } else if (activeTab === 'advertisements') {
+      count = advertisementCount;
     } else if (activeTab === 'wanted') {
       count = wantedCount;
     }
@@ -106,6 +109,9 @@ export default function PublicProperties() {
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'installment') {
       const text = isPlural ? t('search.installmentFoundPlural') : t('search.installmentFound');
+      return text.replace('{count}', count.toString());
+    } else if (activeTab === 'advertisements') {
+      const text = isPlural ? t('publicAdvertisements.foundPlural') : t('publicAdvertisements.found');
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'wanted') {
       const text = isPlural ? t('search.wantedFoundPlural') : t('search.wantedFound');
@@ -132,6 +138,8 @@ export default function PublicProperties() {
                     ? t('search.tanTanTan')
                     : activeTab === 'installment'
                     ? t('listings.installment')
+                    : activeTab === 'advertisements'
+                    ? t('publicAdvertisements.title') || 'Advertisements'
                     : activeTab === 'wanted'
                     ? t('search.wanted')
                     : t('search.properties')}
@@ -142,7 +150,7 @@ export default function PublicProperties() {
 
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5 max-w-5xl">
+              <TabsList className="grid w-full grid-cols-6 max-w-5xl">
                 
                 <TabsTrigger 
                   value="property"
@@ -163,6 +171,13 @@ export default function PublicProperties() {
                   className="data-[state=active]:text-primary"
                 >
                   {t('listings.installment') || 'Installment'} ({installmentCount})
+                </TabsTrigger>
+
+                <TabsTrigger 
+                  value="advertisements"
+                  className="data-[state=active]:text-primary"
+                >
+                  {t('publicAdvertisements.tabLabel') || 'Ads'} ({advertisementCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
@@ -196,6 +211,12 @@ export default function PublicProperties() {
               {activeTab === 'installment' && (
                 <TabsContent value="installment" className="space-y-4">
                   <InstallmentPropertiesList filters={filters} />
+                </TabsContent>
+              )}
+
+              {activeTab === 'advertisements' && (
+                <TabsContent value="advertisements" className="space-y-4">
+                  <AdvertisementList />
                 </TabsContent>
               )}
 
