@@ -135,7 +135,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <Button 
-          onClick={() => navigate(`/property/${property.slug}`)}
+          onClick={() => navigate(`/properties/${property.slug}`)}
           variant="outline"
           className="w-full mt-auto group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-[#4a9b82] group-hover:text-white group-hover:border-0 group-hover:shadow-lg transition-all"
         >

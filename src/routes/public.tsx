@@ -35,6 +35,7 @@ const PublicWantedList = lazyWithRetry(() => import('../pages/publicWantedListin
 
 // Public Properties pages
 const PublicProperties = lazyWithRetry(() => import('../pages/publicProperties').then(module => ({ default: module.default })));
+const PublicPropertyDetail = lazyWithRetry(() => import('../pages/publicPropertyDetail').then(module => ({ default: module.default })));
 
 // Public routes configuration
 export const publicRoutes = [
@@ -205,6 +206,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <PublicProperties />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/properties/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicPropertyDetail />
       </Suspense>
     ),
   },

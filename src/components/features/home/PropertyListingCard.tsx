@@ -149,7 +149,7 @@ export function PropertyListingCard({
             <span className="text-muted-foreground">{likeCount}</span>
           </button>
           <button
-            onClick={() => navigate(`/property/${id}`)}
+            onClick={() => navigate(`/properties/${id}`)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
           >
             <MessageCircle className="h-4 w-4 text-muted-foreground" />

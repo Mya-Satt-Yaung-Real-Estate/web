@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { PublicPropertyListResponse, PublicPropertyFilters } from '@/types/publicProperties';
+import type { PublicPropertyListResponse, PublicPropertyFilters, PublicPropertyDetailResponse } from '@/types/publicProperties';
 
 export const publicPropertyApi = {
 
@@ -37,6 +37,10 @@ export const publicPropertyApi = {
         listing_type_id: listingTypeId,
       },
     });
+  },
+
+  getPublicPropertyBySlug: (slug: string) => {
+    return api.get<PublicPropertyDetailResponse>(`/api/v1/frontend/public/properties/${slug}`);
   },
 };
 

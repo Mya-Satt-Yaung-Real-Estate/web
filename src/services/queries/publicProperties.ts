@@ -15,6 +15,8 @@ export const publicPropertyKeys = {
   tanTanTan: () => [...publicPropertyKeys.all, 'tan-tan-tan'] as const,
   tanTanTanList: (filters?: Omit<PublicPropertyFilters, 'tan_tan_tan'>) => 
     [...publicPropertyKeys.tanTanTan(), filters] as const,
+  details: () => [...publicPropertyKeys.all, 'detail'] as const,
+  detail: (slug: string) => [...publicPropertyKeys.details(), slug] as const,
 } as const;
 
 // ============================================================================
@@ -33,6 +35,10 @@ export const publicPropertyQueries = {
 
   getTanTanTanProperties: (filters?: Omit<PublicPropertyFilters, 'tan_tan_tan'>) => {
     return publicPropertyApi.getTanTanTanProperties(filters);
+  },
+
+  getPublicPropertyBySlug: (slug: string) => {
+    return publicPropertyApi.getPublicPropertyBySlug(slug);
   },
 };
 

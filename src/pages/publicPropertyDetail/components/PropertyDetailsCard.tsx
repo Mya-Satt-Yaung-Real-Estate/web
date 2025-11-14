@@ -1,0 +1,283 @@
+/**
+ * Property Details Card Component
+ * 
+ * Displays property details with tabs for Description, Features, and Comments.
+ */
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageWithFallback } from '@/components/ImageWithFallback';
+import {
+  MapPin,
+  Bed,
+  Bath,
+  Square,
+  ThumbsUp,
+  MessageCircle,
+  Eye,
+  CheckCircle,
+  Home,
+  Sparkles,
+  CreditCard,
+} from 'lucide-react';
+import type { PublicPropertyDetail } from '@/types/publicProperties';
+
+interface PropertyDetailsCardProps {
+  property: PublicPropertyDetail;
+  title: string;
+  description: string;
+  locationString: string;
+  listingTypeName: string;
+  propertyTypeName: string;
+  propertyConditionLabel: string;
+  isLiked: boolean;
+  onLike: () => void;
+  formatTimestamp: (dateString: string) => string;
+  t: (key: string) => string | undefined;
+  language: string;
+}
+
+export function PropertyDetailsCard({
+  property,
+  title,
+  description,
+  locationString,
+  listingTypeName,
+  propertyTypeName,
+  propertyConditionLabel,
+  isLiked,
+  onLike,
+  formatTimestamp,
+  t,
+  language,
+}: PropertyDetailsCardProps) {
+  return (
+    <Card>
+      <CardContent className="p-4 sm:p-6 pt-5 sm:pt-7 space-y-4 sm:space-y-6">
+        <div>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-0 mb-2">
+            <div className="flex-1">
+              <h1 className="mb-2 text-lg sm:text-xl lg:text-2xl">{title}</h1>
+              {property.location && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span>{locationString}</span>
+                </div>
+              )}
+            </div>
+            <div className="text-left sm:text-right">
+              <div className="text-primary mb-1 text-lg sm:text-xl font-semibold">{property.formatted_price || property.price || '-'}</div>
+              <Badge variant="outline" className="text-xs sm:text-sm">{listingTypeName}</Badge>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Key Features */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Bed className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">{t('propertyDetail.bedrooms') || 'Bedrooms'}</p>
+              <p>{property.bedrooms || 0}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Bath className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">{t('propertyDetail.bathrooms') || 'Bathrooms'}</p>
+              <p>{property.bathrooms || 0}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Square className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">{t('propertyDetail.area') || 'Area'}</p>
+              <p>{property.area_sqft ? parseFloat(property.area_sqft).toLocaleString() : '0'} sqft</p>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Additional Property Information */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
+            <div className="flex items-center gap-2 mb-2">
+              <Home className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">{t('propertyDetail.propertyType') || 'Property Type'}</p>
+            </div>
+            <p className="text-sm">{propertyTypeName}</p>
+          </div>
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">{t('propertyDetail.condition') || 'Condition'}</p>
+            </div>
+            <p className="text-sm">{propertyConditionLabel}</p>
+          </div>
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
+            <div className="flex items-center gap-2 mb-2">
+              <CreditCard className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">{t('propertyDetail.bankInstallment') || 'Bank Installment'}</p>
+            </div>
+            <p className="text-sm">
+              {property.bank_installment_available ? (
+                <span className="text-green-600 flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3" />
+                  {t('propertyDetail.available') || 'Available'}
+                </span>
+              ) : (
+                t('propertyDetail.notAvailable') || 'Not Available'
+              )}
+            </p>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Like & Comments Stats */}
+        <div className="flex flex-row items-center justify-between sm:justify-start gap-4 sm:gap-6 p-4 rounded-lg bg-muted/30 border border-border/50">
+          <button
+            onClick={onLike}
+            className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+          >
+            <ThumbsUp className={`h-5 w-5 ${isLiked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+            <span className="text-sm">{property.stats?.like_count || 0}</span>
+            <span className="hidden sm:inline text-sm">{t('propertyDetail.likes') || 'Likes'}</span>
+          </button>
+          <Separator orientation="vertical" className="hidden sm:block h-8" />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Eye className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm">{(property.stats?.view_count || 0).toLocaleString()}</span>
+            <span className="hidden sm:inline text-sm">{t('propertyDetail.views') || 'Views'}</span>
+          </div>
+          <Separator orientation="vertical" className="hidden sm:block h-8" />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <MessageCircle className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm">{property.stats?.comment_count || 0}</span>
+            <span className="hidden sm:inline text-sm">{t('propertyDetail.comments') || 'Comments'}</span>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Tabs */}
+        <Tabs defaultValue="description" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="description" className="text-xs sm:text-sm">{t('propertyDetail.description') || 'Description'}</TabsTrigger>
+            <TabsTrigger value="features" className="text-xs sm:text-sm">{t('propertyDetail.features') || 'Features'}</TabsTrigger>
+            <TabsTrigger value="comments" className="text-xs sm:text-sm">
+              {t('propertyDetail.comments') || 'Comments'} ({property.comments?.length || 0})
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="description" className="space-y-4 pt-4">
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+              {description}
+            </p>
+          </TabsContent>
+          
+          <TabsContent value="features" className="pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {property.features && property.features.length > 0 ? (
+                property.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span className="text-muted-foreground">{feature}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted-foreground">{t('propertyDetail.noFeatures') || 'No features listed'}</p>
+              )}
+            </div>
+          </TabsContent>
+          
+          {/* Comments Tab */}
+          <TabsContent value="comments" className="space-y-6 pt-4">
+            {/* Comments List */}
+            <div className="space-y-6">
+              {!property.comments || property.comments.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>{t('propertyDetail.noComments') || 'No comments yet. Be the first to comment!'}</p>
+                </div>
+              ) : (
+                property.comments.map(comment => (
+                  <div key={comment.id} className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary to-[#4a9b82]">
+                        {comment.profile_link ? (
+                          <ImageWithFallback
+                            src={comment.profile_link}
+                            alt={comment.user_name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white text-sm font-medium">
+                            {comment.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="mb-1">{comment.user_name}</p>
+                            <p className="text-muted-foreground text-sm">
+                              {formatTimestamp(comment.created_at)}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground whitespace-pre-wrap">{comment.comment}</p>
+
+                        {/* Replies */}
+                        {comment.replies && comment.replies.length > 0 && (
+                          <div className="space-y-4 mt-4 pl-4 border-l-2 border-border">
+                            {comment.replies.map(reply => (
+                              <div key={reply.id} className="flex gap-3">
+                                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary to-[#4a9b82]">
+                                  {reply.profile_link ? (
+                                    <ImageWithFallback
+                                      src={reply.profile_link}
+                                      alt={reply.user_name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-white text-xs font-medium">
+                                      {reply.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="mb-1 text-sm">{reply.user_name}</p>
+                                  <p className="text-muted-foreground text-sm mb-1">
+                                    {formatTimestamp(reply.created_at)}
+                                  </p>
+                                  <p className="text-muted-foreground text-sm whitespace-pre-wrap">{reply.comment}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+}
+

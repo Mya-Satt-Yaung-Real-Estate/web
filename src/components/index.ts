@@ -16,7 +16,7 @@ export { Layout } from './layout/Layout';
 export { MobileNavigation } from './layout/mobile/MobileNavigation';
 
 // ============================================================================
-// FEATURE COMPONENTS
+// Feature components
 // ============================================================================
 
 // Home Feature Components
