@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
+import { ShareModal } from '@/components/ui/ShareModal';
 import { MapPin, Bed, Bath, Square, ThumbsUp, MessageCircle, Heart, Eye, DollarSign, Share2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -93,36 +94,6 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
     toggleFavoriteMutation.mutate(property.slug);
   };
 
-  const handleShare = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const propertyUrl = `${window.location.origin}/properties/${property.slug}`;
-    const title = getTitle();
-    
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: title,
-          text: `Check out this property: ${title}`,
-          url: propertyUrl,
-        });
-        toast.success(t('propertyDetail.shared') || 'Shared successfully!');
-      } else {
-        await navigator.clipboard.writeText(propertyUrl);
-        toast.success(t('propertyDetail.linkCopied') || 'Link copied to clipboard!');
-      }
-    } catch (error: any) {
-      // If share is cancelled or fails, fall back to clipboard
-      if (error.name !== 'AbortError') {
-        try {
-          await navigator.clipboard.writeText(propertyUrl);
-          toast.success(t('propertyDetail.linkCopied') || 'Link copied to clipboard!');
-        } catch {
-          toast.error(t('propertyDetail.shareError') || 'Failed to share');
-        }
-      }
-    }
-  };
 
   const getTitle = () => {
     return language === 'mm' ? property.title_mm : property.title_en;
@@ -256,12 +227,16 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
             <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
             <span className={`text-xs sm:text-sm ${isFavorite ? 'text-red-500' : 'text-muted-foreground'}`}>{favoriteCount.toLocaleString()}</span>
           </button>
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
+          <ShareModal 
+            title={getTitle()} 
+            url={`${window.location.origin}/properties/${property.slug}`}
           >
-            <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
-          </button>
+            <button
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
+            >
+              <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+            </button>
+          </ShareModal>
         </div>
 
         <Button 

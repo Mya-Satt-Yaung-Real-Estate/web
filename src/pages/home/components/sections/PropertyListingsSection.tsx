@@ -73,14 +73,14 @@ export const PropertyListingsSection = memo(function PropertyListingsSection() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
-              <h2 className="mb-4">{t('listings.title')}</h2>
+              <h2 className="mb-4">{t('featured.title') || t('listings.title')}</h2>
               <p className="text-muted-foreground">
-                {t('listings.subtitle')}
+                {t('featured.subtitle') || t('listings.subtitle')}
               </p>
             </div>
             <Link to="/search?type=property">
               <Button variant="outline">
-                {t('listings.viewAll')}
+                {t('featured.viewAll') || t('listings.viewAll')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -98,14 +98,14 @@ export const PropertyListingsSection = memo(function PropertyListingsSection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
           <div>
-            <h2 className="mb-4">{t('listings.title')}</h2>
+            <h2 className="mb-4">{t('featured.title') || t('listings.title')}</h2>
             <p className="text-muted-foreground">
-              {t('listings.subtitle')}
+              {t('featured.subtitle') || t('listings.subtitle')}
             </p>
           </div>
           <Link to="/search?type=property">
             <Button variant="outline">
-              {t('listings.viewAll')}
+              {t('featured.viewAll') || t('listings.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
