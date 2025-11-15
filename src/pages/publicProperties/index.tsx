@@ -76,6 +76,27 @@ export default function PublicProperties() {
     const maxArea = searchParams.get('max_area');
     if (maxArea) filters.max_area = Number(maxArea);
 
+    const tanTanTan = searchParams.get('tan_tan_tan');
+    if (tanTanTan === 'true') filters.tan_tan_tan = true;
+    if (tanTanTan === 'false') filters.tan_tan_tan = false;
+
+    const premium = searchParams.get('premium');
+    if (premium === 'true') filters.premium = true;
+    if (premium === 'false') filters.premium = false;
+
+    const installment = searchParams.get('installment');
+    if (installment === 'true') filters.installment = true;
+    if (installment === 'false') filters.installment = false;
+
+    const priceLowToHigh = searchParams.get('price_low_to_high');
+    if (priceLowToHigh === 'true') filters.price_low_to_high = true;
+    if (priceLowToHigh === 'false') filters.price_low_to_high = false;
+
+    const propertyCondition = searchParams.get('property_condition');
+    if (propertyCondition && ['ready', 'some', 'no'].includes(propertyCondition)) {
+      filters.property_condition = propertyCondition as 'ready' | 'some' | 'no';
+    }
+
     return filters;
   };
 

@@ -5,4 +5,5 @@
  */
 
 export { PropertyFilters } from './PropertyFilters';
+export { AdvancedSearchModal } from './AdvancedSearchModal';
 

@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Home, Tag } from 'lucide-react';
+import { Search, Home, Tag, SlidersHorizontal, RotateCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useListingTypes } from '@/hooks/queries/useProperties';
+import { AdvancedSearchModal } from './AdvancedSearchModal';
 import type { PropertyType } from '@/services/api/propertyTypes';
 import type { ListingType } from '@/services/api/listingTypes';
 
@@ -33,6 +34,7 @@ interface PropertyFiltersProps {
 export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
   const { t, language } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isAdvancedModalOpen, setIsAdvancedModalOpen] = useState(false);
   
   // Get filter data
   const { data: propertyTypesData } = usePropertyTypes();
@@ -112,6 +114,122 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     }
   };
 
+  // Handle advanced filter changes
+  const handleAdvancedFilters = (filters: {
+    tan_tan_tan?: boolean;
+    premium?: boolean;
+    installment?: boolean;
+    price_low_to_high?: boolean;
+    property_condition?: 'ready' | 'some' | 'no';
+    property_type_id?: number;
+    listing_type_id?: number;
+    region_id?: number;
+    township_id?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    min_area?: number;
+    max_area?: number;
+    min_price?: number;
+    max_price?: number;
+  }) => {
+    const newParams = new URLSearchParams(searchParams);
+
+    // Update advanced filter params
+    if (filters.tan_tan_tan !== undefined) {
+      newParams.set('tan_tan_tan', String(filters.tan_tan_tan));
+    } else {
+      newParams.delete('tan_tan_tan');
+    }
+
+    if (filters.premium !== undefined) {
+      newParams.set('premium', String(filters.premium));
+    } else {
+      newParams.delete('premium');
+    }
+
+    if (filters.installment !== undefined) {
+      newParams.set('installment', String(filters.installment));
+    } else {
+      newParams.delete('installment');
+    }
+
+    if (filters.property_type_id) {
+      newParams.set('property_type_id', String(filters.property_type_id));
+    } else {
+      newParams.delete('property_type_id');
+    }
+
+    if (filters.listing_type_id) {
+      newParams.set('listing_type_id', String(filters.listing_type_id));
+    } else {
+      newParams.delete('listing_type_id');
+    }
+
+    if (filters.price_low_to_high !== undefined) {
+      newParams.set('price_low_to_high', String(filters.price_low_to_high));
+    } else {
+      newParams.delete('price_low_to_high');
+    }
+
+    if (filters.property_condition) {
+      newParams.set('property_condition', filters.property_condition);
+    } else {
+      newParams.delete('property_condition');
+    }
+
+    if (filters.region_id) {
+      newParams.set('region_id', String(filters.region_id));
+    } else {
+      newParams.delete('region_id');
+    }
+
+    if (filters.township_id) {
+      newParams.set('township_id', String(filters.township_id));
+    } else {
+      newParams.delete('township_id');
+    }
+
+    if (filters.bedrooms) {
+      newParams.set('bedrooms', String(filters.bedrooms));
+    } else {
+      newParams.delete('bedrooms');
+    }
+
+    if (filters.bathrooms) {
+      newParams.set('bathrooms', String(filters.bathrooms));
+    } else {
+      newParams.delete('bathrooms');
+    }
+
+    if (filters.min_area) {
+      newParams.set('min_area', String(filters.min_area));
+    } else {
+      newParams.delete('min_area');
+    }
+
+    if (filters.max_area) {
+      newParams.set('max_area', String(filters.max_area));
+    } else {
+      newParams.delete('max_area');
+    }
+
+    if (filters.min_price) {
+      newParams.set('min_price', String(filters.min_price));
+    } else {
+      newParams.delete('min_price');
+    }
+
+    if (filters.max_price) {
+      newParams.set('max_price', String(filters.max_price));
+    } else {
+      newParams.delete('max_price');
+    }
+
+    // Reset to page 1 when filters change
+    newParams.delete('page');
+    setSearchParams(newParams);
+  };
+
   // Debounce search input
   useEffect(() => {
     const currentSearchParam = searchParams.get('search') || '';
@@ -144,6 +262,18 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
 
   const getListingTypeName = (type: ListingType): string => {
     return language === 'mm' ? type.name_mm : type.name_en;
+  };
+
+  const handleResetFilters = () => {
+    const newParams = new URLSearchParams();
+    
+    // Keep only the type parameter if it exists
+    const typeParam = searchParams.get('type');
+    if (typeParam) {
+      newParams.set('type', typeParam);
+    }
+    
+    setSearchParams(newParams);
   };
 
   return (
@@ -196,21 +326,34 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
           </Select>
         </div>
 
-        {/* Advanced Search Button */}
-        <div className="md:col-span-3">
+        {/* Advanced Search and Reset Buttons */}
+        <div className="md:col-span-3 flex gap-2">
           <Button
             variant="outline"
             size="sm"
-            className="w-full h-10 text-sm"
-            onClick={() => {
-              // TODO: Implement advanced search dropdown
-              console.log('Advanced search clicked');
-            }}
+            className="flex-1 h-10 text-sm"
+            onClick={() => setIsAdvancedModalOpen(true)}
           >
+            <SlidersHorizontal className="h-4 w-4 mr-2" />
             {t('search.advancedSearch') || 'Advanced Search'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-10 text-sm"
+            onClick={handleResetFilters}
+          >
+            <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
       </div>
+
+      {/* Advanced Search Modal */}
+      <AdvancedSearchModal
+        isOpen={isAdvancedModalOpen}
+        onClose={() => setIsAdvancedModalOpen(false)}
+        onApply={handleAdvancedFilters}
+      />
     </div>
   );
 }
