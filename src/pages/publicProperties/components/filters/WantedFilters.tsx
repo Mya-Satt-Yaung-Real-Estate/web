@@ -209,7 +209,7 @@ export function WantedFilters() {
         </div>
 
         {/* Property Type Select */}
-        <div className="md:col-span-3">
+        <div className="md:col-span-2">
           <Select value={propertyTypeId} onValueChange={handlePropertyTypeChange}>
             <SelectTrigger className="h-10 bg-background/50 border-border/50">
               <Home className="h-4 w-4 mr-2 text-primary" />
@@ -257,9 +257,9 @@ export function WantedFilters() {
             size="sm"
             className="h-10 text-sm"
             onClick={handleResetFilters}
-            title={t('search.reset') || 'Reset Filters'}
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {t('search.reset') || 'Reset'}
           </Button>
         </div>
       </div>

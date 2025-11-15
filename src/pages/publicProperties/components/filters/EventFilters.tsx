@@ -259,9 +259,9 @@ export function EventFilters() {
             size="sm"
             className="w-full h-10 text-sm"
             onClick={handleResetFilters}
-            title={t('search.reset') || 'Reset Filters'}
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {t('search.reset') || 'Reset'}
           </Button>
         </div>
       </div>

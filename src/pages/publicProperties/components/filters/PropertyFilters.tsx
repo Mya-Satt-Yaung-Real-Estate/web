@@ -343,7 +343,8 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
             className="h-10 text-sm"
             onClick={handleResetFilters}
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {t('search.reset') || 'Reset'}
           </Button>
         </div>
       </div>
