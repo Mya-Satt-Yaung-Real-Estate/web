@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
-import { PropertyFilters } from './components/filters';
+import { PropertyFilters, AdvertisementFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
+import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
 
 export default function PublicProperties() {
   const { t } = useLanguage();
@@ -100,7 +101,27 @@ export default function PublicProperties() {
     return filters;
   };
 
+  const getAdvertisementFiltersFromParams = (): PublicAdvertisementFilters => {
+    const perPageParam = 20;
+    const filters: PublicAdvertisementFilters = {
+      per_page: perPageParam,
+      page: 1,
+    };
+
+    const search = searchParams.get('search');
+    if (search) filters.search = search;
+
+    const regionId = searchParams.get('region_id');
+    if (regionId) filters.region_id = Number(regionId);
+
+    const townshipId = searchParams.get('township_id');
+    if (townshipId) filters.township_id = Number(townshipId);
+
+    return filters;
+  };
+
   const filters = getFiltersFromParams();
+  const advertisementFilters = getAdvertisementFiltersFromParams();
   
   // Fetch statistics counts from API
   const { data: countsData } = useStatisticsCounts();
@@ -245,6 +266,11 @@ export default function PublicProperties() {
                 <PropertyFilters />
               )}
 
+              {/* Advertisement Filters - Show for Advertisements tab */}
+              {activeTab === 'advertisements' && (
+                <AdvertisementFilters />
+              )}
+
               {activeTab === 'property' && (
                 <TabsContent value="property" className="space-y-4">
                   <PropertyList filters={filters} />
@@ -265,7 +291,7 @@ export default function PublicProperties() {
 
               {activeTab === 'advertisements' && (
                 <TabsContent value="advertisements" className="space-y-4">
-                  <AdvertisementList />
+                  <AdvertisementList filters={advertisementFilters} />
                 </TabsContent>
               )}
 

@@ -5,8 +5,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
 
-export function AdvertisementList() {
+interface AdvertisementListProps {
+  filters?: PublicAdvertisementFilters;
+}
+
+export function AdvertisementList({ filters }: AdvertisementListProps) {
   const { t } = useLanguage();
   const { 
     data, 
@@ -15,7 +20,7 @@ export function AdvertisementList() {
     fetchNextPage, 
     hasNextPage, 
     isFetchingNextPage 
-  } = usePublicAdvertisements({ per_page: 20 });
+  } = usePublicAdvertisements({ ...filters, per_page: 20 });
 
   if (isLoading) {
     return (

@@ -59,6 +59,9 @@ export interface PublicAdvertisementListResponse {
 }
 
 export interface PublicAdvertisementFilters {
+  search?: string;
+  region_id?: number;
+  township_id?: number;
   per_page?: number;
   page?: number;
 }
