@@ -9,9 +9,9 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useCompanyTypes } from './queries/useCompanyTypes';
 import type { CompanyType } from '../types';
 import {
-  Search, Grid3x3, Star, Home as HomeIcon, Building, TrendingUp, Calculator,
-  Briefcase, Users, Calendar, Megaphone, BookOpen, HelpCircle, Mail, Info,
-  Scale, Banknote, Building2
+  Search, Grid3x3, Star, Home as HomeIcon, Calculator,
+  Calendar, Megaphone, BookOpen, HelpCircle, Mail, Info,
+  Scale, Banknote, Building2, FileText, Building, Briefcase, TrendingUp, Users
 } from 'lucide-react';
 
 // Icon mapping for company types
@@ -36,17 +36,13 @@ export function useNavigationData() {
     ],
     
     propertyCategories: [
-      { name: t('categories.searchAllProperty'), path: '/search', icon: Search },
-      { name: t('categories.tantantan'), path: '/search?filter=tantantan', icon: Grid3x3 },
-      { name: t('categories.premiumProperties'), path: '/search?type=premium', icon: Star },
-      { name: t('listings.forSale'), path: '/search?filter=sale', icon: HomeIcon },
-      { name: t('listings.forRent'), path: '/search?filter=rent', icon: Building },
-      { name: t('categories.preSale'), path: '/search?filter=presale', icon: TrendingUp },
-      { name: t('categories.installment'), path: '/search?filter=installment', icon: Calculator },
-      { name: t('categories.buyerPosts'), path: '/search?type=wanted&listingType=buyer', icon: Search },
-      { name: t('categories.renterPosts'), path: '/search?type=wanted&listingType=renter', icon: Users },
-      { name: t('categories.vacanciesJobs'), path: '/search?type=job', icon: Briefcase },
-      { name: t('services.housingEvent'), path: '/search?type=event', icon: Calendar },
+      { name: t('categories.searchAllProperty'), path: '/search', icon: HomeIcon },
+      { name: language === 'mm' ? 'ပရီမီယံအိမ်ခြံမြေ' : 'Premium Property', path: '/search?type=premium', icon: Star },
+      { name: t('listings.installment'), path: '/search?type=installment', icon: Calculator },
+      { name: t('publicAdvertisements.tabLabel'), path: '/search?type=advertisements', icon: Megaphone },
+      { name: t('services.housingEvent'), path: '/search?type=events', icon: Calendar },
+      { name: language === 'mm' ? 'လိုချင်သောစာရင်း' : 'Wanted List', path: '/search?type=wanted', icon: FileText },
+      { name: language === 'mm' ? 'တန်တန်တန်အိမ်ခြံမြေ' : 'TanTanTan Property', path: '/search?type=tantantan', icon: Grid3x3 },
     ],
     
     createListingOptions: [
