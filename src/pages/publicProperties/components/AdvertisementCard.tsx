@@ -57,35 +57,35 @@ export function AdvertisementCard({ advertisement }: AdvertisementCardProps) {
         </div>
       )}
 
-      <CardHeader className="space-y-3 pb-4">
+      <CardHeader className="p-3 sm:p-6 space-y-2 sm:space-y-3 pb-3 sm:pb-4">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
-            <h3 className="mb-2 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem]">
+            <h3 className="mb-1.5 sm:mb-2 text-sm sm:text-base group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
               {title}
             </h3>
             {advertisement.location && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
                 <span className="line-clamp-1">{getLocation()}</span>
               </div>
             )}
           </div>
         </div>
 
-        <div className="min-h-[2.5rem]">
+        <div className="min-h-[2rem] sm:min-h-[2.5rem]">
           {advertisement.description ? (
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
               {advertisement.description}
             </p>
           ) : (
-            <div className="text-sm text-muted-foreground line-clamp-2 opacity-0">
+            <div className="text-xs sm:text-sm text-muted-foreground line-clamp-2 opacity-0">
               &nbsp;
             </div>
           )}
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col justify-between space-y-4">
+      <CardContent className="p-3 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-3">
@@ -105,13 +105,13 @@ export function AdvertisementCard({ advertisement }: AdvertisementCardProps) {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-border/50">
+        <div className="pt-3 sm:pt-4 border-t border-border/50">
           <Button 
             onClick={() => {
               // Navigate to advertisement detail using ID
               navigate(`/advertisements/${advertisement.id}`);
             }}
-            className="w-full gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
+            className="w-full text-xs sm:text-sm gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
             size="sm"
           >
             {t('publicAdvertisements.viewDetails') || 'View Details'}

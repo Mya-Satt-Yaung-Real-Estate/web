@@ -157,63 +157,64 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-4 pt-6 flex-1 flex flex-col">
-        <h4 className="mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+      <CardContent className="p-3 sm:p-4 pt-4 sm:pt-6 flex-1 flex flex-col">
+        <h4 className="mb-2 text-sm sm:text-base line-clamp-1 group-hover:text-primary transition-colors">
           {getTitle()}
         </h4>
         
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
+        <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
+          <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
             <span className="line-clamp-1">{getLocation()}</span>
           </div>
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <DollarSign className="h-4 w-4 flex-shrink-0" />
+          <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+            <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
             <span>{formatPrice(property.price)}</span>
           </div>
-          <div className="flex items-center gap-4 text-muted-foreground">
+          <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <Bed className="h-4 w-4" />
+              <Bed className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span>{property.bedrooms}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Bath className="h-4 w-4" />
+              <Bath className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span>{property.bathrooms}</span>
             </div>
             {property.area_sqft && (
               <div className="flex items-center gap-1.5">
-                <Square className="h-4 w-4" />
+                <Square className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span>{parseFloat(property.area_sqft).toLocaleString()} sqft</span>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
+        <div className="flex items-center justify-between mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-border/50">
           <button
             onClick={handleLike}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
           >
-            <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
-            <span className={isLiked ? 'text-primary' : 'text-muted-foreground'}>{likeCount.toLocaleString()}</span>
+            <ThumbsUp className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isLiked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+            <span className={`text-xs sm:text-sm ${isLiked ? 'text-primary' : 'text-muted-foreground'}`}>{likeCount.toLocaleString()}</span>
           </button>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors">
-            <MessageCircle className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{property.comment_count.toLocaleString()}</span>
+          <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg hover:bg-primary/10 transition-colors">
+            <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+            <span className="text-xs sm:text-sm text-muted-foreground">{property.comment_count.toLocaleString()}</span>
           </div>
           <button
             onClick={handleFavorite}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer"
           >
-            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-            <span className={isFavorite ? 'text-red-500' : 'text-muted-foreground'}>{favoriteCount.toLocaleString()}</span>
+            <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+            <span className={`text-xs sm:text-sm ${isFavorite ? 'text-red-500' : 'text-muted-foreground'}`}>{favoriteCount.toLocaleString()}</span>
           </button>
         </div>
 
         <Button 
           onClick={() => navigate(`/properties/${property.slug}`)}
           variant="outline"
-          className="w-full mt-auto text-foreground group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-[#4a9b82] group-hover:text-white group-hover:border-0 group-hover:shadow-lg hover:bg-gradient-to-r hover:from-primary hover:to-[#4a9b82] hover:text-white hover:border-0 hover:shadow-lg transition-all"
+          size="sm"
+          className="w-full mt-auto text-xs sm:text-sm group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-[#4a9b82] group-hover:text-white group-hover:border-0 group-hover:shadow-lg hover:bg-gradient-to-r hover:from-primary hover:to-[#4a9b82] hover:text-white hover:border-0 hover:shadow-lg transition-all"
         >
           {t('listings.viewDetails') || 'View Details'}
         </Button>

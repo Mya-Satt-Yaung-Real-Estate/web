@@ -132,12 +132,12 @@ export default function PublicProperties() {
     <>
       <SEOHead seo={seo} path="/search" />
       
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-20 sm:pt-24 pb-8 sm:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
               <div>
-                <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
                   {activeTab === 'premium' 
                     ? t('search.premium') 
                     : activeTab === 'tantantan' 
@@ -157,59 +157,61 @@ export default function PublicProperties() {
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-7 max-w-5xl">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
+              <div className="w-full max-w-5xl overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
+                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-7 gap-1 sm:gap-0 inline-flex sm:inline-grid">
                 
                 <TabsTrigger 
                   value="property"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('search.properties') || 'Properties'} ({propertyCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
                   value="premium"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('search.premium') || 'Premium'} ({premiumCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
                   value="installment"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('listings.installment') || 'Installment'} ({installmentCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
                   value="advertisements"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('publicAdvertisements.tabLabel') || 'Ads'} ({advertisementCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
                   value="events"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('events.tabLabel') || 'Events'} ({eventCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
                   value="wanted"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('search.wanted') || 'Wanted'} ({wantedCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
                   value="tantantan"
-                  className="data-[state=active]:text-primary"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
                 </TabsTrigger>
                 
-              </TabsList>
+                </TabsList>
+              </div>
 
               {activeTab === 'property' && (
                 <TabsContent value="property" className="space-y-4">

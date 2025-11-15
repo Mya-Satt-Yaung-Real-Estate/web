@@ -24,7 +24,7 @@ export function PremiumPropertiesList({ filters }: PremiumPropertiesListProps) {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {[...Array(6)].map((_, i) => (
           <Card key={i} className="overflow-hidden">
             <Skeleton className="h-48 w-full" />
@@ -64,7 +64,7 @@ export function PremiumPropertiesList({ filters }: PremiumPropertiesListProps) {
   }
 
   const loadingSkeletons = (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
       {[...Array(6)].map((_, i) => (
         <Card key={`skeleton-${i}`} className="overflow-hidden">
           <Skeleton className="h-48 w-full" />
@@ -85,7 +85,7 @@ export function PremiumPropertiesList({ filters }: PremiumPropertiesListProps) {
       fetchNextPage={fetchNextPage}
       loadingComponent={loadingSkeletons}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {properties.map((property) => (
           <PropertyCard key={property.id} property={property} />
         ))}

@@ -85,22 +85,22 @@ export function EventCard({ event }: EventCardProps) {
         )}
       </div>
 
-      <CardContent className="p-4 pt-5">
-        <div className="space-y-3">
+      <CardContent className="p-3 sm:p-4 pt-4 sm:pt-5">
+        <div className="space-y-2 sm:space-y-3">
           {/* Title */}
-          <h4 className="mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+          <h4 className="mb-1.5 sm:mb-2 text-sm sm:text-base line-clamp-1 group-hover:text-primary transition-colors">
             {getName()}
           </h4>
 
           {/* Date */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             <span>{formatDate(event.date)}</span>
           </div>
 
           {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             <span className="line-clamp-1">
               {(() => {
                 const parts: string[] = [];
@@ -117,8 +117,8 @@ export function EventCard({ event }: EventCardProps) {
 
           {/* Start Time and End Time */}
           {event.start_time || event.end_time ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+              <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
               <span>
                 {formatTime(event.start_time) && formatTime(event.end_time)
                   ? `${formatTime(event.start_time)} - ${formatTime(event.end_time)}`
@@ -133,7 +133,7 @@ export function EventCard({ event }: EventCardProps) {
               // Navigate to event detail using slug if available, otherwise use id
               navigate(event.slug ? `/events/${event.slug}` : `/events/${event.id}`);
             }}
-            className="w-full gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
+            className="w-full text-xs sm:text-sm gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
             size="sm"
           >
             {t('events.viewDetails') || 'View Details'}
