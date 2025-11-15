@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
-import { PropertyFilters, AdvertisementFilters } from './components/filters';
+import { PropertyFilters, AdvertisementFilters, WantedFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
+import type { WantedListFilters } from '@/services/api/wantedList';
 
 export default function PublicProperties() {
   const { t } = useLanguage();
@@ -120,8 +121,48 @@ export default function PublicProperties() {
     return filters;
   };
 
+  const getWantedFiltersFromParams = (): WantedListFilters => {
+    const perPageParam = 30;
+    const filters: WantedListFilters = {
+      per_page: perPageParam,
+      page: 1,
+    };
+
+    const search = searchParams.get('search');
+    if (search) filters.search = search;
+
+    const propertyTypeId = searchParams.get('property_type_id');
+    if (propertyTypeId) filters.property_type_id = Number(propertyTypeId);
+
+    const preferRegionId = searchParams.get('prefer_region_id');
+    if (preferRegionId) filters.prefer_region_id = Number(preferRegionId);
+
+    const preferTownshipId = searchParams.get('prefer_township_id');
+    if (preferTownshipId) filters.prefer_township_id = Number(preferTownshipId);
+
+    const wantedType = searchParams.get('wanted_type');
+    if (wantedType && (wantedType === 'buyer' || wantedType === 'renter')) {
+      filters.wanted_type = wantedType as 'buyer' | 'renter';
+    }
+
+    const minBudget = searchParams.get('min_budget');
+    if (minBudget) filters.min_budget = Number(minBudget);
+
+    const maxBudget = searchParams.get('max_budget');
+    if (maxBudget) filters.max_budget = Number(maxBudget);
+
+    const minArea = searchParams.get('min_area');
+    if (minArea) filters.min_area = Number(minArea);
+
+    const maxArea = searchParams.get('max_area');
+    if (maxArea) filters.max_area = Number(maxArea);
+
+    return filters;
+  };
+
   const filters = getFiltersFromParams();
   const advertisementFilters = getAdvertisementFiltersFromParams();
+  const wantedFilters = getWantedFiltersFromParams();
   
   // Fetch statistics counts from API
   const { data: countsData } = useStatisticsCounts();
@@ -271,6 +312,11 @@ export default function PublicProperties() {
                 <AdvertisementFilters />
               )}
 
+              {/* Wanted Filters - Show for Wanted tab */}
+              {activeTab === 'wanted' && (
+                <WantedFilters />
+              )}
+
               {activeTab === 'property' && (
                 <TabsContent value="property" className="space-y-4">
                   <PropertyList filters={filters} />
@@ -309,7 +355,7 @@ export default function PublicProperties() {
 
               {activeTab === 'wanted' && (
                 <TabsContent value="wanted" className="space-y-4">
-                  <WantedList />
+                  <WantedList filters={wantedFilters} />
                 </TabsContent>
               )}
             </Tabs>

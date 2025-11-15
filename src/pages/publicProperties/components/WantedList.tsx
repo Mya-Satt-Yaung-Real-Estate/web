@@ -5,8 +5,13 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search } from 'lucide-react';
+import type { WantedListFilters } from '@/services/api/wantedList';
 
-export function WantedList() {
+interface WantedListProps {
+  filters?: WantedListFilters;
+}
+
+export function WantedList({ filters }: WantedListProps) {
   const { t } = useLanguage();
   const { 
     data, 
@@ -15,7 +20,7 @@ export function WantedList() {
     fetchNextPage, 
     hasNextPage, 
     isFetchingNextPage 
-  } = useWantedLists({ per_page: 30 });
+  } = useWantedLists({ ...filters, per_page: 30 });
 
   if (isLoading) {
     return (

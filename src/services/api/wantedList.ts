@@ -2,6 +2,15 @@ import { api } from './client';
 import type { WantedListResponse, WantedListDetailResponse } from '@/types/wantedList';
 
 export interface WantedListFilters {
+  search?: string;
+  property_type_id?: number;
+  prefer_region_id?: number;
+  prefer_township_id?: number;
+  wanted_type?: 'buyer' | 'renter';
+  min_budget?: number;
+  max_budget?: number;
+  min_area?: number;
+  max_area?: number;
   per_page?: number;
   page?: number;
 }
