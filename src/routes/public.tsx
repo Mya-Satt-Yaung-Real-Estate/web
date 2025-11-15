@@ -3,7 +3,7 @@ import { PageLoader } from './components/shared';
 import { lazyWithRetry } from '../utils/lazyWithRetry';
 
 // Lazy load public page components with retry mechanism
-const Home = lazyWithRetry(() => import('../pages/Home').then(module => ({ default: module.Home })));
+const Home = lazyWithRetry(() => import('../pages/home').then(module => ({ default: module.Home })));
 const About = lazyWithRetry(() => import('../pages/About').then(module => ({ default: module.About })));
 const AboutApp = lazyWithRetry(() => import('../pages/AboutApp').then(module => ({ default: module.AboutApp })));
 const Companies = lazyWithRetry(() => import('../pages/companies').then(module => ({ default: module.Companies })));

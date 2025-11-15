@@ -20,3 +20,4 @@ export * from './useCompanies';
 export * from './useCompanyTypes';
 export * from './useWantingList';
 export * from './useAiAssistant';
+export * from './home';

@@ -1,0 +1,2 @@
+export { MobilePropertyCarousel } from './MobilePropertyCarousel';
+

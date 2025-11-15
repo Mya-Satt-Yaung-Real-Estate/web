@@ -20,19 +20,19 @@ export { MobileNavigation } from './layout/mobile/MobileNavigation';
 // ============================================================================
 
 // Home Feature Components
-export { PropertyCarousel } from './features/home/PropertyCarousel';
-export { AdvancedSearchFilter } from './features/home/AdvancedSearchFilter';
-export { PropertyListingCard } from './features/home/PropertyListingCard';
-export { WantedListingCard } from './features/home/WantedListingCard';
-export { AdvertisementCard } from './features/home/AdvertisementCard';
-export { AdvertisementCardSimple } from './features/home/AdvertisementCardSimple';
-export { EventCard } from './features/home/EventCard';
-export { PremiumPostCard } from './features/home/PremiumPostCard';
-export { MapView } from './features/home/MapView';
+export { PropertyCarousel } from '../pages/home/components/carousel';
+export { AdvancedSearchFilter } from '../pages/home/components/search';
+export { PropertyListingCard } from '../pages/home/components/cards';
+export { WantedListingCard } from '../pages/home/components/cards';
+export { AdvertisementCard } from '../pages/home/components/cards';
+export { AdvertisementCardSimple } from '../pages/home/components/cards';
+export { EventCard } from '../pages/home/components/cards';
+export { PremiumPostCard } from '../pages/home/components/cards';
+export { MapView } from '../pages/home/components/shared';
 
 // Mobile Home Components
-export { MobilePropertyCarousel } from './features/home/mobile/MobilePropertyCarousel';
-export { MobileAdvancedSearchFilter } from './features/home/mobile/MobileAdvancedSearchFilter';
+export { MobilePropertyCarousel } from '../pages/home/components/carousel';
+export { MobileAdvancedSearchFilter } from '../pages/home/components/search';
 
 // ============================================================================
 // UI COMPONENTS
@@ -57,4 +57,4 @@ export { LazyImage } from './LazyImage';
 // TYPE EXPORTS
 // ============================================================================
 
-export type { SearchFilters } from './features/home/AdvancedSearchFilter';
+export type { SearchFilters } from '../pages/home/components/search';
