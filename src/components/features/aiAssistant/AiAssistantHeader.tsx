@@ -17,7 +17,7 @@ export function AiAssistantHeader({ onClose }: AiAssistantHeaderProps) {
         <Sparkles className="w-5 h-5 text-white" />
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-white">Jad's AI Assistant</h2>
+            <h2 className="text-base font-semibold text-white">Jade's AI Assistant</h2>
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-300/80 text-white border border-purple-200/50">
               Alpha
             </span>

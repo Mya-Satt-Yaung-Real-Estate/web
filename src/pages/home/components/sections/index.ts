@@ -4,4 +4,5 @@ export { PremiumPostsSection } from './PremiumPostsSection';
 export { WantedListingsSection } from './WantedListingsSection';
 export { PropertyListingsSection } from './PropertyListingsSection';
 export { EventsSection } from './EventsSection';
+export { LegalTeamSection } from './LegalTeamSection';
 

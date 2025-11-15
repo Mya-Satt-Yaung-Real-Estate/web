@@ -11,6 +11,7 @@ export const homeKeys = {
   wantedListings: () => [...homeKeys.all, 'wanted-listings'] as const,
   featuredAdvertisements: () => [...homeKeys.all, 'featured-advertisements'] as const,
   upcomingEvents: () => [...homeKeys.all, 'upcoming-events'] as const,
+  legalTeam: () => [...homeKeys.all, 'legal-team'] as const,
 } as const;
 
 // ============================================================================
@@ -36,6 +37,10 @@ export const homeQueries = {
 
   getUpcomingEvents: () => {
     return homeApi.getUpcomingEvents();
+  },
+
+  getLegalTeam: () => {
+    return homeApi.getLegalTeam();
   },
 };
 

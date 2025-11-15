@@ -9,4 +9,5 @@ export { useHomeFeaturedProperties } from './useHomeFeaturedProperties';
 export { useHomeWantedListings } from './useHomeWantedListings';
 export { useHomeFeaturedAdvertisements } from './useHomeFeaturedAdvertisements';
 export { useHomeUpcomingEvents } from './useHomeUpcomingEvents';
+export { useHomeLegalTeam } from './useHomeLegalTeam';
 

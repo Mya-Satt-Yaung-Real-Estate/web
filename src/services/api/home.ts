@@ -3,6 +3,7 @@ import type { PublicPropertyListResponse } from '@/types/publicProperties';
 import type { PublicAdvertisementListResponse } from '@/types/publicAdvertisements';
 import type { WantedListResponse } from '@/types/wantedList';
 import type { HousingEventListResponse } from '@/types/housingEvents';
+import type { LegacyTeamResponse } from '@/types/legacy';
 
 /**
  * Home Page API Service
@@ -44,6 +45,15 @@ export const homeApi = {
    */
   getUpcomingEvents: () => {
     return api.get<HousingEventListResponse>('/api/v1/frontend/public/home/upcoming-events');
+  },
+
+  /**
+   * Get legal team for home page (3 items)
+   */
+  getLegalTeam: () => {
+    return api.get<LegacyTeamResponse>('/api/v1/frontend/legacy-teams', {
+      params: { per_page: 3 },
+    });
   },
 };
 

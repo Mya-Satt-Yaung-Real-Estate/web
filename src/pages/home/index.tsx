@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { PropertyCarousel } from './components/carousel';
 import { AdvancedSearchFilter, type SearchFilters } from './components/search';
 import { 
@@ -10,6 +9,7 @@ import {
   WantedListingsSection,
   PropertyListingsSection,
   EventsSection,
+  LegalTeamSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -19,13 +19,11 @@ import {
   Search,
   MapPin,
   Award,
-  ArrowRight,
   Building2,
   Users,
   PlusCircle,
   Banknote,
   Calculator,
-  Scale
 } from 'lucide-react';
 
 export const Home = memo(function Home() {
@@ -65,13 +63,13 @@ export const Home = memo(function Home() {
       icon: <Building2 className="h-8 w-8" />,
       title: 'Premium Listings',
       description: 'Curated selection of high-quality properties',
-      link: '/premium-listings',
+      link: '/search?type=premium',
     },
     {
       icon: <PlusCircle className="h-8 w-8" />,
       titleKey: 'services.createListing',
       descriptionKey: 'services.createListingDesc',
-      link: '/post-property',
+      link: '/my-properties/create',
     },
     {
       icon: <Users className="h-8 w-8" />,
@@ -108,35 +106,6 @@ export const Home = memo(function Home() {
     },
   ], []);
 
-  const legalTeamPreview = useMemo(() => [
-    {
-      id: 1,
-      name: 'U Aung Myat',
-      position: 'Senior Legal Advisor',
-      specialization: 'Property Law & Contracts',
-      experience: '15 years',
-      photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop',
-      cases: 250,
-    },
-    {
-      id: 2,
-      name: 'Daw Thandar Win',
-      position: 'Legal Consultant',
-      specialization: 'Real Estate Compliance',
-      experience: '12 years',
-      photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop',
-      cases: 180,
-    },
-    {
-      id: 3,
-      name: 'U Kyaw Zin',
-      position: 'Property Rights Attorney',
-      specialization: 'Land Rights & Disputes',
-      experience: '10 years',
-      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop',
-      cases: 150,
-    },
-  ], []);
 
   return (
       <div className="min-h-screen">
@@ -184,6 +153,9 @@ export const Home = memo(function Home() {
       {/* Events */}
       <EventsSection />
 
+      {/* Legal Team */}
+      <LegalTeamSection />
+
       {/* Company Information - Why Choose Jade Property */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">
         <div className="max-w-7xl mx-auto">
@@ -209,62 +181,6 @@ export const Home = memo(function Home() {
             ))}
           </div>
 
-          {/* Legal Team List Section */}
-          <div className="max-w-7xl mx-auto mt-12">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="mb-2">{t('legalTeam.title')}</h3>
-                <p className="text-muted-foreground">
-                  {t('legalTeam.subtitle')}
-                </p>
-              </div>
-              <Link to="/legal-team">
-                <Button variant="outline" className="gap-2">
-                  {t('legalTeam.viewAll')}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {legalTeamPreview.map((lawyer) => (
-                <Card 
-                  key={lawyer.id}
-                  className="group relative overflow-hidden border-border/50 hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/10 backdrop-blur-sm cursor-pointer"
-                  onClick={() => navigate('/legal-team')}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <CardContent className="relative p-6">
-                    <div className="flex flex-col items-center text-center">
-                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-primary/20 group-hover:border-primary/50 transition-all">
-                        <img
-                          src={lawyer.photo}
-                          alt={lawyer.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <h4 className="mb-1 group-hover:text-primary transition-colors">{lawyer.name}</h4>
-                      <p className="text-muted-foreground mb-3">{lawyer.position}</p>
-                      <Badge className="mb-4 gradient-primary text-white">
-                        {lawyer.specialization}
-                      </Badge>
-                      
-                      <div className="w-full space-y-2 pt-3 border-t border-border/50">
-                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                          <Award className="h-4 w-4 text-primary" />
-                          <span>{lawyer.experience} experience</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                          <Scale className="h-4 w-4 text-primary" />
-                          <span>{lawyer.cases}+ cases handled</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
