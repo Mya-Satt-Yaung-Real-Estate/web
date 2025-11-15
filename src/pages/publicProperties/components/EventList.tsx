@@ -4,8 +4,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { HousingEventFilters } from '@/types/housingEvents';
 
-export function EventList() {
+interface EventListProps {
+  filters?: HousingEventFilters;
+}
+
+export function EventList({ filters }: EventListProps) {
   const { t } = useLanguage();
   const { 
     data, 
@@ -14,7 +19,7 @@ export function EventList() {
     fetchNextPage, 
     hasNextPage, 
     isFetchingNextPage 
-  } = useHousingEvents({ per_page: 20 });
+  } = useHousingEvents({ ...filters, per_page: 20 });
 
   if (isLoading) {
     return (

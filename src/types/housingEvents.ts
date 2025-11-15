@@ -62,6 +62,11 @@ export interface HousingEventListResponse {
 export interface HousingEventFilters {
   per_page?: number;
   page?: number;
+  search?: string;
+  date_from?: string;
+  date_to?: string;
+  region_id?: number;
+  township_id?: number;
 }
 
 // Detail page types

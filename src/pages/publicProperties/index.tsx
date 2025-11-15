@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
-import { PropertyFilters, AdvertisementFilters, WantedFilters } from './components/filters';
+import { PropertyFilters, AdvertisementFilters, WantedFilters, EventFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -10,6 +10,7 @@ import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
 import type { WantedListFilters } from '@/services/api/wantedList';
+import type { HousingEventFilters } from '@/types/housingEvents';
 
 export default function PublicProperties() {
   const { t } = useLanguage();
@@ -160,9 +161,35 @@ export default function PublicProperties() {
     return filters;
   };
 
+  const getEventFiltersFromParams = (): HousingEventFilters => {
+    const perPageParam = 20;
+    const filters: HousingEventFilters = {
+      per_page: perPageParam,
+      page: 1,
+    };
+
+    const search = searchParams.get('search');
+    if (search) filters.search = search;
+
+    const dateFrom = searchParams.get('date_from');
+    if (dateFrom) filters.date_from = dateFrom;
+
+    const dateTo = searchParams.get('date_to');
+    if (dateTo) filters.date_to = dateTo;
+
+    const regionId = searchParams.get('region_id');
+    if (regionId) filters.region_id = Number(regionId);
+
+    const townshipId = searchParams.get('township_id');
+    if (townshipId) filters.township_id = Number(townshipId);
+
+    return filters;
+  };
+
   const filters = getFiltersFromParams();
   const advertisementFilters = getAdvertisementFiltersFromParams();
   const wantedFilters = getWantedFiltersFromParams();
+  const eventFilters = getEventFiltersFromParams();
   
   // Fetch statistics counts from API
   const { data: countsData } = useStatisticsCounts();
@@ -317,6 +344,11 @@ export default function PublicProperties() {
                 <WantedFilters />
               )}
 
+              {/* Event Filters - Show for Events tab */}
+              {activeTab === 'events' && (
+                <EventFilters />
+              )}
+
               {activeTab === 'property' && (
                 <TabsContent value="property" className="space-y-4">
                   <PropertyList filters={filters} />
@@ -343,7 +375,7 @@ export default function PublicProperties() {
 
               {activeTab === 'events' && (
                 <TabsContent value="events" className="space-y-4">
-                  <EventList />
+                  <EventList filters={eventFilters} />
                 </TabsContent>
               )}
 
