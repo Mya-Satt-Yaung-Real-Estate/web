@@ -9,6 +9,7 @@ import {
   PremiumPostsSection,
   WantedListingsSection,
   PropertyListingsSection,
+  EventsSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -179,6 +180,9 @@ export const Home = memo(function Home() {
 
       {/* Featured Advertisements */}
       <FeaturedAdvertisementsSection />
+
+      {/* Events */}
+      <EventsSection />
 
       {/* Company Information - Why Choose Jade Property */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">

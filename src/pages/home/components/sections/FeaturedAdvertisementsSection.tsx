@@ -103,7 +103,7 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
               {t('ads.subtitle')}
             </p>
           </div>
-          <Link to="/search?type=advertisement">
+          <Link to="/search?type=advertisements">
             <Button variant="outline">
               {t('ads.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />
