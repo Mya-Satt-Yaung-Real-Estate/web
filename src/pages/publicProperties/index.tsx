@@ -5,6 +5,7 @@ import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, Installme
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 
 export default function PublicProperties() {
@@ -76,15 +77,16 @@ export default function PublicProperties() {
 
   const filters = getFiltersFromParams();
   
-  // TODO: Replace with API endpoint for tab counts
-  // This will be replaced with: const { data: tabCounts } = useTabCounts();
-  const propertyCount = 100;
-  const premiumCount = 100;
-  const tanTanTanCount = 100;
-  const installmentCount = 100;
-  const advertisementCount = 100;
-  const eventCount = 100;
-  const wantedCount = 100;
+  // Fetch statistics counts from API
+  const { data: countsData } = useStatisticsCounts();
+  
+  const propertyCount = countsData?.data?.data?.all_properties_count ?? 0;
+  const premiumCount = countsData?.data?.data?.premium_properties_count ?? 0;
+  const tanTanTanCount = countsData?.data?.data?.tan_tan_tan_properties_count ?? 0;
+  const installmentCount = countsData?.data?.data?.installment_properties_count ?? 0;
+  const advertisementCount = countsData?.data?.data?.advertisements_count ?? 0;
+  const eventCount = countsData?.data?.data?.housing_events_count ?? 0;
+  const wantedCount = countsData?.data?.data?.wanted_listings_count ?? 0;
 
   const getResultsText = () => {
     let count = propertyCount;
@@ -137,7 +139,7 @@ export default function PublicProperties() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
               <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
+                <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
                   {activeTab === 'premium' 
                     ? t('search.premium') 
                     : activeTab === 'tantantan' 

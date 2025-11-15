@@ -28,3 +28,4 @@ export { wantingListApi } from './wantingList';
 export { loanRequestApi } from './loanRequest';
 export { aiAssistantApi } from './aiAssistant';
 export { notificationApi } from './notifications';
+export { statisticsApi } from './statistics';
