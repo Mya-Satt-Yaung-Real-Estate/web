@@ -505,8 +505,12 @@ const translations: Translations = {
   
   // Search
   'search.keywords': { en: 'Keywords', mm: 'သော့ချက်စာလုံးများ' },
+  'search.searchPlaceholder': { en: 'Search by title, description, owner name...', mm: 'ခေါင်းစဉ်၊ ဖော်ပြချက်၊ ပိုင်ရှင်အမည်ဖြင့်ရှာဖွေရန်...' },
   'search.propertyType': { en: 'Property Type', mm: 'အိမ်ခြံမြေအမျိုးအစား' },
   'search.allTypes': { en: 'All Types', mm: 'အမျိုးအစားအားလုံး' },
+  'search.listingType': { en: 'Listing Type', mm: 'စာရင်းအမျိုးအစား' },
+  'search.allListingTypes': { en: 'All Listing Types', mm: 'စာရင်းအမျိုးအစားအားလုံး' },
+  'search.advancedSearch': { en: 'Advanced Search', mm: 'အဆင့်မြင့်ရှာဖွေရန်' },
   'search.residential': { en: 'Residential', mm: 'နေထိုင်ရေးအိမ်ခြံမြေ' },
   'search.commercial': { en: 'Commercial', mm: 'စီးပွားရေးအိမ်ခြံမြေ' },
   'search.industrial': { en: 'Industrial', mm: 'စက်မှုအိမ်ခြံမြေ' },
@@ -856,7 +860,6 @@ const translations: Translations = {
   'contact.errorMessage': { en: 'We encountered an issue while sending your message. Please check your information and try again.', mm: 'သင့်မက်ဆေ့ဂ်ပို့စဉ်တွင် ပြဿနာတစ်ခုကြုံတွေ့ခဲ့ပါသည်။ သင့်အချက်အလက်များကိုစစ်ဆေးပြီး ပြန်လည်ကြိုးစားကြည့်ပါ။' },
 
   // Search Forms
-  'search.searchPlaceholder': { en: 'Search properties...', mm: 'အိမ်ခြံမြေများရှာဖွေရန်...' },
   'search.searchKnowledge': { en: 'Search knowledge...', mm: 'အသိပညာရှာဖွေရန်...' },
   'search.searchFAQ': { en: 'Search FAQ...', mm: 'မေးခွန်းများရှာဖွေရန်...' },
   'search.noResults': { en: 'No results found', mm: 'ရလဒ်များမတွေ့ပါ' },
