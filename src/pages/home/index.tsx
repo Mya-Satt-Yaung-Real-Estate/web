@@ -204,18 +204,8 @@ export const Home = memo(function Home() {
       {/* Premium Posts */}
       <PremiumPostsSection />
 
-      {/* Wanted Listings - Lazy Loaded */}
-      <LazyDataLoader
-        dataLoader={dataLoaders.loadWantedListings}
-        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
-        rootMargin="200px"
-      >
-        {(data, isLoading, error) => {
-          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load wanted listings</div></div>;
-          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
-          return <WantedListingsSection wantedListings={data} />;
-        }}
-      </LazyDataLoader>
+      {/* Wanted Listings */}
+      <WantedListingsSection />
 
       {/* Property Listings */}
       <PropertyListingsSection />

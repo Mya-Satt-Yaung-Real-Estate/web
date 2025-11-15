@@ -619,6 +619,11 @@ const translations: Translations = {
   'premium.title': { en: 'Premium Properties', mm: 'ပရီမီယံအိမ်ခြံမြေများ' },
   'premium.subtitle': { en: 'Exclusive luxury properties for discerning buyers', mm: 'ရွေးချယ်တတ်သောဝယ်သူများအတွက်သီးသန့်ဇိမ်ခံအိမ်ခြံမြေများ' },
   'premium.viewAll': { en: 'View All Premium', mm: 'ပရီမီယံအားလုံးကြည့်ရန်' },
+  
+  // Wanted Listings (Home Page)
+  'wanted.title': { en: 'Wanted Listings', mm: 'လိုအပ်သည့် စာရင်းများ' },
+  'wanted.subtitle': { en: 'Browse active property requests from buyers and renters', mm: 'ဝယ်သူများနှင့် ငှားရမ်းသူများထံမှ လက်ရှိအိမ်ခြံမြေတောင်းဆိုချက်များကို ကြည့်ရှုပါ' },
+  'wanted.viewAll': { en: 'View All Requests', mm: 'တောင်းဆိုချက်အားလုံးကြည့်ရန်' },
   'premium.badge': { en: 'Premium', mm: 'ပရီမီယံ' },
   'premium.trending': { en: 'Trending', mm: 'ခေတ်စားနေ' },
   
