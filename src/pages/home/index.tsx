@@ -4,19 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PropertyCarousel } from './components/carousel';
 import { AdvancedSearchFilter, type SearchFilters } from './components/search';
-// import { LazySection } from '@/components/LazySection';
-import { LazyDataLoader } from '@/components/LazyDataLoader';
 import { 
   FeaturedAdvertisementsSection,
   PremiumPostsSection,
   WantedListingsSection,
   PropertyListingsSection,
-  AdvertisementsSection,
-  EventsSection
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { dataLoaders } from '@/data/loaders';
 import { memo, useMemo, useCallback } from 'react';
 import {
   Home as HomeIcon,
@@ -26,12 +21,9 @@ import {
   ArrowRight,
   Building2,
   Users,
-  Star,
   PlusCircle,
   Banknote,
   Calculator,
-  DollarSign,
-  Clock,
   Scale
 } from 'lucide-react';
 
@@ -145,18 +137,6 @@ export const Home = memo(function Home() {
     },
   ], []);
 
-  // premiumPosts data is now loaded lazily
-
-  // featuredListings data is now loaded lazily
-
-  // advertisements data is now loaded lazily
-
-  // events data is now loaded lazily
-
-  // wantedListings data is now loaded lazily
-
-  // propertyLocations data is now loaded lazily
-
   return (
       <div className="min-h-screen">
       {/* Full Screen Property Carousel */}
@@ -188,19 +168,6 @@ export const Home = memo(function Home() {
         </div>
       </section>
 
-      {/* Featured Advertisements - Lazy Loaded */}
-      <LazyDataLoader
-        dataLoader={dataLoaders.loadFeaturedAdvertisements}
-        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
-        rootMargin="200px"
-      >
-        {(data, isLoading, error) => {
-          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load advertisements</div></div>;
-          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
-          return <FeaturedAdvertisementsSection advertisements={data} />;
-        }}
-      </LazyDataLoader>
-
       {/* Premium Posts */}
       <PremiumPostsSection />
 
@@ -210,174 +177,8 @@ export const Home = memo(function Home() {
       {/* Property Listings */}
       <PropertyListingsSection />
 
-      {/* Advertisements - Lazy Loaded */}
-      <LazyDataLoader
-        dataLoader={dataLoaders.loadAdvertisements}
-        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
-        rootMargin="200px"
-      >
-        {(data, isLoading, error) => {
-          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load advertisements</div></div>;
-          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
-          return <AdvertisementsSection advertisements={data} />;
-        }}
-      </LazyDataLoader>
-
-      {/* Events - Lazy Loaded */}
-      <LazyDataLoader
-        dataLoader={dataLoaders.loadEventsAndMap}
-        fallback={<div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>}
-        rootMargin="200px"
-      >
-        {(data, isLoading, error) => {
-          if (error) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto text-center text-red-500">Failed to load events</div></div>;
-          if (isLoading || !data) return <div className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30"><div className="max-w-7xl mx-auto"><div className="h-32 bg-muted/20 animate-pulse rounded-lg" /></div></div>;
-          return <EventsSection events={data.events} propertyLocations={data.propertyLocations} />;
-        }}
-      </LazyDataLoader>
-
-      {/* Job Posts Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="mt-16">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-              <div>
-                <h2 className="mb-4">{t('jobs.title')}</h2>
-                <p className="text-muted-foreground">
-                  {t('jobs.subtitle')}
-                </p>
-              </div>
-              <Link to="/search?type=job">
-                <Button variant="outline">
-                  {t('jobs.viewAll')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  id: '1',
-                  title: 'Senior Real Estate Agent',
-                  company: 'Jade Property Group',
-                  location: 'Yangon, Myanmar',
-                  type: 'full-time',
-                  salary: '800K - 1.5M MMK/month',
-                  postedDate: '2025-10-10',
-                  featured: true,
-                },
-                {
-                  id: '2',
-                  title: 'Property Marketing Specialist',
-                  company: 'Jade Property Group',
-                  location: 'Yangon, Myanmar',
-                  type: 'full-time',
-                  salary: '600K - 1M MMK/month',
-                  postedDate: '2025-10-12',
-                  featured: true,
-                },
-                {
-                  id: '3',
-                  title: 'Legal Advisor (Property Law)',
-                  company: 'Jade Property Legal Team',
-                  location: 'Yangon, Myanmar',
-                  type: 'full-time',
-                  salary: '1M - 2M MMK/month',
-                  postedDate: '2025-10-08',
-                  featured: false,
-                },
-                {
-                  id: '4',
-                  title: 'Property Consultant',
-                  company: 'Jade Property Group',
-                  location: 'Mandalay, Myanmar',
-                  type: 'full-time',
-                  salary: '500K - 900K MMK/month',
-                  postedDate: '2025-10-14',
-                  featured: false,
-                },
-                {
-                  id: '5',
-                  title: 'Customer Success Manager',
-                  company: 'Jade Property Group',
-                  location: 'Yangon, Myanmar',
-                  type: 'remote',
-                  salary: '700K - 1.2M MMK/month',
-                  postedDate: '2025-10-11',
-                  featured: false,
-                },
-                {
-                  id: '6',
-                  title: 'Junior Property Appraiser',
-                  company: 'Jade Property Valuation',
-                  location: 'Yangon, Myanmar',
-                  type: 'full-time',
-                  salary: '400K - 700K MMK/month',
-                  postedDate: '2025-10-13',
-                  featured: false,
-                },
-              ].map((job) => (
-                <Card 
-                  key={job.id} 
-                  className={`group hover:shadow-xl transition-all cursor-pointer ${
-                    job.featured ? 'border-primary/50 bg-gradient-to-br from-primary/5 to-transparent' : ''
-                  }`}
-                  onClick={() => navigate(`/jobs/${job.id}`)}
-                >
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          {job.featured && (
-                            <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0">
-                      <Star className="h-3 w-3 mr-1 fill-white" />
-                      Featured
-                    </Badge>
-                  )}
-                          <Badge variant={job.type === 'full-time' ? 'default' : 'secondary'}>
-                            {job.type === 'full-time' ? t('jobs.fullTime') : job.type}
-                          </Badge>
-                        </div>
-                        <CardTitle className="group-hover:text-primary transition-colors mb-1">
-                          {job.title}
-                        </CardTitle>
-                        <p className="text-muted-foreground flex items-center gap-1">
-                          <Building2 className="h-4 w-4" />
-                          {job.company}
-                        </p>
-                      </div>
-                </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2 text-sm">
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span>{job.location}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="h-4 w-4 text-primary" />
-                        <span>{job.salary}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        <span>{t('jobs.postedOn')} {new Date(job.postedDate).toLocaleDateString()}</span>
-                    </div>
-                    </div>
-                    <Button 
-                      className="w-full group-hover:bg-primary group-hover:text-white transition-all"
-                      variant="outline"
-                    >
-                      {t('jobs.viewDetails')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Featured Advertisements */}
+      <FeaturedAdvertisementsSection />
 
       {/* Company Information - Why Choose Jade Property */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">
