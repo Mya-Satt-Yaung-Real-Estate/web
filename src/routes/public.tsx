@@ -13,6 +13,8 @@ const Contact = lazyWithRetry(() => import('../pages/Contact').then(module => ({
 const PrivacyPolicy = lazyWithRetry(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
 const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
 const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
+const OtpRequest = lazyWithRetry(() => import('../pages/signup/OtpRequest').then(module => ({ default: module.OtpRequest })));
+const OtpVerify = lazyWithRetry(() => import('../pages/signup/OtpVerify').then(module => ({ default: module.OtpVerify })));
 
 // Knowledge pages
 const KnowledgeHub = lazyWithRetry(() => import('../pages/KnowledgeHub').then(module => ({ default: module.KnowledgeHub })));
@@ -124,6 +126,22 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <SignIn />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signup',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <OtpRequest />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signup/verify-otp',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <OtpVerify />
       </Suspense>
     ),
   },

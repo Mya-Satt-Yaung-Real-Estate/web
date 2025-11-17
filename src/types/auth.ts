@@ -157,3 +157,31 @@ export interface LoginResponse {
     biometric_enabled: boolean;
   };
 }
+
+// OTP Request Types
+export interface OtpRequestRequest {
+  phone: string;
+  type: 'phone';
+  action_type: 'register' | 'forgot_password';
+}
+
+export interface OtpRequestResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    otp_code?: string;
+  };
+}
+
+// OTP Verify Types
+export interface OtpVerifyRequest {
+  phone: string;
+  type: 'phone';
+  otp_code: string;
+  action_type: 'register' | 'forgot_password';
+}
+
+export interface OtpVerifyResponse {
+  success: boolean;
+  message: string;
+}

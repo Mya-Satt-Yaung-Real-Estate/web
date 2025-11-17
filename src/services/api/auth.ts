@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { LoginRequest, LoginResponse, ExtendedUser } from '@/types/auth';
+import type { LoginRequest, LoginResponse, ExtendedUser, OtpRequestRequest, OtpRequestResponse, OtpVerifyRequest, OtpVerifyResponse } from '@/types/auth';
 
 export const authApi = {
   async login(data: LoginRequest): Promise<LoginResponse> {
@@ -40,6 +40,16 @@ export const authApi = {
     description?: string;
   }): Promise<{ success: boolean; message: string; data: ExtendedUser }> {
     const response = await apiClient.put<{ success: boolean; message: string; data: ExtendedUser }>('/api/v1/frontend/profile', data);
+    return response.data;
+  },
+
+  async requestOtp(data: OtpRequestRequest): Promise<OtpRequestResponse> {
+    const response = await apiClient.post<OtpRequestResponse>('/api/v1/frontend/otp/request', data);
+    return response.data;
+  },
+
+  async verifyOtp(data: OtpVerifyRequest): Promise<OtpVerifyResponse> {
+    const response = await apiClient.post<OtpVerifyResponse>('/api/v1/frontend/otp/verify', data);
     return response.data;
   },
 };
