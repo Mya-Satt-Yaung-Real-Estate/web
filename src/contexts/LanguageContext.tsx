@@ -1681,6 +1681,8 @@ const translations: Translations = {
   // Settings
   'settings.title': { en: 'Settings', mm: 'ဆက်တင်များ' },
   'settings.subtitle': { en: 'Manage your preferences and account settings', mm: 'သင့်နှစ်သက်မှုများနှင့် အကောင့်ဆက်တင်များကို စီမံပါ' },
+  'settings.generalSetting': { en: 'General Setting', mm: 'အထွေထွေဆက်တင်' },
+  'settings.generalSettingDesc': { en: 'Manage your language and notification preferences', mm: 'သင့်ဘာသာစကားနှင့် အကြောင်းကြားချက်နှစ်သက်မှုများကို စီမံပါ' },
   'settings.notifications': { en: 'Notifications', mm: 'အကြောင်းကြားချက်များ' },
   'settings.notificationsDesc': { en: 'Manage how you receive notifications', mm: 'အကြောင်းကြားချက်များကို မည်သို့လက်ခံမည်ကို စီမံပါ' },
   'settings.emailNotifications': { en: 'Email Notifications', mm: 'အီးမေးလ် အကြောင်းကြားချက်များ' },
@@ -1713,7 +1715,12 @@ const translations: Translations = {
   'settings.languageChanged': { en: 'Language changed successfully', mm: 'ဘာသာစကားပြောင်းလဲမှု အောင်မြင်ပါသည်' },
   'settings.passwordChanged': { en: 'Password changed successfully', mm: 'လျှို့ဝှက်နံပါတ်အောင်မြင်စွာ ပြောင်းလဲပြီး' },
   'settings.passwordMismatch': { en: 'Passwords do not match', mm: 'လျှို့ဝှက်နံပါတ်များ ကိုက်ညီမှုမရှိပါ' },
-  'settings.passwordTooShort': { en: 'Password must be at least 6 characters', mm: 'လျှို့ဝှက်နံပါတ်သည် အနည်းဆုံး ၆ လုံးရှိရမည်' },
+  'settings.passwordTooShort': { en: 'Password must be at least 8 characters', mm: 'လျှို့ဝှက်နံပါတ်သည် အနည်းဆုံး ၈ လုံးရှိရမည်' },
+  'settings.currentPasswordRequired': { en: 'Current password is required', mm: 'လက်ရှိလျှို့ဝှက်နံပါတ် လိုအပ်ပါသည်' },
+  'settings.newPasswordRequired': { en: 'New password is required', mm: 'လျှို့ဝှက်နံပါတ်အသစ် လိုအပ်ပါသည်' },
+  'settings.confirmPasswordRequired': { en: 'Password confirmation is required', mm: 'လျှို့ဝှက်နံပါတ် အတည်ပြုချက် လိုအပ်ပါသည်' },
+  'settings.passwordDifferent': { en: 'New password must be different from current password', mm: 'လျှို့ဝှက်နံပါတ်အသစ်သည် လက်ရှိလျှို့ဝှက်နံပါတ်နှင့် ကွဲပြားရမည်' },
+  'settings.passwordChangeFailed': { en: 'Failed to change password', mm: 'လျှို့ဝှက်နံပါတ် ပြောင်းလဲရန် မအောင်မြင်ပါ' },
 
   // Profile
   'profile.title': { en: 'My Profile', mm: 'ကျွန်ုပ်၏ ပရိုဖိုင်' },

@@ -84,7 +84,7 @@ export default function Contact() {
     }
 
     if (!formData.category) {
-      newErrors.category = language === 'mm' ? 'အမျိုးအစားရွေးရန်လိုအပ်ပါသည်' : 'Category is required';
+      newErrors.category = language === 'mm' ? 'အမျိုးအစားရွေးရန်လိုအပ်ပါသည်' : 'Subject is required';
     }
 
     if (!formData.message.trim()) {

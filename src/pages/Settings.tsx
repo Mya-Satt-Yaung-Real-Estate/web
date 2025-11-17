@@ -38,6 +38,12 @@ export function Settings() {
     confirmPassword: '',
   });
 
+  const [passwordErrors, setPasswordErrors] = useState<{
+    currentPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+  }>({});
+
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -151,16 +157,54 @@ export function Settings() {
     showSuccess(t('settings.languageChanged'));
   };
 
+  const validatePasswordForm = (): boolean => {
+    const newErrors: {
+      currentPassword?: string;
+      newPassword?: string;
+      confirmPassword?: string;
+    } = {};
+
+    // Validate current password
+    if (!passwordData.currentPassword.trim()) {
+      newErrors.currentPassword = t('settings.currentPasswordRequired') || 'Current password is required';
+    }
+
+    // Validate new password
+    if (!passwordData.newPassword.trim()) {
+      newErrors.newPassword = t('settings.newPasswordRequired') || 'New password is required';
+    } else if (passwordData.newPassword.length < 8) {
+      newErrors.newPassword = t('settings.passwordTooShort') || 'Password must be at least 8 characters';
+    } else if (passwordData.currentPassword && passwordData.newPassword === passwordData.currentPassword) {
+      newErrors.newPassword = t('settings.passwordDifferent') || 'New password must be different from current password';
+    }
+
+    // Validate confirm password
+    if (!passwordData.confirmPassword.trim()) {
+      newErrors.confirmPassword = t('settings.confirmPasswordRequired') || 'Password confirmation is required';
+    } else if (passwordData.newPassword && passwordData.confirmPassword !== passwordData.newPassword) {
+      newErrors.confirmPassword = t('settings.passwordMismatch') || 'Password confirmation does not match';
+    }
+
+    setPasswordErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handlePasswordInputChange = (field: keyof typeof passwordData, value: string) => {
+    setPasswordData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (passwordErrors[field as keyof typeof passwordErrors]) {
+      setPasswordErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showError(t('settings.passwordMismatch'));
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      showError(t('settings.passwordTooShort'));
+    // Clear previous errors
+    setPasswordErrors({});
+    
+    // Validate form
+    if (!validatePasswordForm()) {
       return;
     }
 
@@ -178,11 +222,38 @@ export function Settings() {
             newPassword: '',
             confirmPassword: '',
           });
+          setPasswordErrors({});
         },
         onError: (error: any) => {
+          // Handle API validation errors
+          if (error?.response?.data?.errors) {
+            const apiErrors = error.response.data.errors;
+            const newErrors: typeof passwordErrors = {};
+            
+            if (apiErrors.current_password) {
+              newErrors.currentPassword = Array.isArray(apiErrors.current_password) 
+                ? apiErrors.current_password[0] 
+                : apiErrors.current_password;
+            }
+            if (apiErrors.password) {
+              newErrors.newPassword = Array.isArray(apiErrors.password) 
+                ? apiErrors.password[0] 
+                : apiErrors.password;
+            }
+            if (apiErrors.password_confirmation) {
+              newErrors.confirmPassword = Array.isArray(apiErrors.password_confirmation) 
+                ? apiErrors.password_confirmation[0] 
+                : apiErrors.password_confirmation;
+            }
+            
+            if (Object.keys(newErrors).length > 0) {
+              setPasswordErrors(newErrors);
+            }
+          }
+          
           const errorMessage = error?.response?.data?.message || 
                               error?.message || 
-                              t('settings.passwordChanged') + ' failed';
+                              t('settings.passwordChangeFailed') || 'Failed to change password';
           showError(errorMessage);
         },
       }
@@ -303,8 +374,8 @@ export function Settings() {
             {/* General Settings - Combined Card */}
             <Card className="backdrop-blur-sm bg-background/95 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg">General Settings</CardTitle>
-                <CardDescription>Manage your language and notification preferences</CardDescription>
+                <CardTitle className="text-lg">{t('settings.generalSetting') || 'General Setting'}</CardTitle>
+                <CardDescription>{t('settings.generalSettingDesc') || 'Manage your language and notification preferences'}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Language */}
@@ -379,9 +450,8 @@ export function Settings() {
                         id="current-password"
                         type={showPasswords.current ? "text" : "password"}
                         value={passwordData.currentPassword}
-                        onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                        required
-                        className="pr-10"
+                        onChange={(e) => handlePasswordInputChange('currentPassword', e.target.value)}
+                        className={`pr-10 ${passwordErrors.currentPassword ? 'border-red-500' : ''}`}
                       />
                       <Button
                         type="button"
@@ -397,6 +467,9 @@ export function Settings() {
                         )}
                       </Button>
                     </div>
+                    {passwordErrors.currentPassword && (
+                      <p className="text-sm text-red-500 mt-1">{passwordErrors.currentPassword}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="new-password">{t('settings.newPassword')}</Label>
@@ -405,9 +478,8 @@ export function Settings() {
                         id="new-password"
                         type={showPasswords.new ? "text" : "password"}
                         value={passwordData.newPassword}
-                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                        required
-                        className="pr-10"
+                        onChange={(e) => handlePasswordInputChange('newPassword', e.target.value)}
+                        className={`pr-10 ${passwordErrors.newPassword ? 'border-red-500' : ''}`}
                       />
                       <Button
                         type="button"
@@ -423,6 +495,9 @@ export function Settings() {
                         )}
                       </Button>
                     </div>
+                    {passwordErrors.newPassword && (
+                      <p className="text-sm text-red-500 mt-1">{passwordErrors.newPassword}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="confirm-password">{t('settings.confirmPassword')}</Label>
@@ -431,9 +506,8 @@ export function Settings() {
                         id="confirm-password"
                         type={showPasswords.confirm ? "text" : "password"}
                         value={passwordData.confirmPassword}
-                        onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                        required
-                        className="pr-10"
+                        onChange={(e) => handlePasswordInputChange('confirmPassword', e.target.value)}
+                        className={`pr-10 ${passwordErrors.confirmPassword ? 'border-red-500' : ''}`}
                       />
                       <Button
                         type="button"
@@ -449,6 +523,9 @@ export function Settings() {
                         )}
                       </Button>
                     </div>
+                    {passwordErrors.confirmPassword && (
+                      <p className="text-sm text-red-500 mt-1">{passwordErrors.confirmPassword}</p>
+                    )}
                   </div>
                   <Button 
                     type="submit" 
