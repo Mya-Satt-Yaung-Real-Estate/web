@@ -505,12 +505,14 @@ const translations: Translations = {
   
   // Search
   'search.keywords': { en: 'Keywords', mm: 'သော့ချက်စာလုံးများ' },
+  'search.search': { en: 'Search', mm: 'ရှာဖွေရန်' },
   'search.searchPlaceholder': { en: 'Search by title, description, owner name...', mm: 'ခေါင်းစဉ်၊ ဖော်ပြချက်၊ ပိုင်ရှင်အမည်ဖြင့်ရှာဖွေရန်...' },
   'search.propertyType': { en: 'Property Type', mm: 'အိမ်ခြံမြေအမျိုးအစား' },
   'search.allTypes': { en: 'All Types', mm: 'အမျိုးအစားအားလုံး' },
   'search.listingType': { en: 'Listing Type', mm: 'စာရင်းအမျိုးအစား' },
   'search.allListingTypes': { en: 'All Listing Types', mm: 'စာရင်းအမျိုးအစားအားလုံး' },
   'search.advancedSearch': { en: 'Advanced Search', mm: 'အဆင့်မြင့်ရှာဖွေရန်' },
+  'search.filter': { en: 'Filter', mm: 'စစ်ထုတ်ရန်' },
   'search.propertyFeatures': { en: 'Property Features', mm: 'အိမ်ခြံမြေအင်္ဂါရပ်များ' },
   'search.location': { en: 'Location', mm: 'တည်နေရာ' },
   'search.region': { en: 'Region', mm: 'တိုင်း/ပြည်နယ်' },

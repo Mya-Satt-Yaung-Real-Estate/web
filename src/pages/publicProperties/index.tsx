@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
@@ -186,10 +186,10 @@ export default function PublicProperties() {
     return filters;
   };
 
-  const filters = getFiltersFromParams();
-  const advertisementFilters = getAdvertisementFiltersFromParams();
-  const wantedFilters = getWantedFiltersFromParams();
-  const eventFilters = getEventFiltersFromParams();
+  const filters = useMemo(() => getFiltersFromParams(), [searchParams.toString()]);
+  const advertisementFilters = useMemo(() => getAdvertisementFiltersFromParams(), [searchParams.toString()]);
+  const wantedFilters = useMemo(() => getWantedFiltersFromParams(), [searchParams.toString()]);
+  const eventFilters = useMemo(() => getEventFiltersFromParams(), [searchParams.toString()]);
   
   // Fetch statistics counts from API
   const { data: countsData } = useStatisticsCounts();

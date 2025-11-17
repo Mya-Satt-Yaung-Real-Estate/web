@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PropertyCarousel } from './components/carousel';
-import { AdvancedSearchFilter, type SearchFilters } from './components/search';
+import { HomePropertyFilters } from './components/search';
 import { 
   FeaturedAdvertisementsSection,
   PremiumPostsSection,
@@ -13,7 +13,7 @@ import {
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { memo, useMemo, useCallback } from 'react';
+import { memo, useMemo } from 'react';
 import {
   Home as HomeIcon,
   Search,
@@ -30,10 +30,6 @@ export const Home = memo(function Home() {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
-  const handleSearch = useCallback((filters: SearchFilters) => {
-    // Navigate to property listing page with filters
-    navigate('/modules', { state: { filters } });
-  }, [navigate]);
   
   const stats = useMemo(() => [
     {
@@ -112,10 +108,10 @@ export const Home = memo(function Home() {
       {/* Full Screen Property Carousel */}
         <PropertyCarousel />
 
-      {/* Advanced Search Filter */}
+      {/* Property Search Filter */}
       <section className="py-6 px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <AdvancedSearchFilter onSearch={handleSearch} />
+          <HomePropertyFilters />
         </div>
       </section>
 
