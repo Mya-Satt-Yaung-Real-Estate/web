@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +23,7 @@ export function NotificationDropdown() {
   const { t } = useLanguage();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   // Fetch notifications from API
-  const { data: notificationsResponse, isLoading } = useNotifications({ per_page: 30 });
+  const { data: notificationsResponse, isLoading, refetch } = useNotifications({ per_page: 30 });
   const markAsReadMutation = useMarkNotificationAsRead();
   const markAllAsReadMutation = useMarkAllNotificationsAsRead();
   const deleteNotificationMutation = useDeleteNotification();
@@ -93,6 +93,13 @@ export function NotificationDropdown() {
       },
     });
   };
+
+  // Refetch notifications when dropdown opens to ensure fresh data
+  useEffect(() => {
+    if (dropdownOpen) {
+      refetch();
+    }
+  }, [dropdownOpen, refetch]);
 
   return (
     <>

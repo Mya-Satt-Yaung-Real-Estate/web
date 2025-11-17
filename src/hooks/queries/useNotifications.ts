@@ -20,6 +20,7 @@ export function useNotifications(params?: { per_page?: number; page?: number; fi
     queryFn: () => notificationQueries.getNotifications(params),
     staleTime: 0, // Always consider stale to allow refetching on mutations
     refetchOnWindowFocus: true,
+    refetchOnMount: 'always', // Always refetch when component mounts to get fresh data
   });
 }
 
