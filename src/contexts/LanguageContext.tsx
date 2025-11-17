@@ -1672,7 +1672,7 @@ const translations: Translations = {
   'legacyDetail.years': { en: 'years', mm: 'နှစ်' },
   'legacyDetail.education': { en: 'Education', mm: 'ပညာရေး' },
   'legacyDetail.languages': { en: 'Languages', mm: 'ဘာသာစကားများ' },
-  'legacyDetail.services': { en: 'Services', mm: 'ဝန်ဆောင်မှုများ' },
+  'legacyDetail.services': { en: 'Services Offered', mm: 'ပေးနိုင်သော ဝန်ဆောင်မှုများ' },
   'legacyDetail.certifications': { en: 'Certifications', mm: 'လက်မှတ်များ' },
   'legacyDetail.about': { en: 'About', mm: 'အကြောင်း' },
   'legacyDetail.contactInformation': { en: 'Contact Information', mm: 'ဆက်သွယ်ရန်အချက်အလက်' },
