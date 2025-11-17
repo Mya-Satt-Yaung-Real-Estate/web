@@ -14,6 +14,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { memo, useMemo } from 'react';
+import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
 import {
   Home as HomeIcon,
   Search,
@@ -29,30 +30,42 @@ import {
 export const Home = memo(function Home() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { data: countsData } = useStatisticsCounts();
 
-  
-  const stats = useMemo(() => [
-    {
-      icon: <HomeIcon className="h-6 w-6" />,
-      value: '12,500+',
-      label: 'propertiesListed',
-    },
-    {
-      icon: <Search className="h-6 w-6" />,
-      value: '3,200+',
-      label: 'wantedListing',
-    },
-    {
-      icon: <MapPin className="h-6 w-6" />,
-      value: '45+',
-      label: 'citiesCovered',
-    },
-    {
-      icon: <Award className="h-6 w-6" />,
-      value: '15+',
-      label: 'yearsExperience',
-    },
-  ], []);
+  const stats = useMemo(() => {
+    const counts = countsData?.data?.data;
+    
+    return [
+      {
+        icon: <HomeIcon className="h-6 w-6" />,
+        value: counts?.all_properties_count 
+          ? `${counts.all_properties_count.toLocaleString()}+`
+          : '0+',
+        label: 'propertiesListed',
+      },
+      {
+        icon: <Search className="h-6 w-6" />,
+        value: counts?.wanted_listings_count 
+          ? `${counts.wanted_listings_count.toLocaleString()}+`
+          : '0+',
+        label: 'wantedListing',
+      },
+      {
+        icon: <MapPin className="h-6 w-6" />,
+        value: counts?.cities_covered_count 
+          ? `${counts.cities_covered_count}+`
+          : '0+',
+        label: 'citiesCovered',
+      },
+      {
+        icon: <Award className="h-6 w-6" />,
+        value: counts?.years_of_experience 
+          ? `${counts.years_of_experience}+`
+          : '0+',
+        label: 'yearsExperience',
+      },
+    ];
+  }, [countsData]);
 
   const features = useMemo(() => [
     {
@@ -121,7 +134,7 @@ export const Home = memo(function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, index) => (
               <Card key={index} className="shadow-lg border-border/50 backdrop-blur-sm h-full group hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 cursor-pointer hover:-translate-y-1">
-                <CardContent className="p-6 text-center flex flex-col items-center justify-center h-full">
+                <CardContent className="p-6 pt-6 text-center flex flex-col items-center justify-center h-full">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-[#4a9b82] text-white mb-3 shadow-lg shadow-primary/25 group-hover:shadow-primary/50 group-hover:scale-110 transition-all">
                     {stat.icon}
                   </div>
