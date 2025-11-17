@@ -129,6 +129,17 @@ export const propertyApi = {
   },
 
   /**
+   * Get user's recently viewed properties (frontend endpoint)
+   */
+  getRecentViews: () => {
+    return api.get<{
+      success: boolean;
+      message: string;
+      data: Property[];
+    }>('/api/v1/frontend/properties/recent-view');
+  },
+
+  /**
    * Get user's favorite properties (legacy endpoint)
    */
   getFavoriteProperties: () => {

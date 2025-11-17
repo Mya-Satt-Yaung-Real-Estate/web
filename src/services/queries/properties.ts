@@ -19,6 +19,7 @@ export const propertyKeys = {
   detail: (id: string) => [...propertyKeys.details(), id] as const,
   search: (query: string) => [...propertyKeys.all, 'search', query] as const,
   favorites: () => [...propertyKeys.all, 'favorites'] as const,
+  recentViews: () => [...propertyKeys.all, 'recentViews'] as const,
   stats: () => [...propertyKeys.all, 'stats'] as const,
 } as const;
 
@@ -60,6 +61,13 @@ export const propertyQueries = {
    */
   getFavoriteProperties: () => {
     return propertyApi.getFavoriteProperties();
+  },
+
+  /**
+   * Get user's recently viewed properties
+   */
+  getRecentViews: () => {
+    return propertyApi.getRecentViews();
   },
 
   /**

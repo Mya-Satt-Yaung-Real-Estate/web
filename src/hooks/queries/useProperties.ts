@@ -54,6 +54,18 @@ export function useFavorites(params?: { per_page?: number; page?: number }) {
 }
 
 /**
+ * Get user's recently viewed properties
+ */
+export function useRecentViews() {
+  return useQuery({
+    queryKey: propertyKeys.recentViews(),
+    queryFn: () => propertyQueries.getRecentViews(),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnMount: 'always', // Always refetch when component mounts to get fresh data
+  });
+}
+
+/**
  * Get property by ID
  */
 export function useProperty(id: string) {

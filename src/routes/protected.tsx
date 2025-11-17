@@ -23,6 +23,7 @@ const Settings = lazyWithRetry(() => import('../pages/Settings').then(module => 
 const Profile = lazyWithRetry(() => import('../pages/Profile').then(module => ({ default: module.Profile })));
 const EditProfile = lazyWithRetry(() => import('../pages/EditProfile').then(module => ({ default: module.EditProfile })));
 const Favorites = lazyWithRetry(() => import('../pages/Favorites').then(module => ({ default: module.Favorites })));
+const RecentViews = lazyWithRetry(() => import('../pages/RecentViews').then(module => ({ default: module.RecentViews })));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -218,6 +219,16 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <Favorites />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/recent-views',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <RecentViews />
         </Suspense>
       </ProtectedRoute>
     ),

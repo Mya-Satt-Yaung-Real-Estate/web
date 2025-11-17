@@ -459,6 +459,8 @@ const translations: Translations = {
   'notifications.clearAll': { en: 'Clear All', mm: 'အားလုံးရှင်းလင်းရန်' },
   'services.recentViews': { en: 'Recent Views', mm: 'မကြာသေးမီကြည့်ရှုမှုများ' },
   'services.recentViewsDesc': { en: 'Recently viewed properties', mm: 'မကြာသေးမီကြည့်ရှုခဲ့သောအိမ်ခြံမြေများ' },
+  'recentViews.viewed': { en: 'Viewed on', mm: 'ကြည့်ရှုထားသော ရက်စွဲ' },
+  'recentViews.viewAgain': { en: 'View Again', mm: 'ထပ်မံကြည့်ရှုရန်' },
   'services.profile': { en: 'Profile', mm: 'ပရိုဖိုင်' },
   'services.profileDesc': { en: 'Manage your account', mm: 'သင့်အကောင့်စီမံပါ' },
   'services.setting': { en: 'Setting', mm: 'ဆက်တင်' },
