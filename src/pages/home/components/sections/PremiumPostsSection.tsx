@@ -15,7 +15,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { memo, useMemo } from 'react';
 
-export const PremiumPostsSection = memo(function PremiumPostsSection() {
+interface PremiumPostsSectionProps {
+  count?: number;
+}
+
+export const PremiumPostsSection = memo(function PremiumPostsSection({ count }: PremiumPostsSectionProps) {
   const { t } = useLanguage();
   const { data, isLoading, error } = useHomePremiumProperties();
 
@@ -78,7 +82,14 @@ export const PremiumPostsSection = memo(function PremiumPostsSection() {
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <h2>{t('premium.title')}</h2>
+                <h2>
+                  {t('premium.title')}
+                  {count !== undefined && (
+                    <span className="text-base font-normal text-muted-foreground">
+                      {' '}({count} {count === 1 ? 'item' : 'items'})
+                    </span>
+                  )}
+                </h2>
                 <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0">
                   <Star className="h-3 w-3 mr-1 fill-white" />
                   Premium
@@ -108,18 +119,25 @@ export const PremiumPostsSection = memo(function PremiumPostsSection() {
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-amber-50/30 to-background dark:from-amber-950/10">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <h2>{t('premium.title')}</h2>
-              <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0">
-                <Star className="h-3 w-3 mr-1 fill-white" />
-                Premium
-              </Badge>
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <h2>
+                  {t('premium.title')}
+                  {count !== undefined && (
+                    <span className="text-base font-normal text-muted-foreground">
+                      {' '}({count} {count === 1 ? 'item' : 'items'})
+                    </span>
+                  )}
+                </h2>
+                <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0">
+                  <Star className="h-3 w-3 mr-1 fill-white" />
+                  Premium
+                </Badge>
+              </div>
+              <p className="text-muted-foreground">
+                {t('premium.subtitle')}
+              </p>
             </div>
-            <p className="text-muted-foreground">
-              {t('premium.subtitle')}
-            </p>
-          </div>
           <Link to="/search?type=premium">
             <Button variant="outline" className="border-primary/30 hover:bg-primary/5">
               {t('premium.viewAll')}

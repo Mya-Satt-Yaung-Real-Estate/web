@@ -14,7 +14,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { memo, useMemo } from 'react';
 
-export const WantedListingsSection = memo(function WantedListingsSection() {
+interface WantedListingsSectionProps {
+  count?: number;
+}
+
+export const WantedListingsSection = memo(function WantedListingsSection({ count }: WantedListingsSectionProps) {
   const { t } = useLanguage();
   const { data, isLoading, error } = useHomeWantedListings();
 
@@ -73,7 +77,10 @@ export const WantedListingsSection = memo(function WantedListingsSection() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
-              <h2 className="mb-4">{t('wanted.title') || 'Wanted Listings'}</h2>
+              <h2 className="mb-4">
+                {t('wanted.title') || 'Wanted Listings'}
+                {count !== undefined && ` (${count} ${count === 1 ? 'item' : 'items'})`}
+              </h2>
               <p className="text-muted-foreground">
                 {t('wanted.subtitle') || 'Browse active property requests from buyers and renters'}
               </p>
@@ -98,7 +105,14 @@ export const WantedListingsSection = memo(function WantedListingsSection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
           <div>
-            <h2 className="mb-4">{t('wanted.title') || 'Wanted Listings'}</h2>
+            <h2 className="mb-4">
+              {t('wanted.title') || 'Wanted Listings'}
+              {count !== undefined && (
+                <span className="text-base font-normal text-muted-foreground">
+                  {' '}({count} {count === 1 ? 'item' : 'items'})
+                </span>
+              )}
+            </h2>
             <p className="text-muted-foreground">
               {t('wanted.subtitle') || 'Browse active property requests from buyers and renters'}
             </p>

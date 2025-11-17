@@ -14,7 +14,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { memo, useMemo } from 'react';
 
-export const EventsSection = memo(function EventsSection() {
+interface EventsSectionProps {
+  count?: number;
+}
+
+export const EventsSection = memo(function EventsSection({ count }: EventsSectionProps) {
   const { t } = useLanguage();
   const { data, isLoading, error } = useHomeUpcomingEvents();
 
@@ -73,7 +77,10 @@ export const EventsSection = memo(function EventsSection() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
-              <h2 className="mb-4">{t('events.title')}</h2>
+              <h2 className="mb-4">
+                {t('events.title')}
+                {count !== undefined && ` (${count} ${count === 1 ? 'item' : 'items'})`}
+              </h2>
               <p className="text-muted-foreground">
                 {t('events.subtitle')}
               </p>
@@ -98,7 +105,14 @@ export const EventsSection = memo(function EventsSection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
           <div>
-            <h2 className="mb-4">{t('events.title')}</h2>
+            <h2 className="mb-4">
+              {t('events.title')}
+              {count !== undefined && (
+                <span className="text-base font-normal text-muted-foreground">
+                  {' '}({count} {count === 1 ? 'item' : 'items'})
+                </span>
+              )}
+            </h2>
             <p className="text-muted-foreground">
               {t('events.subtitle')}
             </p>

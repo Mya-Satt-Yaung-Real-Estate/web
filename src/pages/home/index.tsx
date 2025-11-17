@@ -148,19 +148,19 @@ export const Home = memo(function Home() {
       </section>
 
       {/* Premium Posts */}
-      <PremiumPostsSection />
+      <PremiumPostsSection count={countsData?.data?.data?.premium_properties_count} />
 
       {/* Wanted Listings */}
-      <WantedListingsSection />
+      <WantedListingsSection count={countsData?.data?.data?.wanted_listings_count} />
 
       {/* Property Listings */}
-      <PropertyListingsSection />
+      <PropertyListingsSection count={countsData?.data?.data?.all_properties_count} />
 
       {/* Featured Advertisements */}
-      <FeaturedAdvertisementsSection />
+      <FeaturedAdvertisementsSection count={countsData?.data?.data?.advertisements_count} />
 
       {/* Events */}
-      <EventsSection />
+      <EventsSection count={countsData?.data?.data?.housing_events_count} />
 
       {/* Legal Team */}
       <LegalTeamSection />

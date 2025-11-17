@@ -14,7 +14,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { memo, useMemo } from 'react';
 
-export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisementsSection() {
+interface FeaturedAdvertisementsSectionProps {
+  count?: number;
+}
+
+export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisementsSection({ count }: FeaturedAdvertisementsSectionProps) {
   const { t } = useLanguage();
   const { data, isLoading, error } = useHomeFeaturedAdvertisements();
 
@@ -73,7 +77,14 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
-              <h2 className="mb-4">{t('ads.title')}</h2>
+              <h2 className="mb-4">
+                {t('ads.title')}
+                {count !== undefined && (
+                  <span className="text-base font-normal text-muted-foreground">
+                    {' '}({count} {count === 1 ? 'item' : 'items'})
+                  </span>
+                )}
+              </h2>
               <p className="text-muted-foreground">
                 {t('ads.subtitle')}
               </p>
@@ -97,12 +108,19 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
-          <div>
-            <h2 className="mb-4">{t('ads.title')}</h2>
-            <p className="text-muted-foreground">
-              {t('ads.subtitle')}
-            </p>
-          </div>
+            <div>
+              <h2 className="mb-4">
+                {t('ads.title')}
+                {count !== undefined && (
+                  <span className="text-base font-normal text-muted-foreground">
+                    {' '}({count} {count === 1 ? 'item' : 'items'})
+                  </span>
+                )}
+              </h2>
+              <p className="text-muted-foreground">
+                {t('ads.subtitle')}
+              </p>
+            </div>
           <Link to="/search?type=advertisements">
             <Button variant="outline">
               {t('ads.viewAll')}
