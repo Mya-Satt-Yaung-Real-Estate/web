@@ -49,6 +49,7 @@ export function useFavorites(params?: { per_page?: number; page?: number }) {
     queryKey: [...propertyKeys.favorites(), params],
     queryFn: () => propertyQueries.getFavorites(params),
     staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnMount: 'always', // Always refetch when component mounts to get fresh data
   });
 }
 
