@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Bell, Check, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, Check, X, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -21,6 +22,7 @@ import type { Notification as ApiNotification } from '@/services/api/notificatio
 
 export function NotificationDropdown() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   // Fetch notifications from API
   const { data: notificationsResponse, isLoading, refetch } = useNotifications({ per_page: 30 });
@@ -80,6 +82,83 @@ export function NotificationDropdown() {
     deleteNotificationMutation.mutate(id);
   };
 
+  const getNotificationDetailUrl = (notification: ApiNotification): string | null => {
+    const notificationType = notification.type;
+    const referenceSlug = notification.reference_slug;
+    const referenceId = notification.reference_id;
+
+    // Property-related notifications that go to my property detail page
+    if (notificationType === 'property_reject' || notificationType === 'property_approve') {
+      if (!referenceSlug) {
+        return null; // Can't navigate without slug
+      }
+      return `/my-properties/${referenceSlug}`;
+    }
+
+    // Property-related notifications that go to public property detail page
+    if (notificationType === 'new_property' || 
+        notificationType === 'property_comment_reply' || 
+        notificationType === 'property_comment_create') {
+      if (!referenceSlug) {
+        return null; // Can't navigate without slug
+      }
+      return `/properties/${referenceSlug}`;
+    }
+
+    // Point purchase request approved goes to profile page
+    if (notificationType === 'point_purchase_request_approved') {
+      return '/profile';
+    }
+
+    // Housing event notifications go to public event detail page
+    if (notificationType === 'new_housing_event') {
+      if (!referenceSlug) {
+        return null; // Can't navigate without slug
+      }
+      return `/events/${referenceSlug}`;
+    }
+
+    // Appointment confirmed goes to appointments list page
+    if (notificationType === 'appointment_confirmed') {
+      return '/appointments';
+    }
+
+    // Advertisement notifications
+    if (notificationType === 'new_advertisement') {
+      // Public advertisement detail uses ID, not slug
+      if (!referenceId) {
+        return null;
+      }
+      return `/advertisements/${referenceId}`;
+    }
+
+    if (notificationType === 'advertisement_approved') {
+      // My advertisement detail uses ID, not slug
+      if (!referenceId) {
+        return null;
+      }
+      return `/advertisements/detail/${referenceId}`;
+    }
+
+    return null;
+  };
+
+  const handleViewDetail = (notification: ApiNotification, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Mark notification as read if it's unread
+    if (!notification.is_read) {
+      handleMarkAsRead(notification.id);
+    }
+    
+    const url = getNotificationDetailUrl(notification);
+    if (url) {
+      navigate(url);
+      setDropdownOpen(false);
+    }
+  };
+
   const handleClearAll = () => {
     // Close dropdown when opening modal
     setDropdownOpen(false);
@@ -120,7 +199,7 @@ export function NotificationDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-96 p-0 bg-white">
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="font-semibold">Notifications</h3>
+          <h6 className="font-semibold">{t('notifications.title') || 'Notifications'}</h6>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -129,7 +208,7 @@ export function NotificationDropdown() {
               disabled={markAllAsReadMutation.isPending}
               className="h-auto py-1 px-2"
             >
-              Mark all read
+              {t('notifications.markAllRead') || 'Mark all read'}
             </Button>
           )}
         </div>
@@ -182,7 +261,18 @@ export function NotificationDropdown() {
                             className="h-7 px-2"
                           >
                             <Check className="h-3 w-3 mr-1" />
-                            Mark read
+                            {t('notifications.markRead') || 'Mark read'}
+                          </Button>
+                        )}
+                        {getNotificationDetailUrl(notification) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleViewDetail(notification, e)}
+                            className="h-7 px-2"
+                          >
+                            <Eye className="h-3 w-3 mr-1" />
+                            {t('notifications.viewDetail') || 'View Detail'}
                           </Button>
                         )}
                         <Button
@@ -193,7 +283,7 @@ export function NotificationDropdown() {
                           className="h-7 px-2 hover:text-red-500 hover:bg-red-50/50"
                         >
                           <X className="h-3 w-3 mr-1" />
-                          Dismiss
+                          {t('notifications.dismiss') || 'Dismiss'}
                         </Button>
                       </div>
                     </div>
@@ -213,7 +303,7 @@ export function NotificationDropdown() {
               onClick={handleClearAll}
               disabled={clearAllMutation.isPending}
             >
-              Clear All
+              {t('notifications.clearAll') || 'Clear All'}
               <X className="h-4 w-4" />
             </Button>
           </div>

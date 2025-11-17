@@ -454,9 +454,14 @@ const translations: Translations = {
   'favorites.remove': { en: 'Remove', mm: 'ဖယ်ရှားရန်' },
   
   // Notifications
-  'notifications.clearAllTitle': { en: 'Clear All Notifications', mm: 'အကြောင်းကြားချက်အားလုံးကို ရှင်းလင်းရန်' },
+  'notifications.title': { en: 'Notifications', mm: 'အကြောင်းကြားချက်များ' },
+  'notifications.markRead': { en: 'Mark read', mm: 'ဖတ်ပြီး' },
+  'notifications.markAllRead': { en: 'Mark all read', mm: 'အားလုံးကို ဖတ်ပြီး သတ်မှတ်ရန်' },
+  'notifications.dismiss': { en: 'Dismiss', mm: 'ဖျက်ရန်' },
+  'notifications.clearAllTitle': { en: 'Clear All Notifications', mm: 'အားလုံးကို ရှင်းလင်းရန်' },
   'notifications.clearAllMessage': { en: 'Are you sure you want to clear all notifications? This action cannot be undone.', mm: 'အကြောင်းကြားချက်အားလုံးကို ရှင်းလင်းလိုပါသလား? ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြုလုပ်နိုင်မည်မဟုတ်ပါ။' },
   'notifications.clearAll': { en: 'Clear All', mm: 'အားလုံးရှင်းလင်းရန်' },
+  'notifications.viewDetail': { en: 'View', mm: 'ကြည့်ရန်' },
   'services.recentViews': { en: 'Recent Views', mm: 'မကြာသေးမီကြည့်ရှုမှုများ' },
   'services.recentViewsDesc': { en: 'Recently viewed properties', mm: 'မကြာသေးမီကြည့်ရှုခဲ့သောအိမ်ခြံမြေများ' },
   'recentViews.viewed': { en: 'Viewed on', mm: 'ကြည့်ရှုထားသော ရက်စွဲ' },

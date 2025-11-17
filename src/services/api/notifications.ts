@@ -18,6 +18,7 @@ export interface Notification {
   category: string;
   reference_type: string | null;
   reference_id: number | null;
+  reference_slug?: string | null; // Reference slug for navigation (property, event, etc.)
   is_read: number; // 0 or 1
   created_at: string;
   time_ago: string;
