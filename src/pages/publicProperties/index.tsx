@@ -36,6 +36,46 @@ export default function PublicProperties() {
     } else {
       newParams.set('type', value);
     }
+    
+    // Reset all filter parameters when changing tabs
+    // Basic search
+    newParams.delete('search');
+    
+    // Property/Premium/Installment/TanTanTan filters
+    newParams.delete('property_type_id');
+    newParams.delete('listing_type_id');
+    newParams.delete('region_id');
+    newParams.delete('township_id');
+    newParams.delete('min_price');
+    newParams.delete('max_price');
+    newParams.delete('bedrooms');
+    newParams.delete('bathrooms');
+    newParams.delete('min_area');
+    newParams.delete('max_area');
+    newParams.delete('tan_tan_tan');
+    newParams.delete('premium');
+    newParams.delete('installment');
+    newParams.delete('price_low_to_high');
+    newParams.delete('property_condition');
+    
+    // Advertisement filters
+    // (region_id and township_id already deleted above)
+    
+    // Wanted filters
+    newParams.delete('wanted_type');
+    newParams.delete('prefer_region_id');
+    newParams.delete('prefer_township_id');
+    newParams.delete('min_budget');
+    newParams.delete('max_budget');
+    // (min_area and max_area already deleted above)
+    
+    // Event filters
+    newParams.delete('date_from');
+    newParams.delete('date_to');
+    // (region_id and township_id already deleted above)
+    
+    // Reset page to 1 when changing tabs
+    newParams.delete('page');
     setSearchParams(newParams);
   };
 
