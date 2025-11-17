@@ -507,6 +507,7 @@ const translations: Translations = {
   'search.keywords': { en: 'Keywords', mm: 'သော့ချက်စာလုံးများ' },
   'search.search': { en: 'Search', mm: 'ရှာဖွေရန်' },
   'search.searchPlaceholder': { en: 'Search by title, description, owner name...', mm: 'ခေါင်းစဉ်၊ ဖော်ပြချက်၊ ပိုင်ရှင်အမည်ဖြင့်ရှာဖွေရန်...' },
+  'search.recommendedPropertyTypes': { en: 'Recommended Property Types', mm: 'အကြံပြုထားသောအိမ်ခြံမြေအမျိုးအစားများ' },
   'search.propertyType': { en: 'Property Type', mm: 'အိမ်ခြံမြေအမျိုးအစား' },
   'search.allTypes': { en: 'All Types', mm: 'အမျိုးအစားအားလုံး' },
   'search.listingType': { en: 'Listing Type', mm: 'စာရင်းအမျိုးအစား' },
