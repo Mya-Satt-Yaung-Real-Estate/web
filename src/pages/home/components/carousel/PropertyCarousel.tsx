@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -63,13 +63,6 @@ export function PropertyCarousel() {
   const goToSlide = (index: number) => {
     setIsAutoPlaying(false);
     setCurrentIndex(index);
-  };
-
-  const scrollToContent = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
   };
 
   // Use mobile component for mobile/tablet
@@ -143,17 +136,6 @@ export function PropertyCarousel() {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
-
-      {/* Scroll Down Indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce">
-        <button
-          onClick={scrollToContent}
-          className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors group/scroll"
-        >
-          <span className="text-sm">{t('carousel.scrollDown')}</span>
-          <ChevronDown className="h-5 w-5" />
-        </button>
       </div>
     </div>
   );
