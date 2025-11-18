@@ -11,6 +11,10 @@ import { protectedRoutes } from './protected';
 // Lazy load NotFoundPage with retry mechanism
 const NotFoundPage = lazyWithRetry(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
 
+// Lazy load Mobile AI Assistant page (standalone, no layout)
+const AiAssistantMobile = lazyWithRetry(() => import('../pages/mobile/AiAssistantMobile').then(module => ({ default: module.AiAssistantMobile })));
+const MobileRouteGuard = lazyWithRetry(() => import('../components/guards/MobileRouteGuard').then(module => ({ default: module.MobileRouteGuard })));
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -20,6 +24,18 @@ export const router = createBrowserRouter([
       ...publicRoutes,
       ...protectedRoutes,
     ],
+  },
+  
+  // Mobile AI Assistant - standalone route without Layout, protected by guard
+  {
+    path: '/mobile/ai-assistant',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <MobileRouteGuard>
+          <AiAssistantMobile />
+        </MobileRouteGuard>
+      </Suspense>
+    ),
   },
   
   // Catch-all route
