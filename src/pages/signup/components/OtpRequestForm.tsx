@@ -3,13 +3,6 @@ import { Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOtpRequest } from '@/hooks/mutations/useOtpRequest';
 import { storeOtpRequestedPhone } from '@/utils/signupFlow';
@@ -115,28 +108,6 @@ export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Country Code */}
-      <div className="space-y-2">
-        <Label htmlFor="countryCode" className="text-sm font-medium text-gray-700">
-          {t('signup.otpRequest.countryCode') || 'Country Code'}
-        </Label>
-        <Select defaultValue="myanmar" disabled>
-          <SelectTrigger className="w-full">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🇲🇲</span>
-              <SelectValue>
-                {COUNTRY_CODE} ({t('signup.otpRequest.myanmar') || 'Myanmar'})
-              </SelectValue>
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="myanmar">
-              🇲🇲 {COUNTRY_CODE} ({t('signup.otpRequest.myanmar') || 'Myanmar'})
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* Phone Number */}
       <div className="space-y-2">
         <Label htmlFor="phone" className="text-sm font-medium text-gray-700 flex items-center gap-2">

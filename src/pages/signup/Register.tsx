@@ -23,22 +23,17 @@ export function Register() {
   const { isAuthenticated } = useAuthStore();
   const { showSuccess } = useModal();
 
+  // Get phone from sessionStorage (primary) or location state (fallback)
+  const phoneFromStorage = getVerifiedPhone();
+  const phoneFromState = location.state?.phone as string | undefined;
+  const phone = phoneFromStorage || phoneFromState;
+
   // Redirect authenticated users to profile page
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/profile', { replace: true });
     }
   }, [isAuthenticated, navigate]);
-
-  // Show nothing while redirecting if authenticated
-  if (isAuthenticated) {
-    return null;
-  }
-
-  // Get phone from sessionStorage (primary) or location state (fallback)
-  const phoneFromStorage = getVerifiedPhone();
-  const phoneFromState = location.state?.phone as string | undefined;
-  const phone = phoneFromStorage || phoneFromState;
 
   // Redirect to OTP request if no valid phone or OTP not verified
   useEffect(() => {
@@ -48,8 +43,8 @@ export function Register() {
     }
   }, [phone, phoneFromStorage, navigate]);
 
-  // Show nothing while redirecting
-  if (!phone || !phoneFromStorage) {
+  // Show nothing while redirecting if authenticated or no phone/OTP verified
+  if (isAuthenticated || !phone || !phoneFromStorage) {
     return null;
   }
 

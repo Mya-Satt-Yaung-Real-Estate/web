@@ -23,22 +23,17 @@ export function LoginOtpVerify() {
   const { isAuthenticated, setToken, checkAuth } = useAuthStore();
   const { showSuccess } = useModal();
 
+  // Get phone from sessionStorage (primary) or location state (fallback)
+  const phoneFromStorage = getOtpRequestedPhone();
+  const phoneFromState = location.state?.phone as string | undefined;
+  const phone = phoneFromStorage || phoneFromState;
+
   // Redirect authenticated users to profile page
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/profile', { replace: true });
     }
   }, [isAuthenticated, navigate]);
-
-  // Show nothing while redirecting if authenticated
-  if (isAuthenticated) {
-    return null;
-  }
-
-  // Get phone from sessionStorage (primary) or location state (fallback)
-  const phoneFromStorage = getOtpRequestedPhone();
-  const phoneFromState = location.state?.phone as string | undefined;
-  const phone = phoneFromStorage || phoneFromState;
 
   // Redirect to login OTP request if no valid phone found
   useEffect(() => {
@@ -47,8 +42,8 @@ export function LoginOtpVerify() {
     }
   }, [phone, navigate]);
 
-  // Show nothing while redirecting
-  if (!phone) {
+  // Show nothing while redirecting if authenticated or no phone
+  if (isAuthenticated || !phone) {
     return null;
   }
 

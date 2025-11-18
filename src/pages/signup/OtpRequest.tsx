@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Globe, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -143,6 +143,19 @@ export function OtpRequest() {
               </p>
               <p className="text-xs text-gray-400">
                 {t('signup.otpRequest.guestDescription') || 'Browse properties without creating an account'}
+              </p>
+            </div>
+
+            {/* Sign In Link */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                {t('signup.otpRequest.alreadyHaveAccount') || 'Already have an account?'}{' '}
+                <Link 
+                  to="/signin/otp-request" 
+                  className="text-primary hover:underline font-semibold"
+                >
+                  {t('signup.otpRequest.signIn') || 'Sign In'}
+                </Link>
               </p>
             </div>
           </div>
