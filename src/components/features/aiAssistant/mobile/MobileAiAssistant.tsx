@@ -13,10 +13,10 @@ const WELCOME_MESSAGE: AiMessageDisplay = {
 };
 
 interface MobileAiAssistantProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
-export function MobileAiAssistant({ onClose }: MobileAiAssistantProps) {
+export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps) {
   const [messages, setMessages] = useState<AiMessageDisplay[]>([WELCOME_MESSAGE]);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const chatMutation = useAiAssistantChat();

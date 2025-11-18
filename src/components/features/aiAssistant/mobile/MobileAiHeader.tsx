@@ -1,12 +1,12 @@
 import { Sparkles } from 'lucide-react';
 
 interface MobileAiHeaderProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const GRADIENT_COLOR = 'linear-gradient(to right, oklch(0.558 0.288 302.321) 0%, oklch(0.546 0.245 262.881) 100%)';
 
-export function MobileAiHeader({ onClose }: MobileAiHeaderProps) {
+export function MobileAiHeader({ onClose: _onClose }: MobileAiHeaderProps) {
   return (
     <div 
       className="flex items-center justify-center px-4 py-3 flex-shrink-0 safe-area-top"
