@@ -5,17 +5,17 @@ import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOtpVerify } from '@/hooks/mutations/useOtpVerify';
 import { useOtpRequest } from '@/hooks/mutations/useOtpRequest';
-import { storeOtpVerified, storeOtpRequestedPhone, getOtpActionType } from '@/utils/signupFlow';
+import { storeOtpRequestedPhone } from '@/utils/signupFlow';
 import type { OtpVerifyRequest, OtpRequestRequest } from '@/types/auth';
 
-interface OtpVerifyFormProps {
+interface LoginOtpVerifyFormProps {
   phone: string;
-  onSuccess: () => void;
+  onSuccess: (response: any) => void;
 }
 
 const RESEND_COUNTDOWN_SECONDS = 60;
 
-export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
+export function LoginOtpVerifyForm({ phone, onSuccess }: LoginOtpVerifyFormProps) {
   const { t } = useLanguage();
   const { mutate: verifyOtp, isPending } = useOtpVerify();
   const { mutate: requestOtp } = useOtpRequest();
@@ -89,7 +89,7 @@ export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
 
     const otpCode = otp.join('');
     if (otpCode.length !== 6) {
-      setError(t('signup.otpVerify.invalidOtp') || 'Please enter a valid 6-digit OTP code');
+      setError(t('signin.otpVerify.invalidOtp') || 'Please enter a valid 6-digit OTP code');
       return;
     }
 
@@ -97,20 +97,14 @@ export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
       phone: phone.startsWith('09') ? phone : `09${phone}`,
       type: 'phone',
       otp_code: otpCode,
-      action_type: 'register',
+      action_type: 'login',
     };
 
     verifyOtp(payload, {
       onSuccess: (response) => {
-        // For register action, response.data contains phone and action
-        if (response.data?.phone && response.data?.action === 'register') {
-          // Store OTP verification status in sessionStorage
-          storeOtpVerified(phone.startsWith('09') ? phone : `09${phone}`);
-          onSuccess();
-        } else {
-          // This shouldn't happen for register flow, but handle it
-          setError('Unexpected response. Please try again.');
-        }
+        // For login action, response.data contains user and token
+        // Pass the response to parent to handle auto-login
+        onSuccess(response);
       },
       onError: (error: any) => {
         const apiErrors = error?.response?.data?.errors;
@@ -128,19 +122,17 @@ export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
     if (resendCountdown > 0) return;
 
     setError('');
-    // Use stored action type or default to 'register'
-    const storedActionType = getOtpActionType() || 'register';
     const payload: OtpRequestRequest = {
       phone: phone.startsWith('09') ? phone : `09${phone}`,
       type: 'phone',
-      action_type: storedActionType as 'register' | 'forgot_password',
+      action_type: 'login',
     };
 
     requestOtp(payload, {
       onSuccess: (response) => {
         // Update phone and action type in sessionStorage on resend
-        const actionType = response.data?.action || storedActionType;
-        storeOtpRequestedPhone(phone.startsWith('09') ? phone : `09${phone}`, actionType);
+        const responseActionType = response.data?.action || 'login';
+        storeOtpRequestedPhone(phone.startsWith('09') ? phone : `09${phone}`, responseActionType);
         setResendCountdown(RESEND_COUNTDOWN_SECONDS);
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0]?.focus();
@@ -159,27 +151,29 @@ export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
 
   return (
     <form onSubmit={handleVerify} className="space-y-6">
-      {/* Phone Number Display */}
-      <div className="text-center">
-        <p className="text-sm text-gray-500 mb-2">
-          {t('signup.otpVerify.sentCodeTo') || 'We sent a code to'}
+      {/* Phone Display */}
+      <div className="text-center space-y-2">
+        <p className="text-sm text-gray-600">
+          {t('signin.otpVerify.sentCodeTo') || 'We sent a code to'}
         </p>
-        <div className="flex items-center justify-center gap-2 text-primary font-medium">
+        <p className="text-base font-semibold text-gray-800 flex items-center justify-center gap-2">
           <Phone className="h-4 w-4" />
-          <span>{displayPhone}</span>
-        </div>
+          {displayPhone}
+        </p>
       </div>
 
-      {/* OTP Input */}
+      {/* OTP Input Fields */}
       <div className="space-y-2">
-        <label className="text-sm text-gray-500 block">
-          {t('signup.otpVerify.enterOtpCode') || 'Enter OTP Code'}
+        <label className="text-sm font-medium text-gray-700 block text-center">
+          {t('signin.otpVerify.enterOtpCode') || 'Enter OTP Code'}
         </label>
-        <div className="flex gap-2 justify-center">
+        <div className="flex justify-center gap-2">
           {otp.map((digit, index) => (
             <Input
               key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -187,9 +181,7 @@ export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={index === 0 ? handlePaste : undefined}
-              className={`w-12 h-12 text-center text-lg font-semibold ${
-                error ? 'border-red-500' : ''
-              }`}
+              className="w-12 h-12 text-center text-lg font-semibold border-2 focus:border-primary"
               disabled={isPending}
             />
           ))}
@@ -205,26 +197,31 @@ export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
         className="w-full bg-primary hover:bg-primary/90 text-white"
         disabled={isPending || otp.join('').length !== 6}
       >
-        {isPending ? (t('signup.otpVerify.verifying') || 'Verifying...') : (t('signup.otpVerify.verify') || 'Verify')}
+        {isPending ? (
+          t('signin.otpVerify.verifying') || 'Verifying...'
+        ) : (
+          t('signin.otpVerify.verify') || 'Verify'
+        )}
       </Button>
 
       {/* Resend OTP */}
       <div className="text-center">
-        <p className="text-sm text-gray-500 mb-1">
-          {t('signup.otpVerify.didntReceive') || "Didn't receive the code?"}
+        <p className="text-sm text-gray-600 mb-2">
+          {t('signin.otpVerify.didntReceive') || "Didn't receive the code?"}
         </p>
         {resendCountdown > 0 ? (
-          <p className="text-sm text-primary">
-            {t('signup.otpVerify.resendIn') || 'Resend in'} {resendCountdown}s
+          <p className="text-sm text-gray-500">
+            {t('signin.otpVerify.resendIn') || 'Resend in'} {resendCountdown}s
           </p>
         ) : (
-          <button
+          <Button
             type="button"
+            variant="link"
             onClick={handleResend}
-            className="text-sm text-primary hover:underline font-medium"
+            className="text-primary hover:underline"
           >
-            {t('signup.otpVerify.resend') || 'Resend'}
-          </button>
+            {t('signin.otpVerify.resend') || 'Resend'}
+          </Button>
         )}
       </div>
     </form>

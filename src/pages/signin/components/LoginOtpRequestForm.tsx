@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,8 +15,9 @@ import { useOtpRequest } from '@/hooks/mutations/useOtpRequest';
 import { storeOtpRequestedPhone } from '@/utils/signupFlow';
 import type { OtpRequestRequest } from '@/types/auth';
 
-interface OtpRequestFormProps {
+interface LoginOtpRequestFormProps {
   onSuccess: (phone: string) => void;
+  initialPhone?: string;
 }
 
 const PHONE_PREFIX = '09';
@@ -24,11 +25,20 @@ const PHONE_LENGTH = 9; // digits after prefix
 const TOTAL_PHONE_LENGTH = 11; // prefix + digits
 const COUNTRY_CODE = '+95';
 
-export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
+export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequestFormProps) {
   const { t } = useLanguage();
   const { mutate: requestOtp, isPending } = useOtpRequest();
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(initialPhone || '');
   const [error, setError] = useState('');
+
+  // Update phone if initialPhone changes
+  useEffect(() => {
+    if (initialPhone) {
+      // Remove 09 prefix if present since we show +95 separately
+      const phoneWithoutPrefix = initialPhone.startsWith('09') ? initialPhone.slice(2) : initialPhone;
+      setPhone(phoneWithoutPrefix);
+    }
+  }, [initialPhone]);
 
   const formatPhoneNumber = (phone: string): string => {
     const cleanPhone = phone.replace(/\D/g, '');
@@ -74,30 +84,30 @@ export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
     const formattedPhone = phone.startsWith('09') ? phone : `09${phone}`;
     
     if (!phone) {
-      setError(t('signup.otpRequest.phoneRequired') || 'Phone number is required');
+      setError(t('signin.otpRequest.phoneRequired') || 'Phone number is required');
       return;
     }
 
     if (phone.length !== PHONE_LENGTH) {
-      setError(t('signup.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
+      setError(t('signin.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
       return;
     }
 
     if (!validatePhoneNumber(formattedPhone)) {
-      setError(t('signup.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
+      setError(t('signin.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
       return;
     }
 
     const payload: OtpRequestRequest = {
       phone: formattedPhone,
       type: 'phone',
-      action_type: 'register',
+      action_type: 'login',
     };
 
     requestOtp(payload, {
       onSuccess: (response) => {
         // Store phone and action type in sessionStorage for flow protection
-        const responseActionType = response.data?.action || 'register';
+        const responseActionType = response.data?.action || 'login';
         storeOtpRequestedPhone(formattedPhone, responseActionType);
         onSuccess(formattedPhone);
       },
@@ -118,20 +128,20 @@ export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
       {/* Country Code */}
       <div className="space-y-2">
         <Label htmlFor="countryCode" className="text-sm font-medium text-gray-700">
-          {t('signup.otpRequest.countryCode') || 'Country Code'}
+          {t('signin.otpRequest.countryCode') || 'Country Code'}
         </Label>
         <Select defaultValue="myanmar" disabled>
           <SelectTrigger className="w-full">
             <div className="flex items-center gap-2">
               <span className="text-lg">🇲🇲</span>
               <SelectValue>
-                {COUNTRY_CODE} ({t('signup.otpRequest.myanmar') || 'Myanmar'})
+                {COUNTRY_CODE} ({t('signin.otpRequest.myanmar') || 'Myanmar'})
               </SelectValue>
             </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="myanmar">
-              🇲🇲 {COUNTRY_CODE} ({t('signup.otpRequest.myanmar') || 'Myanmar'})
+              🇲🇲 {COUNTRY_CODE} ({t('signin.otpRequest.myanmar') || 'Myanmar'})
             </SelectItem>
           </SelectContent>
         </Select>
@@ -141,7 +151,7 @@ export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
       <div className="space-y-2">
         <Label htmlFor="phone" className="text-sm font-medium text-gray-700 flex items-center gap-2">
           <Phone className="h-4 w-4" />
-          {t('signup.otpRequest.phoneNumber') || 'Phone Number'}
+          {t('signin.otpRequest.phoneNumber') || 'Phone Number'}
         </Label>
         <div className="flex gap-2">
           {/* Non-editable prefix */}
@@ -172,10 +182,10 @@ export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
         disabled={isPending || !phone}
       >
         {isPending ? (
-          t('signup.otpRequest.sendingOtp') || 'Sending OTP...'
+          t('signin.otpRequest.sendingOtp') || 'Sending OTP...'
         ) : (
           <>
-            {t('signup.otpRequest.continue') || 'Continue'} →
+            {t('signin.otpRequest.continue') || 'Continue'} →
           </>
         )}
       </Button>

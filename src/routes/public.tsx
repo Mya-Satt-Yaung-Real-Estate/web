@@ -13,6 +13,8 @@ const Contact = lazyWithRetry(() => import('../pages/Contact').then(module => ({
 const PrivacyPolicy = lazyWithRetry(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
 const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
 const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
+const LoginOtpRequest = lazyWithRetry(() => import('../pages/signin/LoginOtpRequest').then(module => ({ default: module.LoginOtpRequest })));
+const LoginOtpVerify = lazyWithRetry(() => import('../pages/signin/LoginOtpVerify').then(module => ({ default: module.LoginOtpVerify })));
 const OtpRequest = lazyWithRetry(() => import('../pages/signup/OtpRequest').then(module => ({ default: module.OtpRequest })));
 const OtpVerify = lazyWithRetry(() => import('../pages/signup/OtpVerify').then(module => ({ default: module.OtpVerify })));
 const Register = lazyWithRetry(() => import('../pages/signup/Register').then(module => ({ default: module.Register })));
@@ -127,6 +129,22 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <SignIn />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signin/otp-request',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <LoginOtpRequest />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signin/otp-verify',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <LoginOtpVerify />
       </Suspense>
     ),
   },
