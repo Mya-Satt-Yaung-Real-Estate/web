@@ -15,3 +15,4 @@ export * from './useUpdateProfile';
 export * from './useLogin';
 export * from './useOtpRequest';
 export * from './useOtpVerify';
+export * from './useRegister';

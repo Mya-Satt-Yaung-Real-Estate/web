@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { LoginRequest, LoginResponse, ExtendedUser, OtpRequestRequest, OtpRequestResponse, OtpVerifyRequest, OtpVerifyResponse } from '@/types/auth';
+import type { LoginRequest, LoginResponse, ExtendedUser, OtpRequestRequest, OtpRequestResponse, OtpVerifyRequest, OtpVerifyResponse, RegisterIndividualRequest, RegisterCompanyRequest, RegisterResponse } from '@/types/auth';
 
 export const authApi = {
   async login(data: LoginRequest): Promise<LoginResponse> {
@@ -44,12 +44,22 @@ export const authApi = {
   },
 
   async requestOtp(data: OtpRequestRequest): Promise<OtpRequestResponse> {
-    const response = await apiClient.post<OtpRequestResponse>('/api/v1/frontend/otp/request', data);
+    const response = await apiClient.post<OtpRequestResponse>('/api/v2/frontend/otp/request', data);
     return response.data;
   },
 
   async verifyOtp(data: OtpVerifyRequest): Promise<OtpVerifyResponse> {
-    const response = await apiClient.post<OtpVerifyResponse>('/api/v1/frontend/otp/verify', data);
+    const response = await apiClient.post<OtpVerifyResponse>('/api/v2/frontend/otp/verify', data);
+    return response.data;
+  },
+
+  async registerIndividual(data: RegisterIndividualRequest): Promise<RegisterResponse> {
+    const response = await apiClient.post<RegisterResponse>('/api/v2/frontend/auth/register/individual', data);
+    return response.data;
+  },
+
+  async registerCompany(data: RegisterCompanyRequest): Promise<RegisterResponse> {
+    const response = await apiClient.post<RegisterResponse>('/api/v2/frontend/auth/register/company', data);
     return response.data;
   },
 };

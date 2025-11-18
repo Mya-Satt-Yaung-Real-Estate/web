@@ -5,18 +5,17 @@ import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOtpVerify } from '@/hooks/mutations/useOtpVerify';
 import { useOtpRequest } from '@/hooks/mutations/useOtpRequest';
-import { storeOtpVerified, storeOtpRequestedPhone } from '@/utils/signupFlow';
+import { storeOtpVerified, storeOtpRequestedPhone, getOtpActionType } from '@/utils/signupFlow';
 import type { OtpVerifyRequest, OtpRequestRequest } from '@/types/auth';
 
 interface OtpVerifyFormProps {
   phone: string;
   onSuccess: () => void;
-  onBack: () => void;
 }
 
 const RESEND_COUNTDOWN_SECONDS = 60;
 
-export function OtpVerifyForm({ phone, onSuccess, onBack }: OtpVerifyFormProps) {
+export function OtpVerifyForm({ phone, onSuccess }: OtpVerifyFormProps) {
   const { t } = useLanguage();
   const { mutate: verifyOtp, isPending } = useOtpVerify();
   const { mutate: requestOtp } = useOtpRequest();
@@ -94,18 +93,28 @@ export function OtpVerifyForm({ phone, onSuccess, onBack }: OtpVerifyFormProps) 
       return;
     }
 
+    // Get action type from sessionStorage (stored during OTP request)
+    const actionType = getOtpActionType() || 'register';
+
     const payload: OtpVerifyRequest = {
       phone: phone.startsWith('09') ? phone : `09${phone}`,
       type: 'phone',
       otp_code: otpCode,
-      action_type: 'register',
+      action_type: actionType as 'register' | 'login' | 'forgot_password',
     };
 
     verifyOtp(payload, {
-      onSuccess: () => {
-        // Store OTP verification status in sessionStorage
-        storeOtpVerified(phone.startsWith('09') ? phone : `09${phone}`);
-        onSuccess();
+      onSuccess: (response) => {
+        // For register action, response.data contains phone and action
+        // For login action, response.data contains user and token (handled separately)
+        if (response.data?.phone && response.data?.action === 'register') {
+          // Store OTP verification status in sessionStorage
+          storeOtpVerified(phone.startsWith('09') ? phone : `09${phone}`);
+          onSuccess();
+        } else {
+          // This shouldn't happen for register flow, but handle it
+          setError('Unexpected response. Please try again.');
+        }
       },
       onError: (error: any) => {
         const apiErrors = error?.response?.data?.errors;
@@ -123,16 +132,19 @@ export function OtpVerifyForm({ phone, onSuccess, onBack }: OtpVerifyFormProps) 
     if (resendCountdown > 0) return;
 
     setError('');
+    // Use stored action type or default to 'register'
+    const storedActionType = getOtpActionType() || 'register';
     const payload: OtpRequestRequest = {
       phone: phone.startsWith('09') ? phone : `09${phone}`,
       type: 'phone',
-      action_type: 'register',
+      action_type: storedActionType as 'register' | 'forgot_password',
     };
 
     requestOtp(payload, {
-      onSuccess: () => {
-        // Update phone in sessionStorage on resend
-        storeOtpRequestedPhone(phone.startsWith('09') ? phone : `09${phone}`);
+      onSuccess: (response) => {
+        // Update phone and action type in sessionStorage on resend
+        const actionType = response.data?.action || storedActionType;
+        storeOtpRequestedPhone(phone.startsWith('09') ? phone : `09${phone}`, actionType);
         setResendCountdown(RESEND_COUNTDOWN_SECONDS);
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0]?.focus();

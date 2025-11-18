@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Phone, UserCircle } from 'lucide-react';
 
@@ -34,10 +34,22 @@ const TOTAL_PHONE_LENGTH = 11; // prefix + digits
 
 export function SignIn() {
   const navigate = useNavigate();
-  const { signInAsGuest, checkAuth, setToken } = useAuthStore();
+  const { signInAsGuest, checkAuth, setToken, isAuthenticated } = useAuthStore();
   const { showSuccess } = useModal();
   const { t } = useLanguage();
   const { mutate: login, isPending } = useLogin();
+
+  // Redirect authenticated users to profile page
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Show nothing while redirecting
+  if (isAuthenticated) {
+    return null;
+  }
 
   const [formState, setFormState] = useState<FormState>({
     email: '',

@@ -162,7 +162,7 @@ export interface LoginResponse {
 export interface OtpRequestRequest {
   phone: string;
   type: 'phone';
-  action_type: 'register' | 'forgot_password';
+  action_type: 'register' | 'login' | 'forgot_password';
 }
 
 export interface OtpRequestResponse {
@@ -170,6 +170,8 @@ export interface OtpRequestResponse {
   message: string;
   data?: {
     otp_code?: string;
+    action?: string;
+    user?: any;
   };
 }
 
@@ -178,10 +180,70 @@ export interface OtpVerifyRequest {
   phone: string;
   type: 'phone';
   otp_code: string;
-  action_type: 'register' | 'forgot_password';
+  action_type: 'register' | 'login' | 'forgot_password';
 }
 
+// OTP Verify Response - can be different based on action_type
 export interface OtpVerifyResponse {
   success: boolean;
   message: string;
+  data?: {
+    // For register action
+    phone?: string;
+    action?: string;
+    // For login action
+    user?: ExtendedUser;
+    token?: string;
+    token_type?: string;
+    biometric_enabled?: boolean;
+  };
+}
+
+// Registration Types
+export interface RegisterIndividualRequest {
+  name: string;
+  email?: string | null;
+  phone: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export interface RegisterCompanyRequest {
+  name: string;
+  email?: string | null;
+  phone: string;
+  password: string;
+  password_confirmation: string;
+  company_name: string;
+  company_type_id: number;
+  address: string;
+  region_id: number;
+  township_id: number;
+  description?: string;
+  website?: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: ExtendedUser;
+    token: string;
+    token_type: string;
+    company_profile?: {
+      id: number;
+      user_id: number;
+      company_name: string;
+      phone: string;
+      description: string | null;
+      location_en?: string;
+      location_mm?: string;
+      company_type_en?: string;
+      company_type_mm?: string;
+    };
+    trial_points?: {
+      points_allocated: number;
+      expires_at: string;
+    };
+  };
 }

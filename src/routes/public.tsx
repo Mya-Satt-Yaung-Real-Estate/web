@@ -15,6 +15,7 @@ const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => 
 const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
 const OtpRequest = lazyWithRetry(() => import('../pages/signup/OtpRequest').then(module => ({ default: module.OtpRequest })));
 const OtpVerify = lazyWithRetry(() => import('../pages/signup/OtpVerify').then(module => ({ default: module.OtpVerify })));
+const Register = lazyWithRetry(() => import('../pages/signup/Register').then(module => ({ default: module.Register })));
 
 // Knowledge pages
 const KnowledgeHub = lazyWithRetry(() => import('../pages/KnowledgeHub').then(module => ({ default: module.KnowledgeHub })));
@@ -142,6 +143,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <OtpVerify />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signup/register',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <Register />
       </Suspense>
     ),
   },

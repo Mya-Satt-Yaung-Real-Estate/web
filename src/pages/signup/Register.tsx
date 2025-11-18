@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Globe, User } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,13 +12,15 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { useModal } from '@/contexts/ModalContext';
-import { OtpRequestForm } from './components';
+import { getVerifiedPhone, clearSignupFlow } from '@/utils/signupFlow';
+import { RegisterForm } from './components';
 import logoImage from '@/assets/jade.png';
 
-export function OtpRequest() {
+export function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
-  const { signInAsGuest, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { showSuccess } = useModal();
 
   // Redirect authenticated users to profile page
@@ -28,38 +30,71 @@ export function OtpRequest() {
     }
   }, [isAuthenticated, navigate]);
 
-  // Show nothing while redirecting
+  // Show nothing while redirecting if authenticated
   if (isAuthenticated) {
     return null;
   }
 
-  const handleSuccess = (phone: string) => {
-    // Navigate to OTP verify page with phone in state
-    navigate('/signup/verify-otp', { state: { phone } });
+  // Get phone from sessionStorage (primary) or location state (fallback)
+  const phoneFromStorage = getVerifiedPhone();
+  const phoneFromState = location.state?.phone as string | undefined;
+  const phone = phoneFromStorage || phoneFromState;
+
+  // Redirect to OTP request if no valid phone or OTP not verified
+  useEffect(() => {
+    if (!phone || !phoneFromStorage) {
+      // OTP not verified, redirect to OTP request
+      navigate('/signup', { replace: true });
+    }
+  }, [phone, phoneFromStorage, navigate]);
+
+  // Show nothing while redirecting
+  if (!phone || !phoneFromStorage) {
+    return null;
+  }
+
+  const handleSuccess = async () => {
+    // Clear signup flow data
+    clearSignupFlow();
+    
+    // Show success message
+    showSuccess(
+      t('signup.register.success') || 'Registration successful!',
+      t('signup.register.welcome') || 'Welcome to Jade Property'
+    );
+    
+    // Auto-login will be handled by the mutation hook
+    // Navigate to profile page (user is already authenticated with token)
+    navigate('/profile');
   };
 
-  const handleGuestSignIn = () => {
-    signInAsGuest();
-    showSuccess(
-      t('signin.guestMessage'),
-      t('signin.guestAccess')
-    );
-    navigate('/');
+  const handleBack = () => {
+    navigate('/signup/verify-otp');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative">
       <SEOHead
         seo={{
-          title: `${t('signup.otpRequest.title') || 'Request OTP'} - Jade Property`,
-          description: t('signup.otpRequest.subtitle') || 'Enter your phone number to receive OTP',
-          keywords: 'signup, register, OTP, Jade Property',
+          title: `${t('signup.register.title') || 'Register'} - Jade Property`,
+          description: t('signup.register.subtitle') || 'Create your account',
+          keywords: 'signup, register, account, Jade Property',
         }}
-        path="/signup"
+        path="/signup/register"
       />
 
-      {/* Header with Language Selector */}
-      <div className="absolute top-4 right-4 z-10">
+      {/* Header with Back Button and Language Selector */}
+      <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+        <Button
+          variant="default"
+          size="sm"
+          onClick={handleBack}
+          className="bg-primary hover:bg-primary/90 text-white"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t('common.back') || 'Back'}
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
@@ -90,7 +125,7 @@ export function OtpRequest() {
 
       {/* Main Content */}
       <div className="min-h-screen flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-2xl">
           {/* White Card */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
             {/* Logo Section */}
@@ -109,42 +144,12 @@ export function OtpRequest() {
                 {t('signup.otpRequest.appName') || 'Jade Property'}
               </h1>
               <p className="text-sm text-gray-500">
-                {t('signup.otpRequest.enterPhoneNumber') || 'Enter Phone Number'}
+                {t('signup.register.title') || 'Create Your Account'}
               </p>
             </div>
 
             {/* Form */}
-            <OtpRequestForm onSuccess={handleSuccess} />
-
-            {/* OR Separator */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">{t('signup.otpRequest.or') || 'OR'}</span>
-              </div>
-            </div>
-
-            {/* Continue as Guest */}
-            <Button
-              variant="outline"
-              className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
-              onClick={handleGuestSignIn}
-            >
-              <User className="h-4 w-4 mr-2" />
-              {t('signup.otpRequest.continueAsGuest') || 'Continue as Guest'}
-            </Button>
-
-            {/* Guest Access Description */}
-            <div className="mt-4 text-center">
-              <p className="text-xs text-gray-500 mb-1">
-                {t('signup.otpRequest.guestAccess') || 'Guest Access'}
-              </p>
-              <p className="text-xs text-gray-400">
-                {t('signup.otpRequest.guestDescription') || 'Browse properties without creating an account'}
-              </p>
-            </div>
+            <RegisterForm phone={phone} onSuccess={handleSuccess} />
           </div>
         </div>
       </div>

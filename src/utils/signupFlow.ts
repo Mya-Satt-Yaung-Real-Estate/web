@@ -7,6 +7,7 @@
 
 const SIGNUP_PHONE_KEY = 'signup_phone';
 const SIGNUP_PHONE_TIMESTAMP_KEY = 'signup_phone_timestamp';
+const OTP_ACTION_TYPE_KEY = 'otp_action_type';
 const OTP_VERIFIED_KEY = 'otp_verified';
 const OTP_VERIFIED_TIMESTAMP_KEY = 'otp_verified_timestamp';
 
@@ -16,12 +17,15 @@ const OTP_REQUEST_EXPIRY_MS = 15 * 60 * 1000;
 const OTP_VERIFIED_EXPIRY_MS = 10 * 60 * 1000;
 
 /**
- * Store phone number when OTP is successfully requested
+ * Store phone number and action type when OTP is successfully requested
  */
-export function storeOtpRequestedPhone(phone: string): void {
+export function storeOtpRequestedPhone(phone: string, actionType?: string): void {
   const timestamp = Date.now();
   sessionStorage.setItem(SIGNUP_PHONE_KEY, phone);
   sessionStorage.setItem(SIGNUP_PHONE_TIMESTAMP_KEY, timestamp.toString());
+  if (actionType) {
+    sessionStorage.setItem(OTP_ACTION_TYPE_KEY, actionType);
+  }
 }
 
 /**
@@ -50,11 +54,19 @@ export function getOtpRequestedPhone(): string | null {
 }
 
 /**
+ * Get stored action type from OTP request
+ */
+export function getOtpActionType(): string | null {
+  return sessionStorage.getItem(OTP_ACTION_TYPE_KEY);
+}
+
+/**
  * Clear OTP requested phone from sessionStorage
  */
 export function clearOtpRequestedPhone(): void {
   sessionStorage.removeItem(SIGNUP_PHONE_KEY);
   sessionStorage.removeItem(SIGNUP_PHONE_TIMESTAMP_KEY);
+  sessionStorage.removeItem(OTP_ACTION_TYPE_KEY);
 }
 
 /**

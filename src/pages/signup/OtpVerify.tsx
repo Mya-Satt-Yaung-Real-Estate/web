@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuthStore } from '@/stores/authStore';
 import { getOtpRequestedPhone } from '@/utils/signupFlow';
 import { OtpVerifyForm } from './components';
 import logoImage from '@/assets/jade.png';
@@ -18,6 +19,19 @@ export function OtpVerify() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
+  const { isAuthenticated } = useAuthStore();
+
+  // Redirect authenticated users to profile page
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Show nothing while redirecting if authenticated
+  if (isAuthenticated) {
+    return null;
+  }
 
   // Get phone from sessionStorage (primary) or location state (fallback)
   const phoneFromStorage = getOtpRequestedPhone();
@@ -116,7 +130,7 @@ export function OtpVerify() {
             </div>
 
             {/* Form */}
-            <OtpVerifyForm phone={phone} onSuccess={handleSuccess} onBack={handleBack} />
+            <OtpVerifyForm phone={phone} onSuccess={handleSuccess} />
           </div>
         </div>
       </div>

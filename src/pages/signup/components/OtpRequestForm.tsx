@@ -95,9 +95,10 @@ export function OtpRequestForm({ onSuccess }: OtpRequestFormProps) {
     };
 
     requestOtp(payload, {
-      onSuccess: () => {
-        // Store phone in sessionStorage for flow protection
-        storeOtpRequestedPhone(formattedPhone);
+      onSuccess: (response) => {
+        // Store phone and action type in sessionStorage for flow protection
+        const actionType = response.data?.action || 'register';
+        storeOtpRequestedPhone(formattedPhone, actionType);
         onSuccess(formattedPhone);
       },
       onError: (error: any) => {
