@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { AiMessageBubble } from './AiMessageBubble';
 import { AiPropertyResults } from './AiPropertyResults';
 import { AiFaqResults } from './AiFaqResults';
+import { AiLegalResults } from './AiLegalResults';
 import { AiTypingIndicator } from './AiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home, DollarSign, BarChart3, Calculator, FileText, Gavel } from 'lucide-react';
@@ -46,6 +47,7 @@ export function AiChatArea({ messages, isLoading, onQuickAction }: AiChatAreaPro
                   <div key={toolIndex} className="ml-12 mt-2">
                     <AiPropertyResults tool={tool} />
                     <AiFaqResults tool={tool} />
+                    <AiLegalResults tool={tool} />
                   </div>
                 ))}
               </div>

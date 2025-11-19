@@ -46,6 +46,28 @@ export interface AiFaqSearchResult {
   faqs: AiFaq[];
 }
 
+export interface AiLawer {
+  id: number;
+  slug: string;
+  name: string;
+  title: string | null;
+  specialization: string | null;
+  experience_years: number | null;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
+  about: string | null;
+  services: string[] | null;
+  skillful_languages: string[] | null;
+  region: string | null;
+  township: string | null;
+}
+
+export interface AiLegalSearchResult {
+  count: number;
+  lawers: AiLawer[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;

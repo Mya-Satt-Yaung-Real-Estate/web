@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { MobileAiMessageBubble } from './MobileAiMessageBubble';
 import { MobileAiPropertyResults } from './MobileAiPropertyResults';
 import { MobileAiFaqResults } from './MobileAiFaqResults';
+import { MobileAiLegalResults } from './MobileAiLegalResults';
 import { MobileAiTypingIndicator } from './MobileAiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home, DollarSign, BarChart3, Calculator, FileText, Gavel } from 'lucide-react';
@@ -66,6 +67,7 @@ export function MobileAiChatArea({ messages, isLoading, onQuickAction }: MobileA
                   <div key={toolIndex} className={`${message.role === 'user' ? 'mr-12' : 'ml-12'} mt-2`}>
                     <MobileAiPropertyResults tool={tool} />
                     <MobileAiFaqResults tool={tool} />
+                    <MobileAiLegalResults tool={tool} />
                   </div>
                 ))}
               </div>
