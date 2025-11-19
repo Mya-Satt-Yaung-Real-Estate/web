@@ -68,6 +68,27 @@ export interface AiLegalSearchResult {
   lawers: AiLawer[];
 }
 
+export interface AiCompany {
+  id: number;
+  slug: string;
+  name: string;
+  description: string | null;
+  phone: string | null;
+  business_address: string | null;
+  services: string[] | null;
+  specializations: string[] | null;
+  company_type: string | null;
+  region: string | null;
+  township: string | null;
+  view_count: number | null;
+  contact_count: number | null;
+}
+
+export interface AiCompanySearchResult {
+  count: number;
+  companies: AiCompany[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;
