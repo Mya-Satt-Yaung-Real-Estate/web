@@ -6,6 +6,7 @@ import { MobileAiLegalResults } from './MobileAiLegalResults';
 import { MobileAiCompanyResults } from './MobileAiCompanyResults';
 import { MobileAiContactInformation } from './MobileAiContactInformation';
 import { MobileAiEventResults } from './MobileAiEventResults';
+import { MobileAiAdvertisementResults } from './MobileAiAdvertisementResults';
 import { MobileAiTypingIndicator } from './MobileAiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home, DollarSign, BarChart3, Calculator, FileText, Gavel } from 'lucide-react';
@@ -74,6 +75,7 @@ export function MobileAiChatArea({ messages, isLoading, onQuickAction }: MobileA
                     <MobileAiCompanyResults tool={tool} />
                     <MobileAiContactInformation tool={tool} />
                     <MobileAiEventResults tool={tool} />
+                    <MobileAiAdvertisementResults tool={tool} />
                   </div>
                 ))}
               </div>

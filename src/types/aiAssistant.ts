@@ -131,6 +131,26 @@ export interface AiEventSearchResult {
   events: AiEvent[];
 }
 
+export interface AiAdvertisement {
+  id: number;
+  title_en: string;
+  title_mm: string;
+  description: string | null;
+  address: string | null;
+  contact_name: string | null;
+  phone_numbers: string[] | null;
+  email: string | null;
+  is_featured: boolean;
+  region: string | null;
+  township: string | null;
+  published_at: string | null;
+}
+
+export interface AiAdvertisementSearchResult {
+  count: number;
+  advertisements: AiAdvertisement[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;
