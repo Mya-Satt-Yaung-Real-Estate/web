@@ -105,6 +105,32 @@ export interface AiContactInformationResult {
   contact_information: AiContactInformation;
 }
 
+export interface AiEvent {
+  id: number;
+  slug: string;
+  name_en: string;
+  name_mm: string;
+  description: string | null;
+  date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  location: string | null;
+  is_free: boolean;
+  price: number | null;
+  need_registration: boolean;
+  is_online: boolean;
+  host_contact_number: string | null;
+  registration_link: string | null;
+  category: string | null;
+  region: string | null;
+  township: string | null;
+}
+
+export interface AiEventSearchResult {
+  count: number;
+  events: AiEvent[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;
