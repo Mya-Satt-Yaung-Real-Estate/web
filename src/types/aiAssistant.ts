@@ -32,6 +32,20 @@ export interface AiPropertySearchResult {
   properties: AiProperty[];
 }
 
+export interface AiFaq {
+  id: number;
+  slug: string;
+  question_en: string;
+  question_mm: string;
+  answer_en: string;
+  answer_mm: string;
+}
+
+export interface AiFaqSearchResult {
+  count: number;
+  faqs: AiFaq[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;
