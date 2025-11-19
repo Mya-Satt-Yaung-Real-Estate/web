@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MobileAiChatArea } from './MobileAiChatArea';
 import { MobileAiInputArea } from './MobileAiInputArea';
-import { useAiAssistantChat } from '../shared';
-import type { AiMessageDisplay } from '@/types/aiAssistant';
+import { useAiAssistantChat, aiAssistantApi, aiAssistantStorage } from '../shared';
+import type { AiMessageDisplay, AiHistoryMessage } from '@/types/aiAssistant';
 
 const WELCOME_MESSAGE: AiMessageDisplay = {
   id: 'welcome',
@@ -19,9 +19,63 @@ interface MobileAiAssistantProps {
 export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps) {
   const [messages, setMessages] = useState<AiMessageDisplay[]>([WELCOME_MESSAGE]);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const chatMutation = useAiAssistantChat();
 
   const generateMessageId = () => `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  // Transform history message to display format
+  const transformHistoryMessage = (msg: AiHistoryMessage, index: number): AiMessageDisplay => {
+    return {
+      id: `history-${index}-${Date.now()}`,
+      role: msg.role,
+      content: msg.content,
+      timestamp: new Date(msg.timestamp),
+      tools: msg.tools,
+    };
+  };
+
+  // Load history on mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      const storedSessionId = aiAssistantStorage.getSessionId();
+      
+      if (!storedSessionId) {
+        // No session, show welcome message
+        return;
+      }
+
+      setIsLoadingHistory(true);
+      try {
+        const response = await aiAssistantApi.getHistory(storedSessionId);
+        const historyData = response.data.data || response.data;
+        
+        if (historyData.messages && historyData.messages.length > 0) {
+          // Transform history messages
+          const historyMessages = historyData.messages.map((msg, index) => 
+            transformHistoryMessage(msg, index)
+          );
+          
+          // Set messages with history (no welcome message if history exists)
+          setMessages(historyMessages);
+          setSessionId(historyData.session_id || storedSessionId);
+        } else {
+          // No history, show welcome message
+          setMessages([WELCOME_MESSAGE]);
+          setSessionId(storedSessionId);
+        }
+      } catch (error) {
+        // Session expired or error, clear and show welcome
+        aiAssistantStorage.clearSessionId();
+        setMessages([WELCOME_MESSAGE]);
+        setSessionId(null);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    loadHistory();
+  }, []);
 
   const handleSend = async (content: string) => {
     const userMessage: AiMessageDisplay = {
@@ -41,6 +95,7 @@ export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps)
 
       if (response.session_id) {
         setSessionId(response.session_id);
+        aiAssistantStorage.setSessionId(response.session_id);
       }
 
       const aiMessage: AiMessageDisplay = {
@@ -52,8 +107,20 @@ export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps)
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      // Error is handled by the mutation hook (toast notification)
+    } catch (error: any) {
+      // Show error as chat message instead of toast
+      const statusCode = error?.response?.status || 500;
+      const errorContent = statusCode === 429 
+        ? 'Too many requests, Please try again later'
+        : 'Try again later';
+      
+      const errorMessage: AiMessageDisplay = {
+        id: generateMessageId(),
+        role: 'assistant',
+        content: errorContent,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     }
   };
 
@@ -62,7 +129,7 @@ export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps)
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden safe-area-top" data-chat-area>
         <MobileAiChatArea
           messages={messages}
-          isLoading={chatMutation.isPending}
+          isLoading={chatMutation.isPending || isLoadingHistory}
           onQuickAction={handleSend}
         />
       </div>

@@ -50,6 +50,24 @@ export interface AiChatApiResponse {
   data: AiChatResponse;
 }
 
+export interface AiHistoryMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+  tools?: AiToolResult[];
+}
+
+export interface AiHistoryResponse {
+  session_id: string;
+  messages: AiHistoryMessage[];
+}
+
+export interface AiHistoryApiResponse {
+  success: boolean;
+  message: string;
+  data: AiHistoryResponse;
+}
+
 export interface AiMessageDisplay {
   id: string;
   role: 'user' | 'assistant';

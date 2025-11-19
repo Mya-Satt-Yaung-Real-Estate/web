@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { aiAssistantApi } from '@/services/api/aiAssistant';
 import type { AiChatRequest, AiChatResponse } from '@/types/aiAssistant';
-import { toast } from 'sonner';
 
 export const aiAssistantKeys = {
   all: ['ai-assistant'] as const,
@@ -14,10 +13,7 @@ export function useAiAssistantChat() {
       const response = await aiAssistantApi.sendMessage(payload);
       return response.data.data || response.data;
     },
-    onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to send message';
-      toast.error(errorMessage);
-    },
+    // Error handling is done in components to show as chat messages
   });
 }
 

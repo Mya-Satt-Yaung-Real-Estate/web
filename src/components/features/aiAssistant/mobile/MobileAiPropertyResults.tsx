@@ -31,46 +31,43 @@ export const MobileAiPropertyResults = memo(function MobileAiPropertyResults({ t
         </h3>
       </div>
       
-      <div className="overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
-        <div className="flex gap-3" style={{ width: 'max-content' }}>
-          {properties.map((property, index) => (
-            <Link
-              key={property.id}
-              to={`/properties/${property.id}`}
-              className="block group flex-shrink-0"
-              style={{ 
-                animationDelay: `${index * 50}ms`,
-                width: '280px'
-              }}
-            >
-              <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 overflow-hidden group-active:scale-[0.98] group-hover:border-primary/30">
-                <div className="flex flex-col">
-                  <div className="relative w-full h-44 overflow-hidden bg-gray-100">
-                    <LazyImage
-                      src={property.image_url || '/placeholder-property.jpg'}
-                      alt={property.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      {property.property_type && (
-                        <Badge className="text-xs bg-white/95 backdrop-blur-sm text-gray-700 border-0 shadow-md font-medium">
-                          {property.property_type}
-                        </Badge>
-                      )}
-                    </div>
+      <div className="flex flex-col gap-3">
+        {properties.map((property, index) => (
+          <Link
+            key={property.id}
+            to={`/properties/${property.id}`}
+            className="block group"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 overflow-hidden group-active:scale-[0.98] group-hover:border-primary/30">
+              <div className="flex flex-row">
+                <div className="relative w-32 h-32 flex-shrink-0 overflow-hidden bg-gray-100">
+                  <LazyImage
+                    src={property.image_url || '/placeholder-property.jpg'}
+                    alt={property.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute top-1.5 right-1.5 flex gap-1">
+                    {property.property_type && (
+                      <Badge className="text-[10px] bg-white/95 backdrop-blur-sm text-gray-700 border-0 shadow-md font-medium px-1.5 py-0.5">
+                        {property.property_type}
+                      </Badge>
+                    )}
                   </div>
-                  <CardContent className="p-3.5">
-                    <h4 className="font-semibold text-sm mb-2 line-clamp-2 text-gray-900 group-hover:text-primary transition-colors leading-snug">
+                </div>
+                <CardContent className="p-3 flex-1 flex flex-col justify-between min-w-0">
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-sm mb-1.5 line-clamp-2 text-gray-900 group-hover:text-primary transition-colors leading-snug">
                       {property.title}
                     </h4>
                     
                     {property.price && (
-                      <div className="text-base font-bold text-primary mb-2.5">
+                      <div className="text-base font-bold text-primary mb-2">
                         {property.price} <span className="text-xs font-normal text-gray-500">MMK</span>
                       </div>
                     )}
 
-                    <div className="flex flex-wrap gap-1.5 mb-2.5">
+                    <div className="flex flex-wrap gap-1.5 mb-2">
                       {property.bedrooms && (
                         <Badge variant="secondary" className="text-[10px] bg-gray-100 text-gray-700 px-2 py-0.5">
                           <Bed className="w-3 h-3 mr-1" />
@@ -92,23 +89,23 @@ export const MobileAiPropertyResults = memo(function MobileAiPropertyResults({ t
                     </div>
 
                     {property.address && (
-                      <div className="flex items-start text-xs text-gray-600 mb-2.5">
+                      <div className="flex items-start text-xs text-gray-600 mb-1.5">
                         <MapPin className="w-3 h-3 mr-1 mt-0.5 flex-shrink-0" />
                         <span className="line-clamp-1">{property.address}</span>
                       </div>
                     )}
+                  </div>
 
-                    {property.listing_type && (
-                      <Badge variant="outline" className="text-xs border-primary/30 text-primary w-fit font-medium">
-                        {property.listing_type}
-                      </Badge>
-                    )}
-                  </CardContent>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                  {property.listing_type && (
+                    <Badge variant="outline" className="text-xs border-primary/30 text-primary w-fit font-medium mt-1">
+                      {property.listing_type}
+                    </Badge>
+                  )}
+                </CardContent>
+              </div>
+            </Card>
+          </Link>
+        ))}
       </div>
     </div>
   );
