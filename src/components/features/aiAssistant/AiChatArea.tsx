@@ -7,6 +7,7 @@ import { AiCompanyResults } from './AiCompanyResults';
 import { AiContactInformation } from './AiContactInformation';
 import { AiEventResults } from './AiEventResults';
 import { AiAdvertisementResults } from './AiAdvertisementResults';
+import { AiNewsResults } from './AiNewsResults';
 import { AiTypingIndicator } from './AiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home, DollarSign, BarChart3, Calculator, FileText, Gavel } from 'lucide-react';
@@ -56,6 +57,7 @@ export function AiChatArea({ messages, isLoading, onQuickAction }: AiChatAreaPro
                     <AiContactInformation tool={tool} />
                     <AiEventResults tool={tool} />
                     <AiAdvertisementResults tool={tool} />
+                    <AiNewsResults tool={tool} />
                   </div>
                 ))}
               </div>

@@ -151,6 +151,25 @@ export interface AiAdvertisementSearchResult {
   advertisements: AiAdvertisement[];
 }
 
+export interface AiNews {
+  id: number;
+  slug: string;
+  title_en: string;
+  title_mm: string;
+  short_description: string | null;
+  main_content: string | null;
+  writer_name: string | null;
+  category: string | null;
+  view_count: number | null;
+  like_count: number | null;
+  created_at: string | null;
+}
+
+export interface AiNewsSearchResult {
+  count: number;
+  news: AiNews[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;
