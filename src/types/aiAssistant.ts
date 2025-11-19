@@ -89,6 +89,22 @@ export interface AiCompanySearchResult {
   companies: AiCompany[];
 }
 
+export interface AiContactInformation {
+  company_name?: string;
+  primary_phone?: string;
+  secondary_phone?: string;
+  primary_email?: string;
+  support_email?: string;
+  address?: string;
+  website?: string;
+  facebook?: string;
+  instagram?: string;
+}
+
+export interface AiContactInformationResult {
+  contact_information: AiContactInformation;
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;

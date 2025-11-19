@@ -4,6 +4,7 @@ import { AiPropertyResults } from './AiPropertyResults';
 import { AiFaqResults } from './AiFaqResults';
 import { AiLegalResults } from './AiLegalResults';
 import { AiCompanyResults } from './AiCompanyResults';
+import { AiContactInformation } from './AiContactInformation';
 import { AiTypingIndicator } from './AiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home, DollarSign, BarChart3, Calculator, FileText, Gavel } from 'lucide-react';
@@ -50,6 +51,7 @@ export function AiChatArea({ messages, isLoading, onQuickAction }: AiChatAreaPro
                     <AiFaqResults tool={tool} />
                     <AiLegalResults tool={tool} />
                     <AiCompanyResults tool={tool} />
+                    <AiContactInformation tool={tool} />
                   </div>
                 ))}
               </div>
