@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
-import { BalanceCard } from './components';
+import { BalanceCard, PackageList } from './components';
 
 export function PointManagement() {
   const { user, isAuthenticated } = useAuthStore();
@@ -60,12 +60,10 @@ export function PointManagement() {
             <BalanceCard />
           </div>
 
-          {/* Package List Section - Placeholder */}
-          <Card className="backdrop-blur-sm bg-background/95 shadow-sm mb-8">
-            <CardContent className="p-8 text-center text-muted-foreground">
-              <p>{t('points.packages.comingSoon') || 'Package List - Coming Soon'}</p>
-            </CardContent>
-          </Card>
+          {/* Package List Section */}
+          <div className="mb-8">
+            <PackageList />
+          </div>
 
           {/* Transaction List Section - Placeholder */}
           <Card className="backdrop-blur-sm bg-background/95 shadow-sm">

@@ -83,8 +83,8 @@ export function BalanceCard() {
   return (
     <Card className="backdrop-blur-sm bg-background/95 shadow-sm">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+        <CardTitle className="flex items-center gap-2 text-base font-normal">
+          <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
           {t('points.balance.title') || 'Point Balance'}
         </CardTitle>
       </CardHeader>
@@ -156,9 +156,9 @@ export function BalanceCard() {
               className="flex items-center justify-between cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors"
               onClick={() => setIsFifoExpanded(!isFifoExpanded)}
             >
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                {t('points.balance.fifoBreakdown') || 'FIFO Breakdown (Oldest First)'}
+              <h3 className="text-base font-normal flex items-center gap-2 text-primary hover:text-primary/80 hover:underline">
+                <Clock className="h-4 w-4 text-primary" />
+                {t('points.balance.fifoBreakdown') || 'Click here to check breakdown (Oldest first)'}
               </h3>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
