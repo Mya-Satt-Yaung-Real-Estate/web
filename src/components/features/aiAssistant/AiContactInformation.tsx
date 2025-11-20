@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import type { AiToolResult, AiContactInformation } from '@/types/aiAssistant';
+import type { AiToolResult, AiContactInformation as AiContactInformationType } from '@/types/aiAssistant';
 
 interface AiContactInformationProps {
   tool: AiToolResult;
@@ -10,7 +10,7 @@ export const AiContactInformation = memo(function AiContactInformation({ tool }:
     return null;
   }
 
-  const result = tool.result as { contact_information: AiContactInformation };
+  const result = tool.result as { contact_information: AiContactInformationType };
   const contactInfo = result.contact_information || {};
 
   if (Object.keys(contactInfo).length === 0) {
