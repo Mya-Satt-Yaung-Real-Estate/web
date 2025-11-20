@@ -195,3 +195,18 @@ export type {
   AiChatResponse,
   AiChatApiResponse,
 } from './aiAssistant';
+
+// Export point types
+export type {
+  PointPackage,
+  PointBalance,
+  PointAllocation,
+  PointFifoSummary,
+  PointFifoResponse,
+  PointTransaction,
+  PointPurchaseRequest,
+  PointPackagesResponse,
+  PointFifoApiResponse,
+  PointTransactionsResponse,
+  PointPurchaseResponse,
+} from './points';

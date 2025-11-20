@@ -24,6 +24,7 @@ const Profile = lazyWithRetry(() => import('../pages/Profile').then(module => ({
 const EditProfile = lazyWithRetry(() => import('../pages/EditProfile').then(module => ({ default: module.EditProfile })));
 const Favorites = lazyWithRetry(() => import('../pages/Favorites').then(module => ({ default: module.Favorites })));
 const RecentViews = lazyWithRetry(() => import('../pages/RecentViews').then(module => ({ default: module.RecentViews })));
+const PointManagement = lazyWithRetry(() => import('../pages/PointManagement').then(module => ({ default: module.PointManagement })));
 
 // Protected routes configuration
 export const protectedRoutes = [
@@ -229,6 +230,16 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <RecentViews />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/point-management',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <PointManagement />
         </Suspense>
       </ProtectedRoute>
     ),

@@ -30,3 +30,4 @@ export { aiAssistantApi } from './aiAssistant';
 export { notificationApi } from './notifications';
 export { statisticsApi } from './statistics';
 export { homeApi } from './home';
+export { pointApi } from './points';

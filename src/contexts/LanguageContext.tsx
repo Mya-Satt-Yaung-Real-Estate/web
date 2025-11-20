@@ -1907,6 +1907,32 @@ const translations: Translations = {
   'common.save': { en: 'Save Changes', mm: 'သိမ်းဆည်းရန်' },
   'common.saving': { en: 'Saving...', mm: 'သိမ်းဆည်းနေသည်...' },
   'common.home': { en: 'Home', mm: 'ပင်မ' },
+  
+  // Point Management
+  'points.title': { en: 'Point Management', mm: 'ပွိုင့်စီမံခန့်ခွဲမှု' },
+  'points.subtitle': { en: 'Manage your points, view packages, and track transactions', mm: 'သင့်ပွိုင့်များကိုစီမံပါ၊ ပက်ကေ့ချ်များကြည့်ရှုပါနှင့် အရောင်းအဝယ်များကိုခြေရာခံပါ' },
+  'points.balance.title': { en: 'Point Balance', mm: 'ပွိုင့်လက်ကျန်' },
+  'points.balance.currentBalance': { en: 'Current Balance', mm: 'လက်ရှိလက်ကျန်' },
+  'points.balance.points': { en: 'Points', mm: 'ပွိုင့်' },
+  'points.balance.totalAllocated': { en: 'Total Allocated', mm: 'စုစုပေါင်းခွဲဝေထားသော' },
+  'points.balance.totalConsumed': { en: 'Total Consumed', mm: 'စုစုပေါင်းသုံးစွဲပြီး' },
+  'points.balance.activeAllocations': { en: 'Active Packages', mm: 'တက်ကြွသောပက်ကေ့ချ်များ' },
+  'points.balance.fifoBreakdown': { en: 'FIFO Breakdown (Oldest First)', mm: 'FIFO ခွဲခြမ်းစိတ်ဖြာမှု (အဟောင်းဆုံးမှစ)' },
+  'points.balance.consumptionOrder': { en: 'Consumption Order', mm: 'သုံးစွဲမှုအစဉ်' },
+  'points.balance.allocated': { en: 'Allocated', mm: 'ခွဲဝေထားသော' },
+  'points.balance.remaining': { en: 'Remaining', mm: 'လက်ကျန်' },
+  'points.balance.consumed': { en: 'Consumed', mm: 'သုံးစွဲပြီး' },
+  'points.balance.consumption': { en: 'Consumption', mm: 'သုံးစွဲမှု' },
+  'points.balance.allocatedOn': { en: 'Allocated on', mm: 'ခွဲဝေထားသောရက်' },
+  'points.balance.expiresOn': { en: 'Expires on', mm: 'သက်တမ်းကုန်ဆုံးရက်' },
+  'points.balance.expired': { en: 'Expired', mm: 'သက်တမ်းကုန်ဆုံးပြီး' },
+  'points.balance.days': { en: 'days', mm: 'ရက်' },
+  'points.balance.daysLeft': { en: 'days left', mm: 'ရက်ကျန်' },
+  'points.balance.noAllocations': { en: 'No active point allocations found', mm: 'တက်ကြွသောပွိုင့်ခွဲဝေမှုများမတွေ့ရှိပါ' },
+  'points.balance.error': { en: 'Error Loading Balance', mm: 'လက်ကျန်ဖွင့်ရာတွင်အမှား' },
+  'points.balance.errorMessage': { en: 'Failed to load point balance. Please try again later.', mm: 'ပွိုင့်လက်ကျန်ဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
+  'points.packages.comingSoon': { en: 'Package List - Coming Soon', mm: 'ပက်ကေ့ချ်စာရင်း - မကြာမီရောက်ရှိလာမည်' },
+  'points.transactions.comingSoon': { en: 'Transaction List - Coming Soon', mm: 'အရောင်းအဝယ်စာရင်း - မကြာမီရောက်ရှိလာမည်' },
 };
 
 interface LanguageContextType {
