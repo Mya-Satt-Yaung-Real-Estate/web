@@ -8,20 +8,25 @@ import { AiContactInformation } from './AiContactInformation';
 import { AiEventResults } from './AiEventResults';
 import { AiAdvertisementResults } from './AiAdvertisementResults';
 import { AiNewsResults } from './AiNewsResults';
+import { AiWantedResults } from './AiWantedResults';
 import { AiTypingIndicator } from './AiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Home, DollarSign, BarChart3, Calculator, FileText, Gavel } from 'lucide-react';
+import { Home, HelpCircle, Gavel, Building2, Calendar, Megaphone, Newspaper, Phone, Search, Star } from 'lucide-react';
 import type { AiMessageDisplay } from '@/types/aiAssistant';
 
 const GRADIENT_COLOR_START = 'oklch(0.558 0.288 302.321)';
 
 const QUICK_ACTIONS = [
-  { icon: Home, label: 'Find Properties', prompt: 'Find properties in Yangon' },
-  { icon: DollarSign, label: 'Price Analysis', prompt: 'Show me price analysis for properties' },
-  { icon: BarChart3, label: 'Market Trends', prompt: 'What are the current market trends?' },
-  { icon: Calculator, label: 'Loan Calculator', prompt: 'Help me calculate loan payments' },
-  { icon: FileText, label: 'Post Property', prompt: 'How do I post a property listing?' },
-  { icon: Gavel, label: 'Legal Advice', prompt: 'What legal documents do I need for property purchase?' },
+  { icon: Home, label: 'Property Search', prompt: 'Find properties in Yangon' },
+  { icon: Star, label: 'Premium Properties', prompt: 'Find premium properties' },
+  { icon: Search, label: 'Wanted Listing Search', prompt: 'Find wanted listings' },
+  { icon: HelpCircle, label: 'FAQ Search', prompt: 'Search frequently asked questions' },
+  { icon: Gavel, label: 'Legal Search', prompt: 'Find lawyers near me' },
+  { icon: Building2, label: 'Company Search', prompt: 'Search for companies' },
+  { icon: Calendar, label: 'Event Search', prompt: 'Find housing events' },
+  { icon: Megaphone, label: 'Advertisement Search', prompt: 'Show me advertisements' },
+  { icon: Newspaper, label: 'News Search', prompt: 'Show me latest news' },
+  { icon: Phone, label: 'Contact Information', prompt: 'Show me contact information' },
 ] as const;
 
 interface AiChatAreaProps {
@@ -58,6 +63,7 @@ export function AiChatArea({ messages, isLoading, onQuickAction }: AiChatAreaPro
                     <AiEventResults tool={tool} />
                     <AiAdvertisementResults tool={tool} />
                     <AiNewsResults tool={tool} />
+                    <AiWantedResults tool={tool} />
                   </div>
                 ))}
               </div>

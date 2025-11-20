@@ -170,6 +170,32 @@ export interface AiNewsSearchResult {
   news: AiNews[];
 }
 
+export interface AiWantedListing {
+  id: number;
+  title: string;
+  description: string | null;
+  wanted_type: string;
+  min_budget: number | null;
+  max_budget: number | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  min_area: number | null;
+  max_area: number | null;
+  property_type: string | null;
+  prefer_region: string | null;
+  prefer_township: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  additional_requirement: string | null;
+  created_at: string;
+}
+
+export interface AiWantedListingSearchResult {
+  count: number;
+  wanting_lists: AiWantedListing[];
+}
+
 export interface AiChatRequest {
   message: string;
   session_id?: string;
