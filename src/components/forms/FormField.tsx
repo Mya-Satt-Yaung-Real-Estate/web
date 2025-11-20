@@ -24,7 +24,7 @@ export const FormField = ({
 }: FormFieldProps) => {
   return (
     <div className={className}>
-      <Label htmlFor={name}>
+      <Label htmlFor={name} className="font-normal">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       {children}

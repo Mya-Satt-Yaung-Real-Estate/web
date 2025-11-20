@@ -12,6 +12,7 @@ const FAQ = lazyWithRetry(() => import('../pages/FAQ').then(module => ({ default
 const Contact = lazyWithRetry(() => import('../pages/Contact').then(module => ({ default: module.default })));
 const PrivacyPolicy = lazyWithRetry(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
 const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
+const Reviews = lazyWithRetry(() => import('../pages/reviews').then(module => ({ default: module.default })));
 const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
 const LoginOtpRequest = lazyWithRetry(() => import('../pages/signin/LoginOtpRequest').then(module => ({ default: module.LoginOtpRequest })));
 const LoginOtpVerify = lazyWithRetry(() => import('../pages/signin/LoginOtpVerify').then(module => ({ default: module.LoginOtpVerify })));
@@ -121,6 +122,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <Feedback />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/reviews',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <Reviews />
       </Suspense>
     ),
   },

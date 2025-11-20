@@ -50,7 +50,7 @@ export function useNavigationData() {
       { name: t('createListing.wantedPost'), path: '/my-wanted-listings/list', icon: Search },
       { name: t('createListing.advertisementPost'), path: '/advertisements', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
-      { name: t('createListing.giveYourReview'), path: '/feedback', icon: Star },
+      { name: t('createListing.giveYourReview'), path: '/reviews', icon: Star },
       { name: t('services.homeLoanRequest'), path: '/loan-request', icon: Banknote },
     ],
     
