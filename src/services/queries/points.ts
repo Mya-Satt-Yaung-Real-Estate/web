@@ -16,6 +16,8 @@ export const pointKeys = {
   fifo: () => [...pointKeys.all, 'fifo'] as const,
   transactions: (params?: { per_page?: number; page?: number }) => 
     [...pointKeys.all, 'transactions', params] as const,
+  transactionsInfinite: (perPage?: number) => 
+    [...pointKeys.all, 'transactions', 'infinite', perPage] as const,
 } as const;
 
 // ============================================================================

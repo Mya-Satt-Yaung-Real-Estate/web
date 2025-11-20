@@ -8,12 +8,11 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
-import { BalanceCard, PackageList } from './components';
+import { BalanceCard, PackageList, TransactionList } from './components';
 
 export function PointManagement() {
   const { user, isAuthenticated } = useAuthStore();
@@ -65,12 +64,10 @@ export function PointManagement() {
             <PackageList />
           </div>
 
-          {/* Transaction List Section - Placeholder */}
-          <Card className="backdrop-blur-sm bg-background/95 shadow-sm">
-            <CardContent className="p-8 text-center text-muted-foreground">
-              <p>{t('points.transactions.comingSoon') || 'Transaction List - Coming Soon'}</p>
-            </CardContent>
-          </Card>
+          {/* Transaction List Section */}
+          <div className="mb-8">
+            <TransactionList />
+          </div>
         </div>
       </div>
     </>
