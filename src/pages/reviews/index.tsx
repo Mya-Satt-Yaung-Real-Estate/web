@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { ReviewList, CreateReviewModal } from './components';
 import { SEOHead } from '@/components/seo/SEOHead';
@@ -12,15 +13,28 @@ import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { usePublicReviews } from '@/hooks/queries/useReviews';
+import { useAuthStore } from '@/stores/authStore';
+import { toast } from 'sonner';
 
 export default function Reviews() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
   const seo = seoUtils.getPageSEO('reviews');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { refetch } = usePublicReviews();
 
   const handleCreateSuccess = () => {
     refetch();
+  };
+
+  const handleCreateClick = () => {
+    if (!isAuthenticated) {
+      toast.error(t('reviews.signInRequired') || 'Please sign in to create a review');
+      navigate('/signin', { state: { from: '/reviews' } });
+      return;
+    }
+    setIsCreateModalOpen(true);
   };
 
   return (
@@ -40,7 +54,7 @@ export default function Reviews() {
               </p>
             </div>
             <Button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={handleCreateClick}
               className="gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-105"
             >
               <Plus className="h-4 w-4 mr-2" />

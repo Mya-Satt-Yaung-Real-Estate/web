@@ -140,6 +140,9 @@ export default function PublicProperties() {
       filters.property_condition = propertyCondition as 'ready' | 'some' | 'no';
     }
 
+    const userId = searchParams.get('user_id');
+    if (userId) filters.user_id = Number(userId);
+
     return filters;
   };
 

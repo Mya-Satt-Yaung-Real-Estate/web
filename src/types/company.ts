@@ -28,6 +28,7 @@ export interface Township {
 
 export interface Company {
   id: number;
+  user_id: number;
   name: string;
   slug: string;
   member_level: 'bronze' | 'silver' | 'gold' | 'platinum';

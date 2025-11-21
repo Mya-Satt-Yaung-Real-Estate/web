@@ -428,9 +428,8 @@ export default function CompanyDetail() {
           <Card className="bg-gradient-to-br from-background via-background to-primary/5 border-border/50 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="!pt-6 px-6 pb-6">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
                   <TabsTrigger value="properties">{t('companies.tabs.properties')}</TabsTrigger>
-                  <TabsTrigger value="wanted-list">{t('companies.tabs.wantedList')}</TabsTrigger>
                   <TabsTrigger value="advertisements">{t('companies.tabs.advertisements')}</TabsTrigger>
                 </TabsList>
 
@@ -510,7 +509,7 @@ export default function CompanyDetail() {
                             <Card 
                               key={property.id} 
                               className="group hover:shadow-2xl transition-all border-2 border-border/50 backdrop-blur-sm h-full flex flex-col overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
-                              onClick={() => navigate(`/my-properties/${property.slug}`)}
+                              onClick={() => navigate(`/properties/${property.slug}`)}
                             >
                               {/* Image Section */}
                               <div className={`relative h-48 overflow-hidden ${
@@ -620,7 +619,7 @@ export default function CompanyDetail() {
                           <Card 
                             key={property.id} 
                             className="group hover:shadow-xl transition-all border-2 border-border/50 backdrop-blur-sm overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
-                            onClick={() => navigate(`/properties/detail/${property.slug}`)}
+                            onClick={() => navigate(`/properties/${property.slug}`)}
                           >
                             <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-6">
                               {/* Image Section */}
@@ -781,15 +780,6 @@ export default function CompanyDetail() {
                   )}
                 </TabsContent>
 
-                {/* Wanted List Tab */}
-                <TabsContent value="wanted-list" className="mt-6">
-                  <div className="text-center py-12">
-                    <Home className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-lg font-semibold mb-2">{t('companies.comingSoon')}</h3>
-                    <p className="text-muted-foreground">{t('companies.comingSoonWanted')}</p>
-                  </div>
-                </TabsContent>
-
                 {/* Advertisements Tab */}
                 <TabsContent value="advertisements" className="mt-6">
                   {/* View All Link and Toggle Buttons */}
@@ -866,7 +856,7 @@ export default function CompanyDetail() {
                             <Card 
                               key={advertisement.id} 
                               className="group hover:shadow-2xl transition-all border-2 border-border/50 backdrop-blur-sm h-full flex flex-col overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
-                              onClick={() => navigate(`/advertisements/detail/${advertisement.id}`)}
+                              onClick={() => navigate(`/advertisements/${advertisement.id}`)}
                             >
                               {/* Image Section */}
                               <div className={`relative h-48 overflow-hidden ${
@@ -951,7 +941,7 @@ export default function CompanyDetail() {
                           <Card 
                             key={advertisement.id} 
                             className="group hover:shadow-xl transition-all border-2 border-border/50 backdrop-blur-sm overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
-                            onClick={() => navigate(`/advertisements/detail/${advertisement.id}`)}
+                            onClick={() => navigate(`/advertisements/${advertisement.id}`)}
                           >
                             <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-6">
                               {/* Image Section */}

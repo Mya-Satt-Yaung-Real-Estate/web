@@ -291,7 +291,7 @@ export function Companies() {
                       </Button>
                       <Button 
                         className="flex-1 gradient-primary"
-                        onClick={() => navigate('/modules', { state: { companyId: company.id, companyName: company.name } })}
+                        onClick={() => navigate(`/search?user_id=${company.user_id}`)}
                       >
                           {t('companies.viewProperties')}
                         </Button>

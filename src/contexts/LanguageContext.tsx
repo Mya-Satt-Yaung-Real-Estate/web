@@ -514,6 +514,7 @@ const translations: Translations = {
   'reviews.validation.ratingMax': { en: 'Rating must be between 1 and 5', mm: 'အဆင့်သတ်မှတ်ချက်သည် 1 နှင့် 5 အကြားရှိရမည်' },
   'reviews.validation.reviewSubjectRequired': { en: 'Review subject is required', mm: 'သုံးသပ်ချက်ခေါင်းစဉ်ထည့်ရန်လိုအပ်ပါသည်' },
   'reviews.validation.reviewContentRequired': { en: 'Review content is required', mm: 'သုံးသပ်ချက်အကြောင်းအရာထည့်ရန်လိုအပ်ပါသည်' },
+  'reviews.signInRequired': { en: 'Please sign in to create a review', mm: 'သုံးသပ်ချက်ဖန်တီးရန်အတွက် ကျေးဇူးပြု၍ဝင်ရောက်ပါ' },
   'services.searchAll': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
   'services.searchAllDesc': { en: 'Search properties, advertisements, and events', mm: 'အိမ်ခြံမြေများ၊ ကြော်ငြာများနှင့် အခမ်းအနားများကို ရှာဖွေပါ' },
   'services.aboutUs': { en: 'About Us', mm: 'ကျွန်ုပ်တို့အကြောင်း' },

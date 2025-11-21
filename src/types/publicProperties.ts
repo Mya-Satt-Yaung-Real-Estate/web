@@ -91,6 +91,7 @@ export interface PublicPropertyFilters {
   search?: string;
   property_type_id?: number;
   price_low_to_high?: boolean;
+  user_id?: number;
 
   // Advanced filters
   property_condition?: 'ready' | 'some' | 'no';
