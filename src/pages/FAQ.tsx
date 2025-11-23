@@ -37,7 +37,7 @@ const FAQItem = ({ faq, isOpen, onToggle }: FAQItemProps) => {
         onClick={onToggle}
         className="w-full justify-between items-center p-4 transition-all outline-none hover:bg-transparent hover:text-inherit text-left"
       >
-        <span className="text-sm font-medium pr-4 flex-1">{question}</span>
+        <span className="text-base font-medium pr-4 flex-1">{question}</span>
         {isOpen ? (
           <ChevronUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         ) : (
@@ -46,7 +46,7 @@ const FAQItem = ({ faq, isOpen, onToggle }: FAQItemProps) => {
       </Button>
       {isOpen && (
         <div className="px-4 pb-4">
-          <p className="text-muted-foreground text-sm">{answer}</p>
+          <p className="text-muted-foreground text-base leading-relaxed">{answer}</p>
         </div>
       )}
     </div>

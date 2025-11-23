@@ -392,7 +392,7 @@ const translations: Translations = {
   'services.legalTeamDesc': { en: 'Legal consultation services', mm: 'ဥပဒေအကြံပြုဝန်ဆောင်မှု' },
   'services.housingEvent': { en: 'Housing Event', mm: 'အိမ်ရာပွဲများ' },
   'services.housingEventDesc': { en: 'Upcoming property events', mm: 'လာမည့်အိမ်ခြံမြေပွဲများ' },
-  'services.faq': { en: 'FAQ', mm: 'မကြာခဏမေးလေ့ရှိသောမေးခွန်းများ' },
+  'services.faq': { en: 'FAQ', mm: 'အမေးများသောမေးခွန်းများ' },
   'services.faqDesc': { en: 'Frequently asked questions', mm: 'မကြာခဏမေးလေ့ရှိသောမေးခွန်းများ' },
   'services.contactUs': { en: 'Contact Us', mm: 'ဆက်သွယ်ရန်' },
   'services.contactUsDesc': { en: 'Get in touch with us', mm: 'ကျွန်ုပ်တို့နှင့်ဆက်သွယ်ပါ' },
