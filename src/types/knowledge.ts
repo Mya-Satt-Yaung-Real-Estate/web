@@ -32,6 +32,7 @@ export interface KnowledgeHub {
   like_count: number;
   posted_user: KnowledgePostedUser;
   reading_time: number;
+  created_at: string;
   images: KnowledgeImages;
   tag: string[];
 }

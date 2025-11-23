@@ -95,7 +95,7 @@ export function NewsDetail() {
           )}
           
           <CardHeader className="pb-4">
-            <CardTitle className="text-2xl md:text-3xl font-bold leading-tight">
+            <CardTitle className="text-xl md:text-2xl font-bold leading-tight">
               {title}
             </CardTitle>
             

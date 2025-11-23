@@ -32,6 +32,7 @@ export interface NewsItem {
   like_count: number;
   posted_user: NewsPostedUser;
   reading_time: number;
+  created_at: string;
   images: NewsImages | null;
   tag: string[];
 }

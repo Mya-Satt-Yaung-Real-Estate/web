@@ -1,5 +1,5 @@
 import { useLanguage } from '../contexts/LanguageContext';
-import { Clock, Eye, User, Search } from 'lucide-react';
+import { Calendar, Eye, User, Search } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -32,7 +32,12 @@ export function KnowledgeHub() {
       category_en: article.category.name_en,
       category_mm: article.category.name_mm,
       category_id: article.category.id,
-      readTime: `${article.reading_time} min read`,
+      created_at: article.created_at,
+      formattedDate: article.created_at ? new Date(article.created_at).toLocaleDateString(language === 'mm' ? 'my-MM' : 'en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }) : '',
       thumbnail: article.images?.url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=250&fit=crop',
       description: article.short_description,
       view_count: article.view_count,
@@ -40,7 +45,7 @@ export function KnowledgeHub() {
       posted_user: article.posted_user.name,
       tags: article.tag,
     }));
-  }, [allKnowledgeData]);
+  }, [allKnowledgeData, language]);
 
   // Client-side filtering
   const filteredArticles = useMemo(() => {
@@ -200,7 +205,7 @@ export function KnowledgeHub() {
           ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {paginatedArticles.map((article) => (
-                  <Card key={article.id} className="glass border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 overflow-hidden group">
+                  <Card key={article.id} className="glass border-border/50 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 overflow-hidden group flex flex-col h-full">
                     <div className="relative h-48 overflow-hidden">
                       <ImageWithFallback
                         src={article.thumbnail}
@@ -217,41 +222,42 @@ export function KnowledgeHub() {
                         }
                       </Badge>
                     </div>
-                    <CardHeader>
-                      <CardTitle className='text-lg'>
+                    <CardHeader className="pb-3 flex-shrink-0">
+                      <CardTitle className="text-base line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors leading-relaxed">
                         {language === 'mm' 
                           ? (article.title_mm || article.title_en) 
                           : (article.title_en || article.title_mm)
                         }
                       </CardTitle>
-                      <CardDescription className="flex items-center gap-4">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {article.readTime}
-                        </span>
-                      </CardDescription>
+                      {article.description && (
+                        <CardDescription className="line-clamp-2 min-h-[2.5rem]">
+                          {article.description}
+                        </CardDescription>
+                      )}
                     </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground mb-4 line-clamp-3">{article.description}</p>
-                      
-                      {/* Author and Stats */}
+                    <CardContent className="pt-0 flex-1 flex flex-col justify-between">
                       <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {article.posted_user}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {article.view_count}
-                        </span>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>{article.formattedDate}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Eye className="h-4 w-4" />
+                          <span>{article.view_count} {t('knowledge.views')}</span>
+                        </div>
                       </div>
                       
-                      <Link 
-                        to={`/knowledge-hub/${article.slug}`}
-                        className="text-primary hover:text-primary/80 hover:underline transition-colors font-medium"
-                      >
-                        {t('knowledge.readMore')} →
-                      </Link>
+                      <div className="flex items-center justify-between mt-auto">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <User className="h-4 w-4" />
+                          <span>{article.posted_user}</span>
+                        </div>
+                        <Link to={`/knowledge-hub/${article.slug}`}>
+                          <Button variant="outline" size="sm" className="group-hover:bg-primary group-hover:text-white transition-colors">
+                            {t('knowledge.readMore')}
+                          </Button>
+                        </Link>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}

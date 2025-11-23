@@ -82,7 +82,7 @@ export default function KnowledgeDetail() {
 
         {/* Article Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 leading-tight">
             {title}
           </h1>
           

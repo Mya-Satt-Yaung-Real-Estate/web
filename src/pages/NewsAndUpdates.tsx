@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Clock, Eye, User, Search } from 'lucide-react';
+import { Calendar, Eye, User, Search } from 'lucide-react';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { Link } from 'react-router-dom';
 import { SEOHead } from '@/components/seo/SEOHead';
@@ -46,7 +46,12 @@ export function NewsAndUpdates() {
       category_en: item.category.name_en,
       category_mm: item.category.name_mm ? decodeUnicode(item.category.name_mm) : item.category.name_en,
       category_id: item.category.id,
-      readTime: `${item.reading_time} ${t('news.minRead')}`,
+      created_at: item.created_at,
+      formattedDate: item.created_at ? new Date(item.created_at).toLocaleDateString(language === 'mm' ? 'my-MM' : 'en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }) : '',
       thumbnail: item.images?.url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=250&fit=crop',
       description: item.short_description,
       view_count: item.view_count,
@@ -54,7 +59,7 @@ export function NewsAndUpdates() {
       posted_user: item.posted_user.name,
       tags: item.tag,
     }));
-  }, [allNewsData, t]);
+  }, [allNewsData, language]);
 
   // Client-side filtering
   const filteredNewsItems = useMemo(() => {
@@ -253,12 +258,12 @@ export function NewsAndUpdates() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedNewsItems.map((item) => (
-              <Card key={item.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
-                <div className="relative">
+              <Card key={item.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
+                <div className="relative h-48 overflow-hidden">
                   <ImageWithFallback
                     src={item.thumbnail}
                     alt={language === 'mm' ? (item.title_mm || item.title_en) : (item.title_en || item.title_mm)}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <Badge className="absolute top-4 right-4 gradient-primary text-white">
                     {language === 'mm' 
@@ -268,35 +273,33 @@ export function NewsAndUpdates() {
                   </Badge>
                 </div>
                 
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                <CardHeader className="pb-3 flex-shrink-0">
+                  <CardTitle className="text-base line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors leading-relaxed">
                     {language === 'mm' 
                       ? (item.title_mm && item.title_mm !== item.title_en ? item.title_mm : item.title_en) 
                       : item.title_en
                     }
                   </CardTitle>
                   {item.description && (
-                    <CardDescription className="line-clamp-2">
+                    <CardDescription className="line-clamp-2 min-h-[2.5rem]">
                       {item.description}
                     </CardDescription>
                   )}
                 </CardHeader>
                 
-                <CardContent className="pt-0">
+                <CardContent className="pt-0 flex-1 flex flex-col justify-between">
                   <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        <span>{item.readTime}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        <span>{item.view_count} {t('news.views')}</span>
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>{item.formattedDate}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-4 w-4" />
+                      <span>{item.view_count} {t('news.views')}</span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mt-auto">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <User className="h-4 w-4" />
                       <span>{item.posted_user}</span>
