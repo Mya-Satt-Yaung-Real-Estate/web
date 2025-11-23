@@ -1828,6 +1828,7 @@ const translations: Translations = {
   'legacyDetail.about': { en: 'About', mm: 'အကြောင်း' },
   'legacyDetail.contactInformation': { en: 'Contact Information', mm: 'ဆက်သွယ်ရန်အချက်အလက်' },
   'legacyDetail.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
+  'legacy.viewProfile': { en: 'View Profile', mm: 'ကိုယ်ရေးအချက်အလက်ကြည့်ရန်' },
 
   // Settings
   'settings.title': { en: 'Settings', mm: 'ဆက်တင်များ' },

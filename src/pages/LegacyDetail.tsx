@@ -112,9 +112,11 @@ export default function LegacyDetail() {
                   </div>
                 </div>
 
+                <hr className="border-border/50 mb-6" />
+
                 {member.education && member.education.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="mb-2">{t('legacyDetail.education')}</h3>
+                    <h3 className="mb-2 font-bold">{t('legacyDetail.education')}</h3>
                     <div className="flex flex-wrap gap-2">
                       {member.education.map((edu, index) => (
                         <span
@@ -130,7 +132,7 @@ export default function LegacyDetail() {
 
                 {member.services && member.services.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="mb-2">{t('legacyDetail.services')}</h3>
+                    <h3 className="mb-2 font-bold">{t('legacyDetail.services')}</h3>
                     <div className="flex flex-wrap gap-2">
                       {member.services.map((service, index) => (
                         <span
@@ -146,7 +148,7 @@ export default function LegacyDetail() {
 
                 {member.certifications && member.certifications.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="mb-2">{t('legacyDetail.certifications')}</h3>
+                    <h3 className="mb-2 font-bold">{t('legacyDetail.certifications')}</h3>
                     <div className="flex flex-wrap gap-2">
                       {member.certifications.map((certification, index) => (
                         <span
@@ -168,7 +170,7 @@ export default function LegacyDetail() {
                 )}
 
                 <div className="space-y-3">
-                  <h3 className="mb-2">{t('legacyDetail.contactInformation')}</h3>
+                  <h3 className="mb-2 font-bold">{t('legacyDetail.contactInformation')}</h3>
                   <div className="flex items-center gap-3 p-3 rounded-lg border border-border/50">
                     <Phone className="h-5 w-5 text-primary" />
                     <span>{member.phone}</span>

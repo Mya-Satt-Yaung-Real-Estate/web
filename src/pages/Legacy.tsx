@@ -9,6 +9,7 @@ import { useLegacyTeam } from '@/hooks/queries/useLegacy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Award, 
   Building, 
@@ -17,6 +18,7 @@ import {
 
 export default function Legacy() {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   
   const { data: legacyData, isLoading, error } = useLegacyTeam();
 
@@ -50,8 +52,8 @@ export default function Legacy() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Legacy Team Not Found</h1>
-            <p className="text-gray-600">Unable to load the legacy team information.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('legacyDetail.teamMemberNotFound')}</h1>
+            <p className="text-gray-600">{t('legacyDetail.notFoundMessage')}</p>
           </div>
         </div>
       </div>
@@ -65,10 +67,10 @@ export default function Legacy() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-            Legacy Team
+            {t('services.legalTeam')}
           </h1>
           <p className="text-muted-foreground mt-2">
-            Meet our experienced legal professionals who have been serving our community for years.
+            {t('services.legalTeamDesc')}
           </p>
         </div>
 
@@ -98,19 +100,19 @@ export default function Legacy() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Award className="h-4 w-4 text-primary" />
-                    <span>{member.experience_years} years experience</span>
+                    <span>{member.experience_years} {t('legacyDetail.years')} {t('legacyDetail.experience')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Building className="h-4 w-4 text-primary" />
-                    <span>{member.education[0] || 'Education'}</span>
+                    <span>{member.education?.[0] || t('legacyDetail.education')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <GraduationCap className="h-4 w-4 text-primary" />
-                    <span>{member.experience_years}+ years experience</span>
+                    <span>{member.experience_years}+ {t('legacyDetail.years')} {t('legacyDetail.experience')}</span>
                   </div>
                 </div>
                 <Button className="w-full mt-4 gradient-primary shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all">
-                  View Profile
+                  {t('legacy.viewProfile') || 'View Profile'}
                 </Button>
               </CardContent>
             </Card>
