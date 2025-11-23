@@ -174,15 +174,16 @@ export interface AiNewsSearchResult {
 
 export interface AiWantedListing {
   id: number;
+  slug: string;
   title: string;
   description: string | null;
   wanted_type: string;
-  min_budget: number | null;
-  max_budget: number | null;
+  min_budget: string | null;
+  max_budget: string | null;
   bedrooms: number | null;
   bathrooms: number | null;
-  min_area: number | null;
-  max_area: number | null;
+  min_area: string | null;
+  max_area: string | null;
   property_type: string | null;
   prefer_region: string | null;
   prefer_township: string | null;
