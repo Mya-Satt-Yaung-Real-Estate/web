@@ -6,7 +6,13 @@ interface MobileAiFaqResultsProps {
 }
 
 export const MobileAiFaqResults = memo(function MobileAiFaqResults({ tool }: MobileAiFaqResultsProps) {
-  if (tool.type !== 'faq_search' || !tool.result) {
+  // Support both mapped type and raw tool name
+  const isFaqTool = tool.type === 'faq_search' || 
+                    tool.type === 'faqsearchtool' ||
+                    tool.name?.toLowerCase().includes('faq') ||
+                    tool.name?.toLowerCase().includes('search_faqs');
+  
+  if (!isFaqTool || !tool.result) {
     return null;
   }
 

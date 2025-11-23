@@ -6,7 +6,13 @@ interface MobileAiLegalResultsProps {
 }
 
 export const MobileAiLegalResults = memo(function MobileAiLegalResults({ tool }: MobileAiLegalResultsProps) {
-  if (tool.type !== 'legal_search' || !tool.result) {
+  // Support both mapped type and raw tool name
+  const isLegalTool = tool.type === 'legal_search' || 
+                      tool.type === 'legalsearchtool' ||
+                      tool.name?.toLowerCase().includes('legal') ||
+                      tool.name?.toLowerCase().includes('search_legal');
+  
+  if (!isLegalTool || !tool.result) {
     return null;
   }
 
