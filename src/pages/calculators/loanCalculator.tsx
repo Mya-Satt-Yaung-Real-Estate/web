@@ -609,7 +609,7 @@ export function LoanCalculator() {
                             {yearlyScheduleData.map((yearData) => (
                               <tr key={yearData.year} className="border-b hover:bg-muted/50">
                                 <td className="p-3 font-medium">
-                                  {t('loanCalculator.year')} {yearData.year}
+                                  {yearData.year}
                                 </td>
                                 <td className="text-right p-3">{formatCurrency(yearData.principal)}</td>
                                 <td className="text-right p-3">{formatCurrency(yearData.interest)}</td>
