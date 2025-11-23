@@ -11,13 +11,14 @@ import { AiNewsResults } from './AiNewsResults';
 import { AiWantedResults } from './AiWantedResults';
 import { AiTypingIndicator } from './AiTypingIndicator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Home, HelpCircle, Gavel, Building2, Calendar, Megaphone, Newspaper, Phone, Search, Star } from 'lucide-react';
+import { Home, HelpCircle, Gavel, Building2, Calendar, Megaphone, Newspaper, Phone, Search, Star, TrendingUp } from 'lucide-react';
 import type { AiMessageDisplay } from '@/types/aiAssistant';
 
 const GRADIENT_COLOR_START = 'oklch(0.558 0.288 302.321)';
 
 const QUICK_ACTIONS = [
   { icon: Home, label: 'Property Search', prompt: 'Find properties in Yangon' },
+  { icon: TrendingUp, label: 'Popular Posts', prompt: 'Show me popular properties' },
   { icon: Star, label: 'Premium Properties', prompt: 'Find premium properties' },
   { icon: Search, label: 'Wanted Listing Search', prompt: 'Find wanted listings' },
   { icon: HelpCircle, label: 'FAQ Search', prompt: 'Search frequently asked questions' },
