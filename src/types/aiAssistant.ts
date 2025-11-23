@@ -13,6 +13,8 @@ export interface AiToolResult {
 
 export interface AiProperty {
   id: number;
+  slug: string;
+  code: string;
   title: string;
   title_mm: string | null;
   price: string | null;

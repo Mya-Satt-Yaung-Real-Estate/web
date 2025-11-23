@@ -2,7 +2,6 @@ import { memo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LazyImage } from '@/components/LazyImage';
-import { Link } from 'react-router-dom';
 import { MapPin, Bed, Bath, Square } from 'lucide-react';
 import type { AiToolResult, AiProperty } from '@/types/aiAssistant';
 
@@ -33,9 +32,11 @@ export const AiPropertyResults = memo(function AiPropertyResults({ tool }: AiPro
       
       <div className="flex flex-col gap-3">
         {properties.map((property, index) => (
-          <Link
+          <a
             key={property.id}
-            to={`/properties/${property.id}`}
+            href={`/properties/${property.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="block group"
             style={{ animationDelay: `${index * 50}ms` }}
           >
@@ -49,7 +50,7 @@ export const AiPropertyResults = memo(function AiPropertyResults({ tool }: AiPro
                   />
                   <div className="absolute top-2 right-2 flex gap-1">
                     {property.property_type && (
-                      <Badge className="text-xs bg-white/90 backdrop-blur-sm text-gray-700 border-0 shadow-sm">
+                      <Badge className="text-xs bg-black/70 backdrop-blur-sm text-white border-0 shadow-lg font-medium">
                         {property.property_type}
                       </Badge>
                     )}
@@ -104,7 +105,7 @@ export const AiPropertyResults = memo(function AiPropertyResults({ tool }: AiPro
                 </CardContent>
               </div>
             </Card>
-          </Link>
+          </a>
         ))}
       </div>
     </div>
