@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Mail, Phone, Building, Calendar, MapPin, Settings, Home, CheckCircle, XCircle, Star, Eye, ArrowLeft, Edit } from 'lucide-react';
+import { Mail, Phone, Building, Calendar, MapPin, Settings, Home, CheckCircle, XCircle, Star, Eye, ArrowLeft, Edit, Award, ArrowRight } from 'lucide-react';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 
@@ -147,21 +147,44 @@ export function Profile() {
             <CardContent className="pt-6">
               <Separator className="mb-6" />
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div>
+                  <Label className="text-muted-foreground mb-2 flex items-center gap-2">
+                    <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                    {t('profile.currentPoints')}
+                  </Label>
+                  <p className="font-medium text-primary mb-2">{user.current_point || 0}</p>
+                  <button
+                    onClick={() => navigate('/point-management')}
+                    className="text-xs text-primary hover:text-primary/80 hover:underline flex items-center gap-1 transition-all cursor-pointer"
+                  >
+                    <span>{t('profile.managePoints') || 'Manage Points'}</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </button>
+                </div>
+                
+                <div>
+                  <Label className="text-muted-foreground mb-2 flex items-center gap-2">
+                    <Award className="h-4 w-4 text-primary" />
+                    {t('profile.memberLevel')}
+                  </Label>
+                  <p className="font-medium">
+                    {user.member_level ? (
+                      <Badge className="bg-blue-100 text-blue-800 border-blue-300">
+                        {user.member_level}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </p>
+                </div>
+                
                 <div>
                   <Label className="text-muted-foreground mb-2 flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
                     {t('profile.memberSince')}
                   </Label>
                   <p className="font-medium">{formatDate(user.member_since)}</p>
-                </div>
-                
-                <div>
-                  <Label className="text-muted-foreground mb-2 flex items-center gap-2">
-                    <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                    {t('profile.currentPoints')}
-                  </Label>
-                  <p className="font-medium text-primary">{user.current_point || 0}</p>
                 </div>
                 
                 {isCompany && (
