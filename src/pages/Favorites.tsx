@@ -28,6 +28,7 @@ export function Favorites() {
   const pagination = data?.data?.pagination;
 
   const toggleFavorite = useToggleFavorite();
+  const [pendingSlug, setPendingSlug] = useState<string | null>(null);
   const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
   const formatDate = (dateString: string) => {
@@ -75,7 +76,12 @@ export function Favorites() {
       cancelText: t('common.cancel') || 'Cancel',
       confirmVariant: 'destructive',
       onConfirm: async () => {
-        toggleFavorite.mutate(property.slug);
+        setPendingSlug(property.slug);
+        toggleFavorite.mutate(property.slug, {
+          onSettled: () => {
+            setPendingSlug(null);
+          },
+        });
       },
     });
   };
@@ -138,7 +144,11 @@ export function Favorites() {
                 {t('services.favorite') || 'Favorites'}
               </h1>
               <p className="text-muted-foreground mt-2">
-                {t('services.favoriteDesc') || 'Your saved properties'}
+                {pagination?.total 
+                  ? (pagination.total === 1 
+                      ? t('favorites.totalSavedOne') || 'Your saved 1 property'
+                      : t('favorites.totalSaved')?.replace('{count}', pagination.total.toString()) || `Your saved ${pagination.total} properties`)
+                  : t('services.favoriteDesc') || 'Your saved properties'}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -182,9 +192,9 @@ export function Favorites() {
                       <button 
                         className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
                         onClick={(e) => handleToggleFavorite(property, e)}
-                        disabled={toggleFavorite.isPending}
+                        disabled={pendingSlug === property.slug}
                       >
-                        {toggleFavorite.isPending ? (
+                        {pendingSlug === property.slug ? (
                           <Loader2 className="h-5 w-5 text-red-500 animate-spin" />
                         ) : (
                           <Heart className="h-5 w-5 text-red-500 fill-red-500" />

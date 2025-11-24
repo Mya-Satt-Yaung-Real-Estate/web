@@ -447,6 +447,8 @@ const translations: Translations = {
   'favorites.browseProperties': { en: 'Browse Properties', mm: 'အိမ်ခြံမြေများ ရှာဖွေရန်' },
   'favorites.viewDetails': { en: 'View Details', mm: 'အသေးစိတ်ကြည့်ရန်' },
   'favorites.savedOn': { en: 'Saved on', mm: 'သိမ်းဆည်းထားသော ရက်စွဲ' },
+  'favorites.totalSaved': { en: 'Your saved properties ({count} items)', mm: 'သင်သိမ်းထားသော အိမ်ခြံမြေများ ({count} ခု)' },
+  'favorites.totalSavedOne': { en: 'Your saved 1 property', mm: 'သင်သိမ်းထားသော အိမ်ခြံမြေ ၁ ခု' },
   'favorites.removed': { en: 'Property removed from favorites', mm: 'အိမ်ခြံမြေကို အကြိုက်ဆုံးများမှ ဖယ်ရှားပြီး' },
   'favorites.removeError': { en: 'Failed to remove from favorites', mm: 'အကြိုက်ဆုံးများမှ ဖယ်ရှားရန် မအောင်မြင်ပါ' },
   'favorites.confirmRemoveTitle': { en: 'Remove from Favorites', mm: 'အကြိုက်ဆုံးများမှ ဖယ်ရှားရန်' },
