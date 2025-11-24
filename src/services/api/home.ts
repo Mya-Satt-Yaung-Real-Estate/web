@@ -4,6 +4,7 @@ import type { PublicAdvertisementListResponse } from '@/types/publicAdvertisemen
 import type { WantedListResponse } from '@/types/wantedList';
 import type { HousingEventListResponse } from '@/types/housingEvents';
 import type { LegacyTeamResponse } from '@/types/legacy';
+import type { SliderAdsResponse } from '@/types/ads';
 
 /**
  * Home Page API Service
@@ -54,6 +55,13 @@ export const homeApi = {
     return api.get<LegacyTeamResponse>('/api/v1/frontend/legacy-teams', {
       params: { per_page: 3 },
     });
+  },
+
+  /**
+   * Get slider ads for home page carousel
+   */
+  getSliderAds: () => {
+    return api.get<SliderAdsResponse>('/api/v1/frontend/ads/slider');
   },
 };
 

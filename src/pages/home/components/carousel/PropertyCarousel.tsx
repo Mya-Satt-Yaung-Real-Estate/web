@@ -1,63 +1,60 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobileOrTablet } from '@/hooks/useMediaQuery';
+import { useHomeSliderAds } from '@/hooks/queries/home';
 import { MobilePropertyCarousel } from './mobile/MobilePropertyCarousel';
-
-const carouselImages = [
-  {
-    url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&auto=format&fit=crop',
-    titleKey: 'carousel.villa',
-    descriptionKey: 'carousel.villaDesc',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&auto=format&fit=crop',
-    titleKey: 'carousel.apartment',
-    descriptionKey: 'carousel.apartmentDesc',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&auto=format&fit=crop',
-    titleKey: 'carousel.office',
-    descriptionKey: 'carousel.officeDesc',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&auto=format&fit=crop',
-    titleKey: 'carousel.estate',
-    descriptionKey: 'carousel.estateDesc',
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1920&auto=format&fit=crop',
-    titleKey: 'carousel.condo',
-    descriptionKey: 'carousel.condoDesc',
-  },
-];
+import { Skeleton } from '@/components/ui/skeleton';
+import type { SliderAd } from '@/types/ads';
 
 export function PropertyCarousel() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const isMobileOrTablet = useIsMobileOrTablet();
+  const { data, isLoading, error } = useHomeSliderAds();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
+  // Transform API data
+  const sliderAds = useMemo(() => {
+    if (!data?.data?.data) return [];
+    return data.data.data;
+  }, [data]);
+
+  // Auto-play effect
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || sliderAds.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % carouselImages.length);
+      setCurrentIndex((prev) => (prev + 1) % sliderAds.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, sliderAds.length]);
+
+  // Reset index when ads change
+  useEffect(() => {
+    if (sliderAds.length > 0 && currentIndex >= sliderAds.length) {
+      setCurrentIndex(0);
+    }
+  }, [sliderAds.length, currentIndex]);
+
+  const handleLinkClick = (link: string) => {
+    // Always open in new tab (API provides full URLs)
+    window.open(link, '_blank', 'noopener,noreferrer');
+  };
 
   const goToPrevious = () => {
     setIsAutoPlaying(false);
-    setCurrentIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+    if (sliderAds.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + sliderAds.length) % sliderAds.length);
   };
 
   const goToNext = () => {
     setIsAutoPlaying(false);
-    setCurrentIndex((prev) => (prev + 1) % carouselImages.length);
+    if (sliderAds.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % sliderAds.length);
   };
 
   const goToSlide = (index: number) => {
@@ -70,73 +67,146 @@ export function PropertyCarousel() {
     return <MobilePropertyCarousel />;
   }
 
-  // Desktop version (100% Figma match)
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="relative w-full h-[60vh] md:h-[65vh] overflow-hidden">
+        <Skeleton className="w-full h-full" />
+      </div>
+    );
+  }
+
+  // Error or empty state
+  if (error || sliderAds.length === 0) {
+    return null; // Hide carousel if no ads
+  }
+
+  // Desktop version
   return (
     <div className="relative w-full h-[60vh] md:h-[65vh] overflow-hidden group">
       {/* Images */}
       <div className="relative w-full h-full">
-        {carouselImages.map((image, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentIndex ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <ImageWithFallback
-              src={image.url}
-              alt={t(image.titleKey)}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
-            
-            {/* Text Overlay */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8">
-              <div className="max-w-4xl mx-auto">
-                <h2 className="mb-4 text-white animate-fade-in text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
-                  {t(image.titleKey)}
-                </h2>
-                <p className="text-white/90 max-w-2xl mx-auto mb-8 animate-fade-in text-base sm:text-lg md:text-xl">
-                  {t(image.descriptionKey)}
-                </p>
-              </div>
+        {sliderAds.map((ad: SliderAd, index: number) => {
+          const title = language === 'mm' ? ad.title_mm : ad.title_en;
+          const description = language === 'mm' ? ad.description_mm : ad.description_en;
+          const isButtonLink = ad.link_type === 'button_link' && ad.link && ad.link_text;
+          const isTextLink = ad.link_type === 'text_link' && ad.link && ad.link_text;
+          const isImageLink = ad.link_type === 'image_link' && ad.link;
+          const imageUrl = ad.images?.url || '';
+          const textColor = ad.text_color_code || '#FFFFFF'; // Default to white if not provided
+
+          return (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              } ${isImageLink ? 'cursor-pointer' : ''}`}
+              onClick={isImageLink && ad.link && index === currentIndex ? () => handleLinkClick(ad.link!) : undefined}
+            >
+              <ImageWithFallback
+                src={imageUrl}
+                alt={title || `Slide ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              {(title || description || isButtonLink || isTextLink) && (
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
+              )}
+              
+              {/* Text Overlay */}
+              {(title || description || isButtonLink || isTextLink) && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8">
+                  <div className="max-w-4xl mx-auto">
+                    {title && (
+                      <h2 
+                        className="mb-4 animate-fade-in text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold"
+                        style={{ color: textColor }}
+                      >
+                        {title}
+                      </h2>
+                    )}
+                    {description && (
+                      <p 
+                        className="max-w-2xl mx-auto mb-8 animate-fade-in text-base sm:text-lg md:text-xl"
+                        style={{ color: textColor }}
+                      >
+                        {description}
+                      </p>
+                    )}
+                    {isButtonLink && ad.link && ad.link_text && (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLinkClick(ad.link!);
+                        }}
+                        size="lg"
+                        variant="secondary"
+                        className="shadow-2xl hover:scale-105 transition-transform hover:opacity-90 cursor-pointer"
+                        style={{ color: textColor, borderColor: textColor }}
+                      >
+                        <span style={{ color: textColor }}>{ad.link_text}</span>
+                      </Button>
+                    )}
+                    {isTextLink && ad.link && ad.link_text && (
+                      <a
+                        href={ad.link}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleLinkClick(ad.link!);
+                        }}
+                        className="text-lg sm:text-xl underline hover:opacity-90 transition-colors inline-block"
+                        style={{ color: textColor }}
+                      >
+                        {ad.link_text}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Navigation Arrows */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20 w-12 h-12"
-        onClick={goToPrevious}
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20 w-12 h-12"
-        onClick={goToNext}
-      >
-        <ChevronRight className="h-6 w-6" />
-      </Button>
+      {sliderAds.length > 1 && (
+        <>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20 w-12 h-12"
+            onClick={goToPrevious}
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20 w-12 h-12"
+            onClick={goToNext}
+          >
+            <ChevronRight className="h-6 w-6" />
+          </Button>
+        </>
+      )}
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-3">
-        {carouselImages.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`h-2 rounded-full transition-all ${
-              index === currentIndex
-                ? 'bg-white w-12'
-                : 'bg-white/50 hover:bg-white/75 w-2'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {sliderAds.length > 1 && (
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-3">
+          {sliderAds.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === currentIndex
+                  ? 'bg-white w-12'
+                  : 'bg-white/50 hover:bg-white/75 w-2'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

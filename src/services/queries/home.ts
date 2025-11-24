@@ -12,6 +12,7 @@ export const homeKeys = {
   featuredAdvertisements: () => [...homeKeys.all, 'featured-advertisements'] as const,
   upcomingEvents: () => [...homeKeys.all, 'upcoming-events'] as const,
   legalTeam: () => [...homeKeys.all, 'legal-team'] as const,
+  sliderAds: () => [...homeKeys.all, 'slider-ads'] as const,
 } as const;
 
 // ============================================================================
@@ -41,6 +42,10 @@ export const homeQueries = {
 
   getLegalTeam: () => {
     return homeApi.getLegalTeam();
+  },
+
+  getSliderAds: () => {
+    return homeApi.getSliderAds();
   },
 };
 
