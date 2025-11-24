@@ -14,7 +14,7 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: async (data: {
       name: string;
-      email: string;
+      email?: string | null;
       phone: string;
       media_id?: number | null;
       company_name?: string;
@@ -26,6 +26,7 @@ export function useUpdateProfile() {
     }) => {
       const payload = {
         ...data,
+        email: data.email || undefined,
         media_id: data.media_id ?? undefined,
       };
       const response = await authApi.updateProfile(payload);

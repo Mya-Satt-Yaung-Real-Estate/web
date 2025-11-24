@@ -29,7 +29,7 @@ export const authApi = {
 
   async updateProfile(data: {
     name: string;
-    email: string;
+    email?: string;
     phone: string;
     media_id?: number;
     company_name?: string;

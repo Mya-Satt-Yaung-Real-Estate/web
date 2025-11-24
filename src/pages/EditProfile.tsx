@@ -213,7 +213,8 @@ export function EditProfile() {
   const onSubmit = (data: CompanyProfileFormData | IndividualProfileFormData) => {
     const payload: any = {
       name: data.name,
-      // email and phone are disabled, so we don't send them
+      email: data.email || undefined,
+      phone: data.phone,
       ...(mediaId && { media_id: mediaId }),
     };
 
@@ -321,16 +322,15 @@ export function EditProfile() {
                   </div>
 
                   <div>
-                    <Label htmlFor="email">
-                      {t('editProfile.email') || 'Email'} <span className="text-destructive">*</span>
+                    <Label htmlFor="email" className="flex items-center gap-2">
+                      {t('editProfile.email') || 'Email'}
+                      <span className="text-gray-400 text-xs">({t('common.optional') || 'Optional'})</span>
                     </Label>
                     <Input
                       id="email"
                       type="email"
                       {...form.register('email')}
                       placeholder={t('editProfile.emailPlaceholder') || 'Enter your email'}
-                      disabled={true}
-                      readOnly
                     />
                     {form.formState.errors.email && (
                       <p className="text-sm text-destructive mt-1">{form.formState.errors.email.message}</p>
