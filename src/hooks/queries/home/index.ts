@@ -13,4 +13,5 @@ export { useHomeLegalTeam } from './useHomeLegalTeam';
 export { useHomeSliderAds } from './useHomeSliderAds';
 export { useHomeBlockAds } from './useHomeBlockAds';
 export { useDetailSidebarAds } from './useDetailSidebarAds';
+export { usePropertiesMap } from './usePropertiesMap';
 

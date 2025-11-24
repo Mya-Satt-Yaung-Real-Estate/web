@@ -6,4 +6,5 @@ export { PropertyListingsSection } from './PropertyListingsSection';
 export { EventsSection } from './EventsSection';
 export { LegalTeamSection } from './LegalTeamSection';
 export { RecommendedPropertyTypes } from './RecommendedPropertyTypes';
+export { PropertiesMapSection } from './PropertiesMapSection';
 

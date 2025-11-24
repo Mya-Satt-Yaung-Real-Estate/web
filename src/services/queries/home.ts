@@ -15,6 +15,7 @@ export const homeKeys = {
   sliderAds: () => [...homeKeys.all, 'slider-ads'] as const,
   homeBlockAds: () => [...homeKeys.all, 'home-block-ads'] as const,
   detailSidebarAds: () => [...homeKeys.all, 'detail-sidebar-ads'] as const,
+  propertiesMap: () => [...homeKeys.all, 'properties-map'] as const,
 } as const;
 
 // ============================================================================
@@ -56,6 +57,10 @@ export const homeQueries = {
 
   getDetailSidebarAds: () => {
     return homeApi.getDetailSidebarAds();
+  },
+
+  getPropertiesMap: () => {
+    return homeApi.getPropertiesMap();
   },
 };
 

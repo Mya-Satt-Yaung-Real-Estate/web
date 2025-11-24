@@ -34,6 +34,8 @@ const translations: Translations = {
   'home.getStarted': { en: 'Get Started Today', mm: 'ယနေ့စတင်ပါ' },
   'home.cta.title': { en: 'Ready to Find Your Dream Property?', mm: 'သင့်အိပ်မက်အိမ်ခြံမြေကိုရှာဖွေရန်အဆင်သင့်ဖြစ်ပြီလား?' },
   'home.cta.description': { en: 'Join thousands of satisfied clients who found their perfect property with us', mm: 'ကျွန်ုပ်တို့နှင့်အတူ သင့်အတွက်အကောင်းဆုံးအိမ်ခြံမြေကိုရှာတွေ့ခဲ့သော ကျေနပ်သောဖောက်သည်ထောင်ပေါင်းများစွာနှင့်ပါဝင်ပါ' },
+  'home.propertiesMapLocation.title': { en: 'Properties Map Location', mm: 'အိမ်ခြံမြေများ၏မြေပုံတည်နေရာ' },
+  'home.propertiesMapLocation.description': { en: 'Explore properties on the map to find your perfect location', mm: 'သင့်အတွက်အကောင်းဆုံးတည်နေရာကိုရှာဖွေရန်မြေပုံပေါ်ရှိအိမ်ခြံမြေများကိုစူးစမ်းရှာဖွေပါ' },
   
   // Categories
   'categories.searchAllProperty': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },

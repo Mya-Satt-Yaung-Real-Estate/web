@@ -5,6 +5,7 @@ import type { WantedListResponse } from '@/types/wantedList';
 import type { HousingEventListResponse } from '@/types/housingEvents';
 import type { LegacyTeamResponse } from '@/types/legacy';
 import type { SliderAdsResponse } from '@/types/ads';
+import type { MapPropertiesResponse } from '@/types/mapProperties';
 
 /**
  * Home Page API Service
@@ -76,6 +77,13 @@ export const homeApi = {
    */
   getDetailSidebarAds: () => {
     return api.get<SliderAdsResponse>('/api/v1/frontend/ads/detail-page');
+  },
+
+  /**
+   * Get properties for map view on home page
+   */
+  getPropertiesMap: () => {
+    return api.get<MapPropertiesResponse>('/api/v1/frontend/public/home/properties-map');
   },
 };
 

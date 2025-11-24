@@ -10,6 +10,7 @@ import {
   PropertyListingsSection,
   EventsSection,
   LegalTeamSection,
+  PropertiesMapSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -164,6 +165,9 @@ export const Home = memo(function Home() {
 
       {/* Home Block Ads */}
       <HomeBlockAdsCarousel />
+
+      {/* Properties Map */}
+      <PropertiesMapSection />
 
       {/* Legal Team */}
       <LegalTeamSection />
