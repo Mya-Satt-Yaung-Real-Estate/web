@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { publicPropertyApi } from '@/services/api/publicProperties';
 import { publicPropertyKeys } from '@/services/queries/publicProperties';
+import { homeKeys } from '@/services/queries/home';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 import type { PublicProperty } from '@/types/publicProperties';
@@ -31,13 +32,22 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const [likeCount, setLikeCount] = useState(property.like_count);
   const [favoriteCount, setFavoriteCount] = useState(property.favorite_count);
 
+  // Sync state with prop when property data changes (after refetch)
+  useEffect(() => {
+    setIsLiked(property.is_liked ?? false);
+    setIsFavorite(property.is_favorited ?? false);
+    setLikeCount(property.like_count);
+    setFavoriteCount(property.favorite_count);
+  }, [property.is_liked, property.is_favorited, property.like_count, property.favorite_count]);
+
   const toggleLikeMutation = useMutation({
     mutationFn: (slug: string) => publicPropertyApi.toggleLike(slug),
     onSuccess: (response) => {
       const liked = response.data?.data?.liked ?? false;
       setIsLiked(liked);
       setLikeCount(prev => liked ? prev + 1 : Math.max(0, prev - 1));
-      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.all });
+      queryClient.invalidateQueries({ queryKey: homeKeys.all });
       toast.success(liked 
         ? (t('propertyDetail.liked') || 'Liked!')
         : (t('propertyDetail.unliked') || 'Unliked')
@@ -54,7 +64,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
       const favorited = response.data?.data?.is_favorited ?? false;
       setIsFavorite(favorited);
       setFavoriteCount(prev => favorited ? prev + 1 : Math.max(0, prev - 1));
-      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.all });
+      queryClient.invalidateQueries({ queryKey: homeKeys.all });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       toast.success(favorited 
         ? (t('propertyDetail.addedToFavorites') || 'Added to favorites')

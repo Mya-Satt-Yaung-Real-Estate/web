@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePublicProperty } from '@/hooks/queries/usePublicProperties';
 import { publicPropertyApi } from '@/services/api/publicProperties';
 import { publicPropertyKeys } from '@/services/queries/publicProperties';
+import { homeKeys } from '@/services/queries/home';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
@@ -35,17 +36,15 @@ export default function PublicPropertyDetail() {
   // Favorite mutation - must be called before conditional returns
   const toggleFavoriteMutation = useMutation({
     mutationFn: (slug: string) => publicPropertyApi.toggleFavorite(slug),
-    onSuccess: (response, slug) => {
+    onSuccess: (response) => {
       const isFavorited = response.data?.data?.is_favorited ?? false;
       setIsFavorite(isFavorited);
       
-      // Invalidate property detail to refresh favorite status
-      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(slug) });
-      
-      // Invalidate favorites list if it exists
+      // Invalidate all property list queries
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.all });
+      queryClient.invalidateQueries({ queryKey: homeKeys.all });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       
-      // Show success message
       toast.success(isFavorited 
         ? (t('propertyDetail.addedToFavorites') || 'Added to favorites')
         : (t('propertyDetail.removedFromFavorites') || 'Removed from favorites')
@@ -60,14 +59,14 @@ export default function PublicPropertyDetail() {
   // Like mutation - must be called before conditional returns
   const toggleLikeMutation = useMutation({
     mutationFn: (slug: string) => publicPropertyApi.toggleLike(slug),
-    onSuccess: (response, slug) => {
+    onSuccess: (response) => {
       const isLiked = response.data?.data?.liked ?? false;
       setIsLiked(isLiked);
       
-      // Invalidate property detail to refresh like status
-      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(slug) });
+      // Invalidate all property list queries
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.all });
+      queryClient.invalidateQueries({ queryKey: homeKeys.all });
       
-      // Show success message
       toast.success(isLiked 
         ? (t('propertyDetail.liked') || 'Liked!')
         : (t('propertyDetail.unliked') || 'Unliked')
