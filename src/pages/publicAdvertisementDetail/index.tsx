@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePublicAdvertisementDetail } from '@/hooks/queries/usePublicAdvertisementDetail';
 import { publicAdvertisementApi } from '@/services/api/publicAdvertisements';
 import { publicAdvertisementKeys } from '@/services/queries/publicAdvertisements';
+import { homeKeys } from '@/services/queries/home';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
@@ -37,10 +38,12 @@ export default function PublicAdvertisementDetail() {
   const toggleLikeMutation = useMutation({
     mutationFn: (id: string | number) => publicAdvertisementApi.toggleLike(id),
     onSuccess: (response, id) => {
-      const isLiked = response.data?.data?.liked ?? false;
+      const isLiked = response.data?.data?.is_like ?? false;
       setIsLiked(isLiked);
       
-      // Invalidate advertisement detail to refresh like status
+      // Invalidate all advertisement list queries (like property detail page)
+      queryClient.invalidateQueries({ queryKey: publicAdvertisementKeys.all });
+      queryClient.invalidateQueries({ queryKey: homeKeys.all });
       queryClient.invalidateQueries({ queryKey: publicAdvertisementKeys.detail(id) });
       
       // Show success message

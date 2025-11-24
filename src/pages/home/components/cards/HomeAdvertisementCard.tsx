@@ -1,9 +1,15 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Eye, ThumbsUp, Calendar } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { publicAdvertisementApi } from '@/services/api/publicAdvertisements';
+import { publicAdvertisementKeys } from '@/services/queries/publicAdvertisements';
+import { useAuthStore } from '@/stores/authStore';
+import { toast } from 'sonner';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import type { PublicAdvertisement } from '@/types/publicAdvertisements';
 
@@ -14,6 +20,50 @@ interface HomeAdvertisementCardProps {
 export function HomeAdvertisementCard({ advertisement }: HomeAdvertisementCardProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+  const queryClient = useQueryClient();
+  
+  const [isLiked, setIsLiked] = useState(advertisement.is_favorite ?? false);
+  const [likeCount, setLikeCount] = useState(advertisement.stats.favorite_count);
+
+  // Sync state with prop when advertisement data changes (after refetch)
+  useEffect(() => {
+    setIsLiked(advertisement.is_favorite ?? false);
+    setLikeCount(advertisement.stats.favorite_count);
+  }, [advertisement.is_favorite, advertisement.stats.favorite_count]);
+
+  const toggleLikeMutation = useMutation({
+    mutationFn: (id: string | number) => publicAdvertisementApi.toggleLike(id),
+    onSuccess: (response) => {
+      const liked = response.data?.data?.is_like ?? false;
+      setIsLiked(liked);
+      const newLikeCount = response.data?.data?.like_count;
+      if (newLikeCount !== undefined) {
+        setLikeCount(newLikeCount);
+      } else {
+        setLikeCount(prev => liked ? prev + 1 : Math.max(0, prev - 1));
+      }
+      queryClient.invalidateQueries({ queryKey: publicAdvertisementKeys.all });
+      toast.success(liked 
+        ? (t('advertisementDetail.liked') || 'Liked!')
+        : (t('advertisementDetail.unliked') || 'Unliked')
+      );
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || error?.message || t('advertisementDetail.likeError') || 'Failed to update like');
+    },
+  });
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error(t('advertisementDetail.signInRequired') || 'Please sign in to like');
+      navigate('/signin');
+      return;
+    }
+    toggleLikeMutation.mutate(advertisement.id);
+  };
 
   const title = language === 'mm' ? advertisement.title_mm : advertisement.title_en;
 
@@ -87,18 +137,19 @@ export function HomeAdvertisementCard({ advertisement }: HomeAdvertisementCardPr
 
       <CardContent className="p-3 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <Eye className="h-3.5 w-3.5" />
-                <span>{advertisement.stats.view_count.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <ThumbsUp className={`h-3.5 w-3.5 ${advertisement.is_favorite ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
-                <span>{advertisement.stats.favorite_count.toLocaleString()}</span>
-              </div>
+          <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
+            <button
+              onClick={handleLike}
+              className="flex items-center justify-center gap-1.5 hover:bg-primary/10 transition-colors cursor-pointer rounded px-1 py-0.5"
+            >
+              <ThumbsUp className={`h-3.5 w-3.5 ${isLiked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+              <span className={isLiked ? 'text-primary' : 'text-muted-foreground'}>{likeCount.toLocaleString()}</span>
+            </button>
+            <div className="flex items-center justify-center gap-1.5">
+              <Eye className="h-3.5 w-3.5" />
+              <span>{advertisement.stats.view_count.toLocaleString()}</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center justify-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
               <span>{formatDate(advertisement.published_at)}</span>
             </div>

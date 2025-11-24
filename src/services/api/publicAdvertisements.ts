@@ -16,7 +16,7 @@ export const publicAdvertisementApi = {
    * Toggle like status for a public advertisement (frontend endpoint)
    */
   toggleLike: (id: string | number) => {
-    return api.post<{ success: boolean; message: string; data: { liked: boolean; like_count?: number } }>(`/api/v1/frontend/advertisements/${id}/like`);
+    return api.post<{ success: boolean; message: string; data: { is_like: boolean; like_count?: number } }>(`/api/v1/frontend/advertisements/${id}/like`);
   },
 };
 
