@@ -9,4 +9,5 @@ export { PropertyDetailsCard } from './PropertyDetailsCard';
 export { ContactOwnerCard } from './ContactOwnerCard';
 export { QuickActionsCard } from './QuickActionsCard';
 export { LocationCard } from './LocationCard';
+export { DetailSidebarAdsCard } from './DetailSidebarAdsCard';
 

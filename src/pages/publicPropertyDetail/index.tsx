@@ -15,7 +15,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
-import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCard, LocationCard } from './components';
+import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCard, LocationCard, DetailSidebarAdsCard } from './components';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -471,6 +471,9 @@ export default function PublicPropertyDetail() {
                   t={t}
                 />
               )}
+
+              {/* Detail Sidebar Ads Card */}
+              <DetailSidebarAdsCard />
             </div>
           </div>
         </div>

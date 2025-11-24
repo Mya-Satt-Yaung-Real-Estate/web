@@ -70,5 +70,12 @@ export const homeApi = {
   getHomeBlockAds: () => {
     return api.get<SliderAdsResponse>('/api/v1/frontend/ads/home-block');
   },
+
+  /**
+   * Get detail page sidebar ads for property detail page (displayed under map location)
+   */
+  getDetailSidebarAds: () => {
+    return api.get<SliderAdsResponse>('/api/v1/frontend/ads/detail-page');
+  },
 };
 

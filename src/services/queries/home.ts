@@ -14,6 +14,7 @@ export const homeKeys = {
   legalTeam: () => [...homeKeys.all, 'legal-team'] as const,
   sliderAds: () => [...homeKeys.all, 'slider-ads'] as const,
   homeBlockAds: () => [...homeKeys.all, 'home-block-ads'] as const,
+  detailSidebarAds: () => [...homeKeys.all, 'detail-sidebar-ads'] as const,
 } as const;
 
 // ============================================================================
@@ -51,6 +52,10 @@ export const homeQueries = {
 
   getHomeBlockAds: () => {
     return homeApi.getHomeBlockAds();
+  },
+
+  getDetailSidebarAds: () => {
+    return homeApi.getDetailSidebarAds();
   },
 };
 
