@@ -14,10 +14,8 @@ const PrivacyPolicy = lazyWithRetry(() => import('../pages/PrivacyPolicy').then(
 const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
 const Reviews = lazyWithRetry(() => import('../pages/reviews').then(module => ({ default: module.default })));
 const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
-const LoginOtpRequest = lazyWithRetry(() => import('../pages/signin/LoginOtpRequest').then(module => ({ default: module.LoginOtpRequest })));
-const LoginOtpVerify = lazyWithRetry(() => import('../pages/signin/LoginOtpVerify').then(module => ({ default: module.LoginOtpVerify })));
-const OtpRequest = lazyWithRetry(() => import('../pages/signup/OtpRequest').then(module => ({ default: module.OtpRequest })));
-const OtpVerify = lazyWithRetry(() => import('../pages/signup/OtpVerify').then(module => ({ default: module.OtpVerify })));
+const OtpRequest = lazyWithRetry(() => import('../pages/signin/LoginOtpRequest').then(module => ({ default: module.LoginOtpRequest })));
+const OtpVerify = lazyWithRetry(() => import('../pages/signin/LoginOtpVerify').then(module => ({ default: module.LoginOtpVerify })));
 const Register = lazyWithRetry(() => import('../pages/signup/Register').then(module => ({ default: module.Register })));
 
 // Knowledge pages
@@ -145,7 +143,7 @@ export const publicRoutes = [
     path: '/signin/otp-request',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <LoginOtpRequest />
+        <OtpRequest />
       </Suspense>
     ),
   },
@@ -153,7 +151,7 @@ export const publicRoutes = [
     path: '/signin/otp-verify',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <LoginOtpVerify />
+        <OtpVerify />
       </Suspense>
     ),
   },

@@ -12,7 +12,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { useModal } from '@/contexts/ModalContext';
-import { getOtpRequestedPhone, clearSignupFlow } from '@/utils/signupFlow';
+import { getOtpRequestedPhone, clearSignupFlow, storeOtpVerified } from '@/utils/signupFlow';
 import { LoginOtpVerifyForm } from './components';
 import logoImage from '@/assets/jade.png';
 
@@ -48,26 +48,39 @@ export function LoginOtpVerify() {
   }
 
   const handleSuccess = async (response: any) => {
-    // For login action, response.data contains user and token
-    if (response.data?.user && response.data?.token) {
-      // Store token and authenticate user
-      setToken(response.data.token);
-      await checkAuth();
+    // Check user_exists flag
+    if (response.data?.user_exists === true) {
+      // User exists - auto login
+      if (response.data?.user && response.data?.token) {
+        // Store token and authenticate user
+        setToken(response.data.token);
+        await checkAuth();
+        
+        // Clear OTP flow data
+        clearSignupFlow();
+        
+        // Show success message
+        showSuccess(
+          t('signin.welcomeBack') || 'Welcome back!',
+          t('signin.signInSuccessful') || 'You have successfully signed in'
+        );
+        
+        // Navigate to home page
+        navigate('/');
+      } else {
+        // Unexpected response
+        navigate('/signin/otp-request');
+      }
+    } else if (response.data?.user_exists === false) {
+      // User doesn't exist - redirect to registration
+      // Store OTP verification status in sessionStorage
+      storeOtpVerified(phone);
       
-      // Clear OTP flow data
-      clearSignupFlow();
-      
-      // Show success message
-      showSuccess(
-        t('signin.welcomeBack') || 'Welcome back!',
-        t('signin.signInSuccessful') || 'You have successfully signed in'
-      );
-      
-      // Navigate to home page
-      navigate('/');
+      // Navigate to registration page
+      navigate('/signup/register', { state: { phone }, replace: true });
     } else {
-      // This shouldn't happen, but handle it
-      navigate('/signin');
+      // Unexpected response
+      navigate('/signin/otp-request');
     }
   };
 

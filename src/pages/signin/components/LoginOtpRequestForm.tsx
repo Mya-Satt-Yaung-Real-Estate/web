@@ -94,14 +94,12 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
     const payload: OtpRequestRequest = {
       phone: formattedPhone,
       type: 'phone',
-      action_type: 'login',
     };
 
     requestOtp(payload, {
-      onSuccess: (response) => {
-        // Store phone and action type in sessionStorage for flow protection
-        const responseActionType = response.data?.action || 'login';
-        storeOtpRequestedPhone(formattedPhone, responseActionType);
+      onSuccess: () => {
+        // Store phone in sessionStorage for flow protection
+        storeOtpRequestedPhone(formattedPhone);
         onSuccess(formattedPhone);
       },
       onError: (error: any) => {

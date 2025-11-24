@@ -162,7 +162,6 @@ export interface LoginResponse {
 export interface OtpRequestRequest {
   phone: string;
   type: 'phone';
-  action_type: 'register' | 'login' | 'forgot_password';
 }
 
 export interface OtpRequestResponse {
@@ -170,7 +169,6 @@ export interface OtpRequestResponse {
   message: string;
   data?: {
     otp_code?: string;
-    action?: string;
     user?: any;
   };
 }
@@ -180,18 +178,17 @@ export interface OtpVerifyRequest {
   phone: string;
   type: 'phone';
   otp_code: string;
-  action_type: 'register' | 'login' | 'forgot_password';
+  device_token?: string;
 }
 
-// OTP Verify Response - can be different based on action_type
+// OTP Verify Response - unified response with user_exists flag
 export interface OtpVerifyResponse {
   success: boolean;
   message: string;
   data?: {
-    // For register action
+    user_exists: boolean;
     phone?: string;
-    action?: string;
-    // For login action
+    // If user exists (login)
     user?: ExtendedUser;
     token?: string;
     token_type?: string;

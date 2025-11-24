@@ -97,13 +97,13 @@ export function LoginOtpVerifyForm({ phone, onSuccess }: LoginOtpVerifyFormProps
       phone: phone.startsWith('09') ? phone : `09${phone}`,
       type: 'phone',
       otp_code: otpCode,
-      action_type: 'login',
     };
 
     verifyOtp(payload, {
       onSuccess: (response) => {
-        // For login action, response.data contains user and token
-        // Pass the response to parent to handle auto-login
+        // Response contains user_exists flag
+        // If user_exists is true, response.data contains user and token (auto-login)
+        // If user_exists is false, user needs to register
         onSuccess(response);
       },
       onError: (error: any) => {
@@ -125,14 +125,12 @@ export function LoginOtpVerifyForm({ phone, onSuccess }: LoginOtpVerifyFormProps
     const payload: OtpRequestRequest = {
       phone: phone.startsWith('09') ? phone : `09${phone}`,
       type: 'phone',
-      action_type: 'login',
     };
 
     requestOtp(payload, {
-      onSuccess: (response) => {
-        // Update phone and action type in sessionStorage on resend
-        const responseActionType = response.data?.action || 'login';
-        storeOtpRequestedPhone(phone.startsWith('09') ? phone : `09${phone}`, responseActionType);
+      onSuccess: () => {
+        // Update phone in sessionStorage on resend
+        storeOtpRequestedPhone(phone.startsWith('09') ? phone : `09${phone}`);
         setResendCountdown(RESEND_COUNTDOWN_SECONDS);
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0]?.focus();

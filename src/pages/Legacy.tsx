@@ -18,7 +18,7 @@ import {
 
 export default function Legacy() {
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   
   const { data: legacyData, isLoading, error } = useLegacyTeam();
 

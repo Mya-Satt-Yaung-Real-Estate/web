@@ -1255,7 +1255,7 @@ const translations: Translations = {
   'signin.noAccount': { en: "Don't have an account?", mm: 'အကောင့်မရှိသေးပါသလား?' },
   'signin.signUp': { en: 'Sign Up', mm: 'စာရင်းသွင်းရန်' },
   'signin.emailPlaceholder': { en: 'you@example.com', mm: 'you@example.com' },
-  'signin.welcomeBack': { en: 'Welcome back!', mm: 'ပြန်လည်ကြိုဆိုပါသည်!' },
+  'signin.welcomeBack': { en: 'Welcome!', mm: 'ကြိုဆိုပါသည်!' },
   'signin.signInSuccessful': { en: 'Sign in successful', mm: 'အောင်မြင်စွာဝင်ရောက်ပါပြီ' },
   'signin.signInFailed': { en: 'Sign in failed. Please try again.', mm: 'ဝင်ရောက်မှုမအောင်မြင်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
   'signin.invalidPhonePassword': { en: 'Invalid phone number or password. Please try again.', mm: 'ဖုန်းနံပါတ်သို့မဟုတ်စကားဝှက်မမှန်ပါ။ ကျေးဇူးပြု၍ထပ်ကြိုးစားပါ။' },
@@ -1267,10 +1267,10 @@ const translations: Translations = {
   
   // Sign In OTP Request
   'signin.otpRequest.title': { en: 'Login with OTP', mm: 'OTP ဖြင့်ဝင်ရောက်ရန်' },
-  'signin.otpRequest.subtitle': { en: 'Login with your phone number to continue', mm: 'ဆက်လက်ရန် သင့်ဖုန်းနံပါတ်ဖြင့်ဝင်ရောက်ရန်' },
-  'signin.otpRequest.welcomeBack': { en: 'WELCOME BACK', mm: 'ပြန်လည်ကြိုဆိုပါသည်' },
+  'signin.otpRequest.subtitle': { en: 'Get Started with your phone number to continue', mm: 'ဆက်လက်ရန် သင့်ဖုန်းနံပါတ်ဖြင့်ဝင်ရောက်ရန်' },
+  'signin.otpRequest.welcomeBack': { en: 'Welcome!', mm: 'ကြိုဆိုပါသည်' },
   'signin.otpRequest.appName': { en: 'Jade Property', mm: 'Jade Property' },
-  'signin.otpRequest.enterPhoneNumber': { en: 'Login with your phone number', mm: 'သင့်ဖုန်းနံပါတ်ဖြင့်ဝင်ရောက်ရန်' },
+  'signin.otpRequest.enterPhoneNumber': { en: 'Get Started with your phone number', mm: 'သင့်ဖုန်းနံပါတ်ဖြင့်စတင်ရန်' },
   'signin.otpRequest.countryCode': { en: 'Country Code', mm: 'နိုင်ငံကုဒ်' },
   'signin.otpRequest.myanmar': { en: 'Myanmar', mm: 'မြန်မာ' },
   'signin.otpRequest.phoneNumber': { en: 'Your Phone Number', mm: 'သင့်ဖုန်းနံပါတ်' },

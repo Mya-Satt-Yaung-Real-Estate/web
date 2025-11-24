@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Globe, ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,7 +38,7 @@ export function LoginOtpRequest() {
   const phoneFromState = location.state?.phone as string | undefined;
 
   const handleSuccess = (phone: string) => {
-    // Navigate to login OTP verify page with phone in state
+    // Navigate to unified OTP verify page with phone in state
     navigate('/signin/otp-verify', { state: { phone } });
   };
 
@@ -167,18 +167,7 @@ export function LoginOtpRequest() {
               </p>
             </div>
 
-            {/* Sign Up Link */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                {t('signin.otpRequest.noAccount') || "Don't have an account?"}{' '}
-                <Link 
-                  to="/signup" 
-                  className="text-primary hover:underline font-semibold"
-                >
-                  {t('signin.otpRequest.signUp') || 'Sign Up'}
-                </Link>
-              </p>
-            </div>
+            {/* Sign Up Link - removed since unified flow */}
           </div>
         </div>
       </div>
