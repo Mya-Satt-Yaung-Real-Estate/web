@@ -3,15 +3,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
-import { useChangePassword } from '@/hooks/mutations/useChangePassword';
+// import { useChangePassword } from '@/hooks/mutations/useChangePassword';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+// import { Input } from '@/components/ui/input'; // Commented out for hidden change password feature
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Bell, Globe, Lock, Shield, Save, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Bell, Globe, Shield } from 'lucide-react';
+// Lock, Save, Eye, EyeOff - commented out for hidden change password feature
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 
@@ -21,7 +22,7 @@ export function Settings() {
   const { showSuccess, showError } = useModal();
   const navigate = useNavigate();
   const seo = seoUtils.getPageSEO('settings');
-  const { mutate: changePassword, isPending: isChangingPassword } = useChangePassword();
+  // const { mutate: changePassword, isPending: isChangingPassword } = useChangePassword();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notificationSettings, setNotificationSettings] = useState({
@@ -32,23 +33,24 @@ export function Settings() {
     marketingEmails: false,
   });
 
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
+  // Password-related state - commented out for hidden change password feature
+  // const [passwordData, setPasswordData] = useState({
+  //   currentPassword: '',
+  //   newPassword: '',
+  //   confirmPassword: '',
+  // });
 
-  const [passwordErrors, setPasswordErrors] = useState<{
-    currentPassword?: string;
-    newPassword?: string;
-    confirmPassword?: string;
-  }>({});
+  // const [passwordErrors, setPasswordErrors] = useState<{
+  //   currentPassword?: string;
+  //   newPassword?: string;
+  //   confirmPassword?: string;
+  // }>({});
 
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
+  // const [showPasswords, setShowPasswords] = useState({
+  //   current: false,
+  //   new: false,
+  //   confirm: false,
+  // });
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -157,108 +159,109 @@ export function Settings() {
     showSuccess(t('settings.languageChanged'));
   };
 
-  const validatePasswordForm = (): boolean => {
-    const newErrors: {
-      currentPassword?: string;
-      newPassword?: string;
-      confirmPassword?: string;
-    } = {};
+  // Password-related functions - commented out for hidden change password feature
+  // const validatePasswordForm = (): boolean => {
+  //   const newErrors: {
+  //     currentPassword?: string;
+  //     newPassword?: string;
+  //     confirmPassword?: string;
+  //   } = {};
 
-    // Validate current password
-    if (!passwordData.currentPassword.trim()) {
-      newErrors.currentPassword = t('settings.currentPasswordRequired') || 'Current password is required';
-    }
+  //   // Validate current password
+  //   if (!passwordData.currentPassword.trim()) {
+  //     newErrors.currentPassword = t('settings.currentPasswordRequired') || 'Current password is required';
+  //   }
 
-    // Validate new password
-    if (!passwordData.newPassword.trim()) {
-      newErrors.newPassword = t('settings.newPasswordRequired') || 'New password is required';
-    } else if (passwordData.newPassword.length < 8) {
-      newErrors.newPassword = t('settings.passwordTooShort') || 'Password must be at least 8 characters';
-    } else if (passwordData.currentPassword && passwordData.newPassword === passwordData.currentPassword) {
-      newErrors.newPassword = t('settings.passwordDifferent') || 'New password must be different from current password';
-    }
+  //   // Validate new password
+  //   if (!passwordData.newPassword.trim()) {
+  //     newErrors.newPassword = t('settings.newPasswordRequired') || 'New password is required';
+  //   } else if (passwordData.newPassword.length < 8) {
+  //     newErrors.newPassword = t('settings.passwordTooShort') || 'Password must be at least 8 characters';
+  //   } else if (passwordData.currentPassword && passwordData.newPassword === passwordData.currentPassword) {
+  //     newErrors.newPassword = t('settings.passwordDifferent') || 'New password must be different from current password';
+  //   }
 
-    // Validate confirm password
-    if (!passwordData.confirmPassword.trim()) {
-      newErrors.confirmPassword = t('settings.confirmPasswordRequired') || 'Password confirmation is required';
-    } else if (passwordData.newPassword && passwordData.confirmPassword !== passwordData.newPassword) {
-      newErrors.confirmPassword = t('settings.passwordMismatch') || 'Password confirmation does not match';
-    }
+  //   // Validate confirm password
+  //   if (!passwordData.confirmPassword.trim()) {
+  //     newErrors.confirmPassword = t('settings.confirmPasswordRequired') || 'Password confirmation is required';
+  //   } else if (passwordData.newPassword && passwordData.confirmPassword !== passwordData.newPassword) {
+  //     newErrors.confirmPassword = t('settings.passwordMismatch') || 'Password confirmation does not match';
+  //   }
 
-    setPasswordErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  //   setPasswordErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
-  const handlePasswordInputChange = (field: keyof typeof passwordData, value: string) => {
-    setPasswordData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (passwordErrors[field as keyof typeof passwordErrors]) {
-      setPasswordErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-  };
+  // const handlePasswordInputChange = (field: keyof typeof passwordData, value: string) => {
+  //   setPasswordData(prev => ({ ...prev, [field]: value }));
+  //   // Clear error when user starts typing
+  //   if (passwordErrors[field as keyof typeof passwordErrors]) {
+  //     setPasswordErrors(prev => ({ ...prev, [field]: undefined }));
+  //   }
+  // };
 
-  const handlePasswordChange = (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handlePasswordChange = (e: React.FormEvent) => {
+  //   e.preventDefault();
     
-    // Clear previous errors
-    setPasswordErrors({});
+  //   // Clear previous errors
+  //   setPasswordErrors({});
     
-    // Validate form
-    if (!validatePasswordForm()) {
-      return;
-    }
+  //   // Validate form
+  //   if (!validatePasswordForm()) {
+  //     return;
+  //   }
 
-    changePassword(
-      {
-        current_password: passwordData.currentPassword,
-        password: passwordData.newPassword,
-        password_confirmation: passwordData.confirmPassword,
-      },
-      {
-        onSuccess: (response) => {
-          showSuccess(response.message || t('settings.passwordChanged'));
-          setPasswordData({
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: '',
-          });
-          setPasswordErrors({});
-        },
-        onError: (error: any) => {
-          // Handle API validation errors
-          if (error?.response?.data?.errors) {
-            const apiErrors = error.response.data.errors;
-            const newErrors: typeof passwordErrors = {};
+  //   changePassword(
+  //     {
+  //       current_password: passwordData.currentPassword,
+  //       password: passwordData.newPassword,
+  //       password_confirmation: passwordData.confirmPassword,
+  //     },
+  //     {
+  //       onSuccess: (response) => {
+  //         showSuccess(response.message || t('settings.passwordChanged'));
+  //         setPasswordData({
+  //           currentPassword: '',
+  //           newPassword: '',
+  //           confirmPassword: '',
+  //         });
+  //         setPasswordErrors({});
+  //       },
+  //       onError: (error: any) => {
+  //         // Handle API validation errors
+  //         if (error?.response?.data?.errors) {
+  //           const apiErrors = error.response.data.errors;
+  //           const newErrors: typeof passwordErrors = {};
             
-            if (apiErrors.current_password) {
-              newErrors.currentPassword = Array.isArray(apiErrors.current_password) 
-                ? apiErrors.current_password[0] 
-                : apiErrors.current_password;
-            }
-            if (apiErrors.password) {
-              newErrors.newPassword = Array.isArray(apiErrors.password) 
-                ? apiErrors.password[0] 
-                : apiErrors.password;
-            }
-            if (apiErrors.password_confirmation) {
-              newErrors.confirmPassword = Array.isArray(apiErrors.password_confirmation) 
-                ? apiErrors.password_confirmation[0] 
-                : apiErrors.password_confirmation;
-            }
+  //           if (apiErrors.current_password) {
+  //             newErrors.currentPassword = Array.isArray(apiErrors.current_password) 
+  //               ? apiErrors.current_password[0] 
+  //               : apiErrors.current_password;
+  //           }
+  //           if (apiErrors.password) {
+  //             newErrors.newPassword = Array.isArray(apiErrors.password) 
+  //               ? apiErrors.password[0] 
+  //               : apiErrors.password;
+  //           }
+  //           if (apiErrors.password_confirmation) {
+  //             newErrors.confirmPassword = Array.isArray(apiErrors.password_confirmation) 
+  //               ? apiErrors.password_confirmation[0] 
+  //               : apiErrors.password_confirmation;
+  //           }
             
-            if (Object.keys(newErrors).length > 0) {
-              setPasswordErrors(newErrors);
-            }
-          }
+  //           if (Object.keys(newErrors).length > 0) {
+  //             setPasswordErrors(newErrors);
+  //           }
+  //         }
           
-          const errorMessage = error?.response?.data?.message || 
-                              error?.message || 
-                              t('settings.passwordChangeFailed') || 'Failed to change password';
-          showError(errorMessage);
-        },
-      }
-    );
-  };
+  //         const errorMessage = error?.response?.data?.message || 
+  //                             error?.message || 
+  //                             t('settings.passwordChangeFailed') || 'Failed to change password';
+  //         showError(errorMessage);
+  //       },
+  //     }
+  //   );
+  // };
 
   return (
     <>
@@ -432,8 +435,8 @@ export function Settings() {
               </CardContent>
             </Card>
 
-            {/* Change Password Settings */}
-            <Card className="backdrop-blur-sm bg-background/95 shadow-sm">
+            {/* Change Password Settings - Hidden */}
+            {/* <Card className="backdrop-blur-sm bg-background/95 shadow-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
                   <Lock className="h-5 w-5 text-primary" />
@@ -546,7 +549,7 @@ export function Settings() {
                   </Button>
                 </form>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Privacy & Security */}
             <Card className="backdrop-blur-sm bg-background/95 shadow-sm">

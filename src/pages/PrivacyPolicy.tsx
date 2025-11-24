@@ -83,7 +83,7 @@ export const PrivacyPolicy = memo(function PrivacyPolicy() {
 
           {/* Last Updated Notice */}
           <Card className="mb-8 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardContent className="p-6">
+            <CardContent className="pt-8 pb-6 px-6">
               <div className="flex items-center gap-2 text-primary">
                 <Calendar className="h-5 w-5" />
                 <strong>{t('privacyPolicy.lastUpdated')}:</strong>
