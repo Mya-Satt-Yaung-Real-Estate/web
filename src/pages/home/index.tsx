@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PropertyCarousel } from './components/carousel';
+import { PropertyCarousel, HomeBlockAdsCarousel } from './components/carousel';
 import { HomePropertyFilters } from './components/search';
 import { 
   FeaturedAdvertisementsSection,
@@ -161,6 +161,9 @@ export const Home = memo(function Home() {
 
       {/* Events */}
       <EventsSection count={countsData?.data?.data?.housing_events_count} />
+
+      {/* Home Block Ads */}
+      <HomeBlockAdsCarousel />
 
       {/* Legal Team */}
       <LegalTeamSection />

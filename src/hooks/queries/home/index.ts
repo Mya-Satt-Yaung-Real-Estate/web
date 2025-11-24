@@ -11,4 +11,5 @@ export { useHomeFeaturedAdvertisements } from './useHomeFeaturedAdvertisements';
 export { useHomeUpcomingEvents } from './useHomeUpcomingEvents';
 export { useHomeLegalTeam } from './useHomeLegalTeam';
 export { useHomeSliderAds } from './useHomeSliderAds';
+export { useHomeBlockAds } from './useHomeBlockAds';
 

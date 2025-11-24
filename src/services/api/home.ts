@@ -63,5 +63,12 @@ export const homeApi = {
   getSliderAds: () => {
     return api.get<SliderAdsResponse>('/api/v1/frontend/ads/slider');
   },
+
+  /**
+   * Get home block ads for home page (displayed after events section)
+   */
+  getHomeBlockAds: () => {
+    return api.get<SliderAdsResponse>('/api/v1/frontend/ads/home-block');
+  },
 };
 
