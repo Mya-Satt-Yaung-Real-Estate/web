@@ -112,12 +112,13 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }: CreateReviewMo
           <DialogTitle>{t('reviews.createReview') || 'Create Review'}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Property Name */}
           <FormField
             name="property_name"
             label={t('reviews.propertyName') || 'Property Name'}
             error={errors.property_name}
+            className="space-y-4"
           >
             <Input
               {...form.register('property_name')}
@@ -130,6 +131,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }: CreateReviewMo
             name="property_location"
             label={t('reviews.propertyLocation') || 'Property Location'}
             error={errors.property_location}
+            className="space-y-4"
           >
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -146,6 +148,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }: CreateReviewMo
             name="rating"
             label={t('reviews.rating') || 'Rating'}
             error={errors.rating}
+            className="space-y-4"
           >
             <div className="flex items-center gap-2">
               {renderStars(rating || form.watch('rating') || 0, (newRating) => {
@@ -165,6 +168,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }: CreateReviewMo
             name="review_subject"
             label={t('reviews.reviewSubject') || 'Review Subject'}
             error={errors.review_subject}
+            className="space-y-4"
           >
             <Input
               {...form.register('review_subject')}
@@ -177,6 +181,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }: CreateReviewMo
             name="review_content"
             label={t('reviews.reviewContent') || 'Review Content'}
             error={errors.review_content}
+            className="space-y-4"
           >
             <div className="relative">
               <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
