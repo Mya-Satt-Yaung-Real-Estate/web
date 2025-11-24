@@ -165,10 +165,16 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
         </div>
 
         <div className="absolute top-3 right-3 flex flex-col gap-2">
-          <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm">
+          <Badge 
+            variant="secondary" 
+            className="text-white border-0 shadow-lg bg-gradient-to-r from-primary to-[#4a9b82]"
+          >
             {getPropertyType()}
           </Badge>
-          <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm">
+          <Badge 
+            variant="secondary" 
+            className="text-white border-0 shadow-lg bg-gradient-to-r from-purple-500 to-purple-600"
+          >
             {getListingType()}
           </Badge>
         </div>
