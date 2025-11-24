@@ -3,18 +3,12 @@ import { z } from 'zod';
 // Base profile schema (common for both individual and company)
 const baseProfileSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address').optional().or(z.literal('')),
+  email: z.union([
+    z.string().email('Invalid email address'),
+    z.literal(''),
+  ]).optional(),
   phone: z.string().min(1, 'Phone is required'),
   media_id: z.number().optional().nullable(),
-}).refine((data) => {
-  // If email is provided and not empty, it must be a valid email
-  if (data.email && data.email.trim() !== '') {
-    return z.string().email().safeParse(data.email).success;
-  }
-  return true;
-}, {
-  message: 'Invalid email address',
-  path: ['email'],
 });
 
 // Company profile schema

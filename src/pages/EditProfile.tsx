@@ -213,7 +213,7 @@ export function EditProfile() {
   const onSubmit = (data: CompanyProfileFormData | IndividualProfileFormData) => {
     const payload: any = {
       name: data.name,
-      email: data.email || undefined,
+      email: data.email && data.email.trim() !== '' ? data.email : null,
       phone: data.phone,
       ...(mediaId && { media_id: mediaId }),
     };

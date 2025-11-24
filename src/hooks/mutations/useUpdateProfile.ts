@@ -24,10 +24,17 @@ export function useUpdateProfile() {
       township_id?: number;
       description?: string;
     }) => {
-      const payload = {
-        ...data,
-        email: data.email || undefined,
-        media_id: data.media_id ?? undefined,
+      const payload: any = {
+        name: data.name,
+        email: data.email && data.email.trim() !== '' ? data.email : null,
+        phone: data.phone,
+        ...(data.media_id && { media_id: data.media_id }),
+        ...(data.company_name && { company_name: data.company_name }),
+        ...(data.company_type_id && { company_type_id: data.company_type_id }),
+        ...(data.address && { address: data.address }),
+        ...(data.region_id && { region_id: data.region_id }),
+        ...(data.township_id && { township_id: data.township_id }),
+        ...(data.description && { description: data.description }),
       };
       const response = await authApi.updateProfile(payload);
       return response;
