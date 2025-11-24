@@ -256,7 +256,19 @@ export function PropertyDetailsCard({
           <Separator orientation="vertical" className="hidden sm:block h-8" />
           <div className="flex items-center gap-1.5 sm:gap-2">
             <MessageCircle className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm">{property.stats?.comment_count || 0}</span>
+            <span className="text-sm">
+              {(() => {
+                // Calculate total comments including replies
+                if (!property.comments || !Array.isArray(property.comments)) {
+                  return property.stats?.comment_count || 0;
+                }
+                const totalComments = property.comments.length;
+                const totalReplies = property.comments.reduce((sum, comment) => {
+                  return sum + (comment.replies?.length || comment.reply_count || 0);
+                }, 0);
+                return totalComments + totalReplies;
+              })()}
+            </span>
             <span className="hidden sm:inline text-sm">{t('propertyDetail.comments') || 'Comments'}</span>
           </div>
         </div>
@@ -269,7 +281,17 @@ export function PropertyDetailsCard({
             <TabsTrigger value="description" className="text-xs sm:text-sm">{t('propertyDetail.description') || 'Description'}</TabsTrigger>
             <TabsTrigger value="features" className="text-xs sm:text-sm">{t('propertyDetail.features') || 'Features'}</TabsTrigger>
             <TabsTrigger value="comments" className="text-xs sm:text-sm">
-              {t('propertyDetail.comments') || 'Comments'} ({property.comments?.length || 0})
+              {t('propertyDetail.comments') || 'Comments'} ({(() => {
+                // Calculate total comments including replies
+                if (!property.comments || !Array.isArray(property.comments)) {
+                  return 0;
+                }
+                const totalComments = property.comments.length;
+                const totalReplies = property.comments.reduce((sum, comment) => {
+                  return sum + (comment.replies?.length || comment.reply_count || 0);
+                }, 0);
+                return totalComments + totalReplies;
+              })()})
             </TabsTrigger>
           </TabsList>
           

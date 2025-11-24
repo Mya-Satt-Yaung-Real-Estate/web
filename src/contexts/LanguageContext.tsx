@@ -1676,7 +1676,7 @@ const translations: Translations = {
   'propertyDetail.mapLocation': { en: 'Map Location', mm: 'မြေပုံတည်နေရာ' },
   'propertyDetail.openInMaps': { en: 'Open in Google Maps', mm: 'Google Maps တွင် ဖွင့်ရန်' },
   'propertyDetail.getDirections': { en: 'Get Directions', mm: 'လမ်းညွှန်ရယူရန်' },
-  'propertyDetail.quickActions': { en: 'Quick Actions', mm: 'လျင်မြန်သော လုပ်ဆောင်ချက်များ' },
+  'propertyDetail.quickActions': { en: 'Quick Actions', mm: 'အမြန် လုပ်ဆောင်ချက်များ' },
   'propertyDetail.appointmentRequest': { en: 'Appointment Request', mm: 'ချိန်းဆိုမှု တောင်းဆိုရန်' },
   'propertyDetail.scheduleViewing': { en: 'Schedule a viewing', mm: 'ကြည့်ရှုရန် အချိန်ချိန်းဆိုရန်' },
   'propertyDetail.loanCalculator': { en: 'Loan Calculator', mm: 'ချေးငွေ တွက်ချက်ရန်' },

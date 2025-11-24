@@ -231,6 +231,14 @@ export function PropertyGallery({
           {/* Badges - Top Left */}
           {property && (
             <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-wrap gap-1.5 sm:gap-2 z-20">
+              {/* Status Badge - Sold/Rented (Red) */}
+              {(property.status === 'sold' || property.status === 'rented') && (
+                <Badge className="bg-red-600 text-white border-0 font-semibold">
+                  {property.status === 'sold' 
+                    ? (t('editProperty.sold') || 'Sold')
+                    : (t('editProperty.rented') || 'Rented')}
+                </Badge>
+              )}
               {property.tan_tan_tan && <TanTanTanBadge />}
               {(property.premium || property.is_trending) && <PremiumBadge />}
               {property.is_featured && (
@@ -296,7 +304,19 @@ export function PropertyGallery({
               </div>
               <div className="flex items-center gap-1 text-white bg-background/20 backdrop-blur-md px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-white/20">
                 <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline text-xs sm:text-sm">{property.stats?.comment_count || 0}</span>
+                <span className="hidden sm:inline text-xs sm:text-sm">
+                  {(() => {
+                    // Calculate total comments including replies
+                    if (!property.comments || !Array.isArray(property.comments)) {
+                      return property.stats?.comment_count || 0;
+                    }
+                    const totalComments = property.comments.length;
+                    const totalReplies = property.comments.reduce((sum: number, comment: any) => {
+                      return sum + (comment.replies?.length || comment.reply_count || 0);
+                    }, 0);
+                    return totalComments + totalReplies;
+                  })()}
+                </span>
               </div>
             </div>
           )}
