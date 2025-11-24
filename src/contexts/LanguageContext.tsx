@@ -681,7 +681,7 @@ const translations: Translations = {
   'premium.trending': { en: 'Trending', mm: 'ခေတ်စားနေ' },
   
   // Events
-  'events.title': { en: 'Upcoming Events', mm: 'လာမည့်အခမ်းအနားများ' },
+  'events.title': { en: 'Events', mm: 'အခမ်းအနားများ' },
   'events.subtitle': { en: 'Join our real estate events and workshops', mm: 'ကျွန်ုပ်တို့၏အိမ်ခြံမြေအခမ်းအနားများနှင့်လုပ်ငန်းဆိုင်ရာသင်တန်းများတွင်ပါဝင်ပါ' },
   'events.viewAll': { en: 'View All Events', mm: 'အခမ်းအနားအားလုံးကြည့်ရန်' },
   'events.liveNow': { en: 'Live Now', mm: 'ယခုတိုက်ရိုက်ထုတ်လွှင့်နေ' },
