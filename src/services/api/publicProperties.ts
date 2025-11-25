@@ -53,6 +53,13 @@ export const publicPropertyApi = {
   },
 
   /**
+   * Get related properties for a property (frontend endpoint)
+   */
+  getRelatedProperties: (slug: string) => {
+    return api.get<PublicPropertyListResponse>(`/api/v1/frontend/public/properties/${slug}/related`);
+  },
+
+  /**
    * Toggle favorite status for a public property (frontend endpoint)
    */
   toggleFavorite: (slug: string) => {

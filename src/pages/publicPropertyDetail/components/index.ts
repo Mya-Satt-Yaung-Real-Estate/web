@@ -10,4 +10,5 @@ export { ContactOwnerCard } from './ContactOwnerCard';
 export { QuickActionsCard } from './QuickActionsCard';
 export { LocationCard } from './LocationCard';
 export { DetailSidebarAdsCard } from './DetailSidebarAdsCard';
+export { SimilarPropertiesSection } from './SimilarPropertiesSection';
 

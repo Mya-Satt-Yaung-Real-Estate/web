@@ -1682,6 +1682,11 @@ const translations: Translations = {
   'propertyDetail.appointmentRequest': { en: 'Appointment Request', mm: 'ချိန်းဆိုမှု တောင်းဆိုရန်' },
   'propertyDetail.scheduleViewing': { en: 'Schedule a viewing', mm: 'ကြည့်ရှုရန် အချိန်ချိန်းဆိုရန်' },
   'propertyDetail.loanCalculator': { en: 'Loan Calculator', mm: 'ချေးငွေ တွက်ချက်ရန်' },
+  
+  // Similar Properties
+  'similarProperties.title': { en: 'Similar Properties', mm: 'ဆင်တူသော အိမ်ခြံမြေများ' },
+  'similarProperties.subtitle': { en: 'You might also be interested in these', mm: 'သင်လည်း ဤအရာများကို စိတ်ဝင်စားနိုင်ပါသည်' },
+  'similarProperties.viewAll': { en: 'View All', mm: 'အားလုံးကြည့်ရန်' },
   'propertyDetail.calculatePayment': { en: 'Calculate payment', mm: 'ငွေပေးချေမှု တွက်ချက်ရန်' },
   'propertyDetail.yarPyatTax': { en: 'Yar Pyat Tax Calculator', mm: 'ရာပြည့် အခွန်တွက်ချက်ရန်' },
   'propertyDetail.calculateTax': { en: 'Calculate tax', mm: 'အခွန် တွက်ချက်ရန်' },

@@ -15,9 +15,10 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
-import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCard, LocationCard, DetailSidebarAdsCard } from './components';
+import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCard, LocationCard, DetailSidebarAdsCard, SimilarPropertiesSection } from './components';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
 
 export default function PublicPropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -476,6 +477,12 @@ export default function PublicPropertyDetail() {
               <DetailSidebarAdsCard />
             </div>
           </div>
+
+          {/* Separator */}
+          <Separator className="my-8" />
+
+          {/* Similar Properties Section */}
+          {slug && <SimilarPropertiesSection slug={slug} />}
         </div>
       </div>
 

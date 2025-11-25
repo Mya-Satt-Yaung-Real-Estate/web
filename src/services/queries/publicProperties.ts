@@ -20,6 +20,8 @@ export const publicPropertyKeys = {
     [...publicPropertyKeys.installment(), filters] as const,
   details: () => [...publicPropertyKeys.all, 'detail'] as const,
   detail: (slug: string) => [...publicPropertyKeys.details(), slug] as const,
+  related: () => [...publicPropertyKeys.all, 'related'] as const,
+  relatedProperties: (slug: string) => [...publicPropertyKeys.related(), slug] as const,
 } as const;
 
 // ============================================================================
@@ -46,6 +48,10 @@ export const publicPropertyQueries = {
 
   getPublicPropertyBySlug: (slug: string) => {
     return publicPropertyApi.getPublicPropertyBySlug(slug);
+  },
+
+  getRelatedProperties: (slug: string) => {
+    return publicPropertyApi.getRelatedProperties(slug);
   },
 };
 
