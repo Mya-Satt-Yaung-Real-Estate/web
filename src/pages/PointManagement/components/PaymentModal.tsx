@@ -100,7 +100,7 @@ export function PaymentModal({
     orderId,
     enabled: step === 'payment' && !!orderId,
     onSuccess: (status) => {
-      if (status === 'completed') {
+      if (status === 'SUCCESS') {
         setStep('success');
         // Refresh point data
         queryClient.invalidateQueries({ queryKey: pointKeys.packages() });

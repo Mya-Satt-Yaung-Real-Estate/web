@@ -47,7 +47,7 @@ export interface PointOrder {
   point_amount: number;
   price_mmk: number;
   order_id: string;
-  payment_status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  payment_status: 'SUCCESS' | 'ERROR' | 'CANCELLED' | 'TIMEOUT' | 'DECLINED' | 'SYSTEM_ERROR';
   payment_provider: string;
   dinger_transaction_id: string | null;
   dinger_provider_name: string | null;

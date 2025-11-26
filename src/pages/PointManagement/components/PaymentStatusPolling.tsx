@@ -62,7 +62,7 @@ export function usePaymentStatusPolling({
 
       // Check if payment is completed or failed
       const paymentStatus = query.state.data?.data?.data?.payment_status;
-      if (paymentStatus === 'completed' || paymentStatus === 'failed' || paymentStatus === 'cancelled') {
+      if (paymentStatus === 'SUCCESS' || paymentStatus === 'ERROR' || paymentStatus === 'CANCELLED' || paymentStatus === 'TIMEOUT' || paymentStatus === 'DECLINED' || paymentStatus === 'SYSTEM_ERROR') {
         return false; // Stop polling
       }
 
@@ -77,7 +77,7 @@ export function usePaymentStatusPolling({
     if (data?.data?.data) {
       const paymentStatus = data.data.data.payment_status;
       
-      if (paymentStatus === 'completed' && !hasCalledSuccessRef.current) {
+      if (paymentStatus === 'SUCCESS' && !hasCalledSuccessRef.current) {
         hasCalledSuccessRef.current = true;
         onSuccess?.(paymentStatus);
       }
@@ -93,8 +93,8 @@ export function usePaymentStatusPolling({
 
   const order = data?.data?.data;
   const paymentStatus = order?.payment_status || null;
-  const isCompleted = paymentStatus === 'completed';
-  const isFailed = paymentStatus === 'failed' || paymentStatus === 'cancelled';
+  const isCompleted = paymentStatus === 'SUCCESS';
+  const isFailed = paymentStatus === 'ERROR' || paymentStatus === 'CANCELLED' || paymentStatus === 'TIMEOUT' || paymentStatus === 'DECLINED' || paymentStatus === 'SYSTEM_ERROR';
   const isPolling = enabled && !isCompleted && !isFailed && isLoading;
 
   // Check if timeout reached
