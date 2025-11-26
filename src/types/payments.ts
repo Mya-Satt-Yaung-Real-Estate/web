@@ -12,6 +12,8 @@ export interface PaymentTokenRequest {
   providerName: string;
   methodName: string;
   packageId: number;
+  customerName?: string;
+  customerPhone?: string;
 }
 
 export interface PaymentTokenResponseInner {
@@ -19,6 +21,7 @@ export interface PaymentTokenResponseInner {
   merchOrderId: string;
   transactionNum: string;
   qrCode?: string;
+  formToken?: string;
   sign: string;
   signType: string;
 }

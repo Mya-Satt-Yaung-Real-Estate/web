@@ -21,6 +21,9 @@ import { paymentApi } from '@/services/api/payments';
 import { pointKeys } from '@/services/queries/points';
 import { useQueryClient } from '@tanstack/react-query';
 import { useModal } from '@/contexts/ModalContext';
+import { useAuthStore } from '@/stores/authStore';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import type { PointPackage } from '@/types/points';
 import type { PaymentProvider, PaymentMethod } from '@/types/payments';
 import { PaymentProviderSelect } from './PaymentProviderSelect';
@@ -46,12 +49,39 @@ export function PaymentModal({
   const { t, language } = useLanguage();
   const { showSuccess } = useModal();
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
 
   const [step, setStep] = useState<PaymentStep>('select');
   const [selectedProvider, setSelectedProvider] = useState<PaymentProvider | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
+  const [customerName, setCustomerName] = useState<string>('');
+  const [customerPhone, setCustomerPhone] = useState<string>('');
   const [paymentData, setPaymentData] = useState<any>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  // Provider methods mapping (same as PaymentMethodSelect)
+  const PROVIDER_METHODS: Record<PaymentProvider, PaymentMethod[]> = {
+    'AYA Pay': ['QR', 'PIN'],
+    'KBZ Pay': ['QR'],
+    'Wave Pay': ['PIN'],
+    'OK$': ['PIN'],
+    'Sai Sai Pay': ['PIN'],
+    'Onepay': ['PIN'],
+    'MPitesan': ['PIN'],
+    'MPT Pay': ['PIN'],
+    'CB Pay': ['QR'],
+    'UAB Pay': ['PIN'],
+  };
+
+  // Handle provider change - clear method if it's not valid for new provider
+  const handleProviderChange = (provider: PaymentProvider) => {
+    setSelectedProvider(provider);
+    const availableMethods = PROVIDER_METHODS[provider] || [];
+    // Clear selected method if it's not available for the new provider
+    if (selectedMethod && !availableMethods.includes(selectedMethod)) {
+      setSelectedMethod(null);
+    }
+  };
 
   // Reset state when modal closes
   useEffect(() => {
@@ -61,12 +91,38 @@ export function PaymentModal({
       setSelectedMethod(null);
       setPaymentData(null);
       setOrderId(null);
+      setCustomerName('');
+      setCustomerPhone('');
     }
   }, [isOpen]);
 
+  // Pre-fill customer name and phone from user profile for QR method
+  // For PIN/OTP methods, user will enter manually
+  useEffect(() => {
+    if (isOpen && user) {
+      if (selectedMethod === 'QR') {
+        // Auto-fill from user profile for QR method
+        if (user.name) {
+          setCustomerName(user.name);
+        }
+        if (user.phone) {
+          setCustomerPhone(user.phone);
+        }
+      } else if (selectedMethod === 'PIN' || selectedMethod === 'PWA') {
+        // Clear fields when switching to PIN/PWA (user must enter manually)
+        setCustomerName('');
+        setCustomerPhone('');
+      } else if (!selectedMethod) {
+        // Clear fields when no method is selected
+        setCustomerName('');
+        setCustomerPhone('');
+      }
+    }
+  }, [isOpen, user, selectedMethod]);
+
   // Payment token mutation
   const paymentTokenMutation = useMutation({
-    mutationFn: (payload: { providerName: string; methodName: string; packageId: number }) => {
+    mutationFn: (payload: { providerName: string; methodName: string; packageId: number; customerName?: string; customerPhone?: string }) => {
       return paymentApi.getPaymentToken(payload);
     },
     onSuccess: (response) => {
@@ -103,9 +159,9 @@ export function PaymentModal({
     enabled: step === 'payment' && !!orderId,
     onSuccess: (status) => {
       if (status === 'SUCCESS') {
-        setStep('success');
-        // Notify parent component that payment succeeded
+        // Notify parent component that payment succeeded FIRST (before any other operations)
         onPaymentSuccess?.();
+        setStep('success');
         // Refresh point data
         queryClient.invalidateQueries({ queryKey: pointKeys.packages() });
         queryClient.invalidateQueries({ queryKey: pointKeys.fifo() });
@@ -125,12 +181,30 @@ export function PaymentModal({
 
   const handleContinue = () => {
     if (!pkg || !selectedProvider || !selectedMethod) return;
+    
+    // For QR method, use authenticated user's name and phone
+    // For PIN/OTP methods, require user to enter manually
+    let finalCustomerName = '';
+    let finalCustomerPhone = '';
+    
+    if (selectedMethod === 'QR') {
+      // Use authenticated user's info for QR
+      finalCustomerName = user?.name || '';
+      finalCustomerPhone = user?.phone || '';
+    } else {
+      // For PIN/OTP, require manual entry
+      if (!customerName.trim() || !customerPhone.trim()) return;
+      finalCustomerName = customerName.trim();
+      finalCustomerPhone = customerPhone.trim();
+    }
 
     setStep('processing');
     paymentTokenMutation.mutate({
       providerName: selectedProvider,
       methodName: selectedMethod,
       packageId: pkg.id,
+      customerName: finalCustomerName,
+      customerPhone: finalCustomerPhone,
     });
   };
 
@@ -204,13 +278,45 @@ export function PaymentModal({
             <div className="space-y-6">
               <PaymentProviderSelect
                 selectedProvider={selectedProvider}
-                onSelectProvider={setSelectedProvider}
+                onSelectProvider={handleProviderChange}
               />
               <PaymentMethodSelect
                 provider={selectedProvider}
                 selectedMethod={selectedMethod}
                 onSelectMethod={setSelectedMethod}
               />
+              
+              {/* Customer Information - Only show for PIN/PWA methods when method is selected */}
+              {selectedProvider && selectedMethod && selectedMethod !== 'QR' && selectedMethod !== null && (
+                <div className="space-y-4 pt-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="customerName">
+                      {t('payments.customerName') || 'Customer Name'}
+                    </Label>
+                    <Input
+                      id="customerName"
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder={t('payments.customerNamePlaceholder') || 'Enter your name'}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="customerPhone">
+                      {t('payments.customerPhone') || 'Phone Number'}
+                    </Label>
+                    <Input
+                      id="customerPhone"
+                      type="tel"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder={t('payments.customerPhonePlaceholder') || 'Enter your phone number'}
+                      required
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -233,6 +339,49 @@ export function PaymentModal({
                   transactionNum={paymentData.transactionNum}
                   providerName={selectedProvider || ''}
                 />
+              )}
+
+              {selectedMethod === 'QR' && paymentData.formToken && (
+                <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+                  <div className="text-center space-y-4">
+                    <div className="flex items-center justify-center">
+                      <AlertCircle className="h-8 w-8 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                        {t('payments.cbPayFormTitle') || 'CB Pay Payment Form'}
+                      </h3>
+                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
+                        {t('payments.cbPayFormDesc') || 'CB Pay uses a payment form. Please complete the payment using the form below.'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-white dark:bg-gray-900 rounded border space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {t('payments.amount') || 'Amount'}
+                        </span>
+                        <span className="font-semibold text-primary">
+                          {paymentData.amount.toLocaleString()} MMK
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {t('payments.orderId') || 'Order ID'}
+                        </span>
+                        <span className="font-mono text-sm">{paymentData.merchOrderId}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {t('payments.transactionNum') || 'Transaction Number'}
+                        </span>
+                        <span className="font-mono text-sm">{paymentData.transactionNum}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">
+                      {t('payments.cbPayFormNote') || 'Note: CB Pay will redirect you to complete the payment. Please follow the instructions on the payment form.'}
+                    </p>
+                  </div>
+                </div>
               )}
 
               {selectedMethod !== 'QR' && (
@@ -344,7 +493,12 @@ export function PaymentModal({
               </Button>
               <Button
                 onClick={handleContinue}
-                disabled={!selectedProvider || !selectedMethod}
+                disabled={
+                  !selectedProvider || 
+                  !selectedMethod || 
+                  (selectedMethod !== 'QR' && (!customerName.trim() || !customerPhone.trim())) ||
+                  (selectedMethod === 'QR' && (!user?.name || !user?.phone))
+                }
               >
                 {t('payments.continue') || 'Continue'}
               </Button>

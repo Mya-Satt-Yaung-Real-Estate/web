@@ -2048,6 +2048,13 @@ const translations: Translations = {
   'payments.continue': { en: 'Continue', mm: 'ဆက်လက်လုပ်ဆောင်ပါ' },
   'payments.cancelPayment': { en: 'Cancel Payment', mm: 'ငွေပေးချေမှုကိုပယ်ဖျက်ပါ' },
   'payments.close': { en: 'Close', mm: 'ပိတ်ပါ' },
+  'payments.cbPayFormTitle': { en: 'CB Pay Payment Form', mm: 'CB Pay ငွေပေးချေမှုပုံစံ' },
+  'payments.cbPayFormDesc': { en: 'CB Pay uses a payment form. Please complete the payment using the form below.', mm: 'CB Pay သည် ငွေပေးချေမှုပုံစံကိုအသုံးပြုသည်။ ကျေးဇူးပြု၍အောက်ပါပုံစံကိုအသုံးပြု၍ငွေပေးချေမှုကိုပြီးမြောက်စေပါ။' },
+  'payments.cbPayFormNote': { en: 'Note: CB Pay will redirect you to complete the payment. Please follow the instructions on the payment form.', mm: 'မှတ်ချက်: CB Pay သည် ငွေပေးချေမှုကိုပြီးမြောက်စေရန် သင့်အားလမ်းညွှန်ပေးလိမ့်မည်။ ကျေးဇူးပြု၍ငွေပေးချေမှုပုံစံရှိလမ်းညွှန်ချက်များကိုလိုက်နာပါ။' },
+  'payments.customerName': { en: 'Customer Name', mm: 'ဖောက်သည်အမည်' },
+  'payments.customerNamePlaceholder': { en: 'Enter your name', mm: 'သင့်အမည်ကိုထည့်သွင်းပါ' },
+  'payments.customerPhone': { en: 'Phone Number', mm: 'ဖုန်းနံပါတ်' },
+  'payments.customerPhonePlaceholder': { en: 'Enter your phone number', mm: 'သင့်ဖုန်းနံပါတ်ကိုထည့်သွင်းပါ' },
 };
 
 interface LanguageContextType {

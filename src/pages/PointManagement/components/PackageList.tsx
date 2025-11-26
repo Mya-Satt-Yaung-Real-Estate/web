@@ -60,10 +60,11 @@ export function PackageList() {
     setSelectedPackage(null);
     // Reset mutation state when closing payment modal to prevent stale alerts
     purchaseMutation.reset();
-    // Reset payment completion flag after a delay to allow any pending alerts to complete
+    // Reset payment completion flag after a longer delay to prevent any delayed alerts
+    // This ensures the flag stays true long enough to prevent manual purchase alerts
     setTimeout(() => {
       paymentJustCompletedRef.current = false;
-    }, 1000);
+    }, 3000);
   };
 
   const handleConfirmPurchase = () => {
@@ -81,15 +82,17 @@ export function PackageList() {
         // 2. Payment integration is NOT enabled (to prevent showing manual alert after payment success)
         // 3. Payment was not just completed (to prevent showing manual alert after payment success)
         // Use setTimeout to ensure modal closes before showing alert
+        // Also check flag again in the timeout to catch any delayed state updates
         if (!wasClosedByUserRef.current && !isPaymentEnabled && !paymentJustCompletedRef.current) {
           setTimeout(() => {
+            // Double-check all conditions before showing alert
             if (!wasClosedByUserRef.current && !isPaymentEnabled && !paymentJustCompletedRef.current) {
               showSuccess(
                 t('points.packages.purchaseSuccessDesc') || 'Your purchase request is pending approval.',
                 t('points.packages.purchaseSuccess') || 'Purchase Request Submitted'
               );
             }
-          }, 100);
+          }, 200);
         }
       },
       onError: (error: any) => {
@@ -210,8 +213,11 @@ export function PackageList() {
         onClose={handleClosePaymentModal}
         package={selectedPackage}
         onPaymentSuccess={() => {
-          // Set flag to prevent manual purchase alert from showing
+          // Set flag IMMEDIATELY to prevent manual purchase alert from showing
+          // This must be set before any query invalidations or re-renders
           paymentJustCompletedRef.current = true;
+          // Also reset the mutation to clear any stale success state
+          purchaseMutation.reset();
         }}
       />
     </>

@@ -22,7 +22,7 @@ const PAYMENT_PROVIDERS: Array<{
   { name: 'AYA Pay', logo: '/aya_pay.png', description: 'AYA Pay', brandColor: '#D81A22' },
   { name: 'KBZ Pay', logo: '/kbz_pay.png', description: 'KBZ Pay', brandColor: '#155AC7' },
   { name: 'Wave Pay', logo: '/wave_pay.jpeg', description: 'Wave Pay', brandColor: '#FDCB1C' },
-  { name: 'CB Pay', logo: '/cp_pay.png', description: 'CB Pay', brandColor: '#2B76EE' },
+  // { name: 'CB Pay', logo: '/cp_pay.png', description: 'CB Pay', brandColor: '#2B76EE' },
   { name: 'UAB Pay', logo: '/uab_pay.jpeg', description: 'UAB Pay', brandColor: '#003D82' },
   { name: 'OK$', logo: '/ok_pay.jpeg', description: 'OK$', brandColor: '#0084FF' },
   { name: 'Sai Sai Pay', logo: '/saisai_pay.jpeg', description: 'Sai Sai Pay', brandColor: '#7B2CBF' },
