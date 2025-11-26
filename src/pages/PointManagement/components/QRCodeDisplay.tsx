@@ -56,7 +56,7 @@ export function QRCodeDisplay({
       </div>
 
       <Card>
-        <CardContent className="p-6 flex flex-col items-center gap-4">
+        <CardContent className="pt-8 pb-6 px-6 flex flex-col items-center gap-4">
           {/* QR Code Image */}
           <div className="bg-white p-4 rounded-lg border-2 border-primary/20">
             <img

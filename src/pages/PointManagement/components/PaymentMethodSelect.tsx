@@ -74,7 +74,7 @@ export function PaymentMethodSelect({
       <label className="text-sm font-medium">
         {t('payments.selectMethod') || 'Select Payment Method'}
       </label>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div className="grid pt-1.5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {availableMethods.map((method) => {
           const config = METHOD_CONFIG[method];
           const Icon = config.icon;

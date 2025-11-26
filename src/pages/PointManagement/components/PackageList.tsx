@@ -36,6 +36,8 @@ export function PackageList() {
       setSelectedPackage(pkg);
       // Check payment integration status to determine which modal to open
       if (isPaymentEnabled) {
+        // Reset mutation state when opening payment modal to prevent stale alerts
+        purchaseMutation.reset();
         setIsPaymentModalOpen(true);
       } else {
         setIsModalOpen(true);
@@ -66,11 +68,13 @@ export function PackageList() {
         setIsModalOpen(false);
         setSelectedPackage(null);
         
-        // Only show success alert if modal wasn't closed by user
+        // Only show success alert if:
+        // 1. Modal wasn't closed by user
+        // 2. Payment integration is NOT enabled (to prevent showing manual alert after payment success)
         // Use setTimeout to ensure modal closes before showing alert
-        if (!wasClosedByUserRef.current) {
+        if (!wasClosedByUserRef.current && !isPaymentEnabled) {
           setTimeout(() => {
-            if (!wasClosedByUserRef.current) {
+            if (!wasClosedByUserRef.current && !isPaymentEnabled) {
               showSuccess(
                 t('points.packages.purchaseSuccessDesc') || 'Your purchase request is pending approval.',
                 t('points.packages.purchaseSuccess') || 'Purchase Request Submitted'
