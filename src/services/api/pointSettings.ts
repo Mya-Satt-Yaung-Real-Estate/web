@@ -23,6 +23,7 @@ export interface PointSettings {
   renewal_info: PointSettingsInfo;
   upload_info: PointSettingsInfo;
   premium_property_info: PremiumPropertyInfo;
+  payment_integration_status?: boolean;
 }
 
 export interface PointSettingsResponse {

@@ -9,20 +9,24 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePointPackages } from '@/hooks/queries/usePoints';
 import { usePurchasePoints } from '@/hooks/mutations/usePointMutations';
+import { usePaymentIntegrationStatus } from '@/hooks/queries/usePaymentIntegrationStatus';
 import { useModal } from '@/contexts/ModalContext';
 import { useState, useRef } from 'react';
 import { Package } from 'lucide-react';
 import { PackageCard } from './PackageCard';
 import { PurchaseModal } from './PurchaseModal';
+import { PaymentModal } from './PaymentModal';
 import type { PointPackage } from '@/types/points';
 
 export function PackageList() {
   const { t } = useLanguage();
   const { data, isLoading, error } = usePointPackages();
   const purchaseMutation = usePurchasePoints();
+  const { isPaymentEnabled, isLoading: isLoadingPaymentStatus } = usePaymentIntegrationStatus();
   const { showSuccess, showError } = useModal();
   const [selectedPackage, setSelectedPackage] = useState<PointPackage | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   // Track if modal was closed by user (not by mutation success)
   const wasClosedByUserRef = useRef(false);
 
@@ -30,7 +34,12 @@ export function PackageList() {
     const pkg = data?.data?.data?.package_list?.find((p: PointPackage) => p.id === packageId);
     if (pkg) {
       setSelectedPackage(pkg);
-      setIsModalOpen(true);
+      // Check payment integration status to determine which modal to open
+      if (isPaymentEnabled) {
+        setIsPaymentModalOpen(true);
+      } else {
+        setIsModalOpen(true);
+      }
       wasClosedByUserRef.current = false; // Reset when opening modal
     }
   };
@@ -38,6 +47,12 @@ export function PackageList() {
   const handleCloseModal = () => {
     wasClosedByUserRef.current = true; // Mark as closed by user
     setIsModalOpen(false);
+    setIsPaymentModalOpen(false);
+    setSelectedPackage(null);
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
     setSelectedPackage(null);
   };
 
@@ -167,12 +182,20 @@ export function PackageList() {
         </CardContent>
       </Card>
 
+      {/* Manual Purchase Modal (when payment integration is disabled) */}
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirmPurchase}
         package={selectedPackage}
         isLoading={purchaseMutation.isPending}
+      />
+
+      {/* Payment Integration Modal (when payment integration is enabled) */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={handleClosePaymentModal}
+        package={selectedPackage}
       />
     </>
   );

@@ -2010,12 +2010,50 @@ const translations: Translations = {
   'points.transactions.amount': { en: 'Amount', mm: 'ပမာဏ' },
   'points.transactions.date': { en: 'Date', mm: 'ရက်စွဲ' },
   'points.transactions.no': { en: 'No', mm: 'နံပါတ်' },
+
+  // Payment Integration
+  'payments.selectProvider': { en: 'Select Payment Provider', mm: 'ငွေပေးချေမှုပေးသွင်းသူကိုရွေးချယ်ပါ' },
+  'payments.selectMethod': { en: 'Select Payment Method', mm: 'ငွေပေးချေမှုနည်းလမ်းကိုရွေးချယ်ပါ' },
+  'payments.selectProviderFirst': { en: 'Please select a payment provider first', mm: 'ကျေးဇူးပြု၍ငွေပေးချေမှုပေးသွင်းသူကိုအရင်ရွေးချယ်ပါ' },
+  'payments.noMethodsAvailable': { en: 'No payment methods available for this provider', mm: 'ဤပေးသွင်းသူအတွက်ငွေပေးချေမှုနည်းလမ်းမရှိပါ' },
+  'payments.scanQRCode': { en: 'Scan QR Code to Pay', mm: 'ငွေပေးချေရန် QR Code ကိုစကင်ဖတ်ပါ' },
+  'payments.scanWithProvider': { en: 'Open your {provider} app and scan this QR code', mm: 'သင့် {provider} app ကိုဖွင့်ပြီး QR Code ကိုစကင်ဖတ်ပါ' },
+  'payments.amount': { en: 'Amount', mm: 'ပမာဏ' },
+  'payments.orderId': { en: 'Order ID', mm: 'အော်ဒါနံပါတ်' },
+  'payments.transactionNum': { en: 'Transaction Number', mm: 'ငွေလွှဲပြောင်းမှုနံပါတ်' },
+  'payments.instructions': { en: 'Instructions:', mm: 'လမ်းညွှန်ချက်များ:' },
+  'payments.instruction1': { en: 'Open your payment app', mm: 'သင့်ငွေပေးချေမှု app ကိုဖွင့်ပါ' },
+  'payments.instruction2': { en: 'Scan the QR code above', mm: 'အထက်ပါ QR Code ကိုစကင်ဖတ်ပါ' },
+  'payments.instruction3': { en: 'Confirm the payment amount', mm: 'ငွေပေးချေမှုပမာဏကိုအတည်ပြုပါ' },
+  'payments.instruction4': { en: 'Complete the payment', mm: 'ငွေပေးချေမှုကိုပြီးမြောက်စေပါ' },
+  'payments.selectPaymentMethod': { en: 'Select Payment Method', mm: 'ငွေပေးချေမှုနည်းလမ်းကိုရွေးချယ်ပါ' },
+  'payments.selectPaymentMethodDesc': { en: 'Choose your payment provider and method', mm: 'သင့်ငွေပေးချေမှုပေးသွင်းသူနှင့်နည်းလမ်းကိုရွေးချယ်ပါ' },
+  'payments.processing': { en: 'Processing...', mm: 'လုပ်ဆောင်နေသည်...' },
+  'payments.processingDesc': { en: 'Please wait while we process your payment...', mm: 'ငွေပေးချေမှုကိုလုပ်ဆောင်နေစဉ်ကျေးဇူးပြု၍စောင့်ဆိုင်းပါ...' },
+  'payments.completePayment': { en: 'Complete Payment', mm: 'ငွေပေးချေမှုပြီးမြောက်စေပါ' },
+  'payments.completePaymentDesc': { en: 'Complete your payment using the QR code or instructions below', mm: 'QR Code သို့မဟုတ်အောက်ပါလမ်းညွှန်ချက်များကိုအသုံးပြု၍ငွေပေးချေမှုကိုပြီးမြောက်စေပါ' },
+  'payments.paymentSuccess': { en: 'Payment Successful', mm: 'ငွေပေးချေမှုအောင်မြင်ပါသည်' },
+  'payments.paymentSuccessDesc': { en: 'Your payment was successful and points have been added to your account', mm: 'သင့်ငွေပေးချေမှုအောင်မြင်ပြီး ပွိုင့်များကိုသင့်အကောင့်သို့ထည့်သွင်းပြီးပါပြီ' },
+  'payments.paymentError': { en: 'Payment Error', mm: 'ငွေပေးချေမှုအမှားအယွင်း' },
+  'payments.paymentErrorDesc': { en: 'An error occurred during payment processing', mm: 'ငွေပေးချေမှုလုပ်ဆောင်နေစဉ်အမှားအယွင်းတစ်ခုဖြစ်ပွားခဲ့သည်' },
+  'payments.processingPayment': { en: 'Processing your payment request...', mm: 'သင့်ငွေပေးချေမှုတောင်းဆိုချက်ကိုလုပ်ဆောင်နေသည်...' },
+  'payments.pinInstructions': { en: 'Payment Instructions', mm: 'ငွေပေးချေမှုလမ်းညွှန်ချက်များ' },
+  'payments.pinInstruction1': { en: 'Open your {provider} app', mm: 'သင့် {provider} app ကိုဖွင့်ပါ' },
+  'payments.pinInstruction2': { en: 'Enter the payment amount and complete the transaction', mm: 'ငွေပေးချေမှုပမာဏကိုထည့်သွင်းပြီး အရောင်းအဝယ်ကိုပြီးမြောက်စေပါ' },
+  'payments.pinInstruction3': { en: 'Wait for payment confirmation', mm: 'ငွေပေးချေမှုအတည်ပြုချက်ကိုစောင့်ဆိုင်းပါ' },
+  'payments.waitingForPayment': { en: 'Waiting for payment confirmation...', mm: 'ငွေပေးချေမှုအတည်ပြုချက်ကိုစောင့်ဆိုင်းနေသည်...' },
+  'payments.paymentTimeout': { en: 'Payment is taking longer than expected. Please check your payment app or contact support.', mm: 'ငွေပေးချေမှုသည်မျှော်လင့်ထားသည်ထက်ပိုကြာနေသည်။ ကျေးဇူးပြု၍သင့်ငွေပေးချေမှု app ကိုစစ်ဆေးပါသို့မဟုတ်အထောက်အပံ့ကိုဆက်သွယ်ပါ။' },
+  'payments.pointsAdded': { en: 'Your points have been added to your account.', mm: 'သင့်ပွိုင့်များကိုသင့်အကောင့်သို့ထည့်သွင်းပြီးပါပြီ။' },
+  'payments.tryAgain': { en: 'Try Again', mm: 'ထပ်မံကြိုးစားပါ' },
+  'payments.continue': { en: 'Continue', mm: 'ဆက်လက်လုပ်ဆောင်ပါ' },
+  'payments.cancelPayment': { en: 'Cancel Payment', mm: 'ငွေပေးချေမှုကိုပယ်ဖျက်ပါ' },
+  'payments.close': { en: 'Close', mm: 'ပိတ်ပါ' },
 };
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -2023,13 +2061,22 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('en');
 
-  const t = (key: string): string => {
+  const t = (key: string, params?: Record<string, string>): string => {
     const translation = translations[key];
     if (!translation) {
       console.warn(`Translation key not found: ${key}`);
       return key;
     }
-    return translation[language];
+    let text = translation[language];
+    
+    // Replace parameters in the translation string
+    if (params) {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        text = text.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), paramValue);
+      });
+    }
+    
+    return text;
   };
 
   return (
@@ -2049,7 +2096,15 @@ export function useLanguage() {
       return {
         language: 'en' as Language,
         setLanguage: () => {},
-        t: (key: string) => key,
+        t: (key: string, params?: Record<string, string>) => {
+          let text = key;
+          if (params) {
+            Object.entries(params).forEach(([paramKey, paramValue]) => {
+              text = text.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), paramValue);
+            });
+          }
+          return text;
+        },
       };
     }
     throw new Error('useLanguage must be used within a LanguageProvider');
