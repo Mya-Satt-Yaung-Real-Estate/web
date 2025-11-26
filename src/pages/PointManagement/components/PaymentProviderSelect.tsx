@@ -6,7 +6,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Building2, Smartphone, Wallet } from 'lucide-react';
+import { Building2, Smartphone } from 'lucide-react';
 import type { PaymentProvider } from '@/types/payments';
 
 interface PaymentProviderSelectProps {

@@ -26,5 +26,13 @@ export const paymentQueries = {
   getPointOrderStatus: (orderId: string) => {
     return paymentApi.getPointOrderStatus(orderId);
   },
+
+  /**
+   * Get point order detail (alias for getPointOrderStatus)
+   */
+  getPointOrderDetail: (orderId: string) => {
+    return paymentApi.getPointOrderDetail(orderId);
+  },
 };
+
 

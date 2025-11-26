@@ -22,7 +22,7 @@ export function PackageList() {
   const { t } = useLanguage();
   const { data, isLoading, error } = usePointPackages();
   const purchaseMutation = usePurchasePoints();
-  const { isPaymentEnabled, isLoading: isLoadingPaymentStatus } = usePaymentIntegrationStatus();
+  const { isPaymentEnabled } = usePaymentIntegrationStatus();
   const { showSuccess, showError } = useModal();
   const [selectedPackage, setSelectedPackage] = useState<PointPackage | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

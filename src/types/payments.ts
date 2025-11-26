@@ -44,7 +44,7 @@ export interface PointOrder {
   id: number;
   user_id: number;
   package_id: number;
-  // points_requested: number;
+  point_amount: number;
   price_mmk: number;
   order_id: string;
   payment_status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';

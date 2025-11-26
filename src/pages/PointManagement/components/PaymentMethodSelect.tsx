@@ -17,7 +17,7 @@ interface PaymentMethodSelectProps {
 
 const PROVIDER_METHODS: Record<PaymentProvider, PaymentMethod[]> = {
   'AYA Pay': ['QR', 'PIN'],
-  'KBZ Pay': ['QR', 'PWA'],
+  'KBZ Pay': ['QR'],
   'Wave Pay': ['PIN'],
   'OK$': ['PIN'],
   'Sai Sai Pay': ['PIN'],

@@ -24,10 +24,18 @@ export const paymentApi = {
   },
 
   /**
-   * Get point order status
+   * Get point order status (alias for getPointOrderDetail)
    */
   getPointOrderStatus: (orderId: string) => {
     return api.get<PointOrderResponse>(`/api/v2/frontend/point-orders/${orderId}`);
   },
+
+  /**
+   * Get point order detail by order ID
+   */
+  getPointOrderDetail: (orderId: string) => {
+    return api.get<PointOrderResponse>(`/api/v2/frontend/point-orders/${orderId}`);
+  },
 };
+
 

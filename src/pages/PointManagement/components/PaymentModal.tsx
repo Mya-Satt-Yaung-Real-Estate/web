@@ -42,7 +42,7 @@ export function PaymentModal({
   package: pkg,
 }: PaymentModalProps) {
   const { t, language } = useLanguage();
-  const { showSuccess, showError } = useModal();
+  const { showSuccess } = useModal();
   const queryClient = useQueryClient();
 
   const [step, setStep] = useState<PaymentStep>('select');
@@ -94,9 +94,6 @@ export function PaymentModal({
 
   // Payment status polling
   const {
-    paymentStatus,
-    isCompleted,
-    isFailed,
     isTimeout,
     isLoading: isPolling,
   } = usePaymentStatusPolling({
@@ -244,8 +241,8 @@ export function PaymentModal({
                       </p>
                       <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside">
                         <li>
-                          {t('payments.pinInstruction1', { provider: selectedProvider }) ||
-                            `Open your ${selectedProvider} app`}
+                          {t('payments.pinInstruction1', { provider: selectedProvider || '' }) ||
+                            `Open your ${selectedProvider || ''} app`}
                         </li>
                         <li>
                           {t('payments.pinInstruction2') || 'Enter the payment amount and complete the transaction'}
