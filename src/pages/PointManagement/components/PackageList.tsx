@@ -29,6 +29,8 @@ export function PackageList() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   // Track if modal was closed by user (not by mutation success)
   const wasClosedByUserRef = useRef(false);
+  // Track if payment was just completed successfully
+  const paymentJustCompletedRef = useRef(false);
 
   const handlePurchaseClick = (packageId: number) => {
     const pkg = data?.data?.data?.package_list?.find((p: PointPackage) => p.id === packageId);
@@ -56,6 +58,12 @@ export function PackageList() {
   const handleClosePaymentModal = () => {
     setIsPaymentModalOpen(false);
     setSelectedPackage(null);
+    // Reset mutation state when closing payment modal to prevent stale alerts
+    purchaseMutation.reset();
+    // Reset payment completion flag after a delay to allow any pending alerts to complete
+    setTimeout(() => {
+      paymentJustCompletedRef.current = false;
+    }, 1000);
   };
 
   const handleConfirmPurchase = () => {
@@ -71,10 +79,11 @@ export function PackageList() {
         // Only show success alert if:
         // 1. Modal wasn't closed by user
         // 2. Payment integration is NOT enabled (to prevent showing manual alert after payment success)
+        // 3. Payment was not just completed (to prevent showing manual alert after payment success)
         // Use setTimeout to ensure modal closes before showing alert
-        if (!wasClosedByUserRef.current && !isPaymentEnabled) {
+        if (!wasClosedByUserRef.current && !isPaymentEnabled && !paymentJustCompletedRef.current) {
           setTimeout(() => {
-            if (!wasClosedByUserRef.current && !isPaymentEnabled) {
+            if (!wasClosedByUserRef.current && !isPaymentEnabled && !paymentJustCompletedRef.current) {
               showSuccess(
                 t('points.packages.purchaseSuccessDesc') || 'Your purchase request is pending approval.',
                 t('points.packages.purchaseSuccess') || 'Purchase Request Submitted'
@@ -200,6 +209,10 @@ export function PackageList() {
         isOpen={isPaymentModalOpen}
         onClose={handleClosePaymentModal}
         package={selectedPackage}
+        onPaymentSuccess={() => {
+          // Set flag to prevent manual purchase alert from showing
+          paymentJustCompletedRef.current = true;
+        }}
       />
     </>
   );

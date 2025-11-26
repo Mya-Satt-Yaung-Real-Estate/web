@@ -32,6 +32,7 @@ interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   package: PointPackage | null;
+  onPaymentSuccess?: () => void;
 }
 
 type PaymentStep = 'select' | 'processing' | 'payment' | 'success' | 'error';
@@ -40,6 +41,7 @@ export function PaymentModal({
   isOpen,
   onClose,
   package: pkg,
+  onPaymentSuccess,
 }: PaymentModalProps) {
   const { t, language } = useLanguage();
   const { showSuccess } = useModal();
@@ -102,6 +104,8 @@ export function PaymentModal({
     onSuccess: (status) => {
       if (status === 'SUCCESS') {
         setStep('success');
+        // Notify parent component that payment succeeded
+        onPaymentSuccess?.();
         // Refresh point data
         queryClient.invalidateQueries({ queryKey: pointKeys.packages() });
         queryClient.invalidateQueries({ queryKey: pointKeys.fifo() });
