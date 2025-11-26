@@ -2053,8 +2053,13 @@ const translations: Translations = {
   'payments.cbPayFormNote': { en: 'Note: CB Pay will redirect you to complete the payment. Please follow the instructions on the payment form.', mm: 'မှတ်ချက်: CB Pay သည် ငွေပေးချေမှုကိုပြီးမြောက်စေရန် သင့်အားလမ်းညွှန်ပေးလိမ့်မည်။ ကျေးဇူးပြု၍ငွေပေးချေမှုပုံစံရှိလမ်းညွှန်ချက်များကိုလိုက်နာပါ။' },
   'payments.customerName': { en: 'Customer Name', mm: 'ဖောက်သည်အမည်' },
   'payments.customerNamePlaceholder': { en: 'Enter your name', mm: 'သင့်အမည်ကိုထည့်သွင်းပါ' },
-  'payments.customerPhone': { en: 'Phone Number', mm: 'ဖုန်းနံပါတ်' },
-  'payments.customerPhonePlaceholder': { en: 'Enter your phone number', mm: 'သင့်ဖုန်းနံပါတ်ကိုထည့်သွင်းပါ' },
+    'payments.customerPhone': { en: 'Phone Number', mm: 'ဖုန်းနံပါတ်' },
+    'payments.customerPhonePlaceholder': { en: 'Enter your phone number (09XXXXXXXXX)', mm: 'သင့်ဖုန်းနံပါတ်ကိုထည့်သွင်းပါ (09XXXXXXXXX)' },
+    'payments.customerPhoneRequired': { en: 'Phone number is required', mm: 'ဖုန်းနံပါတ် လိုအပ်ပါသည်' },
+    'payments.customerPhoneInvalid': { en: 'Please enter a valid Myanmar phone number (09XXXXXXXXX)', mm: 'ကျေးဇူးပြု၍ မှန်ကန်သော မြန်မာဖုန်းနံပါတ် (09XXXXXXXXX) ထည့်သွင်းပါ' },
+    'payments.customerPhoneMustStartWith09': { en: 'Phone number must start with 09', mm: 'ဖုန်းနံပါတ်သည် 09 ဖြင့် စတင်ရပါမည်' },
+    'payments.customerPhoneMustBe11Digits': { en: 'Phone number must be 11 digits', mm: 'ဖုန်းနံပါတ်သည် 11 လုံးရှိရပါမည်' },
+    'payments.customerPhoneOnlyNumbers': { en: 'Phone number must contain only numbers', mm: 'ဖုန်းနံပါတ်သည် နံပါတ်များသာ ပါဝင်ရပါမည်' },
 };
 
 interface LanguageContextType {

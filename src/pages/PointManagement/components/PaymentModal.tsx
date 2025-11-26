@@ -30,6 +30,8 @@ import { PaymentProviderSelect } from './PaymentProviderSelect';
 import { PaymentMethodSelect } from './PaymentMethodSelect';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { usePaymentStatusPolling } from './PaymentStatusPolling';
+import { validateMyanmarPhone } from '@/utils/phoneValidation';
+import { CheckCircle2 as CheckCircle2Icon, XCircle } from 'lucide-react';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -56,6 +58,7 @@ export function PaymentModal({
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
+  const [phoneValidation, setPhoneValidation] = useState<{ isValid: boolean; error?: string }>({ isValid: false });
   const [paymentData, setPaymentData] = useState<any>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
 
@@ -93,6 +96,7 @@ export function PaymentModal({
       setOrderId(null);
       setCustomerName('');
       setCustomerPhone('');
+      setPhoneValidation({ isValid: false });
     }
   }, [isOpen]);
 
@@ -107,18 +111,39 @@ export function PaymentModal({
         }
         if (user.phone) {
           setCustomerPhone(user.phone);
+          // Validate user's phone for QR method
+          const validation = validateMyanmarPhone(user.phone);
+          setPhoneValidation({ isValid: validation.isValid, error: validation.error });
         }
       } else if (selectedMethod === 'PIN' || selectedMethod === 'PWA') {
         // Clear fields when switching to PIN/PWA (user must enter manually)
         setCustomerName('');
         setCustomerPhone('');
+        setPhoneValidation({ isValid: false });
       } else if (!selectedMethod) {
         // Clear fields when no method is selected
         setCustomerName('');
         setCustomerPhone('');
+        setPhoneValidation({ isValid: false });
       }
     }
   }, [isOpen, user, selectedMethod]);
+
+  // Handle phone input change with real-time validation
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCustomerPhone(value);
+    
+    // Only validate if method is PIN/PWA (not QR)
+    if (selectedMethod === 'PIN' || selectedMethod === 'PWA') {
+      if (value.trim()) {
+        const validation = validateMyanmarPhone(value);
+        setPhoneValidation({ isValid: validation.isValid, error: validation.error });
+      } else {
+        setPhoneValidation({ isValid: false, error: 'required' });
+      }
+    }
+  };
 
   // Payment token mutation
   const paymentTokenMutation = useMutation({
@@ -191,11 +216,34 @@ export function PaymentModal({
       // Use authenticated user's info for QR
       finalCustomerName = user?.name || '';
       finalCustomerPhone = user?.phone || '';
+      
+      // Validate user's phone for QR method
+      if (finalCustomerPhone) {
+        const validation = validateMyanmarPhone(finalCustomerPhone);
+        if (!validation.isValid) {
+          // Show error if user's phone is invalid
+          return;
+        }
+        finalCustomerPhone = validation.normalized;
+      }
     } else {
-      // For PIN/OTP, require manual entry
-      if (!customerName.trim() || !customerPhone.trim()) return;
+      // For PIN/OTP, require manual entry and validation
+      if (!customerName.trim()) return;
+      
+      // Validate phone number
+      if (!customerPhone.trim()) {
+        setPhoneValidation({ isValid: false, error: 'required' });
+        return;
+      }
+      
+      const validation = validateMyanmarPhone(customerPhone);
+      if (!validation.isValid) {
+        setPhoneValidation({ isValid: false, error: validation.error });
+        return;
+      }
+      
       finalCustomerName = customerName.trim();
-      finalCustomerPhone = customerPhone.trim();
+      finalCustomerPhone = validation.normalized; // Use normalized phone
     }
 
     setStep('processing');
@@ -306,14 +354,48 @@ export function PaymentModal({
                     <Label htmlFor="customerPhone">
                       {t('payments.customerPhone') || 'Phone Number'}
                     </Label>
-                    <Input
-                      id="customerPhone"
-                      type="tel"
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                      placeholder={t('payments.customerPhonePlaceholder') || 'Enter your phone number'}
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="customerPhone"
+                        type="tel"
+                        value={customerPhone}
+                        onChange={handlePhoneChange}
+                        placeholder={t('payments.customerPhonePlaceholder') || 'Enter your phone number (09XXXXXXXXX)'}
+                        required
+                        className={`pr-10 ${
+                          customerPhone && phoneValidation.isValid
+                            ? 'border-green-500 focus-visible:ring-green-500'
+                            : customerPhone && !phoneValidation.isValid
+                            ? 'border-red-500 focus-visible:ring-red-500'
+                            : ''
+                        }`}
+                      />
+                      {customerPhone && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {phoneValidation.isValid ? (
+                            <CheckCircle2Icon className="h-5 w-5 text-green-500" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-red-500" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {customerPhone && !phoneValidation.isValid && phoneValidation.error && (
+                      <p className="text-sm text-red-500">
+                        {phoneValidation.error === 'required' &&
+                          (t('payments.customerPhoneRequired') || 'Phone number is required')}
+                        {phoneValidation.error === 'mustStartWith09' &&
+                          (t('payments.customerPhoneMustStartWith09') || 'Phone number must start with 09')}
+                        {phoneValidation.error === 'tooShort' &&
+                          (t('payments.customerPhoneMustBe11Digits') || 'Phone number must be 11 digits')}
+                        {phoneValidation.error === 'tooLong' &&
+                          (t('payments.customerPhoneMustBe11Digits') || 'Phone number must be 11 digits')}
+                        {phoneValidation.error === 'onlyNumbers' &&
+                          (t('payments.customerPhoneOnlyNumbers') || 'Phone number must contain only numbers')}
+                        {!['required', 'mustStartWith09', 'tooShort', 'tooLong', 'onlyNumbers'].includes(phoneValidation.error) &&
+                          (t('payments.customerPhoneInvalid') || 'Please enter a valid Myanmar phone number (09XXXXXXXXX)')}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -491,17 +573,17 @@ export function PaymentModal({
               <Button variant="outline" onClick={handleCancel}>
                 {t('forms.cancel') || 'Cancel'}
               </Button>
-              <Button
-                onClick={handleContinue}
-                disabled={
-                  !selectedProvider || 
-                  !selectedMethod || 
-                  (selectedMethod !== 'QR' && (!customerName.trim() || !customerPhone.trim())) ||
-                  (selectedMethod === 'QR' && (!user?.name || !user?.phone))
-                }
-              >
-                {t('payments.continue') || 'Continue'}
-              </Button>
+                <Button
+                  onClick={handleContinue}
+                  disabled={
+                    !selectedProvider || 
+                    !selectedMethod || 
+                    (selectedMethod !== 'QR' && (!customerName.trim() || !customerPhone.trim() || !phoneValidation.isValid)) ||
+                    (selectedMethod === 'QR' && (!user?.name || !user?.phone || !phoneValidation.isValid))
+                  }
+                >
+                  {t('payments.continue') || 'Continue'}
+                </Button>
             </>
           )}
 
