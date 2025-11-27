@@ -34,7 +34,7 @@ export const MobileAiPropertyResults = memo(function MobileAiPropertyResults({ t
         {properties.map((property, index) => (
           <a
             key={property.id}
-            href={`/properties/${property.slug}`}
+            href={`/mobile/properties/${property.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block group"

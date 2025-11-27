@@ -4,6 +4,7 @@ import { lazyWithRetry } from '../utils/lazyWithRetry';
 
 // Lazy load mobile page components with retry mechanism
 const MobileWantedDetail = lazyWithRetry(() => import('../pages/mobile/wantedDetail').then(module => ({ default: module.default })));
+const MobilePropertyDetail = lazyWithRetry(() => import('../pages/mobile/propertyDetail').then(module => ({ default: module.default })));
 
 // Mobile routes configuration - standalone pages without Layout
 export const mobileRoutes = [
@@ -12,6 +13,14 @@ export const mobileRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <MobileWantedDetail />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/mobile/properties/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <MobilePropertyDetail />
       </Suspense>
     ),
   },

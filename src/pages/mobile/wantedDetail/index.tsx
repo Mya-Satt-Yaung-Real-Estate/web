@@ -133,7 +133,7 @@ export default function MobileWantedDetail() {
       <div className="p-4 space-y-4">
         {/* Header Card */}
         <Card>
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="p-4 pt-5 space-y-4">
             <div>
               <h1 className="mb-3 text-lg font-semibold">{wanted.title}</h1>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -238,7 +238,7 @@ export default function MobileWantedDetail() {
 
         {/* Contact Card */}
         <Card>
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="p-4 pt-5 space-y-4">
             <h3 className="text-base font-semibold">{t('wantedDetail.contact') || 'Contact'}</h3>
             
             <div className="space-y-3">
@@ -272,7 +272,7 @@ export default function MobileWantedDetail() {
         {/* User Info Card */}
         {wanted.user && (
           <Card>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="p-4 pt-5 space-y-3">
               <h3 className="text-base font-semibold">{t('wantedDetail.postedBy') || 'Posted By'}</h3>
               
               <div className="flex items-center gap-3">
@@ -299,7 +299,7 @@ export default function MobileWantedDetail() {
 
         {/* Location Card */}
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-4 pt-5">
             <h4 className="mb-3 text-base font-semibold">{t('wantedDetail.preferredLocation') || 'Preferred Location'}</h4>
             
             <div className="space-y-2">
