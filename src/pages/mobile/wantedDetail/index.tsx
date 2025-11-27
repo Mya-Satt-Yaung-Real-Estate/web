@@ -6,6 +6,7 @@
  */
 
 import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useWantedDetail } from '@/hooks/queries/useWantedDetail';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,70 @@ export default function MobileWantedDetail() {
   const { t, language } = useLanguage();
   
   const { data, isLoading, error } = useWantedDetail(slug || '');
+
+  // Prevent body scrolling and pinch zoom when in mobile WebView - MUST be called before any conditional returns
+  useEffect(() => {
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    document.body.style.touchAction = 'pan-y'; // Allow vertical scroll, prevent pinch zoom
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100vh';
+    document.documentElement.style.touchAction = 'pan-y';
+
+    // Prevent pinch zoom with touch events
+    const preventZoom = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    const preventDoubleTapZoom = (e: TouchEvent) => {
+      const now = Date.now();
+      const timeSinceLastTouch = now - (preventDoubleTapZoom as any).lastTouch || 0;
+      (preventDoubleTapZoom as any).lastTouch = now;
+      
+      if (timeSinceLastTouch < 300 && timeSinceLastTouch > 0) {
+        e.preventDefault();
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener('touchstart', preventZoom, { passive: false });
+    document.addEventListener('touchmove', preventZoom, { passive: false });
+    document.addEventListener('touchend', preventDoubleTapZoom, { passive: false });
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
+
+    // Update viewport meta tag to prevent zoom
+    let viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.touchAction = '';
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.documentElement.style.touchAction = '';
+      
+      document.removeEventListener('touchstart', preventZoom);
+      document.removeEventListener('touchmove', preventZoom);
+      document.removeEventListener('touchend', preventDoubleTapZoom);
+      document.removeEventListener('gesturestart', (e) => e.preventDefault());
+      document.removeEventListener('gesturechange', (e) => e.preventDefault());
+      document.removeEventListener('gestureend', (e) => e.preventDefault());
+      
+      // Restore viewport
+      if (viewportMeta) {
+        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      }
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -129,7 +194,20 @@ export default function MobileWantedDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div 
+      className="fixed inset-0 bg-background overflow-y-auto"
+      style={{ touchAction: 'pan-y' }}
+      onTouchStart={(e) => {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }}
+      onTouchMove={(e) => {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }}
+    >
       <div className="p-4 space-y-4">
         {/* Header Card */}
         <Card>
