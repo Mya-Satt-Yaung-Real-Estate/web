@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Package, Star, Loader2, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { Package, Star, Loader2, AlertCircle, CheckCircle2, X, Mail } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { paymentApi } from '@/services/api/payments';
@@ -41,7 +41,7 @@ interface PaymentModalProps {
   onPaymentSuccess?: () => void;
 }
 
-type PaymentStep = 'select' | 'processing' | 'payment' | 'success' | 'error';
+type PaymentStep = 'select' | 'billingInfo' | 'processing' | 'payment' | 'success' | 'error';
 
 export function PaymentModal({
   isOpen,
@@ -60,6 +60,10 @@ export function PaymentModal({
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
   const [phoneValidation, setPhoneValidation] = useState<{ isValid: boolean; error?: string }>({ isValid: false });
+  const [email, setEmail] = useState<string>('');
+  const [billAddress, setBillAddress] = useState<string>('');
+  const [billCity, setBillCity] = useState<string>('');
+  const [emailValidation, setEmailValidation] = useState<{ isValid: boolean; error?: string }>({ isValid: false });
   const [paymentData, setPaymentData] = useState<any>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [redirectOpenedInNewTab, setRedirectOpenedInNewTab] = useState<boolean>(false);
@@ -77,6 +81,14 @@ export function PaymentModal({
     'MPT Pay': ['PIN'],
     'CB Pay': ['QR'],
     'UAB Pay': ['PIN'],
+    'Visa': ['OTP'], // Credit cards use OTP method
+    'Master': ['OTP'], // Credit cards use OTP method
+    'JCB': ['OTP'], // Credit cards use OTP method
+  };
+
+  // Check if provider is a credit card (doesn't need method selection)
+  const isCreditCardProvider = (provider: PaymentProvider | null): boolean => {
+    return provider === 'Visa' || provider === 'Master' || provider === 'JCB';
   };
 
   // Handle provider change - clear method if it's not valid for new provider
@@ -100,6 +112,10 @@ export function PaymentModal({
       setCustomerName('');
       setCustomerPhone('');
       setPhoneValidation({ isValid: false });
+      setEmail('');
+      setBillAddress('');
+      setBillCity('');
+      setEmailValidation({ isValid: false });
       setRedirectOpenedInNewTab(false);
       newTabOpenedRef.current = false;
     }
@@ -120,8 +136,8 @@ export function PaymentModal({
           const validation = validateMyanmarPhone(user.phone);
           setPhoneValidation({ isValid: validation.isValid, error: validation.error });
         }
-      } else if (selectedMethod === 'PIN' || selectedMethod === 'PWA') {
-        // Clear fields when switching to PIN/PWA (user must enter manually)
+      } else if (selectedMethod === 'PIN' || selectedMethod === 'PWA' || selectedMethod === 'OTP') {
+        // Clear fields when switching to PIN/PWA/OTP (user must enter manually)
         setCustomerName('');
         setCustomerPhone('');
         setPhoneValidation({ isValid: false });
@@ -139,8 +155,8 @@ export function PaymentModal({
     const value = e.target.value;
     setCustomerPhone(value);
     
-    // Only validate if method is PIN/PWA (not QR)
-    if (selectedMethod === 'PIN' || selectedMethod === 'PWA') {
+    // Only validate if method is PIN/PWA/OTP (not QR)
+    if (selectedMethod === 'PIN' || selectedMethod === 'PWA' || selectedMethod === 'OTP') {
       if (value.trim()) {
         const validation = validateMyanmarPhone(value);
         setPhoneValidation({ isValid: validation.isValid, error: validation.error });
@@ -150,9 +166,26 @@ export function PaymentModal({
     }
   };
 
+  // Handle email input change with real-time validation
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    
+    if (value.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(value.trim())) {
+        setEmailValidation({ isValid: true });
+      } else {
+        setEmailValidation({ isValid: false, error: 'invalid' });
+      }
+    } else {
+      setEmailValidation({ isValid: false, error: 'required' });
+    }
+  };
+
   // Payment token mutation
   const paymentTokenMutation = useMutation({
-    mutationFn: (payload: { providerName: string; methodName: string; packageId: number; customerName?: string; customerPhone?: string }) => {
+    mutationFn: (payload: { providerName: string; methodName: string; packageId: number; customerName?: string; customerPhone?: string; email?: string; billAddress?: string; billCity?: string }) => {
       return paymentApi.getPaymentToken(payload);
     },
     onSuccess: (response) => {
@@ -201,7 +234,9 @@ export function PaymentModal({
         setOrderId(data.merchOrderId);
         
         // Check if redirect is needed
-        if (selectedProvider && selectedMethod && requiresRedirect(selectedProvider, selectedMethod)) {
+        // For credit cards, use 'OTP' as method, for others use selectedMethod
+        const methodForRedirect = isCreditCardProvider(selectedProvider) ? 'OTP' : selectedMethod;
+        if (selectedProvider && methodForRedirect && requiresRedirect(selectedProvider, methodForRedirect)) {
           // Validate redirect requirements
           if (!data.formToken || !data.transactionNum || !data.merchOrderId) {
             console.error('Redirect required but missing required fields:', {
@@ -216,7 +251,7 @@ export function PaymentModal({
           // Build redirect URL
           const redirectUrl = buildRedirectUrl(
             selectedProvider,
-            selectedMethod,
+            methodForRedirect,
             data.formToken,
             data.transactionNum,
             data.merchOrderId
@@ -323,7 +358,20 @@ export function PaymentModal({
   });
 
   const handleContinue = () => {
-    if (!pkg || !selectedProvider || !selectedMethod) return;
+    if (!pkg || !selectedProvider) return;
+    
+    // Credit cards need OTP method selection - then go to billing info step
+    if (isCreditCardProvider(selectedProvider)) {
+      // For credit cards, method must be OTP
+      if (!selectedMethod || selectedMethod !== 'OTP') {
+        return;
+      }
+      setStep('billingInfo');
+      return;
+    }
+    
+    // For other providers, method is required
+    if (!selectedMethod) return;
     
     // For QR method, use authenticated user's name and phone
     // For PIN/OTP methods, require user to enter manually
@@ -403,6 +451,7 @@ export function PaymentModal({
           </DialogTitle>
           <DialogDescription>
             {step === 'select' && (t('payments.selectPaymentMethodDesc') || 'Choose your payment provider and method')}
+            {step === 'billingInfo' && (t('payments.billingInformationDesc') || 'Please enter your billing information')}
             {step === 'processing' && (t('payments.processingDesc') || 'Please wait while we process your payment...')}
             {step === 'payment' && (t('payments.completePaymentDesc') || 'Complete your payment using the QR code or instructions below')}
             {step === 'success' && (t('payments.paymentSuccessDesc') || 'Your payment was successful and points have been added to your account')}
@@ -446,6 +495,7 @@ export function PaymentModal({
                 selectedProvider={selectedProvider}
                 onSelectProvider={handleProviderChange}
               />
+              {/* Show method selection for all providers including credit cards */}
               <PaymentMethodSelect
                 provider={selectedProvider}
                 selectedMethod={selectedMethod}
@@ -453,7 +503,7 @@ export function PaymentModal({
               />
               
               {/* Customer Information - Only show for PIN/PWA methods when method is selected */}
-              {selectedProvider && selectedMethod && selectedMethod !== 'QR' && selectedMethod !== null && (
+              {selectedProvider && selectedMethod && selectedMethod !== 'QR' && selectedMethod !== null && !isCreditCardProvider(selectedProvider) && (
                 <div className="space-y-4 pt-2">
                   <div className="space-y-2">
                     <Label htmlFor="customerName">
@@ -517,6 +567,81 @@ export function PaymentModal({
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {step === 'billingInfo' && isCreditCardProvider(selectedProvider) && (
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">
+                    {t('payments.email') || 'Email'} <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={handleEmailChange}
+                      placeholder={t('payments.emailPlaceholder') || 'Enter your email'}
+                      className={`pl-10 pr-10 ${
+                        email && emailValidation.isValid
+                          ? 'border-green-500 focus-visible:ring-green-500'
+                          : email && !emailValidation.isValid
+                          ? 'border-red-500 focus-visible:ring-red-500'
+                          : ''
+                      }`}
+                      required
+                    />
+                    {email && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {emailValidation.isValid ? (
+                          <CheckCircle2Icon className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <XCircle className="h-5 w-5 text-red-500" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {email && !emailValidation.isValid && emailValidation.error && (
+                    <p className="text-sm text-red-500">
+                      {emailValidation.error === 'required' &&
+                        (t('payments.emailRequired') || 'Email is required')}
+                      {emailValidation.error === 'invalid' &&
+                        (t('payments.emailInvalid') || 'Please enter a valid email address')}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="billAddress">
+                    {t('payments.billingAddress') || 'Billing Address'} <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="billAddress"
+                    type="text"
+                    value={billAddress}
+                    onChange={(e) => setBillAddress(e.target.value)}
+                    placeholder={t('payments.billingAddressPlaceholder') || 'Enter your billing address (e.g., No.70, Thukha street, ...)'}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="billCity">
+                    {t('payments.billingCity') || 'Billing City'} <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="billCity"
+                    type="text"
+                    value={billCity}
+                    onChange={(e) => setBillCity(e.target.value)}
+                    placeholder={t('payments.billingCityPlaceholder') || 'Enter your billing city (e.g., Yangon)'}
+                    required
+                  />
+                </div>
+              </div>
             </div>
           )}
 
@@ -695,13 +820,67 @@ export function PaymentModal({
                   onClick={handleContinue}
                   disabled={
                     !selectedProvider || 
-                    !selectedMethod || 
-                    (selectedMethod !== 'QR' && (!customerName.trim() || !customerPhone.trim() || !phoneValidation.isValid)) ||
-                    (selectedMethod === 'QR' && (!user?.name || !user?.phone || !phoneValidation.isValid))
+                    !selectedMethod ||
+                    (isCreditCardProvider(selectedProvider) && selectedMethod !== 'OTP') ||
+                    (!isCreditCardProvider(selectedProvider) && selectedMethod !== 'QR' && (!customerName.trim() || !customerPhone.trim() || !phoneValidation.isValid)) ||
+                    (!isCreditCardProvider(selectedProvider) && selectedMethod === 'QR' && (!user?.name || !user?.phone || !phoneValidation.isValid))
                   }
                 >
                   {t('payments.continue') || 'Continue'}
                 </Button>
+            </>
+          )}
+
+          {step === 'billingInfo' && (
+            <>
+              <Button variant="outline" onClick={() => setStep('select')}>
+                {t('payments.back') || 'Back'}
+              </Button>
+              <Button
+                onClick={() => {
+                  // Validate billing info for credit cards
+                  if (!email.trim()) {
+                    setEmailValidation({ isValid: false, error: 'required' });
+                    return;
+                  }
+                  
+                  // Validate email format
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(email.trim())) {
+                    setEmailValidation({ isValid: false, error: 'invalid' });
+                    return;
+                  }
+                  
+                  if (!billAddress.trim()) {
+                    return;
+                  }
+                  
+                  if (!billCity.trim()) {
+                    return;
+                  }
+                  
+                  // All validations passed, proceed to payment
+                  setStep('processing');
+                  paymentTokenMutation.mutate({
+                    providerName: selectedProvider || '',
+                    methodName: 'OTP',
+                    packageId: pkg?.id || 0,
+                    email: email.trim(),
+                    billAddress: billAddress.trim(),
+                    billCity: billCity.trim(),
+                    customerName: user?.name || '',
+                    customerPhone: user?.phone || '',
+                  });
+                }}
+                disabled={
+                  !email.trim() || 
+                  !emailValidation.isValid || 
+                  !billAddress.trim() || 
+                  !billCity.trim()
+                }
+              >
+                {t('payments.continue') || 'Continue'}
+              </Button>
             </>
           )}
 

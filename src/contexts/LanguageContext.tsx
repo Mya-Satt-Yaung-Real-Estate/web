@@ -2073,6 +2073,17 @@ const translations: Translations = {
     'payments.paymentCancelled': { en: 'Payment Cancelled', mm: 'ငွေပေးချေမှုပယ်ဖျက်ထားသည်' },
     'payments.paymentDeclined': { en: 'Payment Declined', mm: 'ငွေပေးချေမှုငြင်းဆိုထားသည်' },
     'payments.paymentStatus': { en: 'Payment Status', mm: 'ငွေပေးချေမှုအခြေအနေ' },
+    'payments.email': { en: 'Email', mm: 'အီးမေးလ်' },
+    'payments.emailPlaceholder': { en: 'Enter your email', mm: 'သင့်အီးမေးလ်ကိုထည့်သွင်းပါ' },
+    'payments.emailRequired': { en: 'Email is required', mm: 'အီးမေးလ် လိုအပ်ပါသည်' },
+    'payments.emailInvalid': { en: 'Please enter a valid email address', mm: 'ကျေးဇူးပြု၍ မှန်ကန်သော အီးမေးလ်လိပ်စာကို ထည့်သွင်းပါ' },
+    'payments.billingInformation': { en: 'Billing Information', mm: 'ငွေပေးချေမှုအချက်အလက်' },
+    'payments.billingInformationDesc': { en: 'Please enter your billing information', mm: 'ကျေးဇူးပြု၍ သင့်ငွေပေးချေမှုအချက်အလက်ကို ထည့်သွင်းပါ' },
+    'payments.billingAddress': { en: 'Billing Address', mm: 'ငွေပေးချေမှုလိပ်စာ' },
+    'payments.billingAddressPlaceholder': { en: 'Enter your billing address (e.g., No.70, Thukha street, ...)', mm: 'သင့်ငွေပေးချေမှုလိပ်စာကို ထည့်သွင်းပါ (ဥပမာ - No.70, Thukha street, ...)' },
+    'payments.billingCity': { en: 'Billing City', mm: 'ငွေပေးချေမှုမြို့' },
+    'payments.billingCityPlaceholder': { en: 'Enter your billing city (e.g., Yangon)', mm: 'သင့်ငွေပေးချေမှုမြို့ကို ထည့်သွင်းပါ (ဥပမာ - Yangon)' },
+    'payments.back': { en: 'Back', mm: 'နောက်သို့' },
 };
 
 interface LanguageContextType {

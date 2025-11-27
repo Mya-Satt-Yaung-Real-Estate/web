@@ -4,6 +4,11 @@ export function requiresRedirect(provider: PaymentProvider, method: PaymentMetho
   
   const noRedirectProviders: PaymentProvider[] = ['AYA Pay', 'Onepay', 'Sai Sai Pay'];
   
+  // Credit card providers always need redirect
+  if (provider === 'Visa' || provider === 'Master' || provider === 'JCB') {
+    return true;
+  }
+  
   if (provider === 'KBZ Pay' && method === 'QR') {
     return false;
   }
@@ -17,7 +22,7 @@ export function requiresRedirect(provider: PaymentProvider, method: PaymentMetho
     return false;
   }
   
-  return method === 'PIN' || method === 'PWA';
+  return method === 'PIN' || method === 'PWA' || method === 'OTP';
 }
 
 
@@ -33,6 +38,12 @@ export function buildRedirectUrl(
   }
 
   const baseUrl = 'https://portal.dinger.asia';
+  const creditCardUrl = 'https://creditcard-portal.dinger.asia';
+
+  // Credit Card Gateway (Visa, Master, JCB)
+  if (provider === 'Visa' || provider === 'Master' || provider === 'JCB') {
+    return `${creditCardUrl}/?merchantOrderId=${encodeURIComponent(merchantOrderId)}&transactionNum=${encodeURIComponent(transactionNum)}&formToken=${encodeURIComponent(formToken)}`;
+  }
 
   // CB Pay QR Gateway
   if (provider === 'CB Pay' && method === 'QR') {

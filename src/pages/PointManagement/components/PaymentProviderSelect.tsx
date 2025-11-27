@@ -29,6 +29,9 @@ const PAYMENT_PROVIDERS: Array<{
   { name: 'Onepay', logo: '/one_pay.png', description: 'Onepay', brandColor: '#1E88E5' },
   { name: 'MPitesan', logo: '/mpitesan_pay.png', description: 'MPitesan', brandColor: '#1976D2' },
   { name: 'MPT Pay', logo: '/mpt_pay.png', description: 'MPT Pay', brandColor: '#1976D2' },
+  { name: 'Visa', logo: '/visa_card.png', description: 'Visa', brandColor: '#1A1F71' },
+  { name: 'Master', logo: '/master_card.png', description: 'Mastercard', brandColor: '#EB001B' },
+  { name: 'JCB', logo: '/jcb_card.jpeg', description: 'JCB', brandColor: '#0066CC' },
 ];
 
 export function PaymentProviderSelect({

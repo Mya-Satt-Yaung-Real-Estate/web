@@ -14,6 +14,9 @@ export interface PaymentTokenRequest {
   packageId: number;
   customerName?: string;
   customerPhone?: string;
+  email?: string;
+  billAddress?: string;
+  billCity?: string;
 }
 
 export interface PaymentTokenResponseInner {
@@ -92,9 +95,12 @@ export type PaymentProvider =
   | 'MPitesan'
   | 'MPT Pay'
   | 'CB Pay'
-  | 'UAB Pay';
+  | 'UAB Pay'
+  | 'Visa'
+  | 'Master'
+  | 'JCB';
 
-export type PaymentMethod = 'QR' | 'PIN' | 'PWA';
+export type PaymentMethod = 'QR' | 'PIN' | 'PWA' | 'OTP';
 
 export interface PaymentProviderConfig {
   name: PaymentProvider;

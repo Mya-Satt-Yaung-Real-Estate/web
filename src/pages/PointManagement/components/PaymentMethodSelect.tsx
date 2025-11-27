@@ -6,7 +6,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { QrCode, Hash, Smartphone } from 'lucide-react';
+import { QrCode, Hash, Smartphone, Shield } from 'lucide-react';
 import type { PaymentMethod, PaymentProvider } from '@/types/payments';
 
 interface PaymentMethodSelectProps {
@@ -26,12 +26,16 @@ const PROVIDER_METHODS: Record<PaymentProvider, PaymentMethod[]> = {
   'MPT Pay': ['PIN'],
   'CB Pay': ['QR'],
   'UAB Pay': ['PIN'],
+  'Visa': ['OTP'], // Credit cards use OTP method
+  'Master': ['OTP'], // Credit cards use OTP method
+  'JCB': ['OTP'], // Credit cards use OTP method
 };
 
 const METHOD_CONFIG: Record<PaymentMethod, { icon: typeof QrCode; label: string }> = {
   QR: { icon: QrCode, label: 'QR Code' },
   PIN: { icon: Hash, label: 'PIN' },
   PWA: { icon: Smartphone, label: 'PWA' },
+  OTP: { icon: Shield, label: 'OTP' },
 };
 
 export function PaymentMethodSelect({
