@@ -32,6 +32,7 @@ import { QRCodeDisplay } from './QRCodeDisplay';
 import { usePaymentStatusPolling } from './PaymentStatusPolling';
 import { validateMyanmarPhone } from '@/utils/phoneValidation';
 import { CheckCircle2 as CheckCircle2Icon, XCircle } from 'lucide-react';
+import { requiresRedirect, buildRedirectUrl, redirectToPaymentGateway } from '@/utils/paymentRedirect';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -158,7 +159,49 @@ export function PaymentModal({
         const data = response.data.response.response;
         setPaymentData(data);
         setOrderId(data.merchOrderId);
-        setStep('payment');
+        
+        // Check if redirect is needed
+        if (selectedProvider && selectedMethod && requiresRedirect(selectedProvider, selectedMethod)) {
+          // If formToken exists, redirect to payment gateway
+          if (data.formToken && data.transactionNum && data.merchOrderId) {
+            const redirectUrl = buildRedirectUrl(
+              selectedProvider,
+              selectedMethod,
+              data.formToken,
+              data.transactionNum,
+              data.merchOrderId
+            );
+            
+            if (redirectUrl) {
+              // Store order ID for status checking when user returns
+              setOrderId(data.merchOrderId);
+              setPaymentData(data);
+              
+              // Close modal before redirecting
+              onClose();
+              
+              // Small delay to ensure modal closes smoothly, then redirect
+              setTimeout(() => {
+                const success = redirectToPaymentGateway(redirectUrl);
+                if (!success) {
+                  // If redirect failed, show error (though this is unlikely)
+                  console.error('Failed to redirect to payment gateway');
+                }
+              }, 100);
+            } else {
+              // formToken exists but couldn't build URL (shouldn't happen)
+              console.error('Failed to build redirect URL');
+              setStep('error');
+            }
+          } else {
+            // Redirect needed but formToken missing
+            console.error('Redirect required but formToken is missing');
+            setStep('error');
+          }
+        } else {
+          // No redirect needed, proceed to payment step (show QR code or PIN instructions)
+          setStep('payment');
+        }
       } else {
         console.error('Invalid response structure:', response);
         setStep('error');
@@ -413,6 +456,7 @@ export function PaymentModal({
 
           {step === 'payment' && paymentData && (
             <div className="space-y-4">
+              {/* Show QR code if QR code exists */}
               {selectedMethod === 'QR' && paymentData.qrCode && (
                 <QRCodeDisplay
                   qrCode={paymentData.qrCode}
@@ -423,49 +467,7 @@ export function PaymentModal({
                 />
               )}
 
-              {selectedMethod === 'QR' && paymentData.formToken && (
-                <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
-                  <div className="text-center space-y-4">
-                    <div className="flex items-center justify-center">
-                      <AlertCircle className="h-8 w-8 text-blue-500" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                        {t('payments.cbPayFormTitle') || 'CB Pay Payment Form'}
-                      </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
-                        {t('payments.cbPayFormDesc') || 'CB Pay uses a payment form. Please complete the payment using the form below.'}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-white dark:bg-gray-900 rounded border space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {t('payments.amount') || 'Amount'}
-                        </span>
-                        <span className="font-semibold text-primary">
-                          {paymentData.amount.toLocaleString()} MMK
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {t('payments.orderId') || 'Order ID'}
-                        </span>
-                        <span className="font-mono text-sm">{paymentData.merchOrderId}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {t('payments.transactionNum') || 'Transaction Number'}
-                        </span>
-                        <span className="font-mono text-sm">{paymentData.transactionNum}</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">
-                      {t('payments.cbPayFormNote') || 'Note: CB Pay will redirect you to complete the payment. Please follow the instructions on the payment form.'}
-                    </p>
-                  </div>
-                </div>
-              )}
-
+              {/* Show PIN instructions if method is PIN/PWA */}
               {selectedMethod !== 'QR' && (
                 <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                   <div className="flex items-start gap-3">

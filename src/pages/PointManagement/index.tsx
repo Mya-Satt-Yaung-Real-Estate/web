@@ -5,19 +5,25 @@
  */
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useModal } from '@/contexts/ModalContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { BalanceCard, PackageList, TransactionList } from './components';
+import { useQueryClient } from '@tanstack/react-query';
+import { pointKeys } from '@/services/queries/points';
 
 export function PointManagement() {
   const { user, isAuthenticated } = useAuthStore();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { showSuccess, showError, showWarning } = useModal();
+  const queryClient = useQueryClient();
   const seo = seoUtils.getPageSEO('point-management');
 
   useEffect(() => {
@@ -25,6 +31,61 @@ export function PointManagement() {
       navigate('/signin');
     }
   }, [isAuthenticated, user, navigate]);
+
+  // Handle payment return query parameters
+  useEffect(() => {
+    const merchantOrderId = searchParams.get('merchantOrderId');
+    const state = searchParams.get('state');
+
+    if (merchantOrderId && state) {
+      // Refresh point data
+      queryClient.invalidateQueries({ queryKey: pointKeys.packages() });
+      queryClient.invalidateQueries({ queryKey: pointKeys.fifo() });
+      queryClient.invalidateQueries({ queryKey: pointKeys.transactions() });
+
+      // Show appropriate alert based on state
+      const stateUpper = state.toUpperCase();
+      
+      if (stateUpper === 'SUCCESS') {
+        showSuccess(
+          t('payments.paymentReturnSuccess') || 'Payment completed successfully! Points have been added to your account.',
+          t('payments.paymentSuccess') || 'Payment Successful'
+        );
+      } else if (stateUpper === 'TIMEOUT') {
+        showWarning(
+          t('payments.paymentReturnTimeout') || 'Payment timeout. Please check your payment status or contact support if the payment was completed.',
+          t('payments.paymentTimeout') || 'Payment Timeout'
+        );
+      } else if (stateUpper === 'ERROR' || stateUpper === 'SYSTEM_ERROR') {
+        showError(
+          t('payments.paymentReturnError') || 'Payment failed. Please try again or contact support if the issue persists.',
+          t('payments.paymentError') || 'Payment Error'
+        );
+      } else if (stateUpper === 'CANCELLED') {
+        showWarning(
+          t('payments.paymentReturnCancelled') || 'Payment was cancelled. You can try again when ready.',
+          t('payments.paymentCancelled') || 'Payment Cancelled'
+        );
+      } else if (stateUpper === 'DECLINED') {
+        showError(
+          t('payments.paymentReturnDeclined') || 'Payment was declined. Please check your payment method and try again.',
+          t('payments.paymentDeclined') || 'Payment Declined'
+        );
+      } else {
+        // Unknown state
+        showWarning(
+          t('payments.paymentReturnUnknown', { state }) || `Payment status: ${state}. Please check your payment status.`,
+          t('payments.paymentStatus') || 'Payment Status'
+        );
+      }
+
+      // Clear query parameters after showing alert
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('merchantOrderId');
+      newSearchParams.delete('state');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams, showSuccess, showError, showWarning, t, queryClient]);
 
   if (!user || !isAuthenticated) {
     return null;
