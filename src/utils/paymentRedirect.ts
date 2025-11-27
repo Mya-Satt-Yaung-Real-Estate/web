@@ -50,6 +50,19 @@ export function buildRedirectUrl(
 }
 
 /**
+ * Determines if a provider should use new tab redirect instead of same-window redirect
+ * 
+ * @param provider - Payment provider name
+ * @returns true if provider should use new tab, false for same-window redirect
+ */
+export function shouldUseNewTab(provider: PaymentProvider): boolean {
+  // Providers that should open in new tab
+  const newTabProviders: PaymentProvider[] = ['OK$'];
+  
+  return newTabProviders.includes(provider);
+}
+
+/**
  * Redirects to payment gateway in the same window
  * 
  * @param url - Redirect URL
@@ -68,6 +81,31 @@ export function redirectToPaymentGateway(url: string): boolean {
   } catch (error) {
     console.error('Error redirecting to payment gateway:', error);
     return false;
+  }
+}
+
+/**
+ * Opens payment gateway in a new tab
+ * 
+ * @param url - Redirect URL
+ * @returns Window reference or null if failed
+ */
+export function openPaymentGatewayInNewTab(url: string): Window | null {
+  if (!url) {
+    console.error('Payment redirect URL is empty');
+    return null;
+  }
+
+  try {
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!newWindow) {
+      console.error('Failed to open payment gateway in new tab. Popup may be blocked.');
+      return null;
+    }
+    return newWindow;
+  } catch (error) {
+    console.error('Error opening payment gateway in new tab:', error);
+    return null;
   }
 }
 

@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Package, Star, Loader2, AlertCircle, CheckCircle2, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { paymentApi } from '@/services/api/payments';
 import { pointKeys } from '@/services/queries/points';
@@ -32,7 +32,7 @@ import { QRCodeDisplay } from './QRCodeDisplay';
 import { usePaymentStatusPolling } from './PaymentStatusPolling';
 import { validateMyanmarPhone } from '@/utils/phoneValidation';
 import { CheckCircle2 as CheckCircle2Icon, XCircle } from 'lucide-react';
-import { requiresRedirect, buildRedirectUrl, redirectToPaymentGateway } from '@/utils/paymentRedirect';
+import { requiresRedirect, buildRedirectUrl, redirectToPaymentGateway, openPaymentGatewayInNewTab, shouldUseNewTab } from '@/utils/paymentRedirect';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -62,6 +62,8 @@ export function PaymentModal({
   const [phoneValidation, setPhoneValidation] = useState<{ isValid: boolean; error?: string }>({ isValid: false });
   const [paymentData, setPaymentData] = useState<any>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [redirectOpenedInNewTab, setRedirectOpenedInNewTab] = useState<boolean>(false);
+  const newTabOpenedRef = useRef<boolean>(false);
 
   // Provider methods mapping (same as PaymentMethodSelect)
   const PROVIDER_METHODS: Record<PaymentProvider, PaymentMethod[]> = {
@@ -98,6 +100,8 @@ export function PaymentModal({
       setCustomerName('');
       setCustomerPhone('');
       setPhoneValidation({ isValid: false });
+      setRedirectOpenedInNewTab(false);
+      newTabOpenedRef.current = false;
     }
   }, [isOpen]);
 
@@ -152,62 +156,133 @@ export function PaymentModal({
       return paymentApi.getPaymentToken(payload);
     },
     onSuccess: (response) => {
-      // API response structure: { data: { status, message, response: { code, message, time, response: { amount, merchOrderId, ... } } } }
-      // The API client wraps it: { data: <actual response>, success: true, ... }
-      // So: response.data = { status: "success", response: { response: { amount, merchOrderId, ... } } }
-      if (response.data?.status === 'success' && response.data?.response?.response) {
-        const data = response.data.response.response;
+      try {
+        // Log full response for debugging
+        console.log('Payment token response:', response);
+        
+        // API response structure: { data: { status, message, response: { code, message, time, response: { amount, merchOrderId, ... } } } }
+        // The API client wraps it: { data: <actual response>, success: true, ... }
+        // So: response.data = { status: "success", response: { response: { amount, merchOrderId, ... } } }
+        
+        // Validate response structure step by step
+        if (!response || !response.data) {
+          console.error('Invalid response: missing data', response);
+          setStep('error');
+          return;
+        }
+
+        const responseData = response.data;
+        
+        // Check if status is success
+        if (responseData.status !== 'success') {
+          console.error('Payment token request failed:', responseData.message || 'Unknown error');
+          setStep('error');
+          return;
+        }
+
+        // Validate nested response structure
+        if (!responseData.response || !responseData.response.response) {
+          console.error('Invalid response structure: missing nested response', responseData);
+          setStep('error');
+          return;
+        }
+
+        const data = responseData.response.response;
+        
+        // Validate required fields
+        if (!data.merchOrderId) {
+          console.error('Invalid response: missing merchOrderId', data);
+          setStep('error');
+          return;
+        }
+
+        // Store payment data and order ID
         setPaymentData(data);
         setOrderId(data.merchOrderId);
         
         // Check if redirect is needed
         if (selectedProvider && selectedMethod && requiresRedirect(selectedProvider, selectedMethod)) {
-          // If formToken exists, redirect to payment gateway
-          if (data.formToken && data.transactionNum && data.merchOrderId) {
-            const redirectUrl = buildRedirectUrl(
-              selectedProvider,
-              selectedMethod,
-              data.formToken,
-              data.transactionNum,
-              data.merchOrderId
-            );
-            
-            if (redirectUrl) {
-              // Store order ID for status checking when user returns
-              setOrderId(data.merchOrderId);
-              setPaymentData(data);
-              
-              // Close modal before redirecting
-              onClose();
-              
-              // Small delay to ensure modal closes smoothly, then redirect
-              setTimeout(() => {
-                const success = redirectToPaymentGateway(redirectUrl);
-                if (!success) {
-                  // If redirect failed, show error (though this is unlikely)
-                  console.error('Failed to redirect to payment gateway');
-                }
-              }, 100);
-            } else {
-              // formToken exists but couldn't build URL (shouldn't happen)
-              console.error('Failed to build redirect URL');
-              setStep('error');
-            }
-          } else {
-            // Redirect needed but formToken missing
-            console.error('Redirect required but formToken is missing');
+          // Validate redirect requirements
+          if (!data.formToken || !data.transactionNum || !data.merchOrderId) {
+            console.error('Redirect required but missing required fields:', {
+              hasFormToken: !!data.formToken,
+              hasTransactionNum: !!data.transactionNum,
+              hasMerchOrderId: !!data.merchOrderId,
+            });
             setStep('error');
+            return;
+          }
+
+          // Build redirect URL
+          const redirectUrl = buildRedirectUrl(
+            selectedProvider,
+            selectedMethod,
+            data.formToken,
+            data.transactionNum,
+            data.merchOrderId
+          );
+          
+          if (!redirectUrl) {
+            console.error('Failed to build redirect URL');
+            setStep('error');
+            return;
+          }
+
+          // Check if provider should use new tab or same-window redirect
+          const useNewTab = selectedProvider && shouldUseNewTab(selectedProvider);
+          
+          if (useNewTab) {
+            // Open in new tab (e.g., OK$)
+            const newWindow = openPaymentGatewayInNewTab(redirectUrl);
+            if (!newWindow) {
+              // If popup blocked, show error
+              console.error('Failed to open payment gateway in new tab. Popup may be blocked.');
+              setStep('error');
+              return;
+            }
+            // Successfully opened new tab - mark state and proceed to payment step
+            newTabOpenedRef.current = true;
+            setRedirectOpenedInNewTab(true);
+            setStep('payment');
+            // Don't set error state - new tab opened successfully
+          } else {
+            // Same-window redirect (default for other providers)
+            // Close modal before redirecting
+            onClose();
+            
+            // Small delay to ensure modal closes smoothly, then redirect
+            setTimeout(() => {
+              const success = redirectToPaymentGateway(redirectUrl);
+              if (!success) {
+                // If redirect failed, show error (though this is unlikely)
+                console.error('Failed to redirect to payment gateway');
+              }
+            }, 100);
           }
         } else {
           // No redirect needed, proceed to payment step (show QR code or PIN instructions)
+          // Validate that we have either qrCode or formToken for non-redirect methods
+          if (!data.qrCode && !data.formToken) {
+            console.error('No payment method data available (no qrCode or formToken)', data);
+            setStep('error');
+            return;
+          }
           setStep('payment');
         }
-      } else {
-        console.error('Invalid response structure:', response);
+      } catch (error) {
+        // Catch any unexpected errors during response processing
+        console.error('Unexpected error processing payment response:', error);
         setStep('error');
       }
     },
     onError: (error: any) => {
+      // Only show error if new tab was NOT successfully opened
+      // This prevents showing error after successful new tab open
+      if (newTabOpenedRef.current) {
+        console.warn('Error occurred but new tab already opened successfully, ignoring error:', error);
+        return;
+      }
+      
       console.error('Payment token error:', error);
       console.error('Error details:', {
         message: error?.message,
@@ -456,8 +531,49 @@ export function PaymentModal({
 
           {step === 'payment' && paymentData && (
             <div className="space-y-4">
+              {/* Show message if payment gateway opened in new tab */}
+              {redirectOpenedInNewTab && (
+                <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+                  <div className="text-center space-y-4">
+                    <div className="flex items-center justify-center">
+                      <AlertCircle className="h-8 w-8 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                        {t('payments.paymentGatewayOpened') || 'Payment Gateway Opened'}
+                      </h3>
+                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
+                        {t('payments.paymentGatewayOpenedDesc') || 'A new tab has been opened for payment. Please complete your payment in that tab. This window will automatically update when payment is confirmed.'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-white dark:bg-gray-900 rounded border space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {t('payments.amount') || 'Amount'}
+                        </span>
+                        <span className="font-semibold text-primary">
+                          {paymentData.amount.toLocaleString()} MMK
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {t('payments.orderId') || 'Order ID'}
+                        </span>
+                        <span className="font-mono text-sm">{paymentData.merchOrderId}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {t('payments.transactionNum') || 'Transaction Number'}
+                        </span>
+                        <span className="font-mono text-sm">{paymentData.transactionNum}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Show QR code if QR code exists */}
-              {selectedMethod === 'QR' && paymentData.qrCode && (
+              {!redirectOpenedInNewTab && selectedMethod === 'QR' && paymentData.qrCode && (
                 <QRCodeDisplay
                   qrCode={paymentData.qrCode}
                   amount={paymentData.amount}
@@ -467,8 +583,8 @@ export function PaymentModal({
                 />
               )}
 
-              {/* Show PIN instructions if method is PIN/PWA */}
-              {selectedMethod !== 'QR' && (
+              {/* Show PIN instructions if method is PIN/PWA and not redirected to new tab */}
+              {!redirectOpenedInNewTab && selectedMethod !== 'QR' && (
                 <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                   <div className="flex items-start gap-3">
                     <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5" />

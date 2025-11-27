@@ -2053,6 +2053,8 @@ const translations: Translations = {
     'payments.cbPayFormNote': { en: 'Note: CB Pay will redirect you to complete the payment. Please follow the instructions on the payment form.', mm: 'မှတ်ချက်: CB Pay သည် ငွေပေးချေမှုကိုပြီးမြောက်စေရန် သင့်အားလမ်းညွှန်ပေးလိမ့်မည်။ ကျေးဇူးပြု၍ငွေပေးချေမှုပုံစံရှိလမ်းညွှန်ချက်များကိုလိုက်နာပါ။' },
     'payments.redirectedToGateway': { en: 'Redirected to Payment Gateway', mm: 'ငွေပေးချေမှုဂိတ်ဝေသို့လမ်းညွှန်ထားသည်' },
     'payments.redirectedToGatewayDesc': { en: 'A new window has been opened for payment. Please complete your payment in that window. You can close this dialog after payment is complete.', mm: 'ငွေပေးချေမှုအတွက် ဝင်းဒိုးအသစ်တစ်ခုကိုဖွင့်ထားပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ထိုဝင်းဒိုးတွင်ငွေပေးချေမှုကိုပြီးမြောက်စေပါ။ ငွေပေးချေမှုပြီးမြောက်ပြီးနောက် ဤဒိုင်ယာလော့ခ်ကိုပိတ်နိုင်ပါသည်။' },
+    'payments.paymentGatewayOpened': { en: 'Payment Gateway Opened', mm: 'ငွေပေးချေမှုဂိတ်ဝေဖွင့်ထားပြီးပါပြီ' },
+    'payments.paymentGatewayOpenedDesc': { en: 'A new tab has been opened for payment. Please complete your payment in that tab. This window will automatically update when payment is confirmed.', mm: 'ငွေပေးချေမှုအတွက် tab အသစ်တစ်ခုကိုဖွင့်ထားပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ထို tab တွင်ငွေပေးချေမှုကိုပြီးမြောက်စေပါ။ ငွေပေးချေမှုအတည်ပြုပြီးသောအခါ ဤဝင်းဒိုးသည်အလိုအလျောက်အပ်ဒိတ်လုပ်လိမ့်မည်။' },
   'payments.customerName': { en: 'Customer Name', mm: 'ဖောက်သည်အမည်' },
   'payments.customerNamePlaceholder': { en: 'Enter your name', mm: 'သင့်အမည်ကိုထည့်သွင်းပါ' },
     'payments.customerPhone': { en: 'Phone Number', mm: 'ဖုန်းနံပါတ်' },
