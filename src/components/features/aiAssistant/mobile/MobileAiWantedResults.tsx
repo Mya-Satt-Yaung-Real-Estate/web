@@ -54,7 +54,7 @@ export const MobileAiWantedResults = memo(function MobileAiWantedResults({ tool 
         {listings.map((listing, index) => (
           <a
             key={listing.id}
-            href={`/wanted/${listing.slug}`}
+            href={`/mobile/wanted/${listing.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block group"

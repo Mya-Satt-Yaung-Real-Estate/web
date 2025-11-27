@@ -7,6 +7,7 @@ import { lazyWithRetry } from '../utils/lazyWithRetry';
 // Import feature routes
 import { publicRoutes } from './public';
 import { protectedRoutes } from './protected';
+import { mobileRoutes } from './mobile';
 
 // Lazy load NotFoundPage with retry mechanism
 const NotFoundPage = lazyWithRetry(() => import('../pages/NotFound').then(module => ({ default: module.NotFound })));
@@ -37,6 +38,9 @@ export const router = createBrowserRouter([
       </Suspense>
     ),
   },
+  
+  // Mobile routes - standalone pages without Layout
+  ...mobileRoutes,
   
   // Catch-all route
   {
