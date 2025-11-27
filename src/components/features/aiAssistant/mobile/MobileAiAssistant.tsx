@@ -22,6 +22,70 @@ export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const chatMutation = useAiAssistantChat();
 
+  // Prevent body scrolling and pinch zoom when in mobile WebView - MUST be called before any conditional returns
+  useEffect(() => {
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    document.body.style.touchAction = 'pan-y'; // Allow vertical scroll, prevent pinch zoom
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100vh';
+    document.documentElement.style.touchAction = 'pan-y';
+
+    // Prevent pinch zoom with touch events
+    const preventZoom = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    const preventDoubleTapZoom = (e: TouchEvent) => {
+      const now = Date.now();
+      const timeSinceLastTouch = now - (preventDoubleTapZoom as any).lastTouch || 0;
+      (preventDoubleTapZoom as any).lastTouch = now;
+      
+      if (timeSinceLastTouch < 300 && timeSinceLastTouch > 0) {
+        e.preventDefault();
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener('touchstart', preventZoom, { passive: false });
+    document.addEventListener('touchmove', preventZoom, { passive: false });
+    document.addEventListener('touchend', preventDoubleTapZoom, { passive: false });
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
+
+    // Update viewport meta tag to prevent zoom
+    let viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.touchAction = '';
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.documentElement.style.touchAction = '';
+      
+      document.removeEventListener('touchstart', preventZoom);
+      document.removeEventListener('touchmove', preventZoom);
+      document.removeEventListener('touchend', preventDoubleTapZoom);
+      document.removeEventListener('gesturestart', (e) => e.preventDefault());
+      document.removeEventListener('gesturechange', (e) => e.preventDefault());
+      document.removeEventListener('gestureend', (e) => e.preventDefault());
+      
+      // Restore viewport
+      if (viewportMeta) {
+        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      }
+    };
+  }, []);
+
   const generateMessageId = () => `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   // Transform history message to display format
@@ -125,7 +189,20 @@ export function MobileAiAssistant({ onClose: _onClose }: MobileAiAssistantProps)
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-white">
+    <div 
+      className="fixed inset-0 z-50 flex flex-col bg-white"
+      style={{ touchAction: 'pan-y' }}
+      onTouchStart={(e) => {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }}
+      onTouchMove={(e) => {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }}
+    >
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden safe-area-top" data-chat-area>
         <MobileAiChatArea
           messages={messages}
