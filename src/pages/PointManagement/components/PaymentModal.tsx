@@ -91,12 +91,46 @@ export function PaymentModal({
     return provider === 'Visa' || provider === 'Master' || provider === 'JCB';
   };
 
-  // Handle provider change - clear method if it's not valid for new provider
+  // Check if provider should show customer name/phone fields
+  const shouldShowCustomerInfo = (provider: PaymentProvider | null, method: PaymentMethod | null): boolean => {
+    if (!provider || !method) return false;
+    
+    // Show customer info for these providers:
+    // - Sai Sai Pay (PIN)
+    // - Onepay (PIN)
+    // - MPitesan (PIN)
+    // - AYA Pay (PIN only, not QR)
+    // - UAB Pay (PIN)
+    const providersWithCustomerInfo: PaymentProvider[] = ['Sai Sai Pay', 'Onepay', 'MPitesan', 'UAB Pay'];
+    
+    if (providersWithCustomerInfo.includes(provider) && method !== 'QR') {
+      return true;
+    }
+    
+    // AYA Pay - only show for PIN method
+    if (provider === 'AYA Pay' && method === 'PIN') {
+      return true;
+    }
+    
+    return false;
+  };
+
+  // Handle provider change - auto-select method if provider has only one method
   const handleProviderChange = (provider: PaymentProvider) => {
     setSelectedProvider(provider);
     const availableMethods = PROVIDER_METHODS[provider] || [];
-    // Clear selected method if it's not available for the new provider
-    if (selectedMethod && !availableMethods.includes(selectedMethod)) {
+    
+    // Auto-select method if provider has only one method
+    if (availableMethods.length === 1) {
+      setSelectedMethod(availableMethods[0]);
+    } else if (availableMethods.length > 1) {
+      // For providers with multiple methods (like AYA Pay), clear selection
+      // User must select manually
+      if (selectedMethod && !availableMethods.includes(selectedMethod)) {
+        setSelectedMethod(null);
+      }
+    } else {
+      // No methods available, clear selection
       setSelectedMethod(null);
     }
   };
@@ -137,10 +171,23 @@ export function PaymentModal({
           setPhoneValidation({ isValid: validation.isValid, error: validation.error });
         }
       } else if (selectedMethod === 'PIN' || selectedMethod === 'PWA' || selectedMethod === 'OTP') {
-        // Clear fields when switching to PIN/PWA/OTP (user must enter manually)
-        setCustomerName('');
-        setCustomerPhone('');
-        setPhoneValidation({ isValid: false });
+        // Check if provider should show customer info fields
+        if (selectedProvider && shouldShowCustomerInfo(selectedProvider, selectedMethod)) {
+          // Providers that require customer info - clear fields (user must enter manually)
+          setCustomerName('');
+          setCustomerPhone('');
+          setPhoneValidation({ isValid: false });
+        } else {
+          // Other providers - use authenticated user's info or empty (for redirect providers)
+          setCustomerName(user?.name || '');
+          setCustomerPhone(user?.phone || '');
+          if (user?.phone) {
+            const validation = validateMyanmarPhone(user.phone);
+            setPhoneValidation({ isValid: validation.isValid, error: validation.error });
+          } else {
+            setPhoneValidation({ isValid: false });
+          }
+        }
       } else if (!selectedMethod) {
         // Clear fields when no method is selected
         setCustomerName('');
@@ -296,12 +343,14 @@ export function PaymentModal({
           }
         } else {
           // No redirect needed, proceed to payment step (show QR code or PIN instructions)
-          // Validate that we have either qrCode or formToken for non-redirect methods
-          if (!data.qrCode && !data.formToken) {
-            console.error('No payment method data available (no qrCode or formToken)', data);
+          // For QR methods, we need qrCode
+          // For PIN methods, we just need transaction details (merchOrderId, transactionNum, amount)
+          if (selectedMethod === 'QR' && !data.qrCode) {
+            console.error('QR method requires qrCode but it is missing', data);
             setStep('error');
             return;
           }
+          // For PIN methods, we have merchOrderId and transactionNum (already validated above), so we're good
           setStep('payment');
         }
       } catch (error) {
@@ -373,10 +422,14 @@ export function PaymentModal({
     // For other providers, method is required
     if (!selectedMethod) return;
     
+    // For providers that show customer info fields, require manual entry
     // For QR method, use authenticated user's name and phone
-    // For PIN/OTP methods, require user to enter manually
+    // For other providers, use authenticated user's info or empty
     let finalCustomerName = '';
     let finalCustomerPhone = '';
+    
+    // Check if provider should show customer info fields
+    const needsCustomerInfo = selectedProvider && selectedMethod && shouldShowCustomerInfo(selectedProvider, selectedMethod);
     
     if (selectedMethod === 'QR') {
       // Use authenticated user's info for QR
@@ -392,8 +445,8 @@ export function PaymentModal({
         }
         finalCustomerPhone = validation.normalized;
       }
-    } else {
-      // For PIN/OTP, require manual entry and validation
+    } else if (needsCustomerInfo) {
+      // For providers that show customer info fields, require manual entry and validation
       if (!customerName.trim()) return;
       
       // Validate phone number
@@ -410,6 +463,10 @@ export function PaymentModal({
       
       finalCustomerName = customerName.trim();
       finalCustomerPhone = validation.normalized; // Use normalized phone
+    } else {
+      // For other providers (redirect providers, etc.), use authenticated user's info or empty
+      finalCustomerName = user?.name || '';
+      finalCustomerPhone = user?.phone || '';
     }
 
     setStep('processing');
@@ -502,8 +559,8 @@ export function PaymentModal({
                 onSelectMethod={setSelectedMethod}
               />
               
-              {/* Customer Information - Only show for PIN/PWA methods when method is selected */}
-              {selectedProvider && selectedMethod && selectedMethod !== 'QR' && selectedMethod !== null && !isCreditCardProvider(selectedProvider) && (
+              {/* Customer Information - Only show for specific providers that require customer info */}
+              {selectedProvider && selectedMethod && selectedMethod !== 'QR' && selectedMethod !== null && !isCreditCardProvider(selectedProvider) && shouldShowCustomerInfo(selectedProvider, selectedMethod) && (
                 <div className="space-y-4 pt-2">
                   <div className="space-y-2">
                     <Label htmlFor="customerName">
@@ -822,7 +879,7 @@ export function PaymentModal({
                     !selectedProvider || 
                     !selectedMethod ||
                     (isCreditCardProvider(selectedProvider) && selectedMethod !== 'OTP') ||
-                    (!isCreditCardProvider(selectedProvider) && selectedMethod !== 'QR' && (!customerName.trim() || !customerPhone.trim() || !phoneValidation.isValid)) ||
+                    (!isCreditCardProvider(selectedProvider) && selectedMethod !== 'QR' && shouldShowCustomerInfo(selectedProvider, selectedMethod) && (!customerName.trim() || !customerPhone.trim() || !phoneValidation.isValid)) ||
                     (!isCreditCardProvider(selectedProvider) && selectedMethod === 'QR' && (!user?.name || !user?.phone || !phoneValidation.isValid))
                   }
                 >

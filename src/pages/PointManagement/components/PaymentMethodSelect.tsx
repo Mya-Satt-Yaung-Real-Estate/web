@@ -46,31 +46,14 @@ export function PaymentMethodSelect({
   const { t } = useLanguage();
 
   if (!provider) {
-    return (
-      <div className="space-y-3">
-        <label className="text-sm font-medium">
-          {t('payments.selectMethod') || 'Select Payment Method'}
-        </label>
-        <p className="text-sm text-muted-foreground">
-          {t('payments.selectProviderFirst') || 'Please select a payment provider first'}
-        </p>
-      </div>
-    );
+    return null;
   }
 
   const availableMethods = PROVIDER_METHODS[provider] || [];
 
-  if (availableMethods.length === 0) {
-    return (
-      <div className="space-y-3">
-        <label className="text-sm font-medium">
-          {t('payments.selectMethod') || 'Select Payment Method'}
-        </label>
-        <p className="text-sm text-muted-foreground">
-          {t('payments.noMethodsAvailable') || 'No payment methods available for this provider'}
-        </p>
-      </div>
-    );
+  // Only show method selector if provider has multiple methods (only AYA Pay)
+  if (availableMethods.length <= 1) {
+    return null;
   }
 
   return (

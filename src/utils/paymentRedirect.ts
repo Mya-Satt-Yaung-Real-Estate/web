@@ -2,7 +2,7 @@ import type { PaymentProvider, PaymentMethod } from '@/types/payments';
 
 export function requiresRedirect(provider: PaymentProvider, method: PaymentMethod): boolean {
   
-  const noRedirectProviders: PaymentProvider[] = ['AYA Pay', 'Onepay', 'Sai Sai Pay'];
+  const noRedirectProviders: PaymentProvider[] = ['AYA Pay', 'Onepay', 'Sai Sai Pay', 'UAB Pay'];
   
   // Credit card providers always need redirect
   if (provider === 'Visa' || provider === 'Master' || provider === 'JCB') {
@@ -55,7 +55,7 @@ export function buildRedirectUrl(
     return `${baseUrl}/gateway/mpitesan?transactionNumber=${encodeURIComponent(transactionNum)}&formToken=${encodeURIComponent(formToken)}&merchantOrderId=${encodeURIComponent(merchantOrderId)}`;
   }
 
-  // Default redirect for: Wave Pay, OK$, MPT Pay, UAB Pay
+  // Default redirect for: Wave Pay, OK$, MPT Pay
   // Uses transactionNo (not transactionNumber)
   return `${baseUrl}/gateway/redirect?transactionNo=${encodeURIComponent(transactionNum)}&formToken=${encodeURIComponent(formToken)}&merchantOrderId=${encodeURIComponent(merchantOrderId)}`;
 }
