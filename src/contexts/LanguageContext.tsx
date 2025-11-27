@@ -1001,6 +1001,7 @@ const translations: Translations = {
   'wantedDetail.postedOn': { en: 'Posted on', mm: 'တင်ထားသည့်ရက်စွဲ' },
   'wantedDetail.contact': { en: 'Contact', mm: 'ဆက်သွယ်ရန်' },
   'wantedDetail.name': { en: 'Name', mm: 'အမည်' },
+  'wantedDetail.phone': { en: 'Phone', mm: 'ဖုန်း' },
   'wantedDetail.call': { en: 'Call', mm: 'ခေါ်ဆိုရန်' },
   'wantedDetail.email': { en: 'Email', mm: 'အီးမေးလ်' },
   'wantedDetail.postedBy': { en: 'Posted By', mm: 'တင်ထားသူ' },
@@ -1009,6 +1010,7 @@ const translations: Translations = {
   'wantedDetail.preferredLocation': { en: 'Preferred Location', mm: 'နှစ်သက်သောတည်နေရာ' },
   'wantedDetail.errorLoading': { en: 'Error loading wanted listing', mm: 'လိုချင်သောစာရင်းကိုဖွင့်ရာတွင်အမှား' },
   'wantedDetail.errorMessage': { en: 'Failed to load the wanted listing. Please try again later.', mm: 'လိုချင်သောစာရင်းကိုဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
+  'wantedDetail.continueSearchingWithAI': { en: 'Continue Searching with AI', mm: 'AI ဖြင့်ဆက်လက်ရှာဖွေရန်' },
 
   // Public Advertisements
   'publicAdvertisements.title': { en: 'Advertisements', mm: 'ကြော်ငြာများ' },

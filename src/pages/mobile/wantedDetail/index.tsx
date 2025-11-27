@@ -27,7 +27,10 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
+  Sparkles,
 } from 'lucide-react';
+
+const AI_GRADIENT_COLOR = 'linear-gradient(to right, oklch(0.558 0.288 302.321) 0%, oklch(0.546 0.245 262.881) 100%)';
 
 export default function MobileWantedDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -121,8 +124,8 @@ export default function MobileWantedDetail() {
     );
   };
 
-  const handleCall = () => {
-    window.location.href = `tel:${wanted.contact.phone}`;
+  const handleGoBackToAI = () => {
+    navigate('/mobile/ai-assistant?token=JADE_PROPERTY_MOBILE_AI_CALL_2026');
   };
 
   return (
@@ -246,23 +249,18 @@ export default function MobileWantedDetail() {
 
               <Separator />
 
-              <Button 
-                className="w-full gradient-primary" 
-                onClick={handleCall}
-                size="sm"
-              >
-                <Phone className="mr-2 h-4 w-4" />
-                {t('wantedDetail.call') || 'Call'} {wanted.contact.phone}
-              </Button>
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">{t('wantedDetail.phone') || 'Phone'}</p>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  <p className="font-medium">{wanted.contact.phone}</p>
+                </div>
+              </div>
             </div>
 
             <Separator />
 
             <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="h-4 w-4 text-primary" />
-                <span>{wanted.contact.phone}</span>
-              </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="h-4 w-4 text-primary" />
                 <span className="break-all">{wanted.contact.email}</span>
@@ -327,6 +325,20 @@ export default function MobileWantedDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Continue Searching with AI Button */}
+        <Button
+          variant="outline"
+          onClick={handleGoBackToAI}
+          className="w-full border-0 text-white hover:opacity-90"
+          size="sm"
+          style={{
+            background: AI_GRADIENT_COLOR,
+          }}
+        >
+          <Sparkles className="mr-2 h-4 w-4" />
+          {t('wantedDetail.continueSearchingWithAI') || 'Continue Searching with AI'}
+        </Button>
       </div>
     </div>
   );
