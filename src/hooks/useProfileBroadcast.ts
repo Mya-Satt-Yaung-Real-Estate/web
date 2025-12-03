@@ -70,6 +70,12 @@ export function useProfileBroadcast() {
       }
     });
 
+    channelRef.current.listen('.payment-success', (data: {
+      // This is testing
+    }) => {
+      console.log('Payment event data updated:', data);
+    });
+
     // Handle connection errors
     channelRef.current.error((error: any) => {
       console.error('Echo channel error:', error);
