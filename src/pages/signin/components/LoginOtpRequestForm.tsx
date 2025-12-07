@@ -13,9 +13,9 @@ interface LoginOtpRequestFormProps {
   initialPhone?: string;
 }
 
-const PHONE_PREFIX = '09';
-const PHONE_LENGTH = 9; // digits after prefix
-const TOTAL_PHONE_LENGTH = 11; // prefix + digits
+const PHONE_PREFIX = '0';
+const PHONE_LENGTH = 10; // User input: 10 digits starting with 9 (e.g., 9422179288)
+const TOTAL_PHONE_LENGTH = 11; // Final formatted: 11 digits after adding 0 prefix (e.g., 09422179288)
 const COUNTRY_CODE = '+95';
 
 export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequestFormProps) {
@@ -27,8 +27,13 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
   // Update phone if initialPhone changes
   useEffect(() => {
     if (initialPhone) {
-      // Remove 09 prefix if present since we show +95 separately
-      const phoneWithoutPrefix = initialPhone.startsWith('09') ? initialPhone.slice(2) : initialPhone;
+      // Remove 0 or 09 prefix if present since we show +95 separately and number starts with 9
+      let phoneWithoutPrefix = initialPhone;
+      if (initialPhone.startsWith('09')) {
+        phoneWithoutPrefix = initialPhone.slice(2);
+      } else if (initialPhone.startsWith('0')) {
+        phoneWithoutPrefix = initialPhone.slice(1);
+      }
       setPhone(phoneWithoutPrefix);
     }
   }, [initialPhone]);
@@ -36,16 +41,19 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
   const formatPhoneNumber = (phone: string): string => {
     const cleanPhone = phone.replace(/\D/g, '');
     
-    if (cleanPhone.startsWith(PHONE_PREFIX)) {
+    // If already starts with 0 (like 09422179288), return as is
+    if (cleanPhone.startsWith('0')) {
       return cleanPhone;
     }
     
-    if (cleanPhone.length === PHONE_LENGTH && !cleanPhone.startsWith(PHONE_PREFIX)) {
+    // If 10 digits starting with 9, add 0 prefix (becomes 09422179288)
+    if (cleanPhone.length === PHONE_LENGTH && cleanPhone.startsWith('9')) {
       return `${PHONE_PREFIX}${cleanPhone}`;
     }
     
-    if (cleanPhone.length === TOTAL_PHONE_LENGTH && !cleanPhone.startsWith(PHONE_PREFIX)) {
-      return `${PHONE_PREFIX}${cleanPhone.slice(2)}`;
+    // If 11 digits without 0 prefix, extract and add 0
+    if (cleanPhone.length === TOTAL_PHONE_LENGTH && !cleanPhone.startsWith('0')) {
+      return `${PHONE_PREFIX}${cleanPhone.slice(1)}`; // Remove first digit and add 0
     }
     
     return cleanPhone;
@@ -53,16 +61,30 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
 
   const validatePhoneNumber = (phone: string): boolean => {
     const formattedPhone = formatPhoneNumber(phone);
+    // Validates: 09 followed by 9 digits = 11 digits total (e.g., 09422179288)
     return /^09\d{9}$/.test(formattedPhone);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
-    // Remove leading 09 if user types it (since we show +95 separately)
+    // Remove leading 0 or 09 if user types it (since we show +95 separately and number starts with 9)
     if (value.startsWith('09')) {
       value = value.slice(2);
+    } else if (value.startsWith('0')) {
+      value = value.slice(1);
     }
-    // Only allow digits, max 9 digits (without 09 prefix since we show +95 separately)
+
+    // Enforce that phone number starts with 9
+    if (value.length > 0 && !value.startsWith('9')) {
+      // If user types something that doesn't start with 9, only keep digits starting with 9
+      value = value.replace(/^[^9]*/, ''); // Remove any leading non-9 digits
+      // If still doesn't start with 9, set to empty or just '9'
+      if (value.length > 0 && !value.startsWith('9')) {
+        value = '9';
+      }
+    }
+
+    // Only allow digits, max 10 digits total (must start with 9)
     if (value.length <= PHONE_LENGTH) {
       setPhone(value);
       setError('');
@@ -73,19 +95,28 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
     e.preventDefault();
     setError('');
 
-    // Add 09 prefix to the phone number
-    const formattedPhone = phone.startsWith('09') ? phone : `09${phone}`;
+    // Add 0 prefix to the phone number (since it already starts with 9, becomes 09XXXXXXXXX = 11 digits)
+    // Input: 9422179288 (10 digits) → Output: 09422179288 (11 digits)
+    const formattedPhone = phone.startsWith('0') ? phone : `${PHONE_PREFIX}${phone}`;
     
     if (!phone) {
       setError(t('signin.otpRequest.phoneRequired') || 'Phone number is required');
       return;
     }
 
+    // Input must be exactly 10 digits (e.g., 9422179288)
     if (phone.length !== PHONE_LENGTH) {
       setError(t('signin.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
       return;
     }
 
+    // Input must start with 9
+    if (!phone.startsWith('9')) {
+      setError(t('signin.otpRequest.phoneInvalid') || 'Phone number must start with 9');
+      return;
+    }
+
+    // Final formatted phone must be 11 digits (09422179288)
     if (!validatePhoneNumber(formattedPhone)) {
       setError(t('signin.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
       return;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Lock, Building2, MapPin, FileText, Globe } from 'lucide-react';
+import { Mail, Building2, MapPin, FileText, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,8 +40,6 @@ export function CompanyFields({ phone, onSuccess }: CompanyFieldsProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    password_confirmation: '',
     company_name: '',
     company_type_id: '',
     address: '',
@@ -100,18 +98,6 @@ export function CompanyFields({ phone, onSuccess }: CompanyFieldsProps) {
       newErrors.email = t('signup.register.emailInvalid') || 'Please enter a valid email address';
     }
 
-    if (!formData.password) {
-      newErrors.password = t('signup.register.passwordRequired') || 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = t('signup.register.passwordMinLength') || 'Password must be at least 8 characters';
-    }
-
-    if (!formData.password_confirmation) {
-      newErrors.password_confirmation = t('signup.register.confirmPasswordRequired') || 'Password confirmation is required';
-    } else if (formData.password !== formData.password_confirmation) {
-      newErrors.password_confirmation = t('signup.register.passwordMismatch') || 'Passwords do not match';
-    }
-
     if (!formData.company_name.trim()) {
       newErrors.company_name = t('signup.register.companyNameRequired') || 'Company name is required';
     }
@@ -147,8 +133,8 @@ export function CompanyFields({ phone, onSuccess }: CompanyFieldsProps) {
       name: formData.name.trim(),
       email: formData.email.trim() || undefined,
       phone: phone.startsWith('09') ? phone : `09${phone}`,
-      password: formData.password,
-      password_confirmation: formData.password_confirmation,
+      password: '', // Password not required for OTP-based registration
+      password_confirmation: '', // Password confirmation not required
       company_name: formData.company_name.trim(),
       company_type_id: Number(formData.company_type_id),
       address: formData.address.trim(),
@@ -228,43 +214,6 @@ export function CompanyFields({ phone, onSuccess }: CompanyFieldsProps) {
         />
         {errors.email && (
           <p className="text-sm text-red-600">{errors.email}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-          <Lock className="h-4 w-4" />
-          {t('signup.register.password') || 'Password'}
-        </Label>
-        <Input
-          id="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange('password')}
-          className={errors.password ? 'border-red-500' : ''}
-          disabled={isPending}
-          placeholder={t('signup.register.passwordPlaceholder') || 'Enter password (min 8 characters)'}
-        />
-        {errors.password && (
-          <p className="text-sm text-red-600">{errors.password}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700">
-          {t('signup.register.confirmPassword') || 'Confirm Password'}
-        </Label>
-        <Input
-          id="password_confirmation"
-          type="password"
-          value={formData.password_confirmation}
-          onChange={handleChange('password_confirmation')}
-          className={errors.password_confirmation ? 'border-red-500' : ''}
-          disabled={isPending}
-          placeholder={t('signup.register.confirmPasswordPlaceholder') || 'Confirm your password'}
-        />
-        {errors.password_confirmation && (
-          <p className="text-sm text-red-600">{errors.password_confirmation}</p>
         )}
       </div>
 
