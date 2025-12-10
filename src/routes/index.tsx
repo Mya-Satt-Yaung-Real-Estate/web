@@ -16,6 +16,10 @@ const NotFoundPage = lazyWithRetry(() => import('../pages/NotFound').then(module
 const AiAssistantMobile = lazyWithRetry(() => import('../pages/mobile/AiAssistantMobile').then(module => ({ default: module.AiAssistantMobile })));
 const MobileRouteGuard = lazyWithRetry(() => import('../components/guards/MobileRouteGuard').then(module => ({ default: module.MobileRouteGuard })));
 
+// Lazy load Mobile Payment pages (standalone, no layout)
+const PaymentSuccessMobile = lazyWithRetry(() => import('../pages/mobile/payment/success').then(module => ({ default: module.PaymentSuccessMobile })));
+const PaymentFailMobile = lazyWithRetry(() => import('../pages/mobile/payment/fail').then(module => ({ default: module.PaymentFailMobile })));
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -34,6 +38,30 @@ export const router = createBrowserRouter([
       <Suspense fallback={<PageLoader />}>
         <MobileRouteGuard>
           <AiAssistantMobile />
+        </MobileRouteGuard>
+      </Suspense>
+    ),
+  },
+  
+  // Mobile Payment Success - standalone route without Layout, protected by guard
+  {
+    path: '/mobile/payment/success',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <MobileRouteGuard>
+          <PaymentSuccessMobile />
+        </MobileRouteGuard>
+      </Suspense>
+    ),
+  },
+  
+  // Mobile Payment Fail - standalone route without Layout, protected by guard
+  {
+    path: '/mobile/payment/fail',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <MobileRouteGuard>
+          <PaymentFailMobile />
         </MobileRouteGuard>
       </Suspense>
     ),
