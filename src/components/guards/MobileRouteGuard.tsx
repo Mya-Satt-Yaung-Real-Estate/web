@@ -16,37 +16,17 @@ export function MobileRouteGuard({ children }: MobileRouteGuardProps) {
     const validateAccess = () => {
       const token = searchParams.get('token');
       const expectedToken = import.meta.env.VITE_MOBILE_APP_TOKEN;
-      const userAgent = navigator.userAgent.toLowerCase();
 
-      // Check if token exists and matches
-      if (!token || token !== expectedToken) {
-        toast.error('This page is only accessible from the mobile app');
-        navigate('/', { replace: true });
-        return;
-      }
-
-      // Check user-agent for mobile app indicators
-      const isMobileApp = 
-        userAgent.includes('flutter') ||
-        userAgent.includes('jadeapp') ||
-        userAgent.includes('wv'); // WebView indicator
-
-        console.log(isMobileApp)
-      // const isMobileApp = true;
-
-      // Optional: Check screen size (mobile viewport)
-      const isMobileViewport = window.innerWidth <= 1024;
-
-      // Allow if token is valid and (mobile app user-agent OR mobile viewport)
-      if (isMobileViewport) {
+      // Only check token - no other conditions
+      if (token && token === expectedToken) {
         setIsValid(true);
-      } else {
-        toast.error('This page is only accessible from the mobile app');
-        navigate('/', { replace: true });
+        setIsChecking(false);
         return;
       }
 
-      setIsChecking(false);
+      // If token is missing or doesn't match, deny access
+      toast.error('This page is only accessible from the mobile app');
+      navigate('/', { replace: true });
     };
 
     validateAccess();
