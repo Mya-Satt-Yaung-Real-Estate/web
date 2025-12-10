@@ -32,7 +32,7 @@ export function MobileRouteGuard({ children }: MobileRouteGuardProps) {
         userAgent.includes('wv'); // WebView indicator
 
       // Optional: Check screen size (mobile viewport)
-      const isMobileViewport = window.innerWidth <= 768;
+      const isMobileViewport = window.innerWidth <= 1024;
 
       // Allow if token is valid and (mobile app user-agent OR mobile viewport)
       if (isMobileApp || isMobileViewport) {
