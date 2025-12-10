@@ -26,10 +26,12 @@ export function MobileRouteGuard({ children }: MobileRouteGuardProps) {
       }
 
       // Check user-agent for mobile app indicators
-      const isMobileApp = 
-        userAgent.includes('flutter') ||
-        userAgent.includes('jadeapp') ||
-        userAgent.includes('wv'); // WebView indicator
+      // const isMobileApp = 
+      //   userAgent.includes('flutter') ||
+      //   userAgent.includes('jadeapp') ||
+      //   userAgent.includes('wv'); // WebView indicator
+
+      const isMobileApp = true;
 
       // Optional: Check screen size (mobile viewport)
       const isMobileViewport = window.innerWidth <= 1024;
