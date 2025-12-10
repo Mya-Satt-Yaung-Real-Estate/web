@@ -39,7 +39,7 @@ export const MobileAiMessageBubble = memo(function MobileAiMessageBubble({ messa
         {isUser ? <User className="w-4 h-4" /> : <Sparkles className="w-4 h-4 text-white" />}
       </div>
 
-      <div className={`flex-1 max-w-[82%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+      <div className={`flex-1 ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
         <div className="relative group">
           <div 
             className={`rounded-2xl px-4 py-2.5 shadow-sm ${
