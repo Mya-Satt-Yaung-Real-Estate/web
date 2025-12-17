@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Menu, User, LogOut, Globe, X, ChevronDown,
   Building2, Star, Award, Heart, Eye,
@@ -79,6 +79,18 @@ export function Navigation() {
     navigate(path);
     setMobileMenuOpen(false);
   };
+
+  // Close mobile menu on scroll to prevent interference with map interactions
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileMenuOpen]);
 
   // Use mobile component for mobile/tablet
   if (isMobileOrTablet) {

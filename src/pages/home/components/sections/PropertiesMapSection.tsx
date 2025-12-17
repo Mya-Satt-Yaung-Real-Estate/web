@@ -215,7 +215,7 @@ export function PropertiesMapSection() {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30 relative z-40">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-12">
@@ -229,9 +229,9 @@ export function PropertiesMapSection() {
 
         {/* Map Card - Hide when modal is open to prevent conflicts */}
         {!isModalOpen && (
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden relative z-40">
             <CardContent className="p-4 sm:p-6">
-              <div className="relative w-full h-[600px] sm:h-[400px]">
+              <div className="relative w-full h-[600px] sm:h-[400px] z-40">
                 {/* Maximize Button */}
                 <Button
                   variant="secondary"
@@ -243,14 +243,16 @@ export function PropertiesMapSection() {
                   <Maximize2 className="h-4 w-4" />
                 </Button>
 
-                <MapContent
-                  properties={properties}
-                  defaultCenter={defaultCenter}
-                  defaultZoom={defaultZoom}
-                  language={language}
-                  onViewDetails={handleViewDetails}
-                  formatPrice={formatPrice}
-                />
+                <div className="absolute inset-0 z-40">
+                  <MapContent
+                    properties={properties}
+                    defaultCenter={defaultCenter}
+                    defaultZoom={defaultZoom}
+                    language={language}
+                    onViewDetails={handleViewDetails}
+                    formatPrice={formatPrice}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
