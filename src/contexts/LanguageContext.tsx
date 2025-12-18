@@ -1514,6 +1514,8 @@ const translations: Translations = {
   'createProperty.selectTownship': { en: 'မြို့နယ်ရွေးချယ်ရန်', mm: 'မြို့နယ်ရွေးချယ်ရန်' },
   'createProperty.address': { en: 'Address', mm: 'လိပ်စာ' },
   'createProperty.price': { en: 'Price (MMK)', mm: 'စျေးနှုန်း (ကျပ်)' },
+  'createProperty.priceLakh': { en: 'Price (Lakh)', mm: 'စျေးနှုန်း (ကျပ် - သိန်း)' },
+  'createProperty.priceLakhPlaceholder': { en: 'Price (Example: 20)', mm: 'စျေးနှုန်း (ဉပမာ။ 20)' },
   'createProperty.areaSqft': { en: 'Area (sqft)', mm: 'ဧရိယာ (စတုရန်းပေ)' },
   'createProperty.length': { en: 'Length (ft)', mm: 'အလျား (ပေ)' },
   'createProperty.width': { en: 'Width (ft)', mm: 'အနံ (ပေ)' },

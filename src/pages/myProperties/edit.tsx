@@ -184,11 +184,11 @@ export default function EditProperty() {
         form.setValue('latitude', property.location?.latitude ? Number(property.location.latitude) : undefined, { shouldValidate: false });
         form.setValue('longitude', property.location?.longitude ? Number(property.location.longitude) : undefined, { shouldValidate: false });
 
-        // Price and details
-        const priceNum = property.price ? Number(property.price) : undefined;
+        // Price and details - use price_lakh directly
+        const priceLakh = property.price_lakh ? Number(property.price_lakh) : undefined;
         const areaNum = property.area_sqft ? Number(property.area_sqft) : undefined;
-        if (priceNum !== undefined && !isNaN(priceNum)) {
-          form.setValue('price', priceNum, { shouldValidate: false });
+        if (priceLakh !== undefined && !isNaN(priceLakh) && priceLakh > 0) {
+          form.setValue('price_lakh', priceLakh, { shouldValidate: false });
         }
         form.setValue('bedrooms', property.bedrooms ?? 0, { shouldValidate: false });
         form.setValue('bathrooms', property.bathrooms ?? 0, { shouldValidate: false });
@@ -750,8 +750,14 @@ export default function EditProperty() {
                 </FormField>
                 {/* Price, Bedrooms, Bathrooms as a row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField name="price" label={t('createProperty.price')} error={errors.price} required>
-                    <Input type="number" placeholder={t('createProperty.price')} {...form.register('price')} disabled={isEditingRestricted} />
+                  <FormField name="price_lakh" label={t('createProperty.priceLakh') || 'Price (Lakh)'} error={errors.price_lakh} required>
+                    <Input 
+                      type="number" 
+                      step="0.01"
+                      placeholder={t('createProperty.priceLakhPlaceholder') || (language === 'mm' ? 'ဥပမာ: 3' : 'e.g., 3')} 
+                      {...form.register('price_lakh')}
+                      disabled={isEditingRestricted}
+                    />
                   </FormField>
                   <FormField name="bedrooms" label={t('createProperty.bedrooms')} error={errors.bedrooms} required>
                     <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} disabled={isEditingRestricted} />

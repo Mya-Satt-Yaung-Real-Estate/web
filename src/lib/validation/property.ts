@@ -39,7 +39,7 @@ export const createPropertySchema = (t: (key: string) => string) => z.object({
   address: z.string().min(1, t('validation.address.required')).max(500, t('validation.maxLength')),
   latitude: z.preprocess((v) => (v === '' || v === undefined ? undefined : v), z.coerce.number().optional()),
   longitude: z.preprocess((v) => (v === '' || v === undefined ? undefined : v), z.coerce.number().optional()),
-  price: z.preprocess(
+  price_lakh: z.preprocess(
     (v) => (v === '' || v === undefined || v === null ? 0 : v),
     z.coerce.number().positive(t('validation.price.required'))
   ),

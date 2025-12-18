@@ -413,8 +413,13 @@ export default function CreateProperty() {
                 </FormField>
                 {/* Price, Bedrooms, Bathrooms as a row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField name="price" label={t('createProperty.price')} error={errors.price} required>
-                    <Input type="number" placeholder={t('createProperty.price')} {...form.register('price')} />
+                  <FormField name="price_lakh" label={t('createProperty.priceLakh') || 'Price (Lakh)'} error={errors.price_lakh} required>
+                    <Input 
+                      type="number" 
+                      step="0.01"
+                      placeholder={t('createProperty.priceLakhPlaceholder') || (language === 'mm' ? 'ဥပမာ: 3' : 'e.g., 3')} 
+                      {...form.register('price_lakh')}
+                    />
                   </FormField>
                   <FormField name="bedrooms" label={t('createProperty.bedrooms')} error={errors.bedrooms} required>
                     <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} />
