@@ -9,6 +9,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { usePublicProperty } from '@/hooks/queries/usePublicProperties';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -131,6 +132,7 @@ export default function MobilePropertyDetail() {
       ? property.location.location_string
       : (property.location.location_string_mm || '');
   }, [property?.location, language]);
+
 
   const propertyTypeName = useMemo(() => {
     if (!property?.property_type) return '';
@@ -529,7 +531,7 @@ export default function MobilePropertyDetail() {
               <h3 className="mb-2 text-sm font-semibold">{t('propertyDetail.price') || 'Price'}</h3>
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
-                <span className="text-lg font-semibold text-primary">{property.formatted_price || property.price || '-'}</span>
+                <span className="text-lg font-semibold text-primary">{formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}</span>
               </div>
               {property.bank_installment_available && (
                 <Badge variant="outline" className="mt-2 bg-green-500/10 text-green-600 border-green-500/20">

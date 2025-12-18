@@ -10,6 +10,7 @@ import { ExternalLink, Phone, Building2, Tag, Maximize2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 import { usePropertiesMap } from '@/hooks/queries/home';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import 'leaflet/dist/leaflet.css';
@@ -57,7 +58,7 @@ interface MapContentProps {
   defaultZoom: number;
   language: string;
   onViewDetails: (slug: string) => void;
-  formatPrice: (price: string) => string;
+  formatPrice: (price: string, priceLakh?: string | number) => string;
 }
 
 function MapContent({ 
@@ -124,7 +125,7 @@ function MapContent({
                 </div>
 
                 <p className="text-sm font-semibold text-primary mb-2">
-                  {formatPrice(property.price)} MMK
+                  {formatPrice(property.price, property.price_lakh)}
                 </p>
 
                 {property.phone_numbers && property.phone_numbers.length > 0 && (
@@ -178,14 +179,9 @@ export function PropertiesMapSection() {
   const defaultCenter: [number, number] = [16.8661, 96.1951];
   const defaultZoom = 12;
 
-  // Format price for display
-  const formatPrice = (price: string): string => {
-    const numPrice = parseFloat(price);
-    if (isNaN(numPrice)) return price;
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(numPrice);
+  // Format price for display using utility function
+  const formatPrice = (price: string, priceLakh?: string | number): string => {
+    return formatPriceLakh(price, priceLakh, language);
   };
 
   const handleViewDetails = (slug: string) => {

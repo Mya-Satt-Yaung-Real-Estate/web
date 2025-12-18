@@ -15,6 +15,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 import { ShareModal } from '@/components/ui/ShareModal';
 import type { Property } from '@/types/properties';
 import type { Advertisement } from '@/types/advertisement';
@@ -541,7 +542,7 @@ export default function CompanyDetail() {
                                 {/* Price */}
                                 <div className="absolute bottom-3 left-3">
                                   <Badge className="bg-background/90 text-foreground backdrop-blur-sm">
-                                    {property.formatted_price}
+                                    {formatPriceLakh(property.price || '0', property.price_lakh, language) || property.formatted_price}
                                   </Badge>
                                 </div>
                               </div>
@@ -654,7 +655,7 @@ export default function CompanyDetail() {
                                 {/* Price - Below Image */}
                                 <div>
                                   <Badge className="bg-primary text-white border-primary text-sm font-semibold">
-                                    {property.formatted_price}
+                                    {formatPriceLakh(property.price || '0', property.price_lakh, language) || property.formatted_price}
                                   </Badge>
                                 </div>
                               </div>

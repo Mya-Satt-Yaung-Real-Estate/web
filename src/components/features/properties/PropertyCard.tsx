@@ -15,6 +15,7 @@ import { publicPropertyKeys } from '@/services/queries/publicProperties';
 import { homeKeys } from '@/services/queries/home';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
+import { formatPriceLakh } from '@/lib/utils';
 import type { PublicProperty } from '@/types/publicProperties';
 
 interface PropertyCardProps {
@@ -117,11 +118,6 @@ export function PropertyCard({ property }: PropertyCardProps) {
     return language === 'mm' ? property.listing_type.name_mm : property.listing_type.name_en;
   };
 
-  const formatPrice = (price: string) => {
-    const numPrice = parseFloat(price);
-    return `${numPrice.toLocaleString()} MMK`;
-  };
-
   const imageUrl = property.primary_image?.url || property.primary_image?.thumbnail_url || '';
 
   return (
@@ -186,7 +182,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </div>
           <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
             <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span>{formatPrice(property.price)}</span>
+            <span>{formatPriceLakh(property.price, property.price_lakh, language)}</span>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">

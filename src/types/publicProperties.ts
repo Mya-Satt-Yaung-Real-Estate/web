@@ -41,6 +41,7 @@ export interface PublicProperty {
   title_mm: string;
   description: string;
   price: string;
+  price_lakh?: string | number;
   area_sqft: string;
   bedrooms: number;
   bathrooms: number;
@@ -201,6 +202,7 @@ export interface PublicPropertyDetail {
   location: PublicPropertyLocation;
   price: string;
   formatted_price: string;
+  price_lakh?: string | number;
   area_sqft: string;
   length: string | null;
   width: string | null;

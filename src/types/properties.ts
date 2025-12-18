@@ -99,6 +99,7 @@ export interface Property {
   location: PropertyLocation;
   price: string;
   formatted_price: string;
+  price_lakh?: string | number;
   area_sqft: string;
   length?: string;
   width?: string;

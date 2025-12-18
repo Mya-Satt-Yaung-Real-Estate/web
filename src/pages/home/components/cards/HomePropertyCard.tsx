@@ -14,6 +14,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { ShareModal } from '@/components/ui/ShareModal';
 import { MapPin, Bed, Bath, Square, ThumbsUp, MessageCircle, Heart, Eye, DollarSign, Share2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { publicPropertyApi } from '@/services/api/publicProperties';
@@ -124,10 +125,6 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
     return language === 'mm' ? property.listing_type.name_mm : property.listing_type.name_en;
   };
 
-  const formatPrice = (price: string) => {
-    const numPrice = parseFloat(price);
-    return `${numPrice.toLocaleString()} MMK`;
-  };
 
   const imageUrl = property.primary_image?.url || property.primary_image?.thumbnail_url || '';
 
@@ -205,7 +202,7 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
           </div>
           <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
             <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span>{formatPrice(property.price)}</span>
+            <span>{formatPriceLakh(property.price, property.price_lakh, language)}</span>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">

@@ -29,6 +29,7 @@ export interface MapProperty {
   title_en: string;
   title_mm: string;
   price: string;
+  price_lakh?: string | number;
   phone_numbers: string[];
   latitude: string;
   longitude: string;

@@ -31,6 +31,8 @@ import {
   X,
 } from 'lucide-react';
 import type { PublicPropertyDetail } from '@/types/publicProperties';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 
 interface PropertyDetailsCardProps {
   property: PublicPropertyDetail;
@@ -77,6 +79,7 @@ export function PropertyDetailsCard({
   isReplying = false,
   t,
 }: PropertyDetailsCardProps) {
+  const { language } = useLanguage();
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editCommentText, setEditCommentText] = useState('');
@@ -160,7 +163,7 @@ export function PropertyDetailsCard({
               )}
             </div>
             <div className="text-left sm:text-right">
-              <div className="text-primary mb-1 text-lg sm:text-xl font-semibold">{property.formatted_price || property.price || '-'}</div>
+              <div className="text-primary mb-1 text-lg sm:text-xl font-semibold">{formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}</div>
               <Badge variant="outline" className="text-xs sm:text-sm">{listingTypeName}</Badge>
             </div>
           </div>

@@ -16,6 +16,7 @@ import { useModal } from '@/contexts/ModalContext';
 import { propertyApi } from '@/services/api/properties';
 import { pointSettingsApi } from '@/services/api/pointSettings';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 import { useMyProperty } from '@/hooks/queries/useProperties';
 import { MediaGallery } from '@/components/MediaGallery';
 
@@ -642,7 +643,7 @@ export default function PropertyDetail() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground min-w-[120px]">{t('properties.price') || 'Price'}:</span>
-                  <span className="font-medium text-primary">{property.formatted_price || property.price || '-'}</span>
+                  <span className="font-medium text-primary">{formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}</span>
                 </div>
                 {property.bank_installment_available && (
                   <div className="flex items-center gap-2 mt-2">

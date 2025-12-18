@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPriceLakh } from '@/lib/utils';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useFavorites } from '@/hooks/queries/useProperties';
 import { useToggleFavorite } from '@/hooks/mutations/usePropertyMutations';
@@ -28,6 +29,7 @@ export function Favorites() {
   const pagination = data?.data?.pagination;
 
   const toggleFavorite = useToggleFavorite();
+
   const [pendingSlug, setPendingSlug] = useState<string | null>(null);
   const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
@@ -241,7 +243,7 @@ export function Favorites() {
                       </div>
                       <div className="flex items-center justify-between mb-3">
                         <span className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent font-semibold">
-                          {property.formatted_price || (property.price ? `${new Intl.NumberFormat('en-US').format(parseFloat(property.price))} MMK` : '-')}
+                          {formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}
                         </span>
                         <Button 
                           variant="outline" 
