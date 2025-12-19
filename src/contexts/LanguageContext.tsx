@@ -797,6 +797,68 @@ const translations: Translations = {
   'privacyPolicy.sections.governingLaw.title': { en: 'GOVERNING LAW', mm: 'အုပ်ချုပ်သောဥပဒေ' },
   'privacyPolicy.sections.governingLaw.content': { en: 'This Privacy Policy is governed in all respects by the laws of Myanmar.', mm: 'ဤကိုယ်ရေးကိုယ်တာမူဝါဒသည် မြန်မာနိုင်ငံ၏ ဥပဒေများဖြင့် အုပ်ချုပ်ပါသည်။' },
   
+  // Terms of Service
+  'termsOfService.title': { en: 'Terms & Conditions', mm: 'စည်းမျဉ်းစည်းကမ်းများ' },
+  'termsOfService.subtitle': { en: 'Please read these terms carefully before using our platform', mm: 'ကျွန်ုပ်တို့၏ platform ကို အသုံးပြုမီ ဤစည်းမျဉ်းများကို သေချာစွာ ဖတ်ရှုပါ' },
+  'termsOfService.lastUpdated': { en: 'Last Updated', mm: 'နောက်ဆုံး ပြင်ဆင်ထားသော' },
+  'termsOfService.backToTop': { en: 'Back to Top', mm: 'ထိပ်သို့ ပြန်သွားရန်' },
+
+  // Terms of Service SEO
+  'termsOfService.seo.title': { en: 'Terms & Conditions - JADE Property', mm: 'စည်းမျဉ်းစည်းကမ်းများ - JADE Property' },
+  'termsOfService.seo.description': { en: 'Read the terms and conditions for using JADE Property platform', mm: 'JADE Property platform အသုံးပြုရန် စည်းမျဉ်းစည်းကမ်းများကို ဖတ်ရှုပါ' },
+  'termsOfService.seo.keywords': { en: 'terms, conditions, JADE Property, legal', mm: 'စည်းမျဉ်း, စည်းကမ်း, JADE Property, ဥပဒေ' },
+
+  // Terms of Service Table of Contents
+  'termsOfService.toc.title': { en: 'Table of Contents', mm: 'မာတိကာ' },
+  'termsOfService.toc.acceptance': { en: '1. Acceptance of Terms', mm: '၁။ စည်းမျဉ်းစည်းကမ်းများကို လက်ခံခြင်း' },
+  'termsOfService.toc.eligibility': { en: '2. Eligibility', mm: '၂။ အသုံးပြုရန် အရည်အချင်း' },
+  'termsOfService.toc.registration': { en: '3. Account Registration', mm: '၃။ အကောင့်စာရင်းသွင်းခြင်း' },
+  'termsOfService.toc.use': { en: '4. Use of the Platform', mm: '၄။ Platform အသုံးပြုခြင်း' },
+  'termsOfService.toc.listings': { en: '5. Property Listings', mm: '၅။ အိမ်ခြံမြေကြော်ငြာများ' },
+  'termsOfService.toc.payments': { en: '6. Payments & Fees', mm: '၆။ ငွေပေးချေမှု နှင့် ဝန်ဆောင်ခ' },
+  'termsOfService.toc.prohibited': { en: '7. Prohibited Activities', mm: '၇။ မပြုလုပ်ရမည့် အပြုအမူများ' },
+  'termsOfService.toc.intellectual': { en: '8. Intellectual Property', mm: '၈။ မူပိုင်ခွင့်' },
+  'termsOfService.toc.liability': { en: '9. Limitation of Liability', mm: '၉။ တာဝန်ကန့်သတ်ချက်' },
+  'termsOfService.toc.termination': { en: '10. Termination', mm: '၁၀။ အကောင့်ပိတ်သိမ်းခြင်း' },
+  'termsOfService.toc.changes': { en: '11. Changes to Terms', mm: '၁၁။ စည်းမျဉ်းပြင်ဆင်ခြင်း' },
+
+  // Terms of Service Sections
+  'termsOfService.sections.acceptance.title': { en: '1. Acceptance of Terms', mm: '၁။ စည်းမျဉ်းစည်းကမ်းများကို လက်ခံခြင်း' },
+  'termsOfService.sections.acceptance.content': { en: 'By accessing or using the JADE Property website, mobile application, or related services (collectively referred to as the "Platform"), you agree to comply with and be bound by these Terms & Conditions. If you do not agree, please do not use the Platform.', mm: 'JADE Property ဝဘ်ဆိုဒ်၊ မိုဘအပ်ပလီကေးရှင်း နှင့် ဆက်စပ်ဝန်ဆောင်မှုများကို အသုံးပြုခြင်းဖြင့် ဤစည်းမျဉ်းစည်းကမ်းများအား လက်ခံသဘောတူပါသည်။ မလက်ခံပါက Platform ကို မအသုံးပြုရပါ။' },
+
+  'termsOfService.sections.eligibility.title': { en: '2. Eligibility', mm: '၂။ အသုံးပြုရန် အရည်အချင်း' },
+  'termsOfService.sections.eligibility.content': { en: 'Users must be at least 18 years old to register and use the Platform.', mm: 'အသုံးပြုသူသည် အသက် ၁၈ နှစ် ပြည့်ပြီးသူ ဖြစ်ရပါမည်။' },
+
+  'termsOfService.sections.registration.title': { en: '3. Account Registration', mm: '၃။ အကောင့်စာရင်းသွင်းခြင်း' },
+  'termsOfService.sections.registration.content': { en: 'Users are required to provide accurate, complete, and up-to-date information during registration. You are responsible for maintaining the confidentiality of your login credentials and for all activities under your account.', mm: 'စာရင်းသွင်းရာတွင် မှန်ကန်ပြီး ပြည့်စုံသော အချက်အလက်များ ပေးရပါမည်။ သင့်အကောင့်နှင့် စကားဝှက်ကို လုံခြုံစွာ ထိန်းသိမ်းရန် တာဝန်ရှိပါသည်။' },
+
+  'termsOfService.sections.use.title': { en: '4. Use of the Platform', mm: '၄။ Platform အသုံးပြုခြင်း' },
+  'termsOfService.sections.use.content': { en: 'JADE Property provides an online platform for listing, searching, advertising, and communicating about real estate properties. Users agree to use the Platform only for lawful purposes and not to post false, misleading, or fraudulent information.', mm: 'JADE Property သည် အိမ်ခြံမြေကြော်ငြာခြင်း၊ ရှာဖွေခြင်း၊ ဆက်သွယ်ခြင်းများအတွက် အွန်လိုင်း Platform တစ်ခုဖြစ်ပါသည်။ အသုံးပြုသူများသည် တရားဝင် ရည်ရွယ်ချက်များအတွက်သာ အသုံးပြုရပါမည်။ မမှန်ကန်သော သို့မဟုတ် လိမ်လည်သော အချက်အလက်များ မတင်ရပါ။' },
+
+  'termsOfService.sections.listings.title': { en: '5. Property Listings', mm: '၅။ အိမ်ခြံမြေကြော်ငြာများ' },
+  'termsOfService.sections.listings.content': { en: 'All property information, images, prices, and descriptions are provided by property owners, agents, or advertisers. JADE Property does not guarantee the accuracy, completeness, or reliability of listings and is not responsible for any transactions between users.', mm: 'အိမ်ခြံမြေ အချက်အလက်များ၊ ဈေးနှုန်းများ၊ ပုံများအား အိမ်ရှင်များ သို့မဟုတ် အေးဂျင့်များက ပေးပို့ထားခြင်း ဖြစ်ပါသည်။ JADE Property သည် အချက်အလက်မှန်ကန်မှုကို အာမခံခြင်း မပြုလုပ်ပါ။' },
+
+  'termsOfService.sections.payments.title': { en: '6. Payments & Fees', mm: '၆။ ငွေပေးချေမှု နှင့် ဝန်ဆောင်ခ' },
+  'termsOfService.sections.payments.content': { en: 'Some services may require payment of fees. All fees, commissions, or service charges (if any) will be clearly stated before confirmation. Payments made are non-refundable unless otherwise specified.', mm: 'ဝန်ဆောင်မှုအချို့အတွက် အခကြေးငွေ ပေးချေရနိုင်ပါသည်။ အခကြေးငွေများကို အတည်ပြုမပြုမီ ကြိုတင် ဖော်ပြပေးမည် ဖြစ်ပါသည်။ အထူးဖော်ပြထားခြင်း မရှိပါက ပေးချေပြီးငွေများ ပြန်လည်မရရှိပါ။' },
+
+  'termsOfService.sections.prohibited.title': { en: '7. Prohibited Activities', mm: '၇။ မပြုလုပ်ရမည့် အပြုအမူများ' },
+  'termsOfService.sections.prohibited.content': { en: 'Users must not:', mm: 'အသုံးပြုသူများသည် အောက်ပါအပြုအမူများကို မပြုလုပ်ရပါ-' },
+  'termsOfService.sections.prohibited.item1': { en: 'Post illegal, offensive, or misleading content', mm: 'ဥပဒေနှင့် မကိုက်ညီသော သို့မဟုတ် လိမ်လည်သော အကြောင်းအရာများ တင်ခြင်း' },
+  'termsOfService.sections.prohibited.item2': { en: 'Attempt to hack, disrupt, or misuse the Platform', mm: 'Platform ကို ဖျက်ဆီးရန် သို့မဟုတ် မမှန်ကန်စွာ အသုံးပြုရန် ကြိုးစားခြင်း' },
+  'termsOfService.sections.prohibited.item3': { en: 'Use the Platform for unauthorized commercial purposes', mm: 'ခွင့်ပြုချက်မရှိသော စီးပွားရေး ရည်ရွယ်ချက်များအတွက် အသုံးပြုခြင်း' },
+
+  'termsOfService.sections.intellectual.title': { en: '8. Intellectual Property', mm: '၈။ မူပိုင်ခွင့်' },
+  'termsOfService.sections.intellectual.content': { en: 'All content, trademarks, logos, and software on the Platform are the property of JADE Property or its licensors. Unauthorized use, copying, or distribution is strictly prohibited.', mm: 'Platform ပေါ်ရှိ အကြောင်းအရာများ၊ လိုဂိုများ၊ ဆော့ဖ်ဝဲများအားလုံးသည် JADE Property သို့မဟုတ် ၎င်း၏ မူပိုင်ခွင့်ပိုင်ရှင်များ၏ ပိုင်ဆိုင်မှု ဖြစ်ပါသည်။ ခွင့်ပြုချက်မရှိဘဲ အသုံးပြုခြင်း မပြုရပါ။' },
+
+  'termsOfService.sections.liability.title': { en: '9. Limitation of Liability', mm: '၉။ တာဝန်ကန့်သတ်ချက်' },
+  'termsOfService.sections.liability.content': { en: 'JADE Property shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use of the Platform, including but not limited to property disputes, financial losses, or service interruptions.', mm: 'Jade Property သည် အိမ်ခြံမြေ သတင်းအချက်အလက်များကို ချိတ်ဆက်ပေးသော Platform တစ်ခုသာ ဖြစ်ပြီး၊ အသုံးပြုသူများအချင်းချင်း တိုက်ရိုက် ဆက်သွယ်လုပ်ဆောင်မှုများမှ ဖြစ်ပေါ်လာသည့် မည်သည့် ပြဿနာ၊ အငြင်းပွားမှု၊ ဆုံးရှုံးမှုများကိုမဆို တာဝန်မယူပါ။' },
+
+  'termsOfService.sections.termination.title': { en: '10. Termination', mm: '၁၀။ အကောင့်ပိတ်သိမ်းခြင်း' },
+  'termsOfService.sections.termination.content': { en: 'JADE Property reserves the right to suspend or terminate user accounts at any time without prior notice if these Terms & Conditions are violated.', mm: 'စည်းမျဉ်းစည်းကမ်းများကို ချိုးဖောက်ပါက JADE Property သည် ကြိုတင်အကြောင်းကြားခြင်းမရှိဘဲ အကောင့်ပိတ်သိမ်းနိုင်ပါသည်။' },
+
+  'termsOfService.sections.changes.title': { en: '11. Changes to Terms', mm: '၁၁။ စည်းမျဉ်းပြင်ဆင်ခြင်း' },
+  'termsOfService.sections.changes.content': { en: 'JADE Property may update or modify these Terms & Conditions at any time. Continued use of the Platform after changes indicates acceptance of the updated terms.', mm: 'JADE Property သည် စည်းမျဉ်းစည်းကမ်းများကို အချိန်မရွေး ပြင်ဆင်နိုင်ပါသည်။ ဆက်လက်အသုံးပြုခြင်းဖြင့် ပြင်ဆင်ထားသော စည်းမျဉ်းများကို လက်ခံသဘောတူပါသည်။' },
+  
   // About Us
   'about.story': { en: 'Our Story', mm: 'ကျွန်ုပ်တို့၏ ဇာတ်လမ်း' },
   'about.title': { en: 'About Jade Property', mm: 'Jade Property အကြောင်း' },

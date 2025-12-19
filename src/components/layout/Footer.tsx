@@ -130,7 +130,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link 
-                    to="/privacy-policy" 
+                    to="/terms-of-service" 
                     className="text-muted-foreground hover:text-primary transition-all inline-flex items-center gap-2 group text-sm"
                   >
                     <span className="w-1 h-1 rounded-full bg-primary/50 group-hover:bg-primary group-hover:scale-150 transition-all"></span>

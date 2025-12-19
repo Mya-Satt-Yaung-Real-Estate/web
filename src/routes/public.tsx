@@ -11,6 +11,7 @@ const CompanyDetail = lazyWithRetry(() => import('../pages/companies/detail').th
 const FAQ = lazyWithRetry(() => import('../pages/FAQ').then(module => ({ default: module.default })));
 const Contact = lazyWithRetry(() => import('../pages/Contact').then(module => ({ default: module.default })));
 const PrivacyPolicy = lazyWithRetry(() => import('../pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const TermsOfService = lazyWithRetry(() => import('../pages/TermsOfService').then(module => ({ default: module.TermsOfService })));
 const Feedback = lazyWithRetry(() => import('../pages/Feedback').then(module => ({ default: module.Feedback })));
 const Reviews = lazyWithRetry(() => import('../pages/reviews').then(module => ({ default: module.default })));
 const SignIn = lazyWithRetry(() => import('../pages/SignIn').then(module => ({ default: module.SignIn })));
@@ -112,6 +113,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <PrivacyPolicy />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/terms-of-service',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <TermsOfService />
       </Suspense>
     ),
   },
