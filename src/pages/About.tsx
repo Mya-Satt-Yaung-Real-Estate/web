@@ -5,6 +5,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 
+// Helper function to render text with bold markers
+const renderBoldText = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      const boldText = part.slice(2, -2);
+      return <strong key={index}>{boldText}</strong>;
+    }
+    return <span key={index}>{part}</span>;
+  });
+};
+
 export function About() {
   const { t } = useLanguage();
   const seo = seoUtils.getPageSEO('about');
@@ -187,17 +199,22 @@ export function About() {
       <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <section className="mb-20 gradient-mesh -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-7xl mx-auto text-center">
+        <div className="max-w-7xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 backdrop-blur-sm animate-fade-in">
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-primary">{t('about.story')}</span>
           </div>
-          <h1 className="mb-6 text-foreground">
+          <h1 className="mb-6 text-foreground text-center">
             {t('about.title')}
           </h1>
-          <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {t('about.intro')}
-          </p>
+          <div className="text-muted-foreground max-w-3xl mx-auto leading-relaxed space-y-4 text-left">
+            <p>{renderBoldText(t('about.intro'))}</p>
+            <p>{renderBoldText(t('about.intro2'))}</p>
+            <p>{renderBoldText(t('about.intro3'))}</p>
+            <p>{renderBoldText(t('about.intro4'))}</p>
+            <p>{renderBoldText(t('about.intro5'))}</p>
+            <p>{renderBoldText(t('about.intro6'))}</p>
+          </div>
         </div>
       </section>
 
@@ -513,14 +530,14 @@ export function About() {
                       href="mailto:info@jadeproperty.com"
                       className="text-muted-foreground hover:text-primary transition-colors"
                     >
-                      info@jadeproperty.com
+                      info@jade-property.com
                     </a>
                     <br />
                     <a
                       href="mailto:support@jadeproperty.com"
                       className="text-muted-foreground hover:text-primary transition-colors"
                     >
-                      support@jadeproperty.com
+                      support@jade-property.com
                     </a>
                   </div>
                 </div>
@@ -536,14 +553,14 @@ export function About() {
                       href="tel:+95123456789"
                       className="text-muted-foreground hover:text-primary transition-colors"
                     >
-                      +95 (1) 234-5678
+                      09 403677666
                     </a>
                     <br />
                     <a
                       href="tel:+95987654321"
                       className="text-muted-foreground hover:text-primary transition-colors"
                     >
-                      +95 (9) 876-54321
+                      09 763335120
                     </a>
                   </div>
                 </div>
@@ -556,9 +573,9 @@ export function About() {
                       {t('about.address')}
                     </h4>
                     <p className="text-muted-foreground leading-relaxed">
-                      123 Property Street<br />
-                      Downtown Yangon<br />
-                      Myanmar, 11181
+                      Location - PSH-78, Padauk Loop 2,<br />
+                      Padauk Garden Housing,<br />
+                      Hlaing Tharyar Township , Yangon
                     </p>
                   </div>
                 </div>
