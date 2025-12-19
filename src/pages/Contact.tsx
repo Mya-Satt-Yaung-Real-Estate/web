@@ -24,17 +24,17 @@ const contactInfo = [
   {
     icon: Phone,
     title: 'Phone',
-    details: ['+959763335120'],
+    details: ['09 403677666', '09 763335120'],
   },
   {
     icon: Mail,
     title: 'Email',
-    details: ['info@jadeproperty.com', 'support@jadeproperty.com'],
+    details: ['support@jade-property.com'],
   },
   {
     icon: MapPin,
     title: 'Office Address',
-    details: ['122/B, Min Ye Kyaw Swar Rd, Yangon, Myanmar (Burma)'],
+    details: ['Location - PSH-78, Padauk Loop 2, Padauk Garden Housing, Hlaing Tharyar Township, Yangon, Myanmar'],
   },
   {
     icon: Clock,
