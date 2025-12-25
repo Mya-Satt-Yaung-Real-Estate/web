@@ -17,7 +17,8 @@ const contactCategories = [
   'Technical Support',
   'Partnership',
   'Complaint',
-  'Suggestions'
+  'Suggestions',
+  'Account Deletion'
 ];
 
 const contactInfo = [
