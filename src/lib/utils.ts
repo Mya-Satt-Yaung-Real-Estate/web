@@ -19,9 +19,9 @@ export function formatPriceLakh(
     
     // Return Myanmar format if language is Myanmar
     if (language === 'mm') {
-      return `${formattedLakh} သိန်း (ကျပ်)`;
+      return `${formattedLakh} သိန်း`;
     }
-    return `${formattedLakh} Lakh (Kyats)`;
+    return `${formattedLakh} Lakh`;
   }
   
   // Fallback to original format if price_lakh not available
