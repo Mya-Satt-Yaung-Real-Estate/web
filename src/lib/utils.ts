@@ -21,7 +21,7 @@ export function formatPriceLakh(
     if (language === 'mm') {
       return `${formattedLakh} သိန်း`;
     }
-    return `${formattedLakh} Lakh`;
+    return `${formattedLakh} Lakhs`;
   }
   
   // Fallback to original format if price_lakh not available
