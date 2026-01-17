@@ -154,7 +154,7 @@ export function Footer() {
                     href="mailto:info@jadeproperty.com" 
                     className="text-sm"
                   >
-                    info@jade-property.com
+                    jade.cusservice@gmail.com
                   </a>
                 </li>
                 <li className="flex items-center gap-3 text-muted-foreground hover:text-primary group transition-colors">
@@ -165,7 +165,7 @@ export function Footer() {
                     href="tel:+95123456789" 
                     className="text-sm"
                   >
-                    09 403677666 , 09 763335120
+                    +959 750009119, +959 750009229
                   </a>
                 </li>
                 <li className="flex items-center gap-3 text-muted-foreground group">
@@ -173,7 +173,7 @@ export function Footer() {
                     <MapPin className="h-4 w-4 text-primary" />
                   </div>
                   <span className="text-sm">
-                    Location - PSH-78 , Padauk Loop 2 , Padauk Garden Housing , Hlaing Tharyar Township , Yangon
+                  Address- PSH-78, Padauk Loop 2, Padauk Garden Housing, Hlaing Tharyar Township, Yangon
                   </span>
                 </li>
               </ul>
