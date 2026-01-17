@@ -62,7 +62,7 @@ export function MobilePropertyCarousel() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="relative w-full h-[60vh] overflow-hidden">
+      <div className="relative w-full aspect-[1920/680] min-h-[350px] lg:min-h-0 overflow-hidden">
         <Skeleton className="w-full h-full" />
       </div>
     );
@@ -74,7 +74,7 @@ export function MobilePropertyCarousel() {
   }
 
   return (
-    <div className="relative w-full h-[60vh] overflow-hidden group">
+    <div className="relative w-full aspect-[1920/680] min-h-[350px] lg:min-h-0 overflow-hidden group">
       {/* Images */}
       <div className="relative w-full h-full">
         {sliderAds.map((ad: SliderAd, index: number) => {
@@ -98,10 +98,10 @@ export function MobilePropertyCarousel() {
                 src={imageUrl}
                 alt={title || `Slide ${index + 1}`}
                 className="w-full h-full object-cover"
+                style={{
+                  imageRendering: '-webkit-optimize-contrast',
+                } as React.CSSProperties}
               />
-              {(title || description || isButtonLink || isTextLink) && (
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
-              )}
               
               {/* Text Overlay - Mobile Optimized */}
               {(title || description || isButtonLink || isTextLink) && (
@@ -109,7 +109,7 @@ export function MobilePropertyCarousel() {
                   <div className="max-w-4xl mx-auto">
                     {title && (
                       <h2 
-                        className="mb-2 animate-fade-in text-xl font-bold"
+                        className="mb-2 animate-fade-in text-xl font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
                         style={{ color: textColor }}
                       >
                         {title}
@@ -117,7 +117,7 @@ export function MobilePropertyCarousel() {
                     )}
                     {description && (
                       <p 
-                        className="max-w-2xl mx-auto mb-4 animate-fade-in text-sm"
+                        className="max-w-2xl mx-auto mb-4 animate-fade-in text-sm drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]"
                         style={{ color: textColor }}
                       >
                         {description}

@@ -77,7 +77,10 @@ export function LazyImage({
       src={imageSrc}
       alt={alt}
       className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-70'} ${className}`}
-      style={style}
+      style={{
+        ...style,
+        imageRendering: '-webkit-optimize-contrast',
+      } as React.CSSProperties}
       loading="lazy"
     />
   );
