@@ -87,12 +87,12 @@ export const Home = memo(function Home() {
       description: 'Professional guidance from experienced realtors',
       link: '/companies',
     },
-    {
-      icon: <Banknote className="h-8 w-8" />,
-      titleKey: 'services.loanRequest',
-      descriptionKey: 'services.loanRequestDesc',
-      link: '/loan-request',
-    },
+    // {
+    //   icon: <Banknote className="h-8 w-8" />,
+    //   titleKey: 'services.loanRequest',
+    //   descriptionKey: 'services.loanRequestDesc',
+    //   link: '/loan-request',
+    // },
     {
       icon: <Calculator className="h-8 w-8" />,
       titleKey: 'services.loanCalculator',
@@ -209,7 +209,7 @@ export const Home = memo(function Home() {
               Comprehensive real estate solutions powered by cutting-edge technology
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {features.map((feature, index) => (
               <div 
                 key={index} 
