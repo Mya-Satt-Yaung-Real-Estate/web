@@ -24,7 +24,7 @@ import {
   Building2,
   Users,
   PlusCircle,
-  Banknote,
+  // Banknote,
   Calculator,
 } from 'lucide-react';
 

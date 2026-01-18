@@ -173,7 +173,7 @@ export function Footer() {
                     <MapPin className="h-4 w-4 text-primary" />
                   </div>
                   <span className="text-sm">
-                  Address- PSH-78, Padauk Loop 2, Padauk Garden Housing, Hlaing Tharyar Township, Yangon
+                    PSH-78, Padauk Loop 2, Padauk Garden Housing, Hlaing Tharyar Township, Yangon
                   </span>
                 </li>
               </ul>
