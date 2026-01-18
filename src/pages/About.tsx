@@ -46,6 +46,18 @@ export function About() {
       image: '👩‍🎨',
       bio: 'Connecting properties with people',
     },
+    {
+      name: 'Pyo Min Paing',
+      role: 'General Manager',
+      image: '👨‍💻',
+      bio: 'Real estate expert & property solutions',
+    },
+    {
+      name: 'Thiha Naing',
+      role: 'General Manager',
+      image: '👨‍💻',
+      bio: 'Real estate expert & property solutions',
+    },
   ];
 
   const vision = {
