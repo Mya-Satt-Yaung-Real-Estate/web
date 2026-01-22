@@ -54,9 +54,9 @@ export function About() {
     },
     {
       name: 'Thiha Naing',
-      role: 'General Manager',
+      role: 'Quality Control Team Leader',
       image: '👨‍💻',
-      bio: 'Real estate expert & property solutions',
+      bio: 'Precision-driven leadership.',
     },
   ];
 
