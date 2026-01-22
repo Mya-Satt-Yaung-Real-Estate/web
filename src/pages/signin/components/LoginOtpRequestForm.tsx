@@ -14,8 +14,10 @@ interface LoginOtpRequestFormProps {
 }
 
 const PHONE_PREFIX = '0';
-const PHONE_LENGTH = 10; // User input: 10 digits starting with 9 (e.g., 9422179288)
-const TOTAL_PHONE_LENGTH = 11; // Final formatted: 11 digits after adding 0 prefix (e.g., 09422179288)
+const SHORT_PHONE_LENGTH = 7; // User input: 7 digits starting with 9 (e.g., 9505050)
+const MEDIUM_PHONE_LENGTH = 8; // User input: 8 digits starting with 9 (e.g., 95050506)
+const LONG_PHONE_LENGTH = 10; // User input: 10 digits starting with 9 (e.g., 9971238411)
+const MAX_PHONE_LENGTH = 10; // Maximum allowed input length
 const COUNTRY_CODE = '+95';
 
 export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequestFormProps) {
@@ -41,18 +43,18 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
   const formatPhoneNumber = (phone: string): string => {
     const cleanPhone = phone.replace(/\D/g, '');
     
-    // If already starts with 0 (like 09422179288), return as is
+    // If already starts with 0 (like 095050506 or 09971238411), return as is
     if (cleanPhone.startsWith('0')) {
       return cleanPhone;
     }
     
-    // If 10 digits starting with 9, add 0 prefix (becomes 09422179288)
-    if (cleanPhone.length === PHONE_LENGTH && cleanPhone.startsWith('9')) {
+    // If 7, 8, or 10 digits starting with 9, add 0 prefix
+    if ((cleanPhone.length === SHORT_PHONE_LENGTH || cleanPhone.length === MEDIUM_PHONE_LENGTH || cleanPhone.length === LONG_PHONE_LENGTH) && cleanPhone.startsWith('9')) {
       return `${PHONE_PREFIX}${cleanPhone}`;
     }
     
-    // If 11 digits without 0 prefix, extract and add 0
-    if (cleanPhone.length === TOTAL_PHONE_LENGTH && !cleanPhone.startsWith('0')) {
+    // If 9, 10, or 11 digits without 0 prefix, extract and add 0
+    if ((cleanPhone.length === 9 || cleanPhone.length === 10 || cleanPhone.length === 11) && !cleanPhone.startsWith('0')) {
       return `${PHONE_PREFIX}${cleanPhone.slice(1)}`; // Remove first digit and add 0
     }
     
@@ -61,8 +63,8 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
 
   const validatePhoneNumber = (phone: string): boolean => {
     const formattedPhone = formatPhoneNumber(phone);
-    // Validates: 09 followed by 9 digits = 11 digits total (e.g., 09422179288)
-    return /^09\d{9}$/.test(formattedPhone);
+    // Validates: 09 followed by 7-9 digits = 9-11 digits total (e.g., 095030559 or 09971238411)
+    return /^09\d{7,9}$/.test(formattedPhone);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,18 +76,22 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
       value = value.slice(1);
     }
 
-    // Enforce that phone number starts with 9
+    // If user types digits that don't start with 9, automatically prepend 9
+    // Example: 5050506 (7 digits) → 95050506 (8 digits)
+    // Example: 505050 (6 digits) → 9505050 (7 digits)
     if (value.length > 0 && !value.startsWith('9')) {
-      // If user types something that doesn't start with 9, only keep digits starting with 9
-      value = value.replace(/^[^9]*/, ''); // Remove any leading non-9 digits
-      // If still doesn't start with 9, set to empty or just '9'
-      if (value.length > 0 && !value.startsWith('9')) {
-        value = '9';
+      // If it's 6-9 digits not starting with 9, prepend 9
+      // This allows: 5050506 → 95050506, 505050 → 9505050
+      if (value.length >= 6 && value.length <= 9) {
+        value = '9' + value;
+      } else if (value.length < 6) {
+        // For shorter inputs, just prepend 9
+        value = '9' + value;
       }
     }
 
     // Only allow digits, max 10 digits total (must start with 9)
-    if (value.length <= PHONE_LENGTH) {
+    if (value.length <= MAX_PHONE_LENGTH) {
       setPhone(value);
       setError('');
     }
@@ -95,8 +101,10 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
     e.preventDefault();
     setError('');
 
-    // Add 0 prefix to the phone number (since it already starts with 9, becomes 09XXXXXXXXX = 11 digits)
-    // Input: 9422179288 (10 digits) → Output: 09422179288 (11 digits)
+    // Add 0 prefix to the phone number (since it already starts with 9, becomes 09XXXXXXXXX = 9-11 digits)
+    // Input: 9505050 (7 digits) → Output: 09505050 (9 digits)
+    // Input: 95050506 (8 digits) → Output: 095050506 (9 digits)
+    // Input: 9971238411 (10 digits) → Output: 09971238411 (11 digits)
     const formattedPhone = phone.startsWith('0') ? phone : `${PHONE_PREFIX}${phone}`;
     
     if (!phone) {
@@ -104,8 +112,8 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
       return;
     }
 
-    // Input must be exactly 10 digits (e.g., 9422179288)
-    if (phone.length !== PHONE_LENGTH) {
+    // Input must be exactly 7, 8, or 10 digits (e.g., 9505050, 95050506, or 9971238411)
+    if (phone.length !== SHORT_PHONE_LENGTH && phone.length !== MEDIUM_PHONE_LENGTH && phone.length !== LONG_PHONE_LENGTH) {
       setError(t('signin.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
       return;
     }
@@ -116,7 +124,7 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
       return;
     }
 
-    // Final formatted phone must be 11 digits (09422179288)
+    // Final formatted phone must be 9-11 digits (09505050, 095050506, or 09971238411)
     if (!validatePhoneNumber(formattedPhone)) {
       setError(t('signin.otpRequest.phoneInvalid') || 'Please enter a valid phone number');
       return;
@@ -167,7 +175,7 @@ export function LoginOtpRequestForm({ onSuccess, initialPhone }: LoginOtpRequest
             onChange={handlePhoneChange}
             className={`flex-1 ${error ? 'border-red-500' : ''}`}
             disabled={isPending}
-            maxLength={PHONE_LENGTH}
+            maxLength={MAX_PHONE_LENGTH}
           />
         </div>
         {error && (
