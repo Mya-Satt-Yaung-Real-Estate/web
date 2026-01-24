@@ -12,6 +12,8 @@ import { publicPropertyApi } from '@/services/api/publicProperties';
 import { publicPropertyKeys } from '@/services/queries/publicProperties';
 import { homeKeys } from '@/services/queries/home';
 import { SEOHead } from '@/components/seo/SEOHead';
+import { Helmet } from 'react-helmet-async';
+import { generateCanonicalUrl } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
@@ -152,6 +154,15 @@ export default function PublicPropertyDetail() {
     setCurrentImageIndex(0);
   }, [property?.id, property?.media?.images?.length]);
   
+  const seoBaseUrl = 'https://jade-property.com';
+
+  const toAbsoluteUrl = (url?: string | null) => {
+    if (!url) return undefined;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const normalized = url.startsWith('/') ? url : `/${url}`;
+    return `${seoBaseUrl}${normalized}`;
+  };
+
   // Get title based on language - prefer language-specific version, fallback to other language
   const title = useMemo(() => {
     if (!property) return '';
@@ -163,6 +174,8 @@ export default function PublicPropertyDetail() {
   
   // Description is the same for both languages (from API response)
   const description = property?.description || '';
+  const titleEn = property?.title_en?.trim() || '';
+  const titleMm = property?.title_mm?.trim() || '';
   
   // Prepare images and videos for MediaGallery - must be called before conditional returns
   const galleryImages = useMemo(() => {
@@ -271,6 +284,62 @@ export default function PublicPropertyDetail() {
     };
   }, [property?.location, property?.id, title, locationString, listingTypeName]);
 
+  const seoImage = toAbsoluteUrl(
+    property?.media?.primary_image?.url ||
+    property?.media?.images?.[0]?.url ||
+    '/jade.png'
+  );
+
+  const schemaImages = galleryImages
+    .filter((media) => media.type !== 'video')
+    .map((media) => toAbsoluteUrl(media.url))
+    .filter(Boolean);
+
+  const priceValue = property?.price
+    ? Number(String(property.price).replace(/[^\d.]/g, ''))
+    : undefined;
+
+  const structuredData = property ? {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: titleEn || titleMm || title,
+    alternateName: titleMm || undefined,
+    description: description || undefined,
+    image: schemaImages.length ? schemaImages : undefined,
+    url: generateCanonicalUrl(`/properties/${slug}`, seoBaseUrl),
+    inLanguage: language === 'mm' ? 'my-MM' : 'en-US',
+    datePosted: property?.dates?.published_at || property?.dates?.created_at,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: property.location?.address || undefined,
+      addressLocality: property.location?.township?.name_en || undefined,
+      addressRegion: property.location?.region?.name_en || undefined,
+      addressCountry: 'MM',
+    },
+    geo: property.location?.latitude && property.location?.longitude ? {
+      '@type': 'GeoCoordinates',
+      latitude: property.location.latitude,
+      longitude: property.location.longitude,
+    } : undefined,
+    floorSize: property.area_sqft ? {
+      '@type': 'QuantitativeValue',
+      value: Number(String(property.area_sqft).replace(/[^\d.]/g, '')),
+      unitCode: 'SQF',
+    } : undefined,
+    numberOfBedrooms: property.bedrooms || undefined,
+    numberOfBathroomsTotal: property.bathrooms || undefined,
+    offers: priceValue ? {
+      '@type': 'Offer',
+      priceCurrency: 'MMK',
+      price: priceValue,
+      availability: 'https://schema.org/InStock',
+    } : undefined,
+    seller: property.user?.name ? {
+      '@type': 'Person',
+      name: property.user.name,
+    } : undefined,
+  } : null;
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
@@ -365,10 +434,17 @@ export default function PublicPropertyDetail() {
           title: title,
           description: description.substring(0, 160),
           keywords: `${title}, ${locationString}, ${propertyTypeName}, ${listingTypeName}, property, real estate`,
-          image: property?.media?.primary_image?.url || property?.media?.images?.[0]?.url || '/jade.png',
+          image: seoImage,
         }}
         path={`/properties/${slug}`}
       />
+      {structuredData && (
+        <Helmet>
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        </Helmet>
+      )}
       
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-20 sm:pt-24 pb-8 sm:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

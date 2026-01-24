@@ -13,8 +13,8 @@ export const defaultSEO: SEOConfig = {
   title: 'Jade Property - Premium Real Estate Solutions in Myanmar',
   description: 'Find your dream property with Jade Property. Premium real estate solutions, property management, and investment opportunities in Myanmar.',
   keywords: 'real estate, property, Myanmar, Yangon, property management, investment, housing, apartments, houses, land',
-  image: '/assets/jade-og-image.jpg',
-  url: 'https://jadeproperty.com',
+  image: '/assets/jade.png',
+  url: 'https://jade-property.com',
   type: 'website'
 };
 
@@ -24,7 +24,7 @@ export const pageSEO: Record<string, SEOConfig> = {
     title: 'Jade Property - Premium Real Estate Solutions in Myanmar',
     description: 'Find your dream property with Jade Property. Premium real estate solutions, property management, and investment opportunities in Myanmar.',
     keywords: 'real estate Myanmar, property Yangon, property management, investment Myanmar, housing Yangon',
-    image: '/assets/jade-og-image.jpg',
+    image: '/assets/jade.png',
     url: 'https://jadeproperty.com',
     type: 'website'
   },
@@ -48,7 +48,7 @@ export const pageSEO: Record<string, SEOConfig> = {
     title: 'Page Not Found - Jade Property',
     description: 'The page you are looking for could not be found. Return to Jade Property homepage to continue browsing our properties.',
     keywords: 'page not found, 404, Jade Property',
-    image: '/assets/jade-og-image.jpg',
+    image: '/assets/jade.png',
     url: 'https://jadeproperty.com/404',
     type: 'website'
   },
@@ -56,7 +56,7 @@ export const pageSEO: Record<string, SEOConfig> = {
     title: 'My Wanted Listings - Jade Property',
     description: 'Manage your wanted listings and property requirements. Create, edit, and track your property search needs.',
     keywords: 'my wanted listings, property requirements, manage listings, wanted list, property search',
-    image: '/assets/jade-og-image.jpg',
+    image: '/assets/jade.png',
     url: 'https://jadeproperty.com/my-wanted-listings/list',
     type: 'website'
   },
@@ -64,7 +64,7 @@ export const pageSEO: Record<string, SEOConfig> = {
     title: 'Create Wanted Listing - Jade Property',
     description: 'Post your property requirements and let sellers know what you\'re looking for. Create detailed wanted listings for better matches.',
     keywords: 'create wanted listing, property requirements, post requirements, wanted list, property search',
-    image: '/assets/jade-og-image.jpg',
+    image: '/assets/jade.png',
     url: 'https://jadeproperty.com/my-wanted-listings/create',
     type: 'website'
   },
@@ -72,7 +72,7 @@ export const pageSEO: Record<string, SEOConfig> = {
     title: 'Wanted Listings - Jade Property',
     description: 'Browse property requirements and wanted listings from buyers and renters. Find potential customers for your properties.',
     keywords: 'wanted listings, property requirements, buyers, renters, Myanmar property, property search',
-    image: '/assets/jade-og-image.jpg',
+    image: '/assets/jade.png',
     url: 'https://jadeproperty.com/public-wanted-list',
     type: 'website'
   },
@@ -80,7 +80,7 @@ export const pageSEO: Record<string, SEOConfig> = {
     title: 'Loan Calculator - Calculate Monthly Payments | Jade Property',
     description: 'Calculate your monthly loan payments, total costs, and affordability for property loans. Free loan calculator with EMI schedule and payment breakdown.',
     keywords: 'loan calculator, mortgage calculator, EMI calculator, property loan, home loan calculator, Myanmar property loan',
-    image: '/assets/jade-og-image.jpg',
+    image: '/assets/jade.png',
     url: 'https://jadeproperty.com/loan-calculator',
     type: 'website'
   }
@@ -92,7 +92,7 @@ export const generateTitle = (pageTitle: string, siteName: string = 'Jade Proper
 };
 
 // Generate canonical URL
-export const generateCanonicalUrl = (path: string, baseUrl: string = 'https://jadeproperty.com'): string => {
+export const generateCanonicalUrl = (path: string, baseUrl: string = 'https://jade-property.com'): string => {
   return `${baseUrl}${path}`;
 };
 
