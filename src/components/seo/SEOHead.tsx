@@ -24,6 +24,8 @@ export function SEOHead({ seo, path = '/' }: SEOHeadProps) {
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={seo.description} />
       <meta property="og:image" content={seo.image} />
+      <meta property="og:image:secure_url" content={seo.image} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:type" content={seo.type || 'website'} />
       <meta property="og:site_name" content="Jade Property" />
