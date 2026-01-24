@@ -432,7 +432,7 @@ export default function PublicPropertyDetail() {
       <SEOHead 
         seo={{
           title: title,
-          description: description.substring(0, 160),
+          description: description,
           keywords: `${title}, ${locationString}, ${propertyTypeName}, ${listingTypeName}, property, real estate`,
           image: seoImage,
         }}
