@@ -1,0 +1,39 @@
+# Jade Property - robots.txt
+# https://jade-property.com
+
+User-agent: *
+Allow: /
+
+# Public pages - allow
+Allow: /properties/
+Allow: /news-and-updates/
+Allow: /knowledge-hub/
+Allow: /companies/
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /public-wanted-list
+Allow: /search
+Allow: /legacy
+Allow: /yarpyat-taxes-calculator
+Allow: /loan-calculator
+
+# Private/Auth pages - disallow
+Disallow: /signin
+Disallow: /signup
+Disallow: /profile
+Disallow: /profile/edit
+Disallow: /settings
+Disallow: /favorites
+Disallow: /recent-views
+Disallow: /my-properties
+Disallow: /my-wanted-listings
+Disallow: /my-advertisements
+Disallow: /advertisements
+Disallow: /appointments
+Disallow: /point-management
+Disallow: /loan-request
+Disallow: /mobile/
+
+# Sitemap
+Sitemap: https://jade-property.com/sitemap.xml

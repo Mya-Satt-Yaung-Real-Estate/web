@@ -9,6 +9,7 @@ interface SEOHeadProps {
 export function SEOHead({ seo, path = '/' }: SEOHeadProps) {
   const canonicalUrl = generateCanonicalUrl(path);
   const fullTitle = generateTitle(seo.title);
+  const robotsContent = seo.robots || 'index, follow';
 
   return (
     <Helmet>
@@ -17,7 +18,7 @@ export function SEOHead({ seo, path = '/' }: SEOHeadProps) {
       <meta name="description" content={seo.description} />
       <meta name="keywords" content={seo.keywords} />
       <meta name="author" content="Jade Property" />
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={robotsContent} />
       <link rel="canonical" href={canonicalUrl} />
 
       {/* Open Graph Tags for Facebook and Telegram */}
