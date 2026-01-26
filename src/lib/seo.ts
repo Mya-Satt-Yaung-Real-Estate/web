@@ -24,7 +24,7 @@ export const pageSEO: Record<string, SEOConfig> = {
   // === PUBLIC PAGES ===
   home: {
     title: 'Jade Property - Premium Real Estate Solutions in Myanmar',
-    description: 'Find your dream property with Jade Property. Premium real estate solutions, property management, and investment opportunities in Myanmar.',
+    description: 'JADE Property မှာ အိမ်ခြံမြေ ဝယ်ယူလိုသူ၊ ရောင်းလိုသူ၊ ငှားလိုသူများနှင့် Property Agent များအားလုံးအတွက် One-Stop Real Estate Solution အဖြစ် ဝန်ဆောင်မှုများကို ပေးဆောင်လျက်ရှိပါသည်။ ရုံးချုပ်ကို လှိုင်သာယာမြို့နယ်၊ Padauk Garden အိမ်ရာတွင် တည်ထားပြီး အဆင့်မီ ဝန်ဆောင်မှု စံချိန်စံညွှန်းများဖြင့် အိမ်ခြံမြေစျေးကွက်တွင် ခေတ်မီသစ်ဆန်း သော အတွေ့အကြုံများ ပံ့ပိုးပေးနေ ပါသည်။ ကုမ္ပဏီ၏ အဓိက လုပ်ငန်းများတွင် မြေ၊ အဆောက်အဦးများ၏ ရောင်းဝယ်မှု၊ ငှားရမ်းမှု နှင့် အဆင့်မြင့် အိမ်ခြံမြေ Mobile Application Platform ဝန်ဆောင်မှုများ ပါဝင်ပြီး လိုအပ်သော နေရာတိုင်းတွင် Luxury Lifestyle အတွက် ပြည့်စုံသော အခွင့်အလမ်းများ ကို ဖန်တီးပေးနေသည်။',
     keywords: 'real estate Myanmar, property Yangon, property management, investment Myanmar, housing Yangon',
     image: '/assets/jade.png',
     url: 'https://jade-property.com',
@@ -32,7 +32,7 @@ export const pageSEO: Record<string, SEOConfig> = {
   },
   about: {
     title: 'About Jade Property - Leading Property Management Platform',
-    description: 'Learn about Jade Property, Myanmar\'s leading property management platform. Our mission, values, and commitment to excellence in real estate.',
+    description: 'JADE Property သည် ၂၀၂၆ ခုနှစ်တွင် တရားဝင် Launch ပြုလုပ်ခဲ့သော Digital Real Estate Platform တစ်ခုဖြစ်ပြီး မြန်မာနိုင်ငံအတွင်းရှိ အိမ်ခြံမြေ ရောင်းဝယ်ငှားရမ်းမှုများကို လုံခြုံ၊ မြန်ဆန်ပြီး ယုံကြည်စိတ်ချရသော နည်းပညာဖြင့် ချိတ်ဆက်ပေးနေပါသည်။',
     keywords: 'about Jade Property, property management Myanmar, real estate company, property services',
     image: '/assets/jade.png',
     url: 'https://jade-property.com/about',

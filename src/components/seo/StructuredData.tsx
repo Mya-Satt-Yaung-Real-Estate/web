@@ -5,20 +5,20 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Jade Property",
-  "description": "Premium real estate solutions and property management in Myanmar",
-  "url": "https://jadeproperty.com",
-  "logo": "https://jadeproperty.com/assets/jade-logo.png",
+  "description": "JADE Property မှာ အိမ်ခြံမြေ ဝယ်ယူလိုသူ၊ ရောင်းလိုသူ၊ ငှားလိုသူများနှင့် Property Agent များအားလုံးအတွက် One-Stop Real Estate Solution အဖြစ် ဝန်ဆောင်မှုများကို ပေးဆောင်လျက်ရှိပါသည်။",
+  "url": "https://jade-property.com",
+  "logo": "https://jade-property.com/assets/jade.png",
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+95-1-234-5678",
+    "telephone": "09 403677666, 09 763335120",
     "contactType": "customer service",
     "areaServed": "MM",
     "availableLanguage": ["English", "Myanmar"]
   },
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "123 Business Street",
-    "addressLocality": "Yangon",
+    "streetAddress": "Location - PSH-78, Padauk Loop 2, Padauk Garden Housing, Hlaing Tharyar Township, Yangon, Myanmar",
+    "addressLocality": "Yangon, Myanmar",
     "addressCountry": "MM"
   },
   "sameAs": [
@@ -32,8 +32,8 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Jade Property",
-  "url": "https://jadeproperty.com",
-  "description": "Premium real estate solutions and property management in Myanmar",
+  "url": "https://jade-property.com",
+  "description": "JADE Property သည် ၂၀၂၆ ခုနှစ်တွင် တရားဝင် Launch ပြုလုပ်ခဲ့သော Digital Real Estate Platform တစ်ခုဖြစ်ပြီး မြန်မာနိုင်ငံအတွင်းရှိ အိမ်ခြံမြေ ရောင်းဝယ်ငှားရမ်းမှုများကို လုံခြုံ၊ မြန်ဆန်ပြီး ယုံကြည်စိတ်ချရသော နည်းပညာဖြင့် ချိတ်ဆက်ပေးနေပါသည်။",
   "potentialAction": {
     "@type": "SearchAction",
     "target": "https://jadeproperty.com/search?q={search_term_string}",
@@ -47,7 +47,7 @@ const localBusinessSchema = {
   "@type": "LocalBusiness",
   "name": "Jade Property",
   "description": "Premium real estate solutions and property management in Myanmar",
-  "url": "https://jadeproperty.com",
+  "url": "https://jade-property.com",
   "telephone": "+95-1-234-5678",
   "address": {
     "@type": "PostalAddress",
