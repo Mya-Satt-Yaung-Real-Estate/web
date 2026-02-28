@@ -99,6 +99,8 @@ export function MediaGallery({
                                 key={active.id}
                                 src={active.url}
                                 controls
+                                playsInline
+                                {...({ webkitPlaysInline: true } as React.VideoHTMLAttributes<HTMLVideoElement>)}
                                 className="w-full h-64 md:h-96 object-contain rounded bg-black"
                                 preload="metadata"
                             >
@@ -196,6 +198,8 @@ export function MediaLightbox({
                     src={src}
                     controls
                     autoPlay
+                    playsInline
+                    {...({ webkitPlaysInline: true } as React.VideoHTMLAttributes<HTMLVideoElement>)}
                     className="max-w-full max-h-full object-contain"
                     onClick={(e) => e.stopPropagation()}
                 >

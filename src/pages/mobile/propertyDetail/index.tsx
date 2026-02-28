@@ -284,6 +284,8 @@ export default function MobilePropertyDetail() {
                           return (
                             <video
                               controls
+                              playsInline
+                              {...({ webkitPlaysInline: true } as React.VideoHTMLAttributes<HTMLVideoElement>)}
                               className="w-full h-full object-contain"
                               src={videoUrl}
                               title={title}
