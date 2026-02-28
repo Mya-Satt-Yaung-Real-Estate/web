@@ -143,9 +143,9 @@ export function PropertyGallery({
                 </div>
               )}
               
-              {/* Navigation Arrows for Video */}
+              {/* Navigation Arrows for Video — pointer-events-none so clicks reach the <video> controls */}
               {galleryImages.length > 1 && (
-                <>
+                <div className="absolute inset-0 z-10 pointer-events-none">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -156,7 +156,7 @@ export function PropertyGallery({
                         return newIndex;
                       });
                     }}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                    className="pointer-events-auto absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
                   >
                     <ChevronLeft className="h-6 w-6 text-foreground" />
                   </button>
@@ -170,14 +170,14 @@ export function PropertyGallery({
                         return newIndex;
                       });
                     }}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                    className="pointer-events-auto absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
                   >
                     <ChevronRight className="h-6 w-6 text-foreground" />
                   </button>
-                  <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-10 bg-background/90 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm text-foreground">
+                  <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 bg-background/90 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm text-foreground">
                     {safeIndex + 1} / {galleryImages.length}
                   </div>
-                </>
+                </div>
               )}
             </div>
           ) : (
@@ -230,9 +230,9 @@ export function PropertyGallery({
             </div>
           )}
 
-          {/* Badges - Top Left */}
+          {/* Badges - Top Left — pointer-events-none when video so taps reach controls */}
           {property && (
-            <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-wrap gap-1.5 sm:gap-2 z-20">
+            <div className={`absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-wrap gap-1.5 sm:gap-2 z-20 ${isVideo ? 'pointer-events-none' : ''}`}>
               {/* Status Badge - Sold/Rented (Red) */}
               {(property.status === 'sold' || property.status === 'rented') && (
                 <Badge className="bg-red-600 text-white border-0 font-semibold">

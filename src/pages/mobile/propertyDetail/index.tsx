@@ -301,9 +301,9 @@ export default function MobilePropertyDetail() {
                       </div>
                     )}
                     
-                    {/* Navigation Arrows for Video */}
+                    {/* Navigation Arrows for Video — pointer-events-none so clicks reach the <video> controls */}
                     {galleryImages.length > 1 && (
-                      <>
+                      <div className="absolute inset-0 z-10 pointer-events-none">
                         <button
                           type="button"
                           onClick={(e) => {
@@ -314,7 +314,7 @@ export default function MobilePropertyDetail() {
                               return newIndex;
                             });
                           }}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                          className="pointer-events-auto absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
                         >
                           <ChevronLeft className="h-5 w-5 text-foreground" />
                         </button>
@@ -328,14 +328,14 @@ export default function MobilePropertyDetail() {
                               return newIndex;
                             });
                           }}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                          className="pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors shadow-lg"
                         >
                           <ChevronRight className="h-5 w-5 text-foreground" />
                         </button>
-                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-foreground">
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-foreground">
                           {safeIndex + 1} / {galleryImages.length}
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 ) : (
@@ -387,9 +387,9 @@ export default function MobilePropertyDetail() {
                   </div>
                 )}
 
-                {/* Badges - Top Left */}
+                {/* Badges - Top Left — pointer-events-none when video so taps reach controls */}
                 {property && (
-                  <div className="absolute top-2 left-2 flex flex-wrap gap-1.5 z-20">
+                  <div className={`absolute top-2 left-2 flex flex-wrap gap-1.5 z-20 ${isVideo ? 'pointer-events-none' : ''}`}>
                     {property.premium && (
                       <Badge className="bg-yellow-500 text-white border-0 font-semibold text-xs">
                         Premium
