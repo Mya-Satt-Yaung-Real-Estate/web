@@ -25,5 +25,9 @@ export const wantedListApi = {
   getPublicWantedDetail: (slug: string) => {
     return api.get<WantedListDetailResponse>(`/api/v1/frontend/public/wanted-lists/${slug}`);
   },
+
+  unlockPublicWantedDetail: (slug: string) => {
+    return api.post<WantedListDetailResponse>(`/api/v1/frontend/unlock/wanted-list/${slug}`);
+  },
 };
 

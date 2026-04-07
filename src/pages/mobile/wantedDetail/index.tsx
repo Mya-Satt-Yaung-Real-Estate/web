@@ -322,7 +322,7 @@ export default function MobileWantedDetail() {
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">{t('wantedDetail.name') || 'Name'}</p>
-                <p className="font-medium">{wanted.contact.name}</p>
+                <p className="font-medium">{wanted.contact?.name ?? '—'}</p>
               </div>
 
               <Separator />
@@ -331,7 +331,7 @@ export default function MobileWantedDetail() {
                 <p className="text-sm text-muted-foreground mb-1">{t('wantedDetail.phone') || 'Phone'}</p>
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-primary" />
-                  <p className="font-medium">{wanted.contact.phone}</p>
+                  <p className="font-medium">{wanted.contact?.phone ?? '—'}</p>
                 </div>
               </div>
             </div>
@@ -341,7 +341,7 @@ export default function MobileWantedDetail() {
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="break-all">{wanted.contact.email}</span>
+                <span className="break-all">{wanted.contact?.email ?? '—'}</span>
               </div>
             </div>
           </CardContent>

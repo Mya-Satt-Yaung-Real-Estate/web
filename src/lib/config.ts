@@ -12,7 +12,7 @@ import { APP_CONFIG, BREAKPOINTS, ROUTES, STORAGE_KEYS } from './constants';
 
 export const ENV = {
   NODE_ENV: import.meta.env.MODE || 'development',
-  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://api.jadeproperty.com',
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://api.jadeproperty.com.mm',
   VITE_APP_NAME: import.meta.env.VITE_APP_NAME || 'Jade Property',
 } as const;
 

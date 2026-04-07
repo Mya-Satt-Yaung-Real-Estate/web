@@ -108,6 +108,8 @@ export interface WantedListDetailStatus {
   is_expired: boolean;
   is_published: boolean;
   expires_at: string | null;
+  /** When true, contact and user are hidden until unlocked with points (public API). */
+  owner_information_lock?: boolean;
 }
 
 export interface WantedListDetailUser {
@@ -130,9 +132,9 @@ export interface WantedListDetail {
   preferred_location: WantedListDetailPreferredLocation;
   budget: WantedListDetailBudget;
   specifications: WantedListDetailSpecifications;
-  contact: WantedListDetailContact;
+  contact: WantedListDetailContact | null;
   status: WantedListDetailStatus;
-  user: WantedListDetailUser;
+  user: WantedListDetailUser | null;
   created_at: string;
 }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertTriangle, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -9,7 +10,7 @@ export interface ConfirmModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  message: string;
+  message: string | ReactNode;
   confirmText?: string;
   cancelText?: string;
   confirmVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
@@ -79,7 +80,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Content */}
         <div className="p-6">
-          <p className="text-gray-700 leading-relaxed">{message}</p>
+          {typeof message === 'string' ? (
+            <p className="text-gray-700 leading-relaxed">{message}</p>
+          ) : (
+            <div className="text-gray-700 leading-relaxed">{message}</div>
+          )}
         </div>
 
         {/* Footer */}
