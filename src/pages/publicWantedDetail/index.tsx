@@ -459,7 +459,7 @@ export default function PublicWantedDetail() {
                           {unlockPointAmount != null
                             ? language === 'mm'
                               ? ` • ${unlockPointAmount} ပွိုင့်`
-                              : ` • ${unlockPointAmount} pts`
+                              : ` • ${unlockPointAmount} points`
                             : ' • ...'}
                         </Badge>
                       </div>
@@ -552,7 +552,7 @@ export default function PublicWantedDetail() {
                           {unlockPointAmount != null
                             ? language === 'mm'
                               ? ` • ${unlockPointAmount} ပွိုင့်`
-                              : ` • ${unlockPointAmount} pts`
+                              : ` • ${unlockPointAmount} points`
                             : ' • ...'}
                         </Badge>
                       </div>

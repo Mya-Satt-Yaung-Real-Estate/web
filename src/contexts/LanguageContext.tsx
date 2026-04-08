@@ -1744,6 +1744,14 @@ const translations: Translations = {
   'propertyDetail.trending': { en: 'Trending', mm: 'ရေပန်းစားနေသော' },
   'propertyDetail.contactOwner': { en: 'Contact Owner', mm: 'ပိုင်ရှင်နှင့် ဆက်သွယ်ရန်' },
   'propertyDetail.propertyOwner': { en: 'Property Owner', mm: 'အိမ်ခြံမြေ ပိုင်ရှင်' },
+  'propertyDetail.clickToSeeCompany': {
+    en: 'Click to see company information',
+    mm: 'ကုမ္ပဏီအချက်အလက်များကြည့်ရန် နှိပ်ပါ',
+  },
+  'propertyDetail.visitCompany': {
+    en: 'View company profile',
+    mm: 'ကုမ္ပဏီကို ကြည့်ရန်',
+  },
   'propertyDetail.callOwner': { en: 'Call Owner', mm: 'ပိုင်ရှင်ကို ခေါ်ဆိုရန်' },
   'propertyDetail.totalProperties': { en: 'Total Properties', mm: 'စုစုပေါင်း အိမ်ခြံမြေများ' },
   'propertyDetail.locationAddress': { en: 'Location & Address', mm: 'တည်နေရာ နှင့် လိပ်စာ' },

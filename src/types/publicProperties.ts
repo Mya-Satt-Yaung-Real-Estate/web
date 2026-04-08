@@ -162,6 +162,10 @@ export interface PublicPropertyContactInfo {
   phone_numbers: string[];
   email: string;
   property_count: number;
+  is_company?: boolean;
+  company_name?: string | null;
+  company_id?: number | null;
+  company_slug?: string | null;
 }
 
 export interface PublicPropertyStats {
