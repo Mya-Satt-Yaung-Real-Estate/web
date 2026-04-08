@@ -93,6 +93,14 @@ export const createPropertySchema = (t: (key: string) => string) => z.object({
     (v) => (v === '' || v === undefined || v === null ? 0 : v),
     z.coerce.number().positive(t('validation.area.required'))
   ),
+  sqft_fee: z.preprocess(
+    (v) => (v === '' || v === undefined || v === null ? undefined : v),
+    z.coerce.number().min(0, t('validation.price.required')).optional()
+  ),
+  floor: z.preprocess(
+    (v) => (v === '' || v === undefined || v === null ? undefined : v),
+    z.coerce.number().int().min(0, t('validation.area.required')).optional()
+  ),
   bedrooms: z.preprocess(
     (v) => (v === '' || v === undefined || v === null ? 0 : v),
     z.coerce.number().int().min(1, t('validation.bedrooms.required'))

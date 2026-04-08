@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Eye, Heart, Edit, Phone, Trash2, Bath, Bed, Ruler, ThumbsUp, MessageCircle, Square, Star, CheckCircle2, FileText, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Eye, Heart, Edit, Phone, Trash2, Bath, Bed, Ruler, ThumbsUp, MessageCircle, Square, Star, CheckCircle2, FileText, Sparkles, Home } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { SEOHead } from '@/components/seo/SEOHead';
@@ -666,6 +666,22 @@ export default function PropertyDetail() {
                   </span>
                   <span className="font-medium">{property.area_sqft ? `${property.area_sqft} ${t('properties.sqft') || 'sqft'}` : '-'}</span>
                 </div>
+                {property.sqft_fee !== null && property.sqft_fee !== undefined && (
+                  <div className="flex items-center gap-2">
+                    <span className="min-w-[120px] inline-flex items-center gap-2">
+                      <Square className="h-4 w-4" /> {t('properties.sqftFee') || 'Sqft Fee'}:
+                    </span>
+                    <span className="font-medium">{property.sqft_fee} {t('properties.lakh') || 'Lakh'}</span>
+                  </div>
+                )}
+                {property.floor !== null && property.floor !== undefined && (
+                  <div className="flex items-center gap-2">
+                    <span className="min-w-[120px] inline-flex items-center gap-2">
+                      <Home className="h-4 w-4" /> {t('properties.floor') || 'Floor'}:
+                    </span>
+                    <span className="font-medium">{property.floor}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <span className="min-w-[120px] inline-flex items-center gap-2">
                     <Bed className="h-4 w-4" /> {t('properties.bedrooms') || 'Bedrooms'}:

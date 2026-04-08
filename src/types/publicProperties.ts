@@ -208,8 +208,10 @@ export interface PublicPropertyDetail {
   formatted_price: string;
   price_lakh?: string | number;
   area_sqft: string;
+  sqft_fee?: string | number | null;
   length: string | null;
   width: string | null;
+  floor?: number | null;
   bedrooms: number;
   bathrooms: number;
   bank_installment_available: boolean;

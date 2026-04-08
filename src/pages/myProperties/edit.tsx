@@ -194,6 +194,12 @@ export default function EditProperty() {
         form.setValue('bathrooms', property.bathrooms ?? 0, { shouldValidate: false });
         const lengthNum = property.length ? Number(property.length) : undefined;
         const widthNum = property.width ? Number(property.width) : undefined;
+        const sqftFeeNum = (property as any).sqft_fee !== null && (property as any).sqft_fee !== undefined
+          ? Number((property as any).sqft_fee)
+          : undefined;
+        const floorNum = (property as any).floor !== null && (property as any).floor !== undefined
+          ? Number((property as any).floor)
+          : undefined;
         if (lengthNum !== undefined && !isNaN(lengthNum)) {
           form.setValue('length', lengthNum, { shouldValidate: false });
         }
@@ -202,6 +208,12 @@ export default function EditProperty() {
         }
         if (areaNum !== undefined && !isNaN(areaNum)) {
           form.setValue('area_sqft', areaNum, { shouldValidate: false });
+        }
+        if (sqftFeeNum !== undefined && !isNaN(sqftFeeNum)) {
+          form.setValue('sqft_fee', sqftFeeNum, { shouldValidate: false });
+        }
+        if (floorNum !== undefined && !isNaN(floorNum)) {
+          form.setValue('floor', floorNum, { shouldValidate: false });
         }
 
         // Contact
@@ -776,6 +788,25 @@ export default function EditProperty() {
                   </FormField>
                   <FormField name="area_sqft" label={t('createProperty.areaSqft')} error={errors.area_sqft} required>
                     <Input type="number" placeholder={t('createProperty.areaSqft')} {...form.register('area_sqft')} disabled={isEditingRestricted} />
+                  </FormField>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField name="sqft_fee" label={t('createProperty.sqftFee') || '1 Sqft Fee (Lakh)'} error={errors.sqft_fee}>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder={t('createProperty.sqftFee') || '1 Sqft Fee (Lakh)'}
+                      {...form.register('sqft_fee')}
+                      disabled={isEditingRestricted}
+                    />
+                  </FormField>
+                  <FormField name="floor" label={t('createProperty.floor') || 'Floor'} error={errors.floor}>
+                    <Input
+                      type="number"
+                      placeholder={t('createProperty.floor') || 'Floor'}
+                      {...form.register('floor')}
+                      disabled={isEditingRestricted}
+                    />
                   </FormField>
                 </div>
                 {/* Map Location Picker Link - at bottom of Location card */}

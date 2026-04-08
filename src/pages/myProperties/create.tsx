@@ -421,11 +421,11 @@ export default function CreateProperty() {
                       {...form.register('price_lakh')}
                     />
                   </FormField>
-                  <FormField name="bedrooms" label={t('createProperty.bedrooms')} error={errors.bedrooms} required>
-                    <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} />
+                   <FormField name="sqft_fee" label={t('createProperty.sqftFee') || 'Sqft Fee (Lakh)'} error={errors.sqft_fee}>
+                    <Input type="number" step="0.01" placeholder={t('createProperty.sqftFee') || 'Sqft Fee (Lakh)'} {...form.register('sqft_fee')} />
                   </FormField>
-                  <FormField name="bathrooms" label={t('createProperty.bathrooms')} error={errors.bathrooms} required>
-                    <Input type="number" placeholder={t('createProperty.bathrooms')} {...form.register('bathrooms')} />
+                  <FormField name="floor" label={t('createProperty.floor') || 'Floor'} error={errors.floor}>
+                    <Input type="number" placeholder={t('createProperty.floor') || 'Floor'} {...form.register('floor')} />
                   </FormField>
                 </div>
                 {/* Length, Width, Area as a row */}
@@ -438,6 +438,14 @@ export default function CreateProperty() {
                   </FormField>
                   <FormField name="area_sqft" label={t('createProperty.areaSqft')} error={errors.area_sqft} required>
                     <Input type="number" placeholder={t('createProperty.areaSqft')} {...form.register('area_sqft')} />
+                  </FormField>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField name="bedrooms" label={t('createProperty.bedrooms')} error={errors.bedrooms} required>
+                    <Input type="number" placeholder={t('createProperty.bedrooms')} {...form.register('bedrooms')} />
+                  </FormField>
+                  <FormField name="bathrooms" label={t('createProperty.bathrooms')} error={errors.bathrooms} required>
+                    <Input type="number" placeholder={t('createProperty.bathrooms')} {...form.register('bathrooms')} />
                   </FormField>
                 </div>
                 {/* Map Location Picker Link - at bottom of Location card */}

@@ -193,6 +193,18 @@ export function PropertyDetailsCard({
           </div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Home className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">{t('propertyDetail.floor') || 'Floor'}</p>
+              <p>{property.floor !== null && property.floor !== undefined ? property.floor : '-'}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
               <Square className="h-6 w-6 text-primary" />
             </div>
             <div>
@@ -200,6 +212,16 @@ export function PropertyDetailsCard({
               <p>{property.area_sqft ? parseFloat(property.area_sqft).toLocaleString() : '0'} sqft</p>
             </div>
           </div>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <CreditCard className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">{t('createProperty.sqftFee') || '1 Sqft Fee (Lakh)'}</p>
+              <p>{property.sqft_fee !== null && property.sqft_fee !== undefined ? `${property.sqft_fee} ${t('propertyDetail.lakh') || 'Lakh'}` : '-'}</p>
+            </div>
+          </div>
+          <div className="hidden sm:block" />
         </div>
 
         <Separator />
