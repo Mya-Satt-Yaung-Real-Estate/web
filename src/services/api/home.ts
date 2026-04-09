@@ -6,6 +6,7 @@ import type { HousingEventListResponse } from '@/types/housingEvents';
 import type { LegacyTeamResponse } from '@/types/legacy';
 import type { SliderAdsResponse } from '@/types/ads';
 import type { MapPropertiesResponse } from '@/types/mapProperties';
+import type { CompanyLogoListResponse } from '@/types/company';
 
 /**
  * Home Page API Service
@@ -84,6 +85,13 @@ export const homeApi = {
    */
   getPropertiesMap: () => {
     return api.get<MapPropertiesResponse>('/api/v1/frontend/public/home/properties-map');
+  },
+
+  /**
+   * Get company logo list for home page slider
+   */
+  getCompanyLogoLists: () => {
+    return api.get<CompanyLogoListResponse>('/api/v1/frontend/public/home/companies/logo-name');
   },
 };
 

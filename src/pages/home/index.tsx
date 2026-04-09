@@ -11,6 +11,7 @@ import {
   EventsSection,
   LegalTeamSection,
   PropertiesMapSection,
+  CompanyLogoSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -147,6 +148,9 @@ export const Home = memo(function Home() {
           </div>
         </div>
       </section>
+
+      {/* Company Logo Lists */}
+      <CompanyLogoSection />
 
       {/* Premium Posts */}
       <PremiumPostsSection count={countsData?.data?.data?.premium_properties_count} />

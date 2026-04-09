@@ -16,6 +16,7 @@ export const homeKeys = {
   homeBlockAds: () => [...homeKeys.all, 'home-block-ads'] as const,
   detailSidebarAds: () => [...homeKeys.all, 'detail-sidebar-ads'] as const,
   propertiesMap: () => [...homeKeys.all, 'properties-map'] as const,
+  companyLogoLists: () => [...homeKeys.all, 'company-logo-lists'] as const,
 } as const;
 
 // ============================================================================
@@ -61,6 +62,10 @@ export const homeQueries = {
 
   getPropertiesMap: () => {
     return homeApi.getPropertiesMap();
+  },
+
+  getCompanyLogoLists: () => {
+    return homeApi.getCompanyLogoLists();
   },
 };
 

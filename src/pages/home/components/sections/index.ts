@@ -7,4 +7,5 @@ export { EventsSection } from './EventsSection';
 export { LegalTeamSection } from './LegalTeamSection';
 export { RecommendedPropertyTypes } from './RecommendedPropertyTypes';
 export { PropertiesMapSection } from './PropertiesMapSection';
+export { CompanyLogoSection } from './CompanyLogoSection';
 

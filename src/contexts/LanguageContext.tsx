@@ -31,6 +31,8 @@ const translations: Translations = {
   'home.yearsExperience': { en: 'Years Experience', mm: 'နှစ်များအတွေ့အကြုံ' },
   'home.whyChoose': { en: 'Why Choose Jade Property?', mm: 'Jade Property ကိုဘာ့ကြောင့်ရွေးချယ်ရမှာလဲ?' },
   'home.ourServices': { en: 'Our Services', mm: 'ကျွန်ုပ်တို့၏ဝန်ဆောင်မှုများ' },
+  'home.ourPartners': { en: 'Our Partner Companies', mm: 'ကျွန်ုပ်တို့၏ မိတ်ဖက်ကုမ္ပဏီများ' },
+  'home.ourPartnersSubtitle': { en: 'Trusted real estate companies working with us', mm: 'ကျွန်ုပ်တို့နှင့်အတူ လက်တွဲလုပ်ကိုင်နေသော ယုံကြည်စိတ်ချရသော အိမ်ခြံမြေကုမ္ပဏီများ' },
   'home.getStarted': { en: 'Get Started Today', mm: 'ယနေ့စတင်ပါ' },
   'home.cta.title': { en: 'Ready to Find Your Dream Property?', mm: 'သင့်အိပ်မက်အိမ်ခြံမြေကိုရှာဖွေရန်အဆင်သင့်ဖြစ်ပြီလား?' },
   'home.cta.description': { en: 'Join thousands of satisfied clients who found their perfect property with us', mm: 'ကျွန်ုပ်တို့နှင့်အတူ သင့်အတွက်အကောင်းဆုံးအိမ်ခြံမြေကိုရှာတွေ့ခဲ့သော ကျေနပ်သောဖောက်သည်ထောင်ပေါင်းများစွာနှင့်ပါဝင်ပါ' },

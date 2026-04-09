@@ -71,6 +71,19 @@ export interface CompanyDetailResponse {
   data: Company;
 }
 
+export interface CompanyLogoItem {
+  id: number;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+}
+
+export interface CompanyLogoListResponse {
+  success: boolean;
+  message: string;
+  data: CompanyLogoItem[];
+}
+
 // ============================================================================
 // FILTER TYPES
 // ============================================================================
