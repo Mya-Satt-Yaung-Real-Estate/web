@@ -125,7 +125,7 @@ export function NewsDetail() {
 
         {/* Article Content */}
         <Card>
-          <CardContent className="p-8">
+          <CardContent className="p-8 pt-10">
             <div 
               className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground"
               dangerouslySetInnerHTML={{ __html: news.main_content }}
