@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 import { Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useHomeCompanyLogoLists } from '@/hooks/queries/home';
-import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { AnimatePresence, motion } from 'motion/react';
@@ -34,7 +33,7 @@ export const CompanyLogoSection = memo(function CompanyLogoSection() {
   useEffect(() => {
     const updateCardsPerView = () => {
       if (window.innerWidth >= 1280) {
-        setCardsPerView(5);
+        setCardsPerView(6);
       } else if (window.innerWidth >= 1024) {
         setCardsPerView(4);
       } else if (window.innerWidth >= 768) {
@@ -103,10 +102,10 @@ export const CompanyLogoSection = memo(function CompanyLogoSection() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="p-4">
+              <div key={i} className="p-4">
                 <Skeleton className="h-14 w-14 rounded-full mx-auto mb-2" />
                 <Skeleton className="h-4 w-20 mx-auto" />
-              </Card>
+              </div>
             ))}
           </div>
         </div>
@@ -163,13 +162,13 @@ export const CompanyLogoSection = memo(function CompanyLogoSection() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -28 * slideDirection }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 place-items-center"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 place-items-center"
             >
               {visibleLogos.map((company) => (
                 <Link
                   key={company.id}
                   to={`/companies/${company.slug}`}
-                  className="group"
+                  className="group w-[210px] p-3 text-center"
                   onMouseEnter={(event) => {
                     setHoveredCompany(company);
                     handleCompanyMouseMove(event);
@@ -177,22 +176,20 @@ export const CompanyLogoSection = memo(function CompanyLogoSection() {
                   onMouseMove={handleCompanyMouseMove}
                   onMouseLeave={() => setHoveredCompany(null)}
                 >
-                  <Card className="w-[210px] p-5 text-center hover:shadow-md transition-shadow">
-                    <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border bg-background flex items-center justify-center mb-3">
-                      {company.logo_url ? (
-                        <ImageWithFallback
-                          src={company.logo_url}
-                          alt={company.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <Building2 className="h-10 w-10 text-muted-foreground" />
-                      )}
-                    </div>
-                    <p className="text-base font-medium truncate group-hover:text-primary transition-colors">
-                      {company.name}
-                    </p>
-                  </Card>
+                  <div className="w-28 h-30 mx-auto rounded-full overflow-hidden border bg-background/40 flex items-center justify-center mb-3 transition-transform duration-200 group-hover:scale-105">
+                    {company.logo_url ? (
+                      <ImageWithFallback
+                        src={company.logo_url}
+                        alt={company.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Building2 className="h-10 w-10 text-muted-foreground" />
+                    )}
+                  </div>
+                  <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                    {company.name}
+                  </p>
                 </Link>
               ))}
             </motion.div>
