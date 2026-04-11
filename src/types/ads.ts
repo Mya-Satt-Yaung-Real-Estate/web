@@ -30,6 +30,18 @@ export interface SliderAdsResponse {
   data: SliderAd[];
 }
 
+/** GET /api/v1/frontend/ads/detail-page — two sidebar strips */
+export interface DetailPageSidebarsAdsData {
+  sidebar_1: SliderAd[];
+  sidebar_2: SliderAd[];
+}
+
+export interface DetailPageSidebarsAdsResponse {
+  success: boolean;
+  message: string;
+  data: DetailPageSidebarsAdsData;
+}
+
 /** Grouped slides for home 2×2 grid (keys "1".."4"). */
 export type HomeGridAdsData = {
   '1': SliderAd[];

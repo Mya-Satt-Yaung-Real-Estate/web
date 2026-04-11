@@ -2,7 +2,7 @@
  * Detail Sidebar Ads Carousel Component
  * 
  * Displays slider ads in the property detail page sidebar (under map location).
- * Fixed height: 160px, full width of sidebar card.
+ * Fixed strip height (px), full bleed inside card; image uses object-cover (fills frame, no letterboxing).
  */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -13,33 +13,36 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { SliderAd } from '@/types/ads';
-import { useDetailSidebarAds } from '@/hooks/queries/home';
+import { useDetailSidebarAds, type DetailSidebarAdsSlot } from '@/hooks/queries/home';
 
-export function DetailSidebarAdsCarousel() {
+const STRIP_HEIGHT_PX = 180;
+
+interface DetailSidebarAdsCarouselProps {
+  sidebarSlot?: DetailSidebarAdsSlot;
+}
+
+export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCarouselProps) {
   const { language } = useLanguage();
-  const { data, isLoading, error } = useDetailSidebarAds();
+  const { data, isLoading, error } = useDetailSidebarAds(sidebarSlot);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const detailSidebarAds = useMemo(() => {
-    if (!data?.data?.data) return [];
-    return data.data.data;
-  }, [data]);
+  const adsList = useMemo(() => (Array.isArray(data) ? data : []), [data]);
 
   useEffect(() => {
-    if (!isPaused && detailSidebarAds.length > 0) {
+    if (!isPaused && adsList.length > 0) {
       const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % detailSidebarAds.length);
+        setCurrentIndex((prev) => (prev + 1) % adsList.length);
       }, 4000); // Auto-slide every 4 seconds
       return () => clearInterval(interval);
     }
-  }, [isPaused, detailSidebarAds.length]);
+  }, [isPaused, adsList.length]);
 
   useEffect(() => {
-    if (detailSidebarAds.length > 0 && currentIndex >= detailSidebarAds.length) {
+    if (adsList.length > 0 && currentIndex >= adsList.length) {
       setCurrentIndex(0);
     }
-  }, [detailSidebarAds.length, currentIndex]);
+  }, [adsList.length, currentIndex]);
 
   const handleLinkClick = (link: string) => {
     window.open(link, '_blank', 'noopener,noreferrer');
@@ -47,14 +50,14 @@ export function DetailSidebarAdsCarousel() {
 
   const goToPrevious = () => {
     setIsPaused(true);
-    if (detailSidebarAds.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + detailSidebarAds.length) % detailSidebarAds.length);
+    if (adsList.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + adsList.length) % adsList.length);
   };
 
   const goToNext = () => {
     setIsPaused(true);
-    if (detailSidebarAds.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % detailSidebarAds.length);
+    if (adsList.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % adsList.length);
   };
 
   const goToSlide = (index: number) => {
@@ -64,17 +67,20 @@ export function DetailSidebarAdsCarousel() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-[160px] rounded-xl overflow-hidden">
-        <Skeleton className="w-full h-full" />
+      <div
+        className="w-full min-w-0 overflow-hidden"
+        style={{ height: STRIP_HEIGHT_PX }}
+      >
+        <Skeleton className="h-full w-full rounded-none" />
       </div>
     );
   }
 
-  if (error || detailSidebarAds.length === 0) {
+  if (error || adsList.length === 0) {
     return null;
   }
 
-  const currentAd = detailSidebarAds[currentIndex] as SliderAd;
+  const currentAd = adsList[currentIndex] as SliderAd;
   const title = language === 'mm' ? currentAd.title_mm : currentAd.title_en;
   const description = language === 'mm' ? currentAd.description_mm : currentAd.description_en;
   const isButtonLink = currentAd.link_type === 'button_link' && currentAd.link && currentAd.link_text;
@@ -84,13 +90,16 @@ export function DetailSidebarAdsCarousel() {
   const textColor = currentAd.text_color_code || '#FFFFFF';
 
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0">
       <div
         className="relative group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        <div className="relative h-[160px] rounded-xl overflow-hidden shadow-lg">
+        <div
+          className="relative w-full min-w-0 overflow-hidden"
+          style={{ height: STRIP_HEIGHT_PX }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -100,11 +109,11 @@ export function DetailSidebarAdsCarousel() {
               transition={{ duration: 0.5 }}
               className="absolute inset-0"
             >
-              <div className="absolute inset-0">
+              <div className="absolute inset-0 min-h-0 min-w-0">
                 <ImageWithFallback
                   src={imageUrl}
                   alt={title || `Ad ${currentIndex + 1}`}
-                  className="w-full h-full object-cover"
+                  className="block h-full w-full min-h-0 min-w-0 object-cover object-center"
                 />
                 {(title || description || isButtonLink || isTextLink) && (
                   <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
@@ -194,7 +203,7 @@ export function DetailSidebarAdsCarousel() {
             </motion.div>
           </AnimatePresence>
 
-          {detailSidebarAds.length > 1 && (
+          {adsList.length > 1 && (
             <>
               <Button
                 variant="ghost"
@@ -216,9 +225,9 @@ export function DetailSidebarAdsCarousel() {
             </>
           )}
 
-          {detailSidebarAds.length > 1 && (
+          {adsList.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-              {detailSidebarAds.map((_, index) => (
+              {adsList.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
@@ -231,8 +240,8 @@ export function DetailSidebarAdsCarousel() {
             </div>
           )}
 
-          {!isPaused && detailSidebarAds.length > 1 && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20 rounded-b-xl">
+          {!isPaused && adsList.length > 1 && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20">
               <motion.div
                 key={currentIndex}
                 className="h-full bg-gradient-to-r from-amber-400 to-amber-600"

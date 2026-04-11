@@ -551,8 +551,8 @@ export default function PublicPropertyDetail() {
 
               <PropertyDetailCompanyLogosCard t={t} />
 
-              {/* Detail Sidebar Ads Card */}
-              <DetailSidebarAdsCard />
+              <DetailSidebarAdsCard sidebarSlot={1} />
+              <DetailSidebarAdsCard sidebarSlot={2} />
             </div>
           </div>
 

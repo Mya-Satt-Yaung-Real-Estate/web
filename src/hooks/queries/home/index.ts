@@ -12,7 +12,7 @@ export { useHomeUpcomingEvents } from './useHomeUpcomingEvents';
 export { useHomeLegalTeam } from './useHomeLegalTeam';
 export { useHomeSliderAds } from './useHomeSliderAds';
 export { useHomeBlockAds } from './useHomeBlockAds';
-export { useDetailSidebarAds } from './useDetailSidebarAds';
+export { useDetailSidebarAds, type DetailSidebarAdsSlot } from './useDetailSidebarAds';
 export { useHomeGridAds } from './useHomeGridAds';
 export { usePropertiesMap } from './usePropertiesMap';
 export { useHomeCompanyLogoLists } from './useHomeCompanyLogoLists';

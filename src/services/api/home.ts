@@ -4,7 +4,7 @@ import type { PublicAdvertisementListResponse } from '@/types/publicAdvertisemen
 import type { WantedListResponse } from '@/types/wantedList';
 import type { HousingEventListResponse } from '@/types/housingEvents';
 import type { LegacyTeamResponse } from '@/types/legacy';
-import type { SliderAdsResponse, HomeGridAdsResponse } from '@/types/ads';
+import type { SliderAdsResponse, DetailPageSidebarsAdsResponse, HomeGridAdsResponse } from '@/types/ads';
 import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
 
@@ -74,10 +74,10 @@ export const homeApi = {
   },
 
   /**
-   * Get detail page sidebar ads for property detail page (displayed under map location)
+   * Detail page: both sidebar ad strips (sidebar_1 + sidebar_2) in one response.
    */
-  getDetailSidebarAds: () => {
-    return api.get<SliderAdsResponse>('/api/v1/frontend/ads/detail-page');
+  getDetailPageSidebarsAds: () => {
+    return api.get<DetailPageSidebarsAdsResponse>('/api/v1/frontend/ads/detail-page');
   },
 
   getHomeGridAds: () => {

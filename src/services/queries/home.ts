@@ -57,8 +57,8 @@ export const homeQueries = {
     return homeApi.getHomeBlockAds();
   },
 
-  getDetailSidebarAds: () => {
-    return homeApi.getDetailSidebarAds();
+  getDetailPageSidebarsAds: () => {
+    return homeApi.getDetailPageSidebarsAds();
   },
 
   getHomeGridAds: () => {
