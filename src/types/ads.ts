@@ -30,4 +30,18 @@ export interface SliderAdsResponse {
   data: SliderAd[];
 }
 
+/** Grouped slides for home 2×2 grid (keys "1".."4"). */
+export type HomeGridAdsData = {
+  '1': SliderAd[];
+  '2': SliderAd[];
+  '3': SliderAd[];
+  '4': SliderAd[];
+};
+
+export interface HomeGridAdsResponse {
+  success: boolean;
+  message: string;
+  data: HomeGridAdsData;
+}
+
 

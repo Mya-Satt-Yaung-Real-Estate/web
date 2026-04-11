@@ -4,7 +4,7 @@ import type { PublicAdvertisementListResponse } from '@/types/publicAdvertisemen
 import type { WantedListResponse } from '@/types/wantedList';
 import type { HousingEventListResponse } from '@/types/housingEvents';
 import type { LegacyTeamResponse } from '@/types/legacy';
-import type { SliderAdsResponse } from '@/types/ads';
+import type { SliderAdsResponse, HomeGridAdsResponse } from '@/types/ads';
 import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
 
@@ -78,6 +78,10 @@ export const homeApi = {
    */
   getDetailSidebarAds: () => {
     return api.get<SliderAdsResponse>('/api/v1/frontend/ads/detail-page');
+  },
+
+  getHomeGridAds: () => {
+    return api.get<HomeGridAdsResponse>('/api/v1/frontend/ads/home-grid');
   },
 
   /**

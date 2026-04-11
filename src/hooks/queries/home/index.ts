@@ -13,6 +13,7 @@ export { useHomeLegalTeam } from './useHomeLegalTeam';
 export { useHomeSliderAds } from './useHomeSliderAds';
 export { useHomeBlockAds } from './useHomeBlockAds';
 export { useDetailSidebarAds } from './useDetailSidebarAds';
+export { useHomeGridAds } from './useHomeGridAds';
 export { usePropertiesMap } from './usePropertiesMap';
 export { useHomeCompanyLogoLists } from './useHomeCompanyLogoLists';
 

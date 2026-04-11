@@ -12,6 +12,7 @@ import {
   LegalTeamSection,
   PropertiesMapSection,
   CompanyLogoSection,
+  HomeGridAdsSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -160,6 +161,9 @@ export const Home = memo(function Home() {
 
       {/* Property Listings */}
       <PropertyListingsSection count={countsData?.data?.data?.all_properties_count} />
+
+      {/* Home grid ads: 2×2 directly under featured properties; grid_index 1–4 = TL, TR, BL, BR */}
+      <HomeGridAdsSection />
 
       {/* Featured Advertisements */}
       <FeaturedAdvertisementsSection count={countsData?.data?.data?.advertisements_count} />
