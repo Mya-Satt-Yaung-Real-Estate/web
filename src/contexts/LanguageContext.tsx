@@ -1762,6 +1762,7 @@ const translations: Translations = {
   'propertyDetail.callOwner': { en: 'Call Owner', mm: 'ပိုင်ရှင်ကို ခေါ်ဆိုရန်' },
   'propertyDetail.totalProperties': { en: 'Total Properties', mm: 'စုစုပေါင်း အိမ်ခြံမြေများ' },
   'propertyDetail.locationAddress': { en: 'Location & Address', mm: 'တည်နေရာ နှင့် လိပ်စာ' },
+  'propertyDetail.partnerCompanies': { en: 'Partner companies', mm: 'မိတ်ဖက်ကုမ္ပဏီများ' },
   'propertyDetail.mapLocation': { en: 'Map Location', mm: 'မြေပုံတည်နေရာ' },
   'propertyDetail.openInMaps': { en: 'Open in Google Maps', mm: 'Google Maps တွင် ဖွင့်ရန်' },
   'propertyDetail.getDirections': { en: 'Get Directions', mm: 'လမ်းညွှန်ရယူရန်' },

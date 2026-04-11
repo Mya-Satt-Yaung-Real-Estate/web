@@ -17,7 +17,7 @@ import { generateCanonicalUrl } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
-import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCard, LocationCard, DetailSidebarAdsCard, SimilarPropertiesSection } from './components';
+import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCard, LocationCard, PropertyDetailCompanyLogosCard, DetailSidebarAdsCard, SimilarPropertiesSection } from './components';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
@@ -548,6 +548,8 @@ export default function PublicPropertyDetail() {
                   t={t}
                 />
               )}
+
+              <PropertyDetailCompanyLogosCard t={t} />
 
               {/* Detail Sidebar Ads Card */}
               <DetailSidebarAdsCard />
