@@ -151,7 +151,7 @@ export function AdvertisementCard({ advertisement }: AdvertisementCardProps) {
             </div>
             <div className="flex items-center justify-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
-              <span>{formatDate(advertisement.published_at)}</span>
+              <span>{formatDate(advertisement.created_at)}</span>
             </div>
           </div>
         </div>
