@@ -92,7 +92,7 @@ export function AdvertisementDetailsCard({
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>
-              {t('advertisementDetail.publishedOn') || 'Published on'}: {formatTimestamp(advertisement.dates.published_at)}
+              {t('advertisementDetail.publishedOn') || 'Published on'}: {formatTimestamp(advertisement.dates.created_at)}
             </span>
           </div>
           <ShareModal title={title} url={window.location.href}>
