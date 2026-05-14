@@ -15,7 +15,6 @@ interface WantedListingCardProps {
   postedDate: string;
   status: 'Active' | 'Fulfilled' | 'Expired';
   description?: string;
-  poster?: string;
   responses?: number;
   listingType?: 'buyer' | 'renter';
 }
@@ -31,7 +30,6 @@ export function WantedListingCard({
   postedDate,
   status,
   description,
-  poster = 'Anonymous',
   responses = 0,
   listingType = 'buyer',
 }: WantedListingCardProps) {
