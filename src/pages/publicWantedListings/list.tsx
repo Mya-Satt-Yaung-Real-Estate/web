@@ -421,7 +421,7 @@ export default function PublicWantedList() {
                           size="sm"
                         >
                           <Link to={`/public-wanted-list/${listing.id}`}>
-                            Contact {listing.contact_name}
+                            Contact
                           </Link>
                         </Button>
                       </div>

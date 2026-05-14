@@ -129,7 +129,7 @@ export function HomeWantedCard({ wanted }: HomeWantedCardProps) {
             className="w-full text-xs sm:text-sm gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
             size="sm"
           >
-            {t('listings.contact') || 'Contact'} {wanted.contact.name}
+            {t('listings.contact') || 'Contact'}
           </Button>
         </div>
       </CardContent>

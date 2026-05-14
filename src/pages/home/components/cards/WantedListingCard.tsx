@@ -130,7 +130,7 @@ export function WantedListingCard({
             className="w-full gradient-primary shadow-lg shadow-primary/25 hover:shadow-primary/40"
             size="sm"
           >
-            Contact {poster}
+            Contact
           </Button>
         </div>
       </CardContent>
