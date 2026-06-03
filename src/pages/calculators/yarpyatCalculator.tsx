@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Calculator as CalculatorIcon, MapPin, Building2, Home, DollarSign, TrendingUp, Info, Loader2 } from 'lucide-react';
 import { SEOHead } from '@/components/seo/SEOHead';
-import { useRegions, useTownships, useWards, useRoads } from '@/hooks/queries/useLocations';
-import type { Region, Township, Ward, Road } from '@/services/api/locations';
+import { useRegions, useTownships, useWards, useRoads, useYarpyatConfig } from '@/hooks/queries/useLocations';
+import type { Region, Township, Ward, Road, YarpyatTaxConfigGroup, YarpyatTaxConfigItem } from '@/services/api/locations';
 
 export function YarPyatCalculator() {
   const { t, language } = useLanguage();
@@ -41,6 +41,7 @@ export function YarPyatCalculator() {
     landArea?: string;
     length?: string;
     width?: string;
+    config?: string;
   }>({});
 
   // API data
@@ -52,6 +53,18 @@ export function YarPyatCalculator() {
   const { data: roadsData, isLoading: roadsLoading, error: roadsError } = useRoads(
     selectedWard ? parseInt(selectedWard) : null
   );
+  const { data: yarpyatConfigData, isLoading: yarpyatConfigLoading, error: yarpyatConfigError } = useYarpyatConfig();
+
+  const sellingTaxConfig = yarpyatConfigData?.data?.selling_tax;
+  const buyingTaxConfig = yarpyatConfigData?.data?.buying_tax;
+
+  const calculateTaxItemAmount = (item: YarpyatTaxConfigItem) => {
+    return assessedValue * (Number(item.percentage) / 100);
+  };
+
+  const getTaxItemName = (item: YarpyatTaxConfigItem) => {
+    return language === 'mm' ? item.name_mm : item.name_en;
+  };
 
   // Filter townships based on selected region
   const filteredTownships = townshipsData?.data?.filter(
@@ -186,6 +199,16 @@ export function YarPyatCalculator() {
     if (!hasLength || !hasWidth) {
       newErrors.landArea = t('calculator.yarPyat.enterLengthAndWidth');
     }
+
+    if (yarpyatConfigLoading) {
+      newErrors.config = language === 'mm'
+        ? 'အခွန်သတ်မှတ်ချက်များ ဖတ်နေပါသည်။ ခဏစောင့်ပါ။'
+        : 'Tax configuration is loading. Please wait.';
+    } else if (yarpyatConfigError || !yarpyatConfigData?.data) {
+      newErrors.config = language === 'mm'
+        ? 'အခွန်သတ်မှတ်ချက်များ ဖတ်မရပါ။'
+        : 'Tax configuration could not be loaded.';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -198,8 +221,8 @@ export function YarPyatCalculator() {
 
     const area = parseFloat(landArea);
     const assessed = area * ratePerSqft;
-    const selling = assessed * 0.10; // 10% selling tax
-    const buying = assessed * 0.075; // 7.5% buying tax
+    const selling = assessed * ((sellingTaxConfig?.total_percentage ?? 0) / 100);
+    const buying = assessed * ((buyingTaxConfig?.total_percentage ?? 0) / 100);
 
     setAssessedValue(assessed);
     setSellingTax(selling);
@@ -221,6 +244,33 @@ export function YarPyatCalculator() {
     setBuyingTax(0);
     setShowResults(false);
     setErrors({});
+  };
+
+  const renderTaxBreakdown = (config?: YarpyatTaxConfigGroup) => {
+    const items = config?.items ?? [];
+
+    if (items.length === 0) {
+      return (
+        <p className="text-xs text-muted-foreground">
+          {language === 'mm' ? 'အခွန်ခွဲခြမ်းစိတ်ဖြာမှု မရှိသေးပါ။' : 'No tax breakdown configured.'}
+        </p>
+      );
+    }
+
+    return (
+      <div className="mt-3 space-y-2">
+        {items.map((item) => (
+          <div key={item.id} className="flex items-center justify-between gap-3 text-xs">
+            <span className="text-muted-foreground">
+              {getTaxItemName(item)} ({Number(item.percentage).toLocaleString()}%)
+            </span>
+            <span className="font-medium">
+              {calculateTaxItemAmount(item).toLocaleString()} MMK
+            </span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -555,14 +605,23 @@ export function YarPyatCalculator() {
 
                 <div className="border-t border-border my-4"></div>
 
+                {errors.config && (
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+                    <p className="text-sm text-red-600">{errors.config}</p>
+                  </div>
+                )}
+
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   <Button 
                     onClick={handleCalculate}
+                    disabled={yarpyatConfigLoading}
                     className="flex-1 gradient-primary text-white"
                   >
                     <CalculatorIcon className="h-4 w-4 mr-2" />
-                    {t('calculator.yarPyat.calculateTax')}
+                    {yarpyatConfigLoading
+                      ? t('common.loading') || 'Loading...'
+                      : t('calculator.yarPyat.calculateTax')}
                   </Button>
                   <Button 
                     onClick={handleReset}
@@ -644,20 +703,28 @@ export function YarPyatCalculator() {
                         <div className="flex items-center gap-2 mb-2">
                           <DollarSign className="h-4 w-4 text-green-600" />
                           <span className="text-sm text-muted-foreground">{t('calculator.yarPyat.sellingTax')}</span>
+                          <Badge variant="outline" className="ml-auto border-green-500/20 text-green-700">
+                            {(sellingTaxConfig?.total_percentage ?? 0).toLocaleString()}%
+                          </Badge>
                         </div>
                         <p className="text-green-600">
                           {sellingTax.toLocaleString()} MMK
                         </p>
+                        {renderTaxBreakdown(sellingTaxConfig)}
                       </div>
 
                       <div className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20">
                         <div className="flex items-center gap-2 mb-2">
                           <DollarSign className="h-4 w-4 text-blue-600" />
                           <span className="text-sm text-muted-foreground">{t('calculator.yarPyat.buyingTax')}</span>
+                          <Badge variant="outline" className="ml-auto border-blue-500/20 text-blue-700">
+                            {(buyingTaxConfig?.total_percentage ?? 0).toLocaleString()}%
+                          </Badge>
                         </div>
                         <p className="text-blue-600">
                           {buyingTax.toLocaleString()} MMK
                         </p>
+                        {renderTaxBreakdown(buyingTaxConfig)}
                       </div>
                     </div>
 

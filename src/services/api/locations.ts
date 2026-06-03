@@ -41,11 +41,38 @@ export interface Road {
   price: string;
 }
 
+export interface YarpyatTaxConfigItem {
+  id: number;
+  slug: string;
+  tax_type: 'selling' | 'buying';
+  name_en: string;
+  name_mm: string;
+  percentage: number;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export interface YarpyatTaxConfigGroup {
+  total_percentage: number;
+  items: YarpyatTaxConfigItem[];
+}
+
+export interface YarpyatTaxConfig {
+  selling_tax: YarpyatTaxConfigGroup;
+  buying_tax: YarpyatTaxConfigGroup;
+}
+
 // API response types
 export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T[];
+}
+
+export interface SingleApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }
 
 // API functions
@@ -71,6 +98,12 @@ export const locationApi = {
   // Get roads by ward ID
   getRoads: async (wardId: number): Promise<ApiResponse<Road>> => {
     const response = await apiClient.get<ApiResponse<Road>>(`/api/v1/yarpyat/roads?ward_id=${wardId}`);
+    return response.data;
+  },
+
+  // Get Yarpyat tax config
+  getYarpyatConfig: async (): Promise<SingleApiResponse<YarpyatTaxConfig>> => {
+    const response = await apiClient.get<SingleApiResponse<YarpyatTaxConfig>>('/api/v1/yarpyat/config');
     return response.data;
   },
 };

@@ -40,3 +40,12 @@ export const useRoads = (wardId: number | null) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
+
+// Hook to fetch Yarpyat tax config
+export const useYarpyatConfig = () => {
+  return useQuery({
+    queryKey: ['yarpyat-config'],
+    queryFn: locationApi.getYarpyatConfig,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};

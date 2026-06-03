@@ -1245,8 +1245,8 @@ const translations: Translations = {
   'calculator.yarPyat.taxResults': { en: 'Tax Calculation Results', mm: 'တွက်ချက်မှုရလဒ်များ' },
   'calculator.yarPyat.location': { en: 'Location:', mm: 'တည်နေရာ:' },
   'calculator.yarPyat.assessedValue': { en: 'Assessed Value', mm: 'အခွန်တန်ဖိုး' },
-  'calculator.yarPyat.sellingTax': { en: 'Selling Tax (10%)', mm: 'ရောင်းခွန် (10%)' },
-  'calculator.yarPyat.buyingTax': { en: 'Buying Tax (7.5%)', mm: 'ဝယ်ခွန် (7.5%)' },
+  'calculator.yarPyat.sellingTax': { en: 'Selling Tax', mm: 'ရောင်းခွန်' },
+  'calculator.yarPyat.buyingTax': { en: 'Buying Tax', mm: 'ဝယ်ခွန်' },
   'calculator.yarPyat.fillFormMessage': { en: 'Fill in the form and click "Calculate Tax" to see results', mm: 'ပုံစံကိုဖြည့်ပြီး ရလဒ်များကိုကြည့်ရန် "အခွန်တွက်ချက်ရန်" ကိုနှိပ်ပါ' },
   'calculator.yarPyat.infoNote': { en: 'These calculations are estimates based on standard rates. Actual taxes may vary. Please consult with local authorities for exact amounts.', mm: 'ဤတွက်ချက်မှုများသည် စံနှုန်းများအပေါ်အခြေခံသော ခန့်မှန်းချက်များဖြစ်သည်။ အတည်ပြုအခွန်များသည် ကွဲပြားနိုင်သည်။ တိကျသောပမာဏများအတွက် ဒေသဆိုင်ရာအာဏာပိုင်များနှင့် တိုင်ပင်ပါ။' },
   

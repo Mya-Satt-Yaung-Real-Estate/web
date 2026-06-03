@@ -114,10 +114,14 @@ export interface WantedListDetailStatus {
 
 export interface WantedListDetailUser {
   id: number;
-  name: string;
-  email: string;
-  user_type: string;
-  member_level: string;
+  name: string | null;
+  email: string | null;
+  user_type: string | null;
+  member_level: string | null;
+  is_company: boolean;
+  company_name: string | null;
+  company_id: number | null;
+  company_slug: string | null;
 }
 
 export interface WantedListDetail {

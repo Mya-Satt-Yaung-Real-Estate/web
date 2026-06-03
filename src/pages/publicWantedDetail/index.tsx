@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useWantedDetail } from '@/hooks/queries/useWantedDetail';
 import { wantedListApi } from '@/services/api/wantedList';
@@ -35,6 +35,7 @@ import {
   Clock,
   AlertCircle,
   Lock,
+  Building2,
 } from 'lucide-react';
 import { ShareModal } from '@/components/ui/ShareModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -260,6 +261,14 @@ export default function PublicWantedDetail() {
   const shareUrl = window.location.href;
   const title = wanted.title;
   const description = wanted.description || wanted.title;
+  const companyDetailPath =
+    wanted.user?.is_company && wanted.user.company_slug
+      ? `/companies/${wanted.user.company_slug}`
+      : null;
+  const postedByName =
+    wanted.user?.is_company && wanted.user.company_name
+      ? wanted.user.company_name
+      : wanted.user?.name;
 
   return (
     <>
@@ -573,11 +582,31 @@ export default function PublicWantedDetail() {
                       <h3 className="mb-4">{t('wantedDetail.postedBy') || 'Posted By'}</h3>
 
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center text-white font-medium">
-                          {wanted.user.name.charAt(0).toUpperCase()}
-                        </div>
+                        {companyDetailPath ? (
+                          <Link
+                            to={companyDetailPath}
+                            className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center text-white font-medium hover:ring-2 hover:ring-primary/30 transition"
+                            title={t('propertyDetail.clickToSeeCompany') || 'Click to see company information'}
+                          >
+                            {(postedByName || 'C').charAt(0).toUpperCase()}
+                          </Link>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-[#4a9b82] flex items-center justify-center text-white font-medium">
+                            {(postedByName || 'U').charAt(0).toUpperCase()}
+                          </div>
+                        )}
                         <div>
-                          <p className="font-medium">{wanted.user.name}</p>
+                          {companyDetailPath ? (
+                            <Link
+                              to={companyDetailPath}
+                              className="font-medium hover:underline"
+                              title={t('propertyDetail.clickToSeeCompany') || 'Click to see company information'}
+                            >
+                              {postedByName}
+                            </Link>
+                          ) : (
+                            <p className="font-medium">{postedByName}</p>
+                          )}
                           <p className="text-sm text-muted-foreground">
                             {wanted.user.user_type === 'company'
                               ? (t('wantedDetail.company') || 'Company')
@@ -590,6 +619,14 @@ export default function PublicWantedDetail() {
                           )}
                         </div>
                       </div>
+                      {companyDetailPath && (
+                        <Button asChild variant="outline" className="w-full" size="sm">
+                          <Link to={companyDetailPath}>
+                            <Building2 className="mr-2 h-4 w-4 shrink-0" />
+                            {t('propertyDetail.visitCompany') || 'View company profile'}
+                          </Link>
+                        </Button>
+                      )}
                   </CardContent>
                 </Card>
                 )
