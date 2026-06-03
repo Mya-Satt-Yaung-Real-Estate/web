@@ -67,6 +67,7 @@ export interface PropertyStats {
 export interface PropertyDates {
   published_at: string;
   expires_at: string | null;
+  company_profile_expires_at?: string | null;
   verified_at: string | null;
   created_at?: string;
 }
