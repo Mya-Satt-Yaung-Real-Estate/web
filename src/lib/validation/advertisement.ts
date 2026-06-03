@@ -4,6 +4,7 @@ export const createAdvertisementSchema = (t: (key: string) => string) => z.objec
   title_en: z.string().min(1, t('validation.titleEn.required')).max(255, t('validation.maxLength')),
   title_mm: z.string().min(1, t('validation.titleMm.required')).max(255, t('validation.maxLength')),
   description: z.string().min(1, t('validation.description.required')).max(2000, t('validation.maxLength')),
+  advertisement_type: z.enum(['for_rent', 'for_sale']).default('for_sale'),
   region_id: z.preprocess(
     (val) => (val === '' || val === undefined || val === null ? 0 : val),
     z.coerce.number().min(1, t('validation.region.required'))

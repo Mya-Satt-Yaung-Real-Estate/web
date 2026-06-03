@@ -37,6 +37,9 @@ export function AdvertisementFilters() {
   const [townshipId, setTownshipId] = useState<string>(
     searchParams.get('township_id') || 'all'
   );
+  const [advertisementType, setAdvertisementType] = useState<string>(
+    searchParams.get('advertisement_type') || 'all'
+  );
 
   // Filter townships by selected region
   const filteredTownships = useMemo(() => {
@@ -49,15 +52,18 @@ export function AdvertisementFilters() {
     const searchParam = searchParams.get('search') || '';
     const regionParam = searchParams.get('region_id') || 'all';
     const townshipParam = searchParams.get('township_id') || 'all';
+    const advertisementTypeParam = searchParams.get('advertisement_type') || 'all';
     
     setSearch(searchParam);
     setRegionId(regionParam);
     setTownshipId(townshipParam);
+    setAdvertisementType(advertisementTypeParam);
   }, [searchParams]);
 
   // Update URL params when filters change
   const updateFilters = (updates: {
     search?: string;
+    advertisement_type?: string;
     region_id?: string;
     township_id?: string;
   }) => {
@@ -68,6 +74,14 @@ export function AdvertisementFilters() {
         newParams.set('search', updates.search);
       } else {
         newParams.delete('search');
+      }
+    }
+
+    if (updates.advertisement_type !== undefined) {
+      if (updates.advertisement_type && updates.advertisement_type !== 'all') {
+        newParams.set('advertisement_type', updates.advertisement_type);
+      } else {
+        newParams.delete('advertisement_type');
       }
     }
     
@@ -111,7 +125,12 @@ export function AdvertisementFilters() {
   const handleRegionChange = (value: string) => {
     setRegionId(value);
     setTownshipId('all');
-    updateFilters({ region_id: value });
+    updateFilters({ region_id: value, township_id: 'all' });
+  };
+
+  const handleAdvertisementTypeChange = (value: string) => {
+    setAdvertisementType(value);
+    updateFilters({ advertisement_type: value });
   };
 
   const handleTownshipChange = (value: string) => {
@@ -143,7 +162,7 @@ export function AdvertisementFilters() {
     <div className="bg-card border border-border/50 rounded-xl p-4 sm:p-6 mb-6">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
         {/* Search Input */}
-        <div className="md:col-span-5 relative">
+        <div className="md:col-span-3 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={t('search.searchPlaceholder') || 'Search by title, description, owner name...'}
@@ -151,6 +170,20 @@ export function AdvertisementFilters() {
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10 h-10 bg-background/50 border-border/50 focus:border-primary/50"
           />
+        </div>
+
+        {/* Advertisement Type Select */}
+        <div className="md:col-span-2">
+          <Select value={advertisementType} onValueChange={handleAdvertisementTypeChange}>
+            <SelectTrigger className="h-10 bg-background/50 border-border/50">
+              <SelectValue placeholder={t('advertisements.type') || 'Type'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t('advertisements.allTypes') || 'All Types'}</SelectItem>
+              <SelectItem value="for_sale">{t('advertisements.forSale') || 'For Sale'}</SelectItem>
+              <SelectItem value="for_rent">{t('advertisements.forRent') || 'For Rent'}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Region Select */}

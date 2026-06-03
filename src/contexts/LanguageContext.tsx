@@ -1091,6 +1091,7 @@ const translations: Translations = {
   'publicAdvertisements.noResultsFound': { en: 'No advertisements found', mm: 'ကြော်ငြာများမတွေ့ရှိပါ' },
   'publicAdvertisements.viewDetails': { en: 'View Details', mm: 'အသေးစိတ်ကြည့်ရန်' },
   'publicAdvertisements.expired': { en: 'Expired', mm: 'သက်တမ်းကုန်ဆုံး' },
+  'publicAdvertisements.type': { en: 'Advertisement Type', mm: 'ကြော်ငြာအမျိုးအစား' },
 
   // Advertisement Detail
   'advertisementDetail.backToListings': { en: 'Back to Listings', mm: 'စာရင်းများသို့ပြန်ရန်' },
@@ -1483,6 +1484,10 @@ const translations: Translations = {
   'advertisements.category': { en: 'Category', mm: 'အမျိုးအစား' },
   'advertisements.priority': { en: 'Priority', mm: 'ဦးစားပေးမှု' },
   'advertisements.status': { en: 'Status', mm: 'အခြေအနေ' },
+  'advertisements.type': { en: 'Type', mm: 'အမျိုးအစား' },
+  'advertisements.allTypes': { en: 'All Types', mm: 'အမျိုးအစားအားလုံး' },
+  'advertisements.forSale': { en: 'For Sale', mm: 'ရောင်းရန်' },
+  'advertisements.forRent': { en: 'For Rent', mm: 'ငှားရန်' },
   'advertisements.createdAt': { en: 'Created', mm: 'ဖန်တီးထားသည်' },
   'advertisements.updatedAt': { en: 'Updated', mm: 'ပြင်ဆင်ထားသည်' },
   'advertisements.actions': { en: 'Actions', mm: 'လုပ်ဆောင်ချက်များ' },
@@ -1856,6 +1861,8 @@ const translations: Translations = {
     'createAdvertisement.titleMmPlaceholder': { en: 'Enter Myanmar title', mm: 'မြန်မာခေါင်းစဉ်ထည့်ပါ' },
     'createAdvertisement.descriptionLabel': { en: 'Description', mm: 'ဖော်ပြချက်' },
     'createAdvertisement.descriptionPlaceholder': { en: 'Describe your advertisement...', mm: 'သင့်ကြော်ငြာကိုဖော်ပြပါ...' },
+    'createAdvertisement.advertisementType': { en: 'Advertisement Type', mm: 'ကြော်ငြာအမျိုးအစား' },
+    'createAdvertisement.selectAdvertisementType': { en: 'Select Advertisement Type', mm: 'ကြော်ငြာအမျိုးအစားရွေးပါ' },
     'createAdvertisement.location': { en: 'Location', mm: 'တည်နေရာ' },
     'createAdvertisement.region': { en: 'Region', mm: 'ဒေသကြီး' },
     'createAdvertisement.selectRegion': { en: 'Select Region', mm: 'တိုင်းဒေသကြီးရွေးပါ' },

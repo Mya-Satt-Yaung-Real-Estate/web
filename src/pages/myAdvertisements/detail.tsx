@@ -6,6 +6,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
@@ -31,6 +32,12 @@ export default function AdvertisementDetail() {
   const images = useMemo(() => (Array.isArray(ad?.media?.images) ? ad!.media!.images : []), [ad]);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const canEdit = !!ad?.is_me && ad?.verification_status === 'pending';
+  const advertisementTypeLabel = ad?.advertisement_type === 'for_rent'
+    ? (t('advertisements.forRent') || 'For Rent')
+    : (t('advertisements.forSale') || 'For Sale');
+  const advertisementTypeBadgeClass = ad?.advertisement_type === 'for_rent'
+    ? 'bg-sky-500/10 text-sky-700 border-sky-500/30'
+    : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30';
   // Confirm modal and toasts
   const { showSuccess } = useModal();
   const queryClient = useQueryClient();
@@ -152,6 +159,9 @@ export default function AdvertisementDetail() {
               <h1 className="text-2xl font-semibold text-foreground">
                 {ad[`title_${language}`] || ad.title_en}
               </h1>
+              <Badge variant="outline" className={`mt-2 ${advertisementTypeBadgeClass}`}>
+                {advertisementTypeLabel}
+              </Badge>
             </div>
             <div className="flex items-center gap-2">
               {canEdit && (

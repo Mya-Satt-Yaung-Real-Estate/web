@@ -54,6 +54,9 @@ export default function CreateAdvertisement() {
     if (!form.getValues('township_id')) {
       form.setValue('township_id', 0);
     }
+    if (!form.getValues('advertisement_type')) {
+      form.setValue('advertisement_type', 'for_sale');
+    }
   }, []);
 
   const isLoading = regionsLoading || townshipsLoading;
@@ -119,6 +122,7 @@ export default function CreateAdvertisement() {
       title_en: data.title_en,
       title_mm: data.title_mm,
       description: data.description,
+      advertisement_type: data.advertisement_type || 'for_sale',
       region_id: data.region_id,
       township_id: data.township_id,
       address: data.address,
@@ -236,6 +240,26 @@ export default function CreateAdvertisement() {
                       placeholder={t('createAdvertisement.descriptionPlaceholder')}
                       rows={4}
                     />
+                  </FormField>
+
+                  <FormField
+                    name="advertisement_type"
+                    label={t('createAdvertisement.advertisementType') || 'Advertisement Type'}
+                    error={errors.advertisement_type}
+                    required
+                  >
+                    <Select
+                      value={form.watch('advertisement_type') || 'for_sale'}
+                      onValueChange={(value) => form.setValue('advertisement_type', value as 'for_rent' | 'for_sale')}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('createAdvertisement.selectAdvertisementType') || 'Select Advertisement Type'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="for_sale">{t('advertisements.forSale') || 'For Sale'}</SelectItem>
+                        <SelectItem value="for_rent">{t('advertisements.forRent') || 'For Rent'}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormField>
                 </CardContent>
               </Card>

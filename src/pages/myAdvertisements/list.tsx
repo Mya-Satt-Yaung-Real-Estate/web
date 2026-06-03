@@ -26,6 +26,7 @@ export default function MyAdvertisementsList() {
     search: '',
     status: undefined,
     verification_status: undefined,
+    advertisement_type: undefined,
   });
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -34,6 +35,7 @@ export default function MyAdvertisementsList() {
     search: filters.search || undefined,
     status: filters.status,
     verification_status: filters.verification_status,
+    advertisement_type: filters.advertisement_type,
     page: currentPage,
     per_page: 12
   });
@@ -101,6 +103,16 @@ export default function MyAdvertisementsList() {
 
   const getTitle = (advertisement: any) => {
     return language === 'mm' ? advertisement.title_mm : advertisement.title_en;
+  };
+
+  const getAdvertisementTypeLabel = (type?: string) => {
+    return type === 'for_rent' ? t('advertisements.forRent') : t('advertisements.forSale');
+  };
+
+  const getAdvertisementTypeBadgeClass = (type?: string) => {
+    return type === 'for_rent'
+      ? 'bg-sky-500/90 text-white border-sky-400/50 backdrop-blur-sm'
+      : 'bg-emerald-500/90 text-white border-emerald-400/50 backdrop-blur-sm';
   };
 
   const getLocation = (advertisement: any) => {
@@ -179,6 +191,17 @@ export default function MyAdvertisementsList() {
                       <SelectItem value="pending">{t('advertisements.pending')}</SelectItem>
                       <SelectItem value="approved">{t('advertisements.approved')}</SelectItem>
                       <SelectItem value="rejected">{t('advertisements.rejected')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={filters.advertisement_type || "all"} onValueChange={(value) => handleFilterChange('advertisement_type', value)}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder={t('advertisements.type') || 'Type'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('advertisements.allTypes') || 'All Types'}</SelectItem>
+                      <SelectItem value="for_sale">{t('advertisements.forSale') || 'For Sale'}</SelectItem>
+                      <SelectItem value="for_rent">{t('advertisements.forRent') || 'For Rent'}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -269,6 +292,9 @@ export default function MyAdvertisementsList() {
                           className={`${getStatusColor(advertisement.status, advertisement.is_expired)} backdrop-blur-sm`}
                         >
                           {getStatusLabel(advertisement.status, advertisement.is_expired)}
+                        </Badge>
+                        <Badge variant="outline" className={getAdvertisementTypeBadgeClass(advertisement.advertisement_type)}>
+                          {getAdvertisementTypeLabel(advertisement.advertisement_type)}
                         </Badge>
                         {advertisement.is_featured && (
                           <Badge variant="outline" className="bg-yellow-500/90 text-yellow-900 border-yellow-500/50 backdrop-blur-sm">

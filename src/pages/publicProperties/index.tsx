@@ -156,6 +156,11 @@ export default function PublicProperties() {
     const search = searchParams.get('search');
     if (search) filters.search = search;
 
+    const advertisementType = searchParams.get('advertisement_type');
+    if (advertisementType === 'for_rent' || advertisementType === 'for_sale') {
+      filters.advertisement_type = advertisementType;
+    }
+
     const regionId = searchParams.get('region_id');
     if (regionId) filters.region_id = Number(regionId);
 

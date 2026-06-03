@@ -11,6 +11,7 @@ export interface Advertisement {
   title_en: string;
   title_mm: string;
   description: string;
+  advertisement_type?: 'for_rent' | 'for_sale';
   location: {
     region: {
       id: number;
@@ -80,6 +81,7 @@ export interface AdvertisementFilters {
   search?: string;
   status?: 'draft' | 'pending' | 'approved' | 'rejected' | 'expired';
   verification_status?: 'pending' | 'approved' | 'rejected';
+  advertisement_type?: 'for_rent' | 'for_sale';
   is_featured?: boolean;
   is_published?: boolean;
   is_draft?: boolean;
@@ -95,6 +97,7 @@ export interface CreateAdvertisementData {
   title_en: string;
   title_mm: string;
   description: string;
+  advertisement_type?: 'for_rent' | 'for_sale';
   region_id: number;
   township_id: number;
   address: string;

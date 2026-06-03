@@ -7,6 +7,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   MapPin,
   ThumbsUp,
@@ -38,12 +39,22 @@ export function AdvertisementDetailsCard({
   formatTimestamp,
   t,
 }: AdvertisementDetailsCardProps) {
+  const advertisementTypeLabel = advertisement.advertisement_type === 'for_rent'
+    ? (t('advertisements.forRent') || 'For Rent')
+    : (t('advertisements.forSale') || 'For Sale');
+  const advertisementTypeBadgeClass = advertisement.advertisement_type === 'for_rent'
+    ? 'bg-sky-500/10 text-sky-700 border-sky-500/30'
+    : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30';
+
   return (
     <Card>
       <CardContent className="p-4 sm:p-6 pt-5 sm:pt-7 space-y-4 sm:space-y-6">
         <div>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-0 mb-2">
             <div className="flex-1">
+              <Badge variant="outline" className={`mb-2 ${advertisementTypeBadgeClass}`}>
+                {advertisementTypeLabel}
+              </Badge>
               <h1 className="mb-2 text-lg sm:text-xl lg:text-2xl">{title}</h1>
               {advertisement.location && (
                 <div className="flex items-center gap-2 text-muted-foreground">

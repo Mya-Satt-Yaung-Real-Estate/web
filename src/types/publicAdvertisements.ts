@@ -38,6 +38,7 @@ export interface PublicAdvertisement {
   title_en: string;
   title_mm: string;
   description: string;
+  advertisement_type?: 'for_rent' | 'for_sale';
   location: PublicAdvertisementLocation;
   primary_image: PublicAdvertisementPrimaryImage | null;
   stats: PublicAdvertisementStats;
@@ -60,6 +61,7 @@ export interface PublicAdvertisementListResponse {
 
 export interface PublicAdvertisementFilters {
   search?: string;
+  advertisement_type?: 'for_rent' | 'for_sale';
   region_id?: number;
   township_id?: number;
   per_page?: number;
@@ -128,6 +130,7 @@ export interface PublicAdvertisementDetail {
   title_en: string;
   title_mm: string;
   description: string;
+  advertisement_type?: 'for_rent' | 'for_sale';
   location: PublicAdvertisementDetailLocation;
   contact_info: PublicAdvertisementDetailContactInfo;
   is_featured: boolean;

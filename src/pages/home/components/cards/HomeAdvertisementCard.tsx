@@ -66,6 +66,12 @@ export function HomeAdvertisementCard({ advertisement }: HomeAdvertisementCardPr
   };
 
   const title = language === 'mm' ? advertisement.title_mm : advertisement.title_en;
+  const advertisementTypeLabel = advertisement.advertisement_type === 'for_rent'
+    ? (t('advertisements.forRent') || 'For Rent')
+    : (t('advertisements.forSale') || 'For Sale');
+  const advertisementTypeBadgeClass = advertisement.advertisement_type === 'for_rent'
+    ? 'bg-sky-500/10 text-sky-700 border-sky-500/30'
+    : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30';
 
   const getLocation = () => {
     if (!advertisement.location) return '';
@@ -110,6 +116,9 @@ export function HomeAdvertisementCard({ advertisement }: HomeAdvertisementCardPr
       <CardHeader className="p-3 sm:p-6 space-y-2 sm:space-y-3 pb-3 sm:pb-4">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
+            <Badge variant="outline" className={`mb-2 w-fit ${advertisementTypeBadgeClass}`}>
+              {advertisementTypeLabel}
+            </Badge>
             <h3 className="mb-1.5 sm:mb-2 text-sm sm:text-base group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
               {title}
             </h3>

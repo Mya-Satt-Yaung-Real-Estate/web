@@ -82,6 +82,7 @@ export default function EditAdvertisement() {
     form.setValue('title_en', a.title_en, { shouldValidate: false, shouldDirty: false });
     form.setValue('title_mm', a.title_mm, { shouldValidate: false, shouldDirty: false });
     form.setValue('description', a.description || '', { shouldValidate: false, shouldDirty: false });
+    form.setValue('advertisement_type', a.advertisement_type || 'for_sale', { shouldValidate: false, shouldDirty: false });
     form.setValue('address', a.location?.address || '', { shouldValidate: false, shouldDirty: false });
     form.setValue('contact_name', a.contact_info?.contact_name || '', { shouldValidate: false, shouldDirty: false });
     const phones = a.contact_info?.phone_numbers || [];
@@ -203,6 +204,7 @@ export default function EditAdvertisement() {
       title_en: data.title_en,
       title_mm: data.title_mm,
       description: data.description,
+      advertisement_type: data.advertisement_type || 'for_sale',
       region_id: data.region_id,
       township_id: data.township_id,
       address: data.address,
@@ -273,6 +275,25 @@ export default function EditAdvertisement() {
                   </div>
                   <FormField name="description" label={t('createAdvertisement.descriptionLabel')} error={errors.description} required>
                     <Textarea {...form.register('description')} placeholder={t('createAdvertisement.descriptionPlaceholder')} rows={4} />
+                  </FormField>
+                  <FormField
+                    name="advertisement_type"
+                    label={t('createAdvertisement.advertisementType') || 'Advertisement Type'}
+                    error={errors.advertisement_type}
+                    required
+                  >
+                    <Select
+                      value={form.watch('advertisement_type') || 'for_sale'}
+                      onValueChange={(value) => form.setValue('advertisement_type', value as 'for_rent' | 'for_sale')}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('createAdvertisement.selectAdvertisementType') || 'Select Advertisement Type'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="for_sale">{t('advertisements.forSale') || 'For Sale'}</SelectItem>
+                        <SelectItem value="for_rent">{t('advertisements.forRent') || 'For Rent'}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormField>
                 </CardContent>
               </Card>
