@@ -44,6 +44,14 @@ export default function CreateProperty() {
 
   // Form validation (same pattern as advertisements)
   const { form, errors } = useFormValidation(createPropertySchema);
+  const selectedCurrency = form.watch('currency') || 'MMK';
+  const selectedCurrencyLabel = selectedCurrency === 'MMK'
+    ? 'Lakh'
+    : selectedCurrency === 'THB'
+      ? (t('createProperty.currencyThb') || 'Baht')
+      : selectedCurrency === 'CNY'
+        ? (t('createProperty.currencyCny') || 'Yuan')
+        : selectedCurrency;
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>(['']);
   const [phoneErrors, setPhoneErrors] = useState<string[]>(['']);
 
@@ -91,6 +99,9 @@ export default function CreateProperty() {
     }
     if (!form.getValues('features')) {
       form.setValue('features', []);
+    }
+    if (!form.getValues('currency')) {
+      form.setValue('currency', 'MMK');
     }
   }, []);
 
@@ -207,6 +218,8 @@ export default function CreateProperty() {
     try {
       const payload = {
         ...data,
+        currency: data.currency || 'MMK',
+        price_amount: data.price_lakh,
         media_ids: mediaIds,
       };
       console.log('Submitting payload:', payload);
@@ -412,17 +425,30 @@ export default function CreateProperty() {
                   <Input {...form.register('address')} />
                 </FormField>
                 {/* Price, Bedrooms, Bathrooms as a row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField name="price_lakh" label={t('createProperty.priceLakh') || 'Price (Lakh)'} error={errors.price_lakh} required>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <FormField name="currency" label={t('createProperty.currency') || 'Currency'} error={(errors as any).currency} required>
+                    <Select value={selectedCurrency} onValueChange={(v) => form.setValue('currency', v as 'MMK' | 'USD' | 'THB' | 'CNY')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('createProperty.selectCurrency') || 'Select Currency'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MMK">{t('createProperty.currencyMmk') || 'MMK (Lakhs)'}</SelectItem>
+                        <SelectItem value="USD">{t('createProperty.currencyUsd') || 'USD'}</SelectItem>
+                        <SelectItem value="THB">{t('createProperty.currencyThb') || 'Baht'}</SelectItem>
+                        <SelectItem value="CNY">{t('createProperty.currencyCny') || 'Yuan'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField name="price_lakh" label={selectedCurrency === 'MMK' ? (t('createProperty.priceLakh') || 'Price (Lakh)') : (t('createProperty.priceAmount') || 'Price Amount')} error={errors.price_lakh} required>
                     <Input 
                       type="number" 
                       step="0.01"
-                      placeholder={t('createProperty.priceLakhPlaceholder') || (language === 'mm' ? 'ဥပမာ: 3' : 'e.g., 3')} 
+                      placeholder={selectedCurrency === 'MMK' ? (t('createProperty.priceLakhPlaceholder') || (language === 'mm' ? 'ဥပမာ: 3' : 'e.g., 3')) : (t('createProperty.priceAmountPlaceholder') || 'e.g., 1000')} 
                       {...form.register('price_lakh')}
                     />
                   </FormField>
-                   <FormField name="sqft_fee" label={t('createProperty.sqftFee') || 'Sqft Fee (Lakh)'} error={errors.sqft_fee}>
-                    <Input type="number" step="0.01" placeholder={t('createProperty.sqftFee') || 'Sqft Fee (Lakh)'} {...form.register('sqft_fee')} />
+                   <FormField name="sqft_fee" label={`${t('createProperty.sqftFee') || '1 Sqft Fee'} (${selectedCurrencyLabel})`} error={errors.sqft_fee}>
+                    <Input type="number" step="0.01" placeholder={`${t('createProperty.sqftFee') || '1 Sqft Fee'} (${selectedCurrencyLabel})`} {...form.register('sqft_fee')} />
                   </FormField>
                   <FormField name="floor" label={t('createProperty.floor') || 'Floor'} error={errors.floor}>
                     <Input type="number" placeholder={t('createProperty.floor') || 'Floor'} {...form.register('floor')} />

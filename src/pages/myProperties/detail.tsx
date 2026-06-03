@@ -16,7 +16,7 @@ import { useModal } from '@/contexts/ModalContext';
 import { propertyApi } from '@/services/api/properties';
 import { pointSettingsApi } from '@/services/api/pointSettings';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { formatPriceLakh } from '@/lib/utils';
+import { formatCurrencyAmount, formatCurrencyUnit, formatPriceLakh } from '@/lib/utils';
 import { useMyProperty } from '@/hooks/queries/useProperties';
 import { MediaGallery } from '@/components/MediaGallery';
 
@@ -643,7 +643,7 @@ export default function PropertyDetail() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground min-w-[120px]">{t('properties.price') || 'Price'}:</span>
-                  <span className="font-medium text-primary">{formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}</span>
+                  <span className="font-medium text-primary">{formatPriceLakh(property.price || '0', property.price_lakh, language, property.currency, property.price_amount) || '-'}</span>
                 </div>
                 {property.bank_installment_available && (
                   <div className="flex items-center gap-2 mt-2">
@@ -669,9 +669,9 @@ export default function PropertyDetail() {
                 {property.sqft_fee !== null && property.sqft_fee !== undefined && (
                   <div className="flex items-center gap-2">
                     <span className="min-w-[120px] inline-flex items-center gap-2">
-                      <Square className="h-4 w-4" /> {t('properties.sqftFee') || 'Sqft Fee'}:
+                      <Square className="h-4 w-4" /> {t('properties.sqftFee') || '1 Sqft Fee'} ({formatCurrencyUnit(property.currency, language)}):
                     </span>
-                    <span className="font-medium">{property.sqft_fee} {t('properties.lakh') || 'Lakh'}</span>
+                    <span className="font-medium">{formatCurrencyAmount(property.sqft_fee, property.currency, language)}</span>
                   </div>
                 )}
                 {property.floor !== null && property.floor !== undefined && (

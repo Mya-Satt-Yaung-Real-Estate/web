@@ -533,7 +533,7 @@ export default function MobilePropertyDetail() {
               <h3 className="mb-2 text-sm font-semibold">{t('propertyDetail.price') || 'Price'}</h3>
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
-                <span className="text-lg font-semibold text-primary">{formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}</span>
+                <span className="text-lg font-semibold text-primary">{formatPriceLakh(property.price || '0', property.price_lakh, language, property.currency, property.price_amount) || '-'}</span>
               </div>
               {property.bank_installment_available && (
                 <Badge variant="outline" className="mt-2 bg-green-500/10 text-green-600 border-green-500/20">

@@ -50,6 +50,14 @@ export default function EditProperty() {
 
   // Form validation
   const { form, errors } = useFormValidation(createPropertySchema);
+  const selectedCurrency = form.watch('currency') || 'MMK';
+  const selectedCurrencyLabel = selectedCurrency === 'MMK'
+    ? 'Lakh'
+    : selectedCurrency === 'THB'
+      ? (t('createProperty.currencyThb') || 'Baht')
+      : selectedCurrency === 'CNY'
+        ? (t('createProperty.currencyCny') || 'Yuan')
+        : selectedCurrency;
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>(['']);
   const [phoneErrors, setPhoneErrors] = useState<string[]>(['']);
 
@@ -184,9 +192,12 @@ export default function EditProperty() {
         form.setValue('latitude', property.location?.latitude ? Number(property.location.latitude) : undefined, { shouldValidate: false });
         form.setValue('longitude', property.location?.longitude ? Number(property.location.longitude) : undefined, { shouldValidate: false });
 
-        // Price and details - use price_lakh directly
-        const priceLakh = property.price_lakh ? Number(property.price_lakh) : undefined;
+        // Price and details
+        const propertyCurrency = (property as any).currency || 'MMK';
+        const priceValue = (property as any).price_amount ?? property.price_lakh;
+        const priceLakh = priceValue ? Number(priceValue) : undefined;
         const areaNum = property.area_sqft ? Number(property.area_sqft) : undefined;
+        form.setValue('currency', propertyCurrency, { shouldValidate: false });
         if (priceLakh !== undefined && !isNaN(priceLakh) && priceLakh > 0) {
           form.setValue('price_lakh', priceLakh, { shouldValidate: false });
         }
@@ -299,6 +310,9 @@ export default function EditProperty() {
     if (!form.getValues('features')) {
       form.setValue('features', []);
     }
+    if (!form.getValues('currency')) {
+      form.setValue('currency', 'MMK');
+    }
   }, []);
 
   // Sync mediaIds state with form when it changes
@@ -410,6 +424,8 @@ export default function EditProperty() {
     try {
       const payload = {
         ...data,
+        currency: data.currency || 'MMK',
+        price_amount: data.price_lakh,
         media_ids: mediaIds,
       };
       console.log('Submitting payload:', payload);
@@ -761,12 +777,29 @@ export default function EditProperty() {
                   <Input {...form.register('address')} disabled={isEditingRestricted} />
                 </FormField>
                 {/* Price, Bedrooms, Bathrooms as a row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField name="price_lakh" label={t('createProperty.priceLakh') || 'Price (Lakh)'} error={errors.price_lakh} required>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <FormField name="currency" label={t('createProperty.currency') || 'Currency'} error={(errors as any).currency} required>
+                    <Select
+                      value={selectedCurrency}
+                      onValueChange={(v) => form.setValue('currency', v as 'MMK' | 'USD' | 'THB' | 'CNY', { shouldDirty: true })}
+                      disabled={isEditingRestricted}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('createProperty.selectCurrency') || 'Select Currency'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MMK">{t('createProperty.currencyMmk') || 'MMK (Lakhs)'}</SelectItem>
+                        <SelectItem value="USD">{t('createProperty.currencyUsd') || 'USD'}</SelectItem>
+                        <SelectItem value="THB">{t('createProperty.currencyThb') || 'Baht'}</SelectItem>
+                        <SelectItem value="CNY">{t('createProperty.currencyCny') || 'Yuan'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField name="price_lakh" label={selectedCurrency === 'MMK' ? (t('createProperty.priceLakh') || 'Price (Lakh)') : (t('createProperty.priceAmount') || 'Price Amount')} error={errors.price_lakh} required>
                     <Input 
                       type="number" 
                       step="0.01"
-                      placeholder={t('createProperty.priceLakhPlaceholder') || (language === 'mm' ? 'ဥပမာ: 3' : 'e.g., 3')} 
+                      placeholder={selectedCurrency === 'MMK' ? (t('createProperty.priceLakhPlaceholder') || (language === 'mm' ? 'ဥပမာ: 3' : 'e.g., 3')) : (t('createProperty.priceAmountPlaceholder') || 'e.g., 1000')} 
                       {...form.register('price_lakh')}
                       disabled={isEditingRestricted}
                     />
@@ -791,11 +824,11 @@ export default function EditProperty() {
                   </FormField>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField name="sqft_fee" label={t('createProperty.sqftFee') || '1 Sqft Fee (Lakh)'} error={errors.sqft_fee}>
+                  <FormField name="sqft_fee" label={`${t('createProperty.sqftFee') || '1 Sqft Fee'} (${selectedCurrencyLabel})`} error={errors.sqft_fee}>
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder={t('createProperty.sqftFee') || '1 Sqft Fee (Lakh)'}
+                      placeholder={`${t('createProperty.sqftFee') || '1 Sqft Fee'} (${selectedCurrencyLabel})`}
                       {...form.register('sqft_fee')}
                       disabled={isEditingRestricted}
                     />

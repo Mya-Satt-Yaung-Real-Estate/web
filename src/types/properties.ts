@@ -100,6 +100,8 @@ export interface Property {
   price: string;
   formatted_price: string;
   price_lakh?: string | number;
+  currency?: 'MMK' | 'USD' | 'THB' | 'CNY';
+  price_amount?: string | number | null;
   area_sqft: string;
   sqft_fee?: string | number | null;
   length?: string;

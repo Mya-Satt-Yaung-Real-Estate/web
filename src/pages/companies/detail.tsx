@@ -542,7 +542,7 @@ export default function CompanyDetail() {
                                 {/* Price */}
                                 <div className="absolute bottom-3 left-3">
                                   <Badge className="bg-background/90 text-foreground backdrop-blur-sm">
-                                    {formatPriceLakh(property.price || '0', property.price_lakh, language) || property.formatted_price}
+                                    {formatPriceLakh(property.price || '0', property.price_lakh, language, (property as any).currency, (property as any).price_amount) || property.formatted_price}
                                   </Badge>
                                 </div>
                               </div>
@@ -655,7 +655,7 @@ export default function CompanyDetail() {
                                 {/* Price - Below Image */}
                                 <div>
                                   <Badge className="bg-primary text-white border-primary text-sm font-semibold">
-                                    {formatPriceLakh(property.price || '0', property.price_lakh, language) || property.formatted_price}
+                                    {formatPriceLakh(property.price || '0', property.price_lakh, language, (property as any).currency, (property as any).price_amount) || property.formatted_price}
                                   </Badge>
                                 </div>
                               </div>

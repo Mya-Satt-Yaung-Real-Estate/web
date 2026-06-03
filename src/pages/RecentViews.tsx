@@ -193,7 +193,7 @@ export function RecentViews() {
                     </div>
                     <div className="flex items-center justify-between mb-3">
                       <span className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent font-semibold">
-                        {formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}
+                        {formatPriceLakh(property.price || '0', property.price_lakh, language, property.currency, property.price_amount) || '-'}
                       </span>
                       <Button 
                         variant="outline" 

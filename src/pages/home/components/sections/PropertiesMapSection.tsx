@@ -58,7 +58,7 @@ interface MapContentProps {
   defaultZoom: number;
   language: string;
   onViewDetails: (slug: string) => void;
-  formatPrice: (price: string, priceLakh?: string | number) => string;
+  formatPrice: (price: string, priceLakh?: string | number, currency?: string, priceAmount?: string | number | null) => string;
 }
 
 function MapContent({ 
@@ -125,7 +125,7 @@ function MapContent({
                 </div>
 
                 <p className="text-sm font-semibold text-primary mb-2">
-                  {formatPrice(property.price, property.price_lakh)}
+                  {formatPrice(property.price, property.price_lakh, property.currency, property.price_amount)}
                 </p>
 
                 {property.phone_numbers && property.phone_numbers.length > 0 && (
@@ -180,8 +180,8 @@ export function PropertiesMapSection() {
   const defaultZoom = 12;
 
   // Format price for display using utility function
-  const formatPrice = (price: string, priceLakh?: string | number): string => {
-    return formatPriceLakh(price, priceLakh, language);
+  const formatPrice = (price: string, priceLakh?: string | number, currency?: string, priceAmount?: string | number | null): string => {
+    return formatPriceLakh(price, priceLakh, language, currency, priceAmount);
   };
 
   const handleViewDetails = (slug: string) => {

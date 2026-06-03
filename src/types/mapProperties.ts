@@ -30,6 +30,8 @@ export interface MapProperty {
   title_mm: string;
   price: string;
   price_lakh?: string | number;
+  currency?: 'MMK' | 'USD' | 'THB' | 'CNY';
+  price_amount?: string | number | null;
   phone_numbers: string[];
   latitude: string;
   longitude: string;

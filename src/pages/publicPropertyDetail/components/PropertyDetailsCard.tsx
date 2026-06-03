@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import type { PublicPropertyDetail } from '@/types/publicProperties';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { formatPriceLakh } from '@/lib/utils';
+import { formatCurrencyAmount, formatCurrencyUnit, formatPriceLakh } from '@/lib/utils';
 
 interface PropertyDetailsCardProps {
   property: PublicPropertyDetail;
@@ -163,7 +163,7 @@ export function PropertyDetailsCard({
               )}
             </div>
             <div className="text-left sm:text-right">
-              <div className="text-primary mb-1 text-lg sm:text-xl font-semibold">{formatPriceLakh(property.price || '0', property.price_lakh, language) || '-'}</div>
+              <div className="text-primary mb-1 text-lg sm:text-xl font-semibold">{formatPriceLakh(property.price || '0', property.price_lakh, language, property.currency, property.price_amount) || '-'}</div>
               <Badge variant="outline" className="text-xs sm:text-sm">{listingTypeName}</Badge>
             </div>
           </div>
@@ -217,8 +217,8 @@ export function PropertyDetailsCard({
               <CreditCard className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-muted-foreground">{t('createProperty.sqftFee') || '1 Sqft Fee (Lakh)'}</p>
-              <p>{property.sqft_fee !== null && property.sqft_fee !== undefined ? `${property.sqft_fee} ${t('propertyDetail.lakh') || 'Lakh'}` : '-'}</p>
+              <p className="text-muted-foreground">{t('createProperty.sqftFee') || '1 Sqft Fee'} ({formatCurrencyUnit(property.currency, language)})</p>
+              <p>{formatCurrencyAmount(property.sqft_fee, property.currency, language)}</p>
             </div>
           </div>
           <div className="hidden sm:block" />

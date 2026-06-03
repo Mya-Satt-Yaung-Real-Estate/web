@@ -202,7 +202,7 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
           </div>
           <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
             <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span>{formatPriceLakh(property.price, property.price_lakh, language)}</span>
+            <span>{formatPriceLakh(property.price, property.price_lakh, language, property.currency, property.price_amount)}</span>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
