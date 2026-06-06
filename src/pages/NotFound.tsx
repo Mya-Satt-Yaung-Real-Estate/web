@@ -16,7 +16,7 @@ export function NotFound() {
         {/* 404 Illustration */}
         <div className="mb-8">
           <div className="text-3xl font-bold text-primary/50 mb-4">
-            Wait! Mg Khaing! <br /> We are still developing this page.
+            Wait! <br /> We are still developing this page.
           </div>
         </div>
 

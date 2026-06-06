@@ -17,4 +17,5 @@ export { useHomeGridAds } from './useHomeGridAds';
 export { usePropertiesMap } from './usePropertiesMap';
 export { useHomeCompanyLogoLists } from './useHomeCompanyLogoLists';
 export { usePropertyDetailCompanyLogoLists } from './usePropertyDetailCompanyLogoLists';
+export { useHomeYoutubeVideos } from './useHomeYoutubeVideos';
 

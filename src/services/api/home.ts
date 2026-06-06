@@ -7,6 +7,7 @@ import type { LegacyTeamResponse } from '@/types/legacy';
 import type { SliderAdsResponse, DetailPageSidebarsAdsResponse, HomeGridAdsResponse } from '@/types/ads';
 import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
+import type { YoutubeVideoListResponse } from '@/types/youtubeVideo';
 
 /**
  * Home Page API Service
@@ -103,6 +104,13 @@ export const homeApi = {
    */
   getPropertyDetailCompanyLogoLists: () => {
     return api.get<CompanyLogoListResponse>('/api/v1/frontend/public/home/companies/logo-name/property-detail');
+  },
+
+  /**
+   * Get YouTube videos for home page (3 items)
+   */
+  getHomeYoutubeVideos: () => {
+    return api.get<YoutubeVideoListResponse>('/api/v1/frontend/public/home/youtube-videos');
   },
 };
 

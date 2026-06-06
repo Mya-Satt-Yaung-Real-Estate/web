@@ -19,6 +19,7 @@ export const homeKeys = {
   propertiesMap: () => [...homeKeys.all, 'properties-map'] as const,
   companyLogoLists: () => [...homeKeys.all, 'company-logo-lists'] as const,
   propertyDetailCompanyLogoLists: () => [...homeKeys.all, 'property-detail-company-logo-lists'] as const,
+  youtubeVideos: () => [...homeKeys.all, 'youtube-videos'] as const,
 } as const;
 
 // ============================================================================
@@ -76,6 +77,10 @@ export const homeQueries = {
 
   getPropertyDetailCompanyLogoLists: () => {
     return homeApi.getPropertyDetailCompanyLogoLists();
+  },
+
+  getHomeYoutubeVideos: () => {
+    return homeApi.getHomeYoutubeVideos();
   },
 };
 

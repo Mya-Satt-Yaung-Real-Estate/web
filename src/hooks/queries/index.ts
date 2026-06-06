@@ -16,6 +16,7 @@ export * from './useAuth';
 export * from './useKnowledge';
 export * from './useLegacy';
 export * from './useNews';
+export * from './useYoutubeVideos';
 export * from './useCompanies';
 export * from './useCompanyTypes';
 export * from './useWantingList';

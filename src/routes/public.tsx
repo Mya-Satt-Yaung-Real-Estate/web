@@ -27,6 +27,10 @@ const KnowledgeDetail = lazyWithRetry(() => import('../pages/KnowledgeDetail').t
 const NewsAndUpdates = lazyWithRetry(() => import('../pages/NewsAndUpdates').then(module => ({ default: module.default })));
 const NewsDetail = lazyWithRetry(() => import('../pages/NewsDetail').then(module => ({ default: module.default })));
 
+// YouTube video pages
+const YoutubeVideos = lazyWithRetry(() => import('../pages/youtubeVideos').then(module => ({ default: module.default })));
+const YoutubeVideoDetail = lazyWithRetry(() => import('../pages/youtubeVideos/detail').then(module => ({ default: module.default })));
+
 // Legacy pages
 const Legacy = lazyWithRetry(() => import('../pages/Legacy').then(module => ({ default: module.default })));
 const LegacyDetail = lazyWithRetry(() => import('../pages/LegacyDetail').then(module => ({ default: module.default })));
@@ -221,6 +225,22 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <NewsDetail />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/youtube-videos',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <YoutubeVideos />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/youtube-videos/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <YoutubeVideoDetail />
       </Suspense>
     ),
   },
