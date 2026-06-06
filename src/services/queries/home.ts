@@ -18,6 +18,7 @@ export const homeKeys = {
   homeGridAds: () => [...homeKeys.all, 'home-grid-ads'] as const,
   propertiesMap: () => [...homeKeys.all, 'properties-map'] as const,
   companyLogoLists: () => [...homeKeys.all, 'company-logo-lists'] as const,
+  propertyDetailCompanyLogoLists: () => [...homeKeys.all, 'property-detail-company-logo-lists'] as const,
 } as const;
 
 // ============================================================================
@@ -71,6 +72,10 @@ export const homeQueries = {
 
   getCompanyLogoLists: () => {
     return homeApi.getCompanyLogoLists();
+  },
+
+  getPropertyDetailCompanyLogoLists: () => {
+    return homeApi.getPropertyDetailCompanyLogoLists();
   },
 };
 

@@ -10,7 +10,7 @@ import { Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
-import { useHomeCompanyLogoLists } from '@/hooks/queries/home';
+import { usePropertyDetailCompanyLogoLists } from '@/hooks/queries/home';
 import { AnimatePresence, motion } from 'motion/react';
 import type { CompanyLogoItem } from '@/types/company';
 
@@ -24,7 +24,7 @@ interface PropertyDetailCompanyLogosCardProps {
 export const PropertyDetailCompanyLogosCard = memo(function PropertyDetailCompanyLogosCard({
   t,
 }: PropertyDetailCompanyLogosCardProps) {
-  const { data, isLoading, error } = useHomeCompanyLogoLists();
+  const { data, isLoading, error } = usePropertyDetailCompanyLogoLists();
   const [pageIndex, setPageIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hoveredCompany, setHoveredCompany] = useState<CompanyLogoItem | null>(null);

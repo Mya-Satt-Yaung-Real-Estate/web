@@ -97,5 +97,12 @@ export const homeApi = {
   getCompanyLogoLists: () => {
     return api.get<CompanyLogoListResponse>('/api/v1/frontend/public/home/companies/logo-name');
   },
+
+  /**
+   * Get company logo list for property detail sidebar
+   */
+  getPropertyDetailCompanyLogoLists: () => {
+    return api.get<CompanyLogoListResponse>('/api/v1/frontend/public/home/companies/logo-name/property-detail');
+  },
 };
 
