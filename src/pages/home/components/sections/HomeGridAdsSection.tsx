@@ -59,24 +59,27 @@ function SlotCarousel({ slides }: { slides: SliderAd[] }) {
   const title = language === 'mm' ? ad.title_mm : ad.title_en;
   const description = language === 'mm' ? ad.description_mm : ad.description_en;
   const imageUrl = ad.images && typeof ad.images === 'object' && 'url' in ad.images ? (ad.images as { url?: string }).url || '' : '';
-  const href = ad.link?.trim() || '';
-  const linkLabel = ([title, description].filter(Boolean).join('. ').slice(0, 120) || 'Advertisement') + ' (opens in new tab)';
+  const adLink = ad.link?.trim();
+  const companySlug = ad.user?.company?.slug;
+  const href = adLink || (companySlug ? `/companies/${companySlug}` : '#');
+  const opensInNewTab = Boolean(adLink);
+  const linkLabel =
+    ([title, description].filter(Boolean).join('. ').slice(0, 120) || 'Advertisement') +
+    (opensInNewTab ? ' (opens in new tab)' : '');
 
   const shellClass =
     `relative w-full ${SLOT_HEIGHT_CLASSES} rounded-lg overflow-hidden shadow-md border border-border/50` +
-    (href ? ' cursor-pointer transition-shadow hover:shadow-lg hover:ring-2 hover:ring-primary/30' : '');
+    (href !== '#' ? ' cursor-pointer transition-shadow hover:shadow-lg hover:ring-2 hover:ring-primary/30' : '');
 
   return (
     <div className={shellClass} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      {href ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute inset-0 z-0 rounded-lg"
-          aria-label={linkLabel}
-        />
-      ) : null}
+      <a
+        href={href}
+        target={opensInNewTab ? '_blank' : undefined}
+        rel={opensInNewTab ? 'noopener noreferrer' : undefined}
+        className="absolute inset-0 z-0 rounded-lg"
+        aria-label={linkLabel}
+      />
       <div className="absolute inset-0 z-[1] pointer-events-none">
         <AnimatePresence mode="wait">
           <motion.div

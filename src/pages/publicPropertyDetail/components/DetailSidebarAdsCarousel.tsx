@@ -44,8 +44,15 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
     }
   }, [adsList.length, currentIndex]);
 
-  const handleLinkClick = (link: string) => {
-    window.open(link, '_blank', 'noopener,noreferrer');
+  const handleLinkClick = (href: string, opensInNewTab: boolean) => {
+    if (href === '#') return;
+
+    if (opensInNewTab) {
+      window.open(href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    window.location.href = href;
   };
 
   const goToPrevious = () => {
@@ -83,9 +90,16 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
   const currentAd = adsList[currentIndex] as SliderAd;
   const title = language === 'mm' ? currentAd.title_mm : currentAd.title_en;
   const description = language === 'mm' ? currentAd.description_mm : currentAd.description_en;
-  const isButtonLink = currentAd.link_type === 'button_link' && currentAd.link && currentAd.link_text;
-  const isTextLink = currentAd.link_type === 'text_link' && currentAd.link && currentAd.link_text;
-  const isImageLink = currentAd.link_type === 'image_link' && currentAd.link;
+  const adLink = currentAd.link?.trim();
+  const companySlug = currentAd.user?.company?.slug;
+  const targetHref = adLink || (companySlug ? `/companies/${companySlug}` : '#');
+  const opensInNewTab = Boolean(adLink);
+  const hasClickableTarget = targetHref !== '#';
+  const linkLabel =
+    ([title, description].filter(Boolean).join('. ').slice(0, 120) || 'Advertisement') +
+    (opensInNewTab ? ' (opens in new tab)' : '');
+  const isButtonLink = currentAd.link_type === 'button_link' && hasClickableTarget && currentAd.link_text;
+  const isTextLink = currentAd.link_type === 'text_link' && hasClickableTarget && currentAd.link_text;
   const imageUrl = currentAd.images?.url || '';
   const textColor = currentAd.text_color_code || '#FFFFFF';
 
@@ -97,8 +111,19 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
         onMouseLeave={() => setIsPaused(false)}
       >
         <div
-          className="relative w-full min-w-0 overflow-hidden"
+          className={`relative w-full min-w-0 overflow-hidden ${hasClickableTarget ? 'cursor-pointer' : ''}`}
           style={{ height: STRIP_HEIGHT_PX }}
+          role={hasClickableTarget ? 'link' : undefined}
+          tabIndex={hasClickableTarget ? 0 : undefined}
+          aria-label={hasClickableTarget ? linkLabel : undefined}
+          onClick={() => handleLinkClick(targetHref, opensInNewTab)}
+          onKeyDown={(event) => {
+            if (!hasClickableTarget) return;
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              handleLinkClick(targetHref, opensInNewTab);
+            }
+          }}
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -147,7 +172,7 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
                       </motion.p>
                     )}
 
-                    {isButtonLink && currentAd.link && currentAd.link_text && (
+                    {isButtonLink && currentAd.link_text && (
                       <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -157,7 +182,7 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
                         <Button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleLinkClick(currentAd.link!);
+                            handleLinkClick(targetHref, opensInNewTab);
                           }}
                           size="sm"
                           variant="secondary"
@@ -169,7 +194,7 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
                       </motion.div>
                     )}
 
-                    {isTextLink && currentAd.link && currentAd.link_text && (
+                    {isTextLink && currentAd.link_text && (
                       <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -177,11 +202,11 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
                         className="flex justify-center"
                       >
                         <a
-                          href={currentAd.link}
+                          href={targetHref}
+                          target={opensInNewTab ? '_blank' : undefined}
+                          rel={opensInNewTab ? 'noopener noreferrer' : undefined}
                           onClick={(e) => {
-                            e.preventDefault();
                             e.stopPropagation();
-                            handleLinkClick(currentAd.link!);
                           }}
                           className="text-xs sm:text-sm underline hover:opacity-90 transition-colors inline-block cursor-pointer"
                           style={{ color: textColor }}
@@ -193,13 +218,6 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
                   </div>
                 </div>
               )}
-
-              {isImageLink && currentAd.link && (
-                <div
-                  className="absolute inset-0 cursor-pointer"
-                  onClick={() => handleLinkClick(currentAd.link!)}
-                />
-              )}
             </motion.div>
           </AnimatePresence>
 
@@ -208,7 +226,10 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={goToPrevious}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goToPrevious();
+                }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -217,7 +238,10 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={goToNext}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goToNext();
+                }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <ChevronRight className="h-5 w-5" />
@@ -230,7 +254,10 @@ export function DetailSidebarAdsCarousel({ sidebarSlot = 1 }: DetailSidebarAdsCa
               {adsList.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => goToSlide(index)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    goToSlide(index);
+                  }}
                   className={`h-1.5 rounded-full transition-all ${
                     index === currentIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/70'
                   }`}

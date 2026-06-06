@@ -22,6 +22,16 @@ export interface SliderAd {
   link_text: string | null;
   text_color_code: string | null;
   images: SliderAdImage;
+  user?: {
+    id: number;
+    slug: string | null;
+    name: string | null;
+    company: {
+      id: number;
+      slug: string;
+      name: string;
+    } | null;
+  } | null;
 }
 
 export interface SliderAdsResponse {
