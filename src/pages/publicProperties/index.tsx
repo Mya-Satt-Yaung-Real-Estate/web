@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PremiumPropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
+import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
 import { PropertyFilters, AdvertisementFilters, WantedFilters, EventFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
@@ -54,6 +54,7 @@ export default function PublicProperties() {
     newParams.delete('max_area');
     newParams.delete('tan_tan_tan');
     newParams.delete('premium');
+    newParams.delete('jade_market');
     newParams.delete('installment');
     newParams.delete('price_low_to_high');
     newParams.delete('property_condition');
@@ -126,6 +127,10 @@ export default function PublicProperties() {
     const premium = searchParams.get('premium');
     if (premium === 'true') filters.premium = true;
     if (premium === 'false') filters.premium = false;
+
+    const jadeMarket = searchParams.get('jade_market');
+    if (jadeMarket === 'true') filters.jade_market = true;
+    if (jadeMarket === 'false') filters.jade_market = false;
 
     const installment = searchParams.get('installment');
     if (installment === 'true') filters.installment = true;
@@ -244,6 +249,7 @@ export default function PublicProperties() {
   
   const propertyCount = countsData?.data?.data?.all_properties_count ?? 0;
   const premiumCount = countsData?.data?.data?.premium_properties_count ?? 0;
+  const jadeMarketplaceCount = countsData?.data?.data?.jade_market_properties_count ?? 0;
   const tanTanTanCount = countsData?.data?.data?.tan_tan_tan_properties_count ?? 0;
   const installmentCount = countsData?.data?.data?.installment_properties_count ?? 0;
   const advertisementCount = countsData?.data?.data?.advertisements_count ?? 0;
@@ -254,6 +260,8 @@ export default function PublicProperties() {
     let count = propertyCount;
     if (activeTab === 'premium') {
       count = premiumCount;
+    } else if (activeTab === 'marketplace') {
+      count = jadeMarketplaceCount;
     } else if (activeTab === 'tantantan') {
       count = tanTanTanCount;
     } else if (activeTab === 'installment') {
@@ -270,6 +278,9 @@ export default function PublicProperties() {
     
     if (activeTab === 'premium') {
       const text = isPlural ? t('search.premiumFoundPlural') : t('search.premiumFound');
+      return text.replace('{count}', count.toString());
+    } else if (activeTab === 'marketplace') {
+      const text = isPlural ? t('search.marketplaceFoundPlural') : t('search.marketplaceFound');
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'tantantan') {
       const text = isPlural ? t('search.tanTanTanFoundPlural') : t('search.tanTanTanFound');
@@ -304,6 +315,8 @@ export default function PublicProperties() {
                 <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
                   {activeTab === 'premium' 
                     ? t('search.premium') 
+                    : activeTab === 'marketplace'
+                    ? t('search.marketplace') || 'Jade Marketplace'
                     : activeTab === 'tantantan' 
                     ? t('search.tanTanTan')
                     : activeTab === 'installment'
@@ -323,7 +336,7 @@ export default function PublicProperties() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
               <div className="w-full overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
-                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-7 gap-1 sm:gap-0 inline-flex sm:inline-grid">
+                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-8 gap-1 sm:gap-0 inline-flex sm:inline-grid">
                 
                 <TabsTrigger 
                   value="property"
@@ -337,6 +350,13 @@ export default function PublicProperties() {
                   className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
                   {t('search.premium') || 'Premium'} ({premiumCount})
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="marketplace"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
+                >
+                  {t('search.marketplace') || 'Jade Marketplace'} ({jadeMarketplaceCount})
                 </TabsTrigger>
 
                 <TabsTrigger 
@@ -377,8 +397,8 @@ export default function PublicProperties() {
                 </TabsList>
               </div>
 
-              {/* Property Filters - Show for Property, Premium, Installment, and TanTanTan tabs */}
-              {(activeTab === 'property' || activeTab === 'premium' || activeTab === 'installment' || activeTab === 'tantantan') && (
+              {/* Property Filters - Show for property-related tabs */}
+              {(activeTab === 'property' || activeTab === 'premium' || activeTab === 'marketplace' || activeTab === 'installment' || activeTab === 'tantantan') && (
                 <PropertyFilters />
               )}
 
@@ -406,6 +426,12 @@ export default function PublicProperties() {
               {activeTab === 'premium' && (
                 <TabsContent value="premium" className="space-y-4">
                   <PremiumPropertiesList filters={filters} />
+                </TabsContent>
+              )}
+
+              {activeTab === 'marketplace' && (
+                <TabsContent value="marketplace" className="space-y-4">
+                  <JadeMarketplacePropertiesList filters={filters} />
                 </TabsContent>
               )}
 

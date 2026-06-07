@@ -18,6 +18,15 @@ export const publicPropertyApi = {
     });
   },
 
+  getJadeMarketplaceProperties: (filters: Omit<PublicPropertyFilters, 'jade_market'> = {}) => {
+    return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/properties', {
+      params: {
+        ...filters,
+        jade_market: true,
+      },
+    });
+  },
+
   getTanTanTanProperties: (filters: Omit<PublicPropertyFilters, 'tan_tan_tan'> = {}) => {
     return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/properties', {
       params: {

@@ -1,5 +1,6 @@
 export { PropertyList } from './PropertyList';
 export { PremiumPropertiesList } from './PremiumPropertiesList';
+export { JadeMarketplacePropertiesList } from './JadeMarketplacePropertiesList';
 export { TanTanTanPropertiesList } from './TanTanTanPropertiesList';
 export { InstallmentPropertiesList } from './InstallmentPropertiesList';
 export { AdvertisementList } from './AdvertisementList';

@@ -112,5 +112,12 @@ export const homeApi = {
   getHomeYoutubeVideos: () => {
     return api.get<YoutubeVideoListResponse>('/api/v1/frontend/public/home/youtube-videos');
   },
+
+  /**
+   * Get Jade Market properties for home page (4 items)
+   */
+  getJadeMarketProperties: () => {
+    return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/home/jade-market-properties');
+  },
 };
 

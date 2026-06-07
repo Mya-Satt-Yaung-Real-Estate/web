@@ -20,6 +20,7 @@ export const homeKeys = {
   companyLogoLists: () => [...homeKeys.all, 'company-logo-lists'] as const,
   propertyDetailCompanyLogoLists: () => [...homeKeys.all, 'property-detail-company-logo-lists'] as const,
   youtubeVideos: () => [...homeKeys.all, 'youtube-videos'] as const,
+  jadeMarketProperties: () => [...homeKeys.all, 'jade-market-properties'] as const,
 } as const;
 
 // ============================================================================
@@ -81,6 +82,10 @@ export const homeQueries = {
 
   getHomeYoutubeVideos: () => {
     return homeApi.getHomeYoutubeVideos();
+  },
+
+  getJadeMarketProperties: () => {
+    return homeApi.getJadeMarketProperties();
   },
 };
 

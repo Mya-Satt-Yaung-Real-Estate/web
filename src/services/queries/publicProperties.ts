@@ -12,6 +12,9 @@ export const publicPropertyKeys = {
   premium: () => [...publicPropertyKeys.all, 'premium'] as const,
   premiumList: (filters?: Omit<PublicPropertyFilters, 'premium'>) => 
     [...publicPropertyKeys.premium(), filters] as const,
+  jadeMarketplace: () => [...publicPropertyKeys.all, 'jade-marketplace'] as const,
+  jadeMarketplaceList: (filters?: Omit<PublicPropertyFilters, 'jade_market'>) =>
+    [...publicPropertyKeys.jadeMarketplace(), filters] as const,
   tanTanTan: () => [...publicPropertyKeys.all, 'tan-tan-tan'] as const,
   tanTanTanList: (filters?: Omit<PublicPropertyFilters, 'tan_tan_tan'>) => 
     [...publicPropertyKeys.tanTanTan(), filters] as const,
@@ -36,6 +39,10 @@ export const publicPropertyQueries = {
 
   getPremiumProperties: (filters?: Omit<PublicPropertyFilters, 'premium'>) => {
     return publicPropertyApi.getPremiumProperties(filters);
+  },
+
+  getJadeMarketplaceProperties: (filters?: Omit<PublicPropertyFilters, 'jade_market'>) => {
+    return publicPropertyApi.getJadeMarketplaceProperties(filters);
   },
 
   getTanTanTanProperties: (filters?: Omit<PublicPropertyFilters, 'tan_tan_tan'>) => {

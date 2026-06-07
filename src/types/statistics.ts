@@ -7,6 +7,7 @@
 export interface StatisticsCounts {
   all_properties_count: number;
   premium_properties_count: number;
+  jade_market_properties_count: number;
   wanted_listings_count: number;
   advertisements_count: number;
   housing_events_count: number;

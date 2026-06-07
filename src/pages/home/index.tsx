@@ -14,6 +14,7 @@ import {
   CompanyLogoSection,
   HomeGridAdsSection,
   HomeYoutubeVideosSection,
+  HomeJadeMarketPropertiesSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -165,6 +166,9 @@ export const Home = memo(function Home() {
 
       {/* YouTube Videos */}
       <HomeYoutubeVideosSection />
+
+      {/* Jade Market Properties */}
+      <HomeJadeMarketPropertiesSection />
 
       {/* Home grid ads: 2×2 directly under featured properties; grid_index 1–4 = TL, TR, BL, BR */}
       <HomeGridAdsSection />
