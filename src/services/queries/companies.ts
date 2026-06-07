@@ -24,6 +24,9 @@ export const companiesKeys = {
   advertisements: (slug: string) => [...companiesKeys.detailBySlug(slug), 'advertisements'] as const,
   advertisementsList: (slug: string, params?: { per_page?: number; page?: number }) => 
     [...companiesKeys.advertisements(slug), params] as const,
+  wantedLists: (slug: string) => [...companiesKeys.detailBySlug(slug), 'wanted-lists'] as const,
+  wantedListsList: (slug: string, params?: { per_page?: number; page?: number }) =>
+    [...companiesKeys.wantedLists(slug), params] as const,
 } as const;
 
 // ============================================================================
@@ -64,5 +67,12 @@ export const companiesQueries = {
    */
   getCompanyAdvertisements: (slug: string, params?: { per_page?: number; page?: number }) => {
     return companiesApi.getCompanyAdvertisements(slug, params);
+  },
+
+  /**
+   * Get company wanted lists by slug
+   */
+  getCompanyWantedLists: (slug: string, params?: { per_page?: number; page?: number }) => {
+    return companiesApi.getCompanyWantedLists(slug, params);
   },
 };

@@ -70,3 +70,15 @@ export function useCompanyAdvertisements(slug: string, params?: { per_page?: num
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
+
+/**
+ * Get company wanted lists by slug
+ */
+export function useCompanyWantedLists(slug: string, params?: { per_page?: number; page?: number }) {
+  return useQuery({
+    queryKey: companiesKeys.wantedListsList(slug, params),
+    queryFn: () => companiesQueries.getCompanyWantedLists(slug, params),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
