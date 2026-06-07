@@ -155,6 +155,36 @@ export const Home = memo(function Home() {
       {/* Company Logo Lists */}
       <CompanyLogoSection />
 
+      {/* Featured Advertisements For Sale */}
+      <FeaturedAdvertisementsSection
+        advertisementType="for_sale"
+        titleKey="ads.featuredForSale"
+        titleFallback="Feature Advertisements For Sale"
+        viewAllHref="/search?type=advertisements&advertisement_type=for_sale"
+        count={countsData?.data?.data?.featured_for_sale_advertisements_count}
+      />
+
+      {/* Featured Advertisements For Rent */}
+      <FeaturedAdvertisementsSection
+        advertisementType="for_rent"
+        titleKey="ads.featuredForRent"
+        titleFallback="Feature Advertisements For Rent"
+        viewAllHref="/search?type=advertisements&advertisement_type=for_rent"
+        count={countsData?.data?.data?.featured_for_rent_advertisements_count}
+      />
+
+      {/* Home grid ads: 2×2 directly under featured properties; grid_index 1–4 = TL, TR, BL, BR */}
+      <HomeGridAdsSection />
+
+      {/* Jade Market Properties */}
+      <HomeJadeMarketPropertiesSection />
+
+      {/* YouTube Videos */}
+      <HomeYoutubeVideosSection />
+
+      {/* Events */}
+      <EventsSection count={countsData?.data?.data?.housing_events_count} />
+
       {/* Premium Posts */}
       <PremiumPostsSection count={countsData?.data?.data?.premium_properties_count} />
 
@@ -163,21 +193,6 @@ export const Home = memo(function Home() {
 
       {/* Property Listings */}
       <PropertyListingsSection count={countsData?.data?.data?.all_properties_count} />
-
-      {/* YouTube Videos */}
-      <HomeYoutubeVideosSection />
-
-      {/* Jade Market Properties */}
-      <HomeJadeMarketPropertiesSection />
-
-      {/* Home grid ads: 2×2 directly under featured properties; grid_index 1–4 = TL, TR, BL, BR */}
-      <HomeGridAdsSection />
-
-      {/* Featured Advertisements */}
-      <FeaturedAdvertisementsSection count={countsData?.data?.data?.advertisements_count} />
-
-      {/* Events */}
-      <EventsSection count={countsData?.data?.data?.housing_events_count} />
 
       {/* Home Block Ads */}
       <HomeBlockAdsCarousel />

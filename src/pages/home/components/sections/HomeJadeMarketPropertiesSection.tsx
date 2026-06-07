@@ -6,8 +6,10 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { HomePropertyCard } from '../cards/HomePropertyCard';
 import { useHomeJadeMarketProperties } from '@/hooks/queries/home';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const HomeJadeMarketPropertiesSection = memo(function HomeJadeMarketPropertiesSection() {
+  const { t } = useLanguage();
   const { data, isLoading, error } = useHomeJadeMarketProperties();
 
   const properties = useMemo(() => {
@@ -50,7 +52,7 @@ export const HomeJadeMarketPropertiesSection = memo(function HomeJadeMarketPrope
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <h2>Jade Market Place</h2>
+              <h2>{t('home.jadeMarketplaceTitle') || 'Jade Market Place'}</h2>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
                 <ShoppingCart className="h-3.5 w-3.5" />
                 Marketplace
@@ -62,7 +64,7 @@ export const HomeJadeMarketPropertiesSection = memo(function HomeJadeMarketPrope
           </div>
           <Button asChild variant="outline">
             <Link to="/search?type=marketplace">
-              View Marketplace
+              {t('home.viewMarketplace') || 'View Marketplace'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

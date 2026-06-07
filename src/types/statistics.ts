@@ -10,6 +10,8 @@ export interface StatisticsCounts {
   jade_market_properties_count: number;
   wanted_listings_count: number;
   advertisements_count: number;
+  featured_for_sale_advertisements_count: number;
+  featured_for_rent_advertisements_count: number;
   housing_events_count: number;
   installment_properties_count: number;
   lawyers_count: number;

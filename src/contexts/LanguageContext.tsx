@@ -38,6 +38,8 @@ const translations: Translations = {
   'home.cta.description': { en: 'Join thousands of satisfied clients who found their perfect property with us', mm: 'ကျွန်ုပ်တို့နှင့်အတူ သင့်အတွက်အကောင်းဆုံးအိမ်ခြံမြေကိုရှာတွေ့ခဲ့သော ကျေနပ်သောဖောက်သည်ထောင်ပေါင်းများစွာနှင့်ပါဝင်ပါ' },
   'home.propertiesMapLocation.title': { en: 'Properties Map Location', mm: 'အိမ်ခြံမြေများ၏မြေပုံတည်နေရာ' },
   'home.propertiesMapLocation.description': { en: 'Explore properties on the map to find your perfect location', mm: 'သင့်အတွက်အကောင်းဆုံးတည်နေရာကိုရှာဖွေရန်မြေပုံပေါ်ရှိအိမ်ခြံမြေများကိုစူးစမ်းရှာဖွေပါ' },
+  'home.jadeMarketplaceTitle': { en: 'Jade Market Place', mm: 'Jade အရောင်းစဉ်တာ' },
+  'home.viewMarketplace': { en: 'View Marketplace', mm: 'အရောင်းစဉ်တာတွင် ကြည့်ပါ' },
   
   // Categories
   'categories.searchAllProperty': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
@@ -661,6 +663,8 @@ const translations: Translations = {
   
   // Advertisements
   'ads.title': { en: 'Featured Advertisements', mm: 'အထူးကြော်ငြာများ' },
+  'ads.featuredForSale': { en: 'Feature Advertisements For Sale', mm: 'အထူး ရောင်းရန် ကြော်ညာများ' },
+  'ads.featuredForRent': { en: 'Feature Advertisements For Rent', mm: 'အထူး ငှားရန် ကြော်ညာများ' },
   'ads.subtitle': { en: 'Discover exclusive offers and promotions', mm: 'သီးသန့်ကမ်းလှမ်းမှုများနှင့်ကြော်ငြာများကိုရှာဖွေပါ' },
   'ads.viewAll': { en: 'View All', mm: 'အားလုံးကြည့်ရန်' },
   'ads.promoted': { en: 'Promoted', mm: 'ကြော်ငြာပေးထား' },
@@ -673,9 +677,9 @@ const translations: Translations = {
   'premium.viewAll': { en: 'View All Premium', mm: 'ပရီမီယံအားလုံးကြည့်ရန်' },
   
   // Wanted Listings (Home Page)
-  'wanted.title': { en: 'Wanted Listings', mm: 'လိုအပ်သည့် စာရင်းများ' },
+  'wanted.title': { en: 'Wanted Listings', mm: 'အဝယ် စာရင်းများ' },
   'wanted.subtitle': { en: 'Browse active property requests from buyers and renters', mm: 'ဝယ်သူများနှင့် ငှားရမ်းသူများထံမှ လက်ရှိအိမ်ခြံမြေတောင်းဆိုချက်များကို ကြည့်ရှုပါ' },
-  'wanted.viewAll': { en: 'View All Requests', mm: 'တောင်းဆိုချက်အားလုံးကြည့်ရန်' },
+  'wanted.viewAll': { en: 'View All Requests', mm: 'အဝယ်စားရင်းများ ကြည့်ရန်' },
   
   // Featured Properties (Home Page)
   'featured.title': { en: 'Featured Properties', mm: 'အထူးအိမ်ခြံမြေများ' },
@@ -1042,7 +1046,7 @@ const translations: Translations = {
   'search.installmentFoundPlural': { en: 'Installment found {count} results', mm: 'အရစ်ကျ {count} ရလဒ်များတွေ့ရှိပါသည်' },
   'search.properties': { en: 'Properties', mm: 'အိမ်ခြံမြေများ' },
   'search.premium': { en: 'Premium', mm: 'ပရီမီယံ' },
-  'search.marketplace': { en: 'Jade Marketplace', mm: 'Jade စျေးကွက်' },
+  'search.marketplace': { en: 'Jade Marketplace', mm: 'Jade အရောင်းစဉ်တာ' },
   'search.tanTanTan': { en: 'Tan Tan Tan', mm: 'တန်တန်တန်' },
   'search.wanted': { en: 'Wanted', mm: 'လိုချင်သော' },
   'search.wantedFound': { en: 'Wanted found {count} result', mm: 'လိုချင်သော {count} ရလဒ်တွေ့ရှိပါသည်' },

@@ -1,4 +1,4 @@
-import { homeApi } from '../api/home';
+import { homeApi, type HomeAdvertisementType } from '../api/home';
 
 // ============================================================================
 // QUERY KEYS
@@ -9,7 +9,7 @@ export const homeKeys = {
   premiumProperties: () => [...homeKeys.all, 'premium-properties'] as const,
   featuredProperties: () => [...homeKeys.all, 'featured-properties'] as const,
   wantedListings: () => [...homeKeys.all, 'wanted-listings'] as const,
-  featuredAdvertisements: () => [...homeKeys.all, 'featured-advertisements'] as const,
+  featuredAdvertisements: (advertisementType?: HomeAdvertisementType) => [...homeKeys.all, 'featured-advertisements', advertisementType ?? 'all'] as const,
   upcomingEvents: () => [...homeKeys.all, 'upcoming-events'] as const,
   legalTeam: () => [...homeKeys.all, 'legal-team'] as const,
   sliderAds: () => [...homeKeys.all, 'slider-ads'] as const,
@@ -40,8 +40,8 @@ export const homeQueries = {
     return homeApi.getWantedListings();
   },
 
-  getFeaturedAdvertisements: () => {
-    return homeApi.getFeaturedAdvertisements();
+  getFeaturedAdvertisements: (advertisementType?: HomeAdvertisementType) => {
+    return homeApi.getFeaturedAdvertisements(advertisementType);
   },
 
   getUpcomingEvents: () => {

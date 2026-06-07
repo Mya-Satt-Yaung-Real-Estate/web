@@ -9,6 +9,8 @@ import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
 import type { YoutubeVideoListResponse } from '@/types/youtubeVideo';
 
+export type HomeAdvertisementType = 'for_sale' | 'for_rent';
+
 /**
  * Home Page API Service
  * 
@@ -40,8 +42,10 @@ export const homeApi = {
   /**
    * Get featured advertisements for home page (6 items)
    */
-  getFeaturedAdvertisements: () => {
-    return api.get<PublicAdvertisementListResponse>('/api/v1/frontend/public/home/featured-advertisements');
+  getFeaturedAdvertisements: (advertisementType?: HomeAdvertisementType) => {
+    return api.get<PublicAdvertisementListResponse>('/api/v1/frontend/public/home/featured-advertisements', {
+      params: advertisementType ? { advertisement_type: advertisementType } : undefined,
+    });
   },
 
   /**

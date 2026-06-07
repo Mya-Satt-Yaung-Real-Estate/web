@@ -13,14 +13,25 @@ import { useHomeFeaturedAdvertisements } from '@/hooks/queries/home';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { memo, useMemo } from 'react';
+import type { HomeAdvertisementType } from '@/services/api/home';
 
 interface FeaturedAdvertisementsSectionProps {
+  advertisementType?: HomeAdvertisementType;
+  titleKey?: string;
+  titleFallback?: string;
+  viewAllHref?: string;
   count?: number;
 }
 
-export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisementsSection({ count }: FeaturedAdvertisementsSectionProps) {
+export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisementsSection({
+  advertisementType,
+  titleKey = 'ads.title',
+  titleFallback = 'Featured Advertisements',
+  viewAllHref = '/search?type=advertisements',
+  count,
+}: FeaturedAdvertisementsSectionProps) {
   const { t } = useLanguage();
-  const { data, isLoading, error } = useHomeFeaturedAdvertisements();
+  const { data, isLoading, error } = useHomeFeaturedAdvertisements(advertisementType);
 
   // Get advertisements from API response
   const advertisements = useMemo(() => {
@@ -78,7 +89,7 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
               <h2 className="mb-4">
-                {t('ads.title')}
+                {t(titleKey) || titleFallback}
                 {count !== undefined && (
                   <span className="text-base font-normal text-muted-foreground">
                     {' '}({count} {count === 1 ? 'item' : 'items'})
@@ -89,7 +100,7 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
                 {t('ads.subtitle')}
               </p>
             </div>
-            <Link to="/search?type=advertisement">
+            <Link to={viewAllHref}>
               <Button variant="outline">
                 {t('ads.viewAll')}
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -110,7 +121,7 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
             <div>
               <h2 className="mb-4">
-                {t('ads.title')}
+                {t(titleKey) || titleFallback}
                 {count !== undefined && (
                   <span className="text-base font-normal text-muted-foreground">
                     {' '}({count} {count === 1 ? 'item' : 'items'})
@@ -121,7 +132,7 @@ export const FeaturedAdvertisementsSection = memo(function FeaturedAdvertisement
                 {t('ads.subtitle')}
               </p>
             </div>
-          <Link to="/search?type=advertisements">
+          <Link to={viewAllHref}>
             <Button variant="outline">
               {t('ads.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />

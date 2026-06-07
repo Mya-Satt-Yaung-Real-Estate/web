@@ -6,11 +6,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { homeKeys, homeQueries } from '@/services/queries/home';
+import type { HomeAdvertisementType } from '@/services/api/home';
 
-export function useHomeFeaturedAdvertisements() {
+export function useHomeFeaturedAdvertisements(advertisementType?: HomeAdvertisementType) {
   return useQuery({
-    queryKey: homeKeys.featuredAdvertisements(),
-    queryFn: homeQueries.getFeaturedAdvertisements,
+    queryKey: homeKeys.featuredAdvertisements(advertisementType),
+    queryFn: () => homeQueries.getFeaturedAdvertisements(advertisementType),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
