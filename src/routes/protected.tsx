@@ -18,6 +18,9 @@ const MyPropertiesList = lazyWithRetry(() => import('../pages/myProperties/list'
 const CreateProperty = lazyWithRetry(() => import('../pages/myProperties/create'));
 const EditProperty = lazyWithRetry(() => import('../pages/myProperties/edit'));
 const PropertyDetail = lazyWithRetry(() => import('../pages/myProperties/detail'));
+const MyProjectsList = lazyWithRetry(() => import('../pages/myProjects/list'));
+const CreateProject = lazyWithRetry(() => import('../pages/myProjects/create'));
+const EditProject = lazyWithRetry(() => import('../pages/myProjects/edit'));
 const CreateLoanRequest = lazyWithRetry(() => import('../pages/loanRequest/create').then(module => ({ default: module.default })));
 const Settings = lazyWithRetry(() => import('../pages/Settings').then(module => ({ default: module.Settings })));
 const Profile = lazyWithRetry(() => import('../pages/Profile').then(module => ({ default: module.Profile })));
@@ -168,6 +171,37 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <PropertyDetail />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  // Projects routes
+  {
+    path: '/my-projects',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyProjectsList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-projects/create',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <CreateProject />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-projects/edit/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditProject />
         </Suspense>
       </ProtectedRoute>
     ),

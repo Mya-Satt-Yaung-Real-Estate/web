@@ -134,6 +134,19 @@ export type {
   CompanyFilters,
 } from './company';
 
+export type {
+  Project,
+  ProjectCondition,
+  ProjectCurrency,
+  ProjectFilters,
+  ProjectFormPayload,
+  ProjectListResponse,
+  ProjectPaymentPlan,
+  ProjectPublishStatus,
+  ProjectResponse,
+  ProjectUnitType,
+} from './projects';
+
 // Export wanting list types
 export type {
   WantingList,

@@ -365,6 +365,7 @@ const translations: Translations = {
   // Create Listing
   'createListing.title': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },
   'createListing.propertyPost': { en: 'Property Post', mm: 'အိမ်ခြံမြေတင်ရန်' },
+  'createListing.projectListing': { en: 'Project Listing', mm: 'ပရောဂျက်စာရင်း' },
   'createListing.wantedPost': { en: 'Wanted Post', mm: 'လိုချင်သောစာရင်း' },
   'createListing.advertisementPost': { en: 'Advertisement Post', mm: 'ကြော်ငြာတင်ရန်' },
   'createListing.appointmentRequest': { en: 'Appointment Request', mm: 'ချိန်းဆိုမှုတောင်းဆိုရန်' },

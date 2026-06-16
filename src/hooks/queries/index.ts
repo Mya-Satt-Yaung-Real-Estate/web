@@ -19,6 +19,7 @@ export * from './useNews';
 export * from './useYoutubeVideos';
 export * from './useCompanies';
 export * from './useCompanyTypes';
+export * from './useProjects';
 export * from './useWantingList';
 export * from './useAiAssistant';
 export * from './home';

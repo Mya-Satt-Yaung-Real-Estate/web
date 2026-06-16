@@ -136,6 +136,13 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
+  myProjects: {
+    title: 'My Projects - Jade Property',
+    description: 'Manage your upcoming project listings.',
+    keywords: 'my projects, upcoming projects, manage listings, Jade Property',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
   myAdvertisements: {
     title: 'My Advertisements - Jade Property',
     description: 'Manage your advertisements.',
