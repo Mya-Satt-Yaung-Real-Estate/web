@@ -5,6 +5,7 @@ export const projectKeys = {
   all: ['projects'] as const,
   lists: () => [...projectKeys.all, 'list'] as const,
   list: (filters?: ProjectFilters) => [...projectKeys.lists(), filters] as const,
+  infiniteList: (filters?: ProjectFilters) => [...projectKeys.lists(), 'infinite', filters] as const,
   details: () => [...projectKeys.all, 'detail'] as const,
   detail: (idOrSlug: string) => [...projectKeys.details(), idOrSlug] as const,
   mine: () => [...projectKeys.all, 'mine'] as const,

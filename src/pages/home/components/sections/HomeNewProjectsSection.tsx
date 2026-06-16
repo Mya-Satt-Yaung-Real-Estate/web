@@ -207,7 +207,7 @@ export const HomeNewProjectsSection = memo(function HomeNewProjectsSection() {
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link to="/search">
+            <Link to="/search?type=projects">
               {t('home.viewAllProjects') || 'View All Projects'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

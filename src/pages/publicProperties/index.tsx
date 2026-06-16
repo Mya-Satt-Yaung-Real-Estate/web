@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, AdvertisementList, EventList, WantedList } from './components';
-import { PropertyFilters, AdvertisementFilters, WantedFilters, EventFilters } from './components/filters';
+import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, ProjectList, AdvertisementList, EventList, WantedList } from './components';
+import { PropertyFilters, ProjectFilters, AdvertisementFilters, WantedFilters, EventFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,6 +11,7 @@ import type { PublicPropertyFilters } from '@/types/publicProperties';
 import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
 import type { WantedListFilters } from '@/services/api/wantedList';
 import type { HousingEventFilters } from '@/types/housingEvents';
+import type { ProjectCondition, ProjectFilters as PublicProjectFilters } from '@/types/projects';
 
 export default function PublicProperties() {
   const { t } = useLanguage();
@@ -58,6 +59,7 @@ export default function PublicProperties() {
     newParams.delete('installment');
     newParams.delete('price_low_to_high');
     newParams.delete('property_condition');
+    newParams.delete('condition');
     
     // Advertisement filters
     // (region_id and township_id already deleted above)
@@ -95,12 +97,6 @@ export default function PublicProperties() {
 
     const listingTypeId = searchParams.get('listing_type_id');
     if (listingTypeId) filters.listing_type_id = Number(listingTypeId);
-
-    const regionId = searchParams.get('region_id');
-    if (regionId) filters.region_id = Number(regionId);
-
-    const townshipId = searchParams.get('township_id');
-    if (townshipId) filters.township_id = Number(townshipId);
 
     const minPrice = searchParams.get('min_price');
     if (minPrice) filters.min_price = Number(minPrice);
@@ -239,10 +235,43 @@ export default function PublicProperties() {
     return filters;
   };
 
-  const filters = useMemo(() => getFiltersFromParams(), [searchParams.toString()]);
-  const advertisementFilters = useMemo(() => getAdvertisementFiltersFromParams(), [searchParams.toString()]);
-  const wantedFilters = useMemo(() => getWantedFiltersFromParams(), [searchParams.toString()]);
-  const eventFilters = useMemo(() => getEventFiltersFromParams(), [searchParams.toString()]);
+  const getProjectFiltersFromParams = (): PublicProjectFilters => {
+    const filters: PublicProjectFilters = {
+      per_page: 20,
+      page: 1,
+    };
+
+    const search = searchParams.get('search');
+    if (search) filters.search = search;
+
+    const propertyTypeId = searchParams.get('property_type_id');
+    if (propertyTypeId) filters.property_type_id = Number(propertyTypeId);
+
+    const regionId = searchParams.get('region_id');
+    if (regionId) filters.region_id = Number(regionId);
+
+    const townshipId = searchParams.get('township_id');
+    if (townshipId) filters.township_id = Number(townshipId);
+
+    const minPrice = searchParams.get('min_price');
+    if (minPrice) filters.min_price = Number(minPrice);
+
+    const maxPrice = searchParams.get('max_price');
+    if (maxPrice) filters.max_price = Number(maxPrice);
+
+    const condition = searchParams.get('condition');
+    if (condition && ['ongoing', 'upcoming', 'under_construction'].includes(condition)) {
+      filters.condition = condition as ProjectCondition;
+    }
+
+    return filters;
+  };
+
+  const filters = getFiltersFromParams();
+  const advertisementFilters = getAdvertisementFiltersFromParams();
+  const wantedFilters = getWantedFiltersFromParams();
+  const eventFilters = getEventFiltersFromParams();
+  const projectFilters = getProjectFiltersFromParams();
   
   // Fetch statistics counts from API
   const { data: countsData } = useStatisticsCounts();
@@ -252,6 +281,7 @@ export default function PublicProperties() {
   const jadeMarketplaceCount = countsData?.data?.data?.jade_market_properties_count ?? 0;
   const tanTanTanCount = countsData?.data?.data?.tan_tan_tan_properties_count ?? 0;
   const installmentCount = countsData?.data?.data?.installment_properties_count ?? 0;
+  const projectCount = countsData?.data?.data?.projects_count ?? 0;
   const advertisementCount = countsData?.data?.data?.advertisements_count ?? 0;
   const eventCount = countsData?.data?.data?.housing_events_count ?? 0;
   const wantedCount = countsData?.data?.data?.wanted_listings_count ?? 0;
@@ -266,6 +296,8 @@ export default function PublicProperties() {
       count = tanTanTanCount;
     } else if (activeTab === 'installment') {
       count = installmentCount;
+    } else if (activeTab === 'projects') {
+      count = projectCount;
     } else if (activeTab === 'advertisements') {
       count = advertisementCount;
     } else if (activeTab === 'events') {
@@ -287,6 +319,9 @@ export default function PublicProperties() {
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'installment') {
       const text = isPlural ? t('search.installmentFoundPlural') : t('search.installmentFound');
+      return text.replace('{count}', count.toString());
+    } else if (activeTab === 'projects') {
+      const text = isPlural ? t('search.projectsFoundPlural') : t('search.projectsFound');
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'advertisements') {
       const text = isPlural ? t('publicAdvertisements.foundPlural') : t('publicAdvertisements.found');
@@ -321,6 +356,8 @@ export default function PublicProperties() {
                     ? t('search.tanTanTan')
                     : activeTab === 'installment'
                     ? t('listings.installment')
+                    : activeTab === 'projects'
+                    ? t('search.projects')
                     : activeTab === 'advertisements'
                     ? t('publicAdvertisements.title') || 'Advertisements'
                     : activeTab === 'events'
@@ -336,7 +373,7 @@ export default function PublicProperties() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
               <div className="w-full overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
-                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-8 gap-1 sm:gap-0 inline-flex sm:inline-grid">
+                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-9 gap-1 sm:gap-0 inline-flex sm:inline-grid">
                 
                 <TabsTrigger 
                   value="property"
@@ -393,6 +430,13 @@ export default function PublicProperties() {
                 >
                   {t('search.wanted') || 'Wanted'} ({wantedCount})
                 </TabsTrigger>
+
+                <TabsTrigger
+                  value="projects"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
+                >
+                  {t('search.projects') || 'Projects'} ({projectCount})
+                </TabsTrigger>
                 
                 </TabsList>
               </div>
@@ -400,6 +444,11 @@ export default function PublicProperties() {
               {/* Property Filters - Show for property-related tabs */}
               {(activeTab === 'property' || activeTab === 'premium' || activeTab === 'marketplace' || activeTab === 'installment' || activeTab === 'tantantan') && (
                 <PropertyFilters />
+              )}
+
+              {/* Project Filters - Show for Projects tab */}
+              {activeTab === 'projects' && (
+                <ProjectFilters />
               )}
 
               {/* Advertisement Filters - Show for Advertisements tab */}
@@ -438,6 +487,12 @@ export default function PublicProperties() {
               {activeTab === 'installment' && (
                 <TabsContent value="installment" className="space-y-4">
                   <InstallmentPropertiesList filters={filters} />
+                </TabsContent>
+              )}
+
+              {activeTab === 'projects' && (
+                <TabsContent value="projects" className="space-y-4">
+                  <ProjectList filters={projectFilters} />
                 </TabsContent>
               )}
 

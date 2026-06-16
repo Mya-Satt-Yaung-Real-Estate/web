@@ -13,6 +13,7 @@ export interface StatisticsCounts {
   featured_for_sale_advertisements_count: number;
   featured_for_rent_advertisements_count: number;
   housing_events_count: number;
+  projects_count: number;
   installment_properties_count: number;
   lawyers_count: number;
   tan_tan_tan_properties_count: number;
