@@ -40,6 +40,9 @@ const translations: Translations = {
   'home.propertiesMapLocation.description': { en: 'Explore properties on the map to find your perfect location', mm: 'သင့်အတွက်အကောင်းဆုံးတည်နေရာကိုရှာဖွေရန်မြေပုံပေါ်ရှိအိမ်ခြံမြေများကိုစူးစမ်းရှာဖွေပါ' },
   'home.jadeMarketplaceTitle': { en: 'Jade Market Place', mm: 'Jade အရောင်းစဉ်တာ' },
   'home.viewMarketplace': { en: 'View Marketplace', mm: 'အရောင်းစဉ်တာတွင် ကြည့်ပါ' },
+  'home.newProjectsTitle': { en: 'New & Upcoming Projects', mm: 'စီမံကိန်းအသစ်များ' },
+  'home.newProjectsSubtitle': { en: 'Discover the latest development projects and upcoming launches', mm: 'နောက်ဆုံးပေါ် ဖွံ့ဖြိုးရေးစီမံကိန်းများနှင့် မကြာမီစတင်မည့် စီမံကိန်းများကို ကြည့်ရှုပါ' },
+  'home.viewAllProjects': { en: 'View All Projects', mm: 'စီမံကိန်းအားလုံး ကြည့်ရန်' },
   
   // Categories
   'categories.searchAllProperty': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
@@ -365,7 +368,7 @@ const translations: Translations = {
   // Create Listing
   'createListing.title': { en: 'Create Listing', mm: 'စာရင်းဖန်တီးရန်' },
   'createListing.propertyPost': { en: 'Property Post', mm: 'အိမ်ခြံမြေတင်ရန်' },
-  'createListing.projectListing': { en: 'Project Listing', mm: 'ပရောဂျက်စာရင်း' },
+  'createListing.projectListing': { en: 'New Projects', mm: 'စီမံကိန်းများ' },
   'createListing.wantedPost': { en: 'Wanted Post', mm: 'လိုချင်သောစာရင်း' },
   'createListing.advertisementPost': { en: 'Advertisement Post', mm: 'ကြော်ငြာတင်ရန်' },
   'createListing.appointmentRequest': { en: 'Appointment Request', mm: 'ချိန်းဆိုမှုတောင်းဆိုရန်' },

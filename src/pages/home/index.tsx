@@ -15,6 +15,7 @@ import {
   HomeGridAdsSection,
   HomeYoutubeVideosSection,
   HomeJadeMarketPropertiesSection,
+  HomeNewProjectsSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -151,6 +152,10 @@ export const Home = memo(function Home() {
           </div>
         </div>
       </section>
+
+
+      {/* New Projects */}
+      <HomeNewProjectsSection />
 
       {/* Company Logo Lists */}
       <CompanyLogoSection />

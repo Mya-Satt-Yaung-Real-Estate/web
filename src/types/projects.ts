@@ -9,6 +9,7 @@ export interface ProjectDeveloper {
   name: string;
   user_type: string;
   member_level: string;
+  company_slug?: string | null;
   profile_image_url: string | null;
 }
 
@@ -95,6 +96,12 @@ export interface ProjectListResponse {
   message: string;
   data: Project[];
   pagination: ProjectPagination;
+}
+
+export interface HomeProjectListResponse {
+  success: boolean;
+  message: string;
+  data: Project[];
 }
 
 export interface ProjectResponse {

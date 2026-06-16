@@ -8,6 +8,7 @@ import type { SliderAdsResponse, DetailPageSidebarsAdsResponse, HomeGridAdsRespo
 import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
 import type { YoutubeVideoListResponse } from '@/types/youtubeVideo';
+import type { HomeProjectListResponse } from '@/types/projects';
 
 export type HomeAdvertisementType = 'for_sale' | 'for_rent';
 
@@ -122,6 +123,13 @@ export const homeApi = {
    */
   getJadeMarketProperties: () => {
     return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/home/jade-market-properties');
+  },
+
+  /**
+   * Get new projects for home page (3 items)
+   */
+  getNewProjects: () => {
+    return api.get<HomeProjectListResponse>('/api/v1/frontend/public/home/new-projects');
   },
 };
 

@@ -11,4 +11,5 @@ export { CompanyLogoSection } from './CompanyLogoSection';
 export { HomeGridAdsSection } from './HomeGridAdsSection';
 export { HomeYoutubeVideosSection } from './HomeYoutubeVideosSection';
 export { HomeJadeMarketPropertiesSection } from './HomeJadeMarketPropertiesSection';
+export { HomeNewProjectsSection } from './HomeNewProjectsSection';
 
