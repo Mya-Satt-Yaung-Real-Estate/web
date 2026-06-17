@@ -46,6 +46,7 @@ const PublicWantedDetail = lazyWithRetry(() => import('../pages/publicWantedDeta
 // Public Properties pages
 const PublicProperties = lazyWithRetry(() => import('../pages/publicProperties').then(module => ({ default: module.default })));
 const PublicPropertyDetail = lazyWithRetry(() => import('../pages/publicPropertyDetail').then(module => ({ default: module.default })));
+const PublicProjectDetail = lazyWithRetry(() => import('../pages/publicProjectDetail').then(module => ({ default: module.default })));
 
 // Public Advertisement pages
 const PublicAdvertisementDetail = lazyWithRetry(() => import('../pages/publicAdvertisementDetail').then(module => ({ default: module.default })));
@@ -310,6 +311,14 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <PublicPropertyDetail />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/projects/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicProjectDetail />
       </Suspense>
     ),
   },

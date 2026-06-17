@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { ArrowRight, Building2, Eye, Home, MapPin, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,6 +35,7 @@ const getConditionColor = (condition: string) => {
 
 function HomeProjectCard({ project }: { project: Project }) {
   const { language } = useLanguage();
+  const navigate = useNavigate();
 
   const title = language === 'mm' ? project.title_mm || project.title_en : project.title_en;
   const description = language === 'mm'
@@ -54,17 +55,35 @@ function HomeProjectCard({ project }: { project: Project }) {
     .filter((image) => image.url && image.url !== imageUrl)
     .slice(0, 2);
 
+  const openProjectDetail = () => {
+    const projectPath = project.slug || String(project.id);
+    if (projectPath) {
+      navigate(`/projects/${projectPath}`);
+    }
+  };
+
   return (
-    <Card className="group overflow-hidden rounded-xl border border-primary/20 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl h-full flex flex-col">
-      <div className="relative overflow-hidden h-56">
+    <Card
+      role="link"
+      tabIndex={0}
+      onClick={openProjectDetail}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openProjectDetail();
+        }
+      }}
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-primary/20 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
+    >
+      <div className="relative h-56 overflow-hidden">
         <ImageWithFallback
           src={imageUrl}
           alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+        <div className="pointer-events-none absolute top-3 left-3 flex flex-wrap gap-2">
           <Badge variant="outline" className={`rounded-full px-3 py-1 text-[11px] font-semibold shadow-md backdrop-blur-sm ${getConditionColor(project.condition)}`}>
             {conditionLabels[project.condition] || project.condition}
           </Badge>
@@ -77,7 +96,7 @@ function HomeProjectCard({ project }: { project: Project }) {
         </div>
 
         {previewImages.length > 0 && (
-          <div className="absolute bottom-3 right-3 flex gap-1.5">
+          <div className="pointer-events-none absolute bottom-3 right-3 flex gap-1.5">
             {previewImages.map((image) => (
               <div key={image.id} className="h-10 w-10 overflow-hidden rounded-md border-2 border-white bg-white shadow-md">
                 <ImageWithFallback src={image.url} alt={title} className="h-full w-full object-cover" />
@@ -86,16 +105,16 @@ function HomeProjectCard({ project }: { project: Project }) {
           </div>
         )}
 
-        <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-lg border border-white/20 bg-black/35 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
+        <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-1 rounded-lg border border-white/20 bg-black/35 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
           <Eye className="h-3.5 w-3.5" />
           <span>{(project.view_count || 0).toLocaleString()}</span>
         </div>
       </div>
 
-      <CardContent className="p-5 pt-7 flex-1 flex flex-col">
-        <h4 className="mb-3 text-base font-semibold line-clamp-1 text-foreground group-hover:text-primary transition-colors">
+      <CardContent className="flex flex-1 flex-col p-5 pt-7">
+        <h3 className="mb-3 line-clamp-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
           {title}
-        </h4>
+        </h3>
 
         {description && (
           <p className="mb-5 min-h-[2.5rem] text-sm leading-5 text-muted-foreground line-clamp-2">
@@ -113,6 +132,8 @@ function HomeProjectCard({ project }: { project: Project }) {
             {companySlug ? (
               <Link
                 to={`/companies/${companySlug}`}
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
                 className="line-clamp-1 hover:text-primary hover:underline"
               >
                 {developerName}

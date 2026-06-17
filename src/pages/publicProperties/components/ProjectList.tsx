@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Building2, Eye, Home, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,6 +31,7 @@ const getConditionColor = (condition: ProjectCondition) => {
 
 function ProjectCard({ project }: { project: Project }) {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
 
   const title = language === 'mm' ? project.title_mm || project.title_en : project.title_en;
   const description = language === 'mm'
@@ -52,8 +53,23 @@ function ProjectCard({ project }: { project: Project }) {
     under_construction: t('projects.condition.underConstruction') || 'Under Construction',
   };
 
+  const openProjectDetail = () => {
+    navigate(`/projects/${project.slug}`);
+  };
+
   return (
-    <Card className="group h-full overflow-hidden rounded-xl border border-primary/20 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl">
+    <Card
+      role="link"
+      tabIndex={0}
+      onClick={openProjectDetail}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openProjectDetail();
+        }
+      }}
+      className="group h-full cursor-pointer overflow-hidden rounded-xl border border-primary/20 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
+    >
       <div className="relative h-56 overflow-hidden">
         <ImageWithFallback
           src={imageUrl}
@@ -96,7 +112,12 @@ function ProjectCard({ project }: { project: Project }) {
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 flex-shrink-0 text-primary" />
             {companySlug ? (
-              <Link to={`/companies/${companySlug}`} className="line-clamp-1 hover:text-primary hover:underline">
+              <Link
+                to={`/companies/${companySlug}`}
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
+                className="line-clamp-1 hover:text-primary hover:underline"
+              >
                 {developerName}
               </Link>
             ) : (
