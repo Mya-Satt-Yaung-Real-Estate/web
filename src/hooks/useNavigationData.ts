@@ -11,7 +11,8 @@ import type { CompanyType } from '../types';
 import {
   Search, Grid3x3, Star, Home as HomeIcon, Calculator,
   Calendar, Megaphone, BookOpen, HelpCircle, Mail, Info,
-  Scale, Banknote, Building2, FileText, Building, Briefcase, TrendingUp, Users
+  Scale, Banknote, Building2, FileText, Building, Briefcase, TrendingUp, Users,
+  ShoppingCart, Eye,
 } from 'lucide-react';
 
 // Icon mapping for company types
@@ -38,6 +39,9 @@ export function useNavigationData() {
     propertyCategories: [
       { name: t('categories.searchAllProperty'), path: '/search', icon: HomeIcon },
       { name: language === 'mm' ? 'ပရီမီယံအိမ်ခြံမြေ' : 'Premium Property', path: '/search?type=premium', icon: Star },
+      { name: t('nav.marketplace'), path: '/search?type=marketplace', icon: ShoppingCart },
+      { name: t('nav.projects'), path: '/search?type=projects', icon: Building2 },
+      { name: t('nav.popular'), path: '/search?type=property&popular=true', icon: Eye },
       { name: t('listings.installment'), path: '/search?type=installment', icon: Calculator },
       { name: t('publicAdvertisements.tabLabel'), path: '/search?type=advertisements', icon: Megaphone },
       { name: t('services.housingEvent'), path: '/search?type=events', icon: Calendar },

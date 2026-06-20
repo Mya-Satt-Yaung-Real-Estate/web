@@ -16,6 +16,7 @@ import {
   HomeYoutubeVideosSection,
   HomeJadeMarketPropertiesSection,
   HomeNewProjectsSection,
+  HomePopularPropertiesSection,
 } from './components/sections';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -157,6 +158,9 @@ export const Home = memo(function Home() {
       {/* New Projects */}
       <HomeNewProjectsSection />
 
+      {/* Premium Posts */}
+      <PremiumPostsSection count={countsData?.data?.data?.premium_properties_count} />
+
       {/* Company Logo Lists */}
       <CompanyLogoSection />
 
@@ -181,26 +185,26 @@ export const Home = memo(function Home() {
       {/* Home grid ads: 2×2 directly under featured properties; grid_index 1–4 = TL, TR, BL, BR */}
       <HomeGridAdsSection />
 
+      {/* Events */}
+      <EventsSection count={countsData?.data?.data?.housing_events_count} />
+
       {/* Jade Market Properties */}
       <HomeJadeMarketPropertiesSection />
 
       {/* YouTube Videos */}
       <HomeYoutubeVideosSection />
 
-      {/* Events */}
-      <EventsSection count={countsData?.data?.data?.housing_events_count} />
+      {/* Home Block Ads */}
+      <HomeBlockAdsCarousel />
 
-      {/* Premium Posts */}
-      <PremiumPostsSection count={countsData?.data?.data?.premium_properties_count} />
+      {/* Popular Properties */}
+      <HomePopularPropertiesSection />
 
       {/* Wanted Listings */}
       <WantedListingsSection count={countsData?.data?.data?.wanted_listings_count} />
 
       {/* Property Listings */}
       <PropertyListingsSection count={countsData?.data?.data?.all_properties_count} />
-
-      {/* Home Block Ads */}
-      <HomeBlockAdsCarousel />
 
       {/* Properties Map */}
       <PropertiesMapSection />

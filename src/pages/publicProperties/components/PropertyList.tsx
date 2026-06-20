@@ -13,6 +13,7 @@ interface PropertyListProps {
 
 export function PropertyList({ filters }: PropertyListProps) {
   const { t } = useLanguage();
+  const isPopularMode = filters?.popular === true;
   const { 
     data, 
     isLoading, 
@@ -80,8 +81,8 @@ export function PropertyList({ filters }: PropertyListProps) {
 
   return (
     <InfiniteScrollList
-      hasNextPage={hasNextPage || false}
-      isFetchingNextPage={isFetchingNextPage}
+      hasNextPage={isPopularMode ? false : (hasNextPage || false)}
+      isFetchingNextPage={isPopularMode ? false : isFetchingNextPage}
       fetchNextPage={fetchNextPage}
       loadingComponent={loadingSkeletons}
     >

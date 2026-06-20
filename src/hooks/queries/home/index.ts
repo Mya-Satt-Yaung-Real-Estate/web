@@ -20,4 +20,5 @@ export { usePropertyDetailCompanyLogoLists } from './usePropertyDetailCompanyLog
 export { useHomeYoutubeVideos } from './useHomeYoutubeVideos';
 export { useHomeJadeMarketProperties } from './useHomeJadeMarketProperties';
 export { useHomeNewProjects } from './useHomeNewProjects';
+export { useHomePopularProperties } from './useHomePopularProperties';
 

@@ -11,7 +11,10 @@ import type { PublicPropertyFilters } from '@/types/publicProperties';
 /**
  * Get all public properties with filters (infinite scroll)
  */
-export function usePublicProperties(filters?: PublicPropertyFilters) {
+export function usePublicProperties(
+  filters?: PublicPropertyFilters,
+  options?: { enabled?: boolean }
+) {
   return useInfiniteQuery({
     queryKey: publicPropertyKeys.list(filters),
     queryFn: ({ pageParam = 1 }) => {
@@ -34,6 +37,7 @@ export function usePublicProperties(filters?: PublicPropertyFilters) {
     },
     initialPageParam: 1,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: options?.enabled ?? true,
   });
 }
 

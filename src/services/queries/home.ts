@@ -8,6 +8,7 @@ export const homeKeys = {
   all: ['home'] as const,
   premiumProperties: () => [...homeKeys.all, 'premium-properties'] as const,
   featuredProperties: () => [...homeKeys.all, 'featured-properties'] as const,
+  popularProperties: () => [...homeKeys.all, 'popular-properties'] as const,
   wantedListings: () => [...homeKeys.all, 'wanted-listings'] as const,
   featuredAdvertisements: (advertisementType?: HomeAdvertisementType) => [...homeKeys.all, 'featured-advertisements', advertisementType ?? 'all'] as const,
   upcomingEvents: () => [...homeKeys.all, 'upcoming-events'] as const,
@@ -35,6 +36,10 @@ export const homeQueries = {
 
   getFeaturedProperties: () => {
     return homeApi.getFeaturedProperties();
+  },
+
+  getPopularProperties: () => {
+    return homeApi.getPopularProperties();
   },
 
   getWantedListings: () => {

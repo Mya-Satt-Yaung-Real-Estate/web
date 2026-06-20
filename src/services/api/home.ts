@@ -34,6 +34,13 @@ export const homeApi = {
   },
 
   /**
+   * Get popular properties for home page (4 items, highest view count)
+   */
+  getPopularProperties: () => {
+    return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/home/popular-properties');
+  },
+
+  /**
    * Get wanted listings for home page (6 items)
    */
   getWantedListings: () => {

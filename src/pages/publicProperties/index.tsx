@@ -7,6 +7,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
+import { usePublicProperties } from '@/hooks/queries/usePublicProperties';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
 import type { WantedListFilters } from '@/services/api/wantedList';
@@ -60,6 +61,7 @@ export default function PublicProperties() {
     newParams.delete('price_low_to_high');
     newParams.delete('property_condition');
     newParams.delete('condition');
+    newParams.delete('popular');
     
     // Advertisement filters
     // (region_id and township_id already deleted above)
@@ -83,11 +85,15 @@ export default function PublicProperties() {
   };
 
   const getFiltersFromParams = (): PublicPropertyFilters => {
-    const perPageParam = 30;
+    const isPopular = searchParams.get('popular') === 'true';
     const filters: PublicPropertyFilters = {
-      per_page: perPageParam,
+      per_page: 30,
       page: 1,
     };
+
+    if (isPopular) {
+      filters.popular = true;
+    }
 
     const search = searchParams.get('search');
     if (search) filters.search = search;
@@ -268,6 +274,8 @@ export default function PublicProperties() {
   };
 
   const filters = getFiltersFromParams();
+  const isPopularProperties = filters.popular === true;
+  const { data: popularData, isLoading: isPopularLoading } = usePublicProperties(filters, { enabled: isPopularProperties });
   const advertisementFilters = getAdvertisementFiltersFromParams();
   const wantedFilters = getWantedFiltersFromParams();
   const eventFilters = getEventFiltersFromParams();
@@ -338,6 +346,19 @@ export default function PublicProperties() {
     }
   };
 
+  const getPopularResultsText = () => {
+    if (isPopularLoading) {
+      return '';
+    }
+
+    const count = popularData?.pages[0]?.data?.pagination?.total ?? 0;
+    const text = count === 1
+      ? t('search.popularPropertiesFound')
+      : t('search.popularPropertiesFoundPlural');
+
+    return text.replace('{count}', count.toString());
+  };
+
   return (
     <>
       <SEOHead seo={seo} path="/search" />
@@ -348,7 +369,9 @@ export default function PublicProperties() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
               <div>
                 <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                  {activeTab === 'premium' 
+                  {isPopularProperties
+                    ? t('home.popularPropertiesTitle') || 'Popular Properties'
+                    : activeTab === 'premium' 
                     ? t('search.premium') 
                     : activeTab === 'marketplace'
                     ? t('search.marketplace') || 'Jade Marketplace'
@@ -366,7 +389,9 @@ export default function PublicProperties() {
                     ? t('search.wanted')
                     : t('search.properties')}
                 </h1>
-                <p className="text-muted-foreground mt-2">{getResultsText()}</p>
+                <p className="text-muted-foreground mt-2">
+                  {isPopularProperties ? getPopularResultsText() : getResultsText()}
+                </p>
               </div>
             </div>
 
@@ -393,7 +418,7 @@ export default function PublicProperties() {
                   value="marketplace"
                   className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
-                  {t('search.marketplace') || 'Jade Marketplace'} ({jadeMarketplaceCount})
+                  {t('search.marketplace') || 'Marketplace'} ({jadeMarketplaceCount})
                 </TabsTrigger>
 
                 <TabsTrigger 

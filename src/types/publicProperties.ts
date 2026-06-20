@@ -112,6 +112,9 @@ export interface PublicPropertyFilters {
   // Pagination
   per_page?: number;
   page?: number;
+
+  /** Pre-filter to top viewed properties (30 items max) */
+  popular?: boolean;
 }
 
 // ============================================================================
