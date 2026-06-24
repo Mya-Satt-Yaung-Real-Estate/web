@@ -10,6 +10,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { seoUtils } from '@/lib/seo';
 import { Building2, MapPin, Phone, Mail, Star, Eye, Home, Search, Globe } from 'lucide-react';
+import { Pagination } from '@/components/ui/pagination';
 import { useCompanies } from '@/hooks/queries/useCompanies';
 import { useCompanyTypes } from '@/hooks/queries/useCompanyTypes';
 import type { Company, CompanyType } from '@/types';
@@ -20,7 +21,8 @@ export function Companies() {
   const [searchParams] = useSearchParams();
   const seo = seoUtils.getPageSEO('companies');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
@@ -30,13 +32,50 @@ export function Companies() {
     if (typeId) {
       setSelectedCategory(typeId);
     } else {
-      setSelectedCategory('all'); // Default to "All Companies"
+      setSelectedCategory('all');
     }
+    setCurrentPage(1);
   }, [searchParams]);
 
-  // API data - fetch all companies at once for client-side filtering
-  const { data: companiesResponse, isLoading, error } = useCompanies();
-  const allCompanies: Company[] = companiesResponse?.data?.data || [];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const companyFilters = useMemo(() => {
+    const filters: {
+      per_page: number;
+      page: number;
+      search?: string;
+      company_type_id?: number;
+    } = {
+      per_page: itemsPerPage,
+      page: currentPage,
+    };
+
+    if (debouncedSearch.trim()) {
+      filters.search = debouncedSearch.trim();
+    }
+
+    if (selectedCategory !== 'all' && selectedCategory) {
+      const categoryId = parseInt(selectedCategory, 10);
+      if (!isNaN(categoryId)) {
+        filters.company_type_id = categoryId;
+      }
+    }
+
+    return filters;
+  }, [currentPage, debouncedSearch, selectedCategory, itemsPerPage]);
+
+  const { data: companiesResponse, isLoading, error } = useCompanies(companyFilters);
+  const companies: Company[] = companiesResponse?.data?.data || [];
+  const pagination = companiesResponse?.data?.pagination;
+  const totalCompanies = pagination?.total ?? companies.length;
+  const totalPages = pagination?.last_page ?? 1;
 
   // API data - fetch company types for category filter
   const { data: companyTypesResponse } = useCompanyTypes();
@@ -57,45 +96,8 @@ export function Companies() {
     return [allCategoriesOption, ...apiCategories];
   }, [companyTypes, language]);
 
-  // Client-side filtering and search
-  const filteredCompanies = useMemo(() => {
-    return allCompanies.filter((company: Company) => {
-      // Search filter with null checks
-      const companyName = company.name || '';
-      const companyDescription = company.description || '';
-      const companyTypeName = company.company_type?.name_en || '';
-      
-      const matchesSearch = companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        companyDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        companyTypeName.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      if (!matchesSearch) return false;
-      
-      // Category filter - filter by company type ID
-      if (selectedCategory === 'all' || !selectedCategory) return true; // Show all if "all" selected or no category
-      
-      const categoryId = parseInt(selectedCategory);
-      if (!isNaN(categoryId)) {
-        return company.company_type?.id === categoryId;
-      }
-      
-      return true;
-    });
-  }, [allCompanies, searchQuery, selectedCategory]);
-
-  // Client-side pagination
-  const paginatedCompanies = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredCompanies.slice(startIndex, endIndex);
-  }, [filteredCompanies, currentPage, itemsPerPage]);
-
-  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
-
-  // Reset to first page when search or filter changes
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    setCurrentPage(1);
   };
 
   const handleCategoryChange = (value: string) => {
@@ -171,9 +173,9 @@ export function Companies() {
           {!isLoading && !error && (
             <div className="mb-6">
               <p className="text-sm text-muted-foreground">
-                Showing {paginatedCompanies.length} of {filteredCompanies.length} companies
-                {searchQuery && ` for "${searchQuery}"`}
-                {selectedCategory && ` in ${categories.find(c => c.value === selectedCategory)?.label}`}
+                Showing {companies.length} of {totalCompanies} companies
+                {debouncedSearch && ` for "${debouncedSearch}"`}
+                {selectedCategory !== 'all' && selectedCategory && ` in ${categories.find(c => c.value === selectedCategory)?.label}`}
               </p>
               </div>
           )}
@@ -181,7 +183,7 @@ export function Companies() {
           {/* Companies Grid */}
           {!isLoading && !error && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {paginatedCompanies.map((company: Company) => (
+              {companies.map((company: Company) => (
                   <Card key={company.id} className="backdrop-blur-sm bg-background/95 hover:shadow-xl transition-all">
                     <CardHeader>
                       <div className="flex items-start gap-4">
@@ -304,45 +306,17 @@ export function Companies() {
 
           {/* Pagination */}
           {!isLoading && !error && totalPages > 1 && (
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
-                
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className="w-10 h-10"
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </div>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </Button>
-              </div>
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
           )}
 
           {/* No Results */}
-          {!isLoading && !error && filteredCompanies.length === 0 && (
+          {!isLoading && !error && totalCompanies === 0 && (
             <Card className="backdrop-blur-sm bg-background/95">
               <CardContent className="py-12 text-center">
                 <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />

@@ -57,6 +57,15 @@ export interface CompaniesResponse {
   success: boolean;
   message: string;
   data: Company[];
+  pagination?: {
+    current_page: number;
+    per_page: number;
+    total: number;
+    last_page: number;
+    from: number | null;
+    to: number | null;
+    has_more_pages: boolean;
+  };
 }
 
 export interface CompanyTypeResponse {
@@ -90,6 +99,9 @@ export interface CompanyLogoListResponse {
 
 export interface CompanyFilters {
   search?: string;
+  company_type_id?: number;
+  per_page?: number;
+  page?: number;
   member_level?: string;
   verification_status?: string;
   company_type?: string;
