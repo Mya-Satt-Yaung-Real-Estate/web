@@ -17,6 +17,7 @@ export function useUpdateProfile() {
       email?: string | null;
       phone: string;
       media_id?: number | null;
+      cover_media_id?: number | null;
       company_name?: string;
       company_type_id?: number;
       address?: string;
@@ -29,6 +30,7 @@ export function useUpdateProfile() {
         email: data.email && data.email.trim() !== '' ? data.email : null,
         phone: data.phone,
         ...(data.media_id && { media_id: data.media_id }),
+        ...(data.cover_media_id !== undefined && { cover_media_id: data.cover_media_id }),
         ...(data.company_name && { company_name: data.company_name }),
         ...(data.company_type_id && { company_type_id: data.company_type_id }),
         ...(data.address && { address: data.address }),

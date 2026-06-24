@@ -32,6 +32,7 @@ export const authApi = {
     email?: string;
     phone: string;
     media_id?: number;
+    cover_media_id?: number | null;
     company_name?: string;
     company_type_id?: number;
     address?: string;

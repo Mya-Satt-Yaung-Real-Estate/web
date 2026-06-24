@@ -18,6 +18,7 @@ interface ProfileImageUploadProps {
   } | null;
   disabled?: boolean;
   className?: string;
+  variant?: 'profile' | 'cover';
 }
 
 export function ProfileImageUpload({
@@ -27,6 +28,7 @@ export function ProfileImageUpload({
   initialImage,
   disabled = false,
   className = '',
+  variant = 'profile',
 }: ProfileImageUploadProps) {
   const [uploadedImage, setUploadedImage] = useState<{
     id: number;
@@ -127,6 +129,18 @@ export function ProfileImageUpload({
     fileInputRef.current?.click();
   };
 
+  const isCover = variant === 'cover';
+  const previewClassName = isCover
+    ? 'w-[480px] max-w-full h-[240px] rounded-lg overflow-hidden'
+    : 'w-[240px] max-w-full aspect-square rounded-lg overflow-hidden';
+  const dropzoneClassName = isCover
+    ? 'flex flex-col items-center justify-center gap-4 w-[480px] max-w-full h-[240px] p-4'
+    : 'flex flex-col items-center justify-center gap-4 w-[240px] h-[240px]';
+  const uploadLabel = isCover
+    ? (t('editProfile.uploadCoverImage') || 'Upload Cover Image')
+    : (t('profile.uploadImage') || 'Upload Profile Image');
+  const previewAlt = isCover ? 'Cover image' : 'Profile image';
+
   return (
     <div className={className}>
       <input
@@ -142,10 +156,10 @@ export function ProfileImageUpload({
         <Card className="relative w-fit">
           <CardContent className="!p-0">
             <div className="relative group">
-              <div className="aspect-square w-full max-w-[200px] rounded-lg overflow-hidden">
+              <div className={previewClassName}>
                 <ImageWithFallback
                   src={uploadedImage.url}
-                  alt="Profile image"
+                  alt={previewAlt}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -170,7 +184,7 @@ export function ProfileImageUpload({
           onClick={handleClick}
         >
           <CardContent className="p-0">
-            <div className="flex flex-col items-center justify-center gap-4 w-[200px]">
+            <div className={dropzoneClassName}>
               {uploading ? (
                 <>
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -186,7 +200,7 @@ export function ProfileImageUpload({
                   <Upload className="h-8 w-8 text-muted-foreground" />
                   <div className="text-center">
                     <p className="text-sm font-medium">
-                      {t('profile.uploadImage') || 'Upload Profile Image'}
+                      {uploadLabel}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {t('profile.imageFormat') || 'PNG, JPG up to 5MB'}

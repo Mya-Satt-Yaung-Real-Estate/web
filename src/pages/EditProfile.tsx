@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, User, Building, MapPin } from 'lucide-react';
+import { ArrowLeft, User, Building, MapPin, ImageIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,7 +70,10 @@ export function EditProfile() {
   });
 
   const [mediaId, setMediaId] = useState<number | null>(null);
+  const [coverMediaId, setCoverMediaId] = useState<number | null>(null);
+  const [coverChanged, setCoverChanged] = useState(false);
   const [isMediaLoading, setIsMediaLoading] = useState(false);
+  const [isCoverMediaLoading, setIsCoverMediaLoading] = useState(false);
   const [isFormInitialized, setIsFormInitialized] = useState(false);
   const watchedRegionId = form.watch('region_id' as any);
   // Get township_id from form to ensure it's available even if region isn't watched yet
@@ -216,6 +219,7 @@ export function EditProfile() {
       email: data.email && data.email.trim() !== '' ? data.email : null,
       phone: data.phone,
       ...(mediaId && { media_id: mediaId }),
+      ...(coverChanged && { cover_media_id: coverMediaId }),
     };
 
     if (user?.user_type === 'company') {
@@ -258,27 +262,56 @@ export function EditProfile() {
           </div>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Profile Image */}
-            <Card className="backdrop-blur-sm bg-background/95 shadow-sm w-fit">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <User className="h-5 w-5 text-primary" />
-                  {t('editProfile.profileImage') || 'Profile Image'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ProfileImageUpload
-                  onUploadComplete={(id) => setMediaId(id || null)}
-                  onUploadError={(error) => console.error('Upload error:', error)}
-                  onLoadingChange={setIsMediaLoading}
-                  initialImage={user.profile_image_url ? {
-                    id: 0, // We don't have the media ID, so use 0 as placeholder
-                    url: user.profile_image_url,
-                  } : undefined}
-                  disabled={isUpdating}
-                />
-              </CardContent>
-            </Card>
+            <div className="flex flex-col sm:flex-row flex-wrap items-start gap-6">
+              {/* Profile Image */}
+              <Card className="backdrop-blur-sm bg-background/95 shadow-sm w-fit">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <User className="h-5 w-5 text-primary" />
+                    {t('editProfile.profileImage') || 'Profile Image'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ProfileImageUpload
+                    variant="profile"
+                    onUploadComplete={(id) => setMediaId(id || null)}
+                    onUploadError={(error) => console.error('Upload error:', error)}
+                    onLoadingChange={setIsMediaLoading}
+                    initialImage={user.profile_image_url ? {
+                      id: 0,
+                      url: user.profile_image_url,
+                    } : undefined}
+                    disabled={isUpdating}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Cover Image */}
+              <Card className="backdrop-blur-sm bg-background/95 shadow-sm w-fit">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <ImageIcon className="h-5 w-5 text-primary" />
+                    {t('editProfile.coverImage') || 'Cover Image'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ProfileImageUpload
+                    variant="cover"
+                    onUploadComplete={(id) => {
+                      setCoverMediaId(id);
+                      setCoverChanged(true);
+                    }}
+                    onUploadError={(error) => console.error('Cover upload error:', error)}
+                    onLoadingChange={setIsCoverMediaLoading}
+                    initialImage={user.cover_image_url ? {
+                      id: 0,
+                      url: user.cover_image_url,
+                    } : undefined}
+                    disabled={isUpdating}
+                  />
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Basic Information */}
             <Card className="backdrop-blur-sm bg-background/95 shadow-sm">
@@ -505,7 +538,7 @@ export function EditProfile() {
               </Button>
               <Button
                 type="submit"
-                disabled={isUpdating || isMediaLoading}
+                disabled={isUpdating || isMediaLoading || isCoverMediaLoading}
                 className="gradient-primary"
               >
                 {isUpdating ? (

@@ -18,6 +18,7 @@ interface BaseUser {
   verify_account: boolean;
   member_since: string;
   profile_image_url: string | null;
+  cover_image_url?: string | null;
   current_point: number;
   achievements: {
     verify_account: boolean;
@@ -89,6 +90,7 @@ export interface ExtendedUser {
   verify_account: boolean;
   member_since: string;
   profile_image_url: string | null;
+  cover_image_url?: string | null;
   current_point: number;
   unread_notification_count?: number; // Unread notification count from profile
   // Company-specific fields at root level

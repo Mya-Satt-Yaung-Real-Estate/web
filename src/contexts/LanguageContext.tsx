@@ -2112,6 +2112,7 @@ const translations: Translations = {
 
   // Profile
   'profile.title': { en: 'My Profile', mm: 'ကျွန်ုပ်၏ ပရိုဖိုင်' },
+  'profile.editCover': { en: 'Edit cover photo', mm: 'မျက်နှာဖုံးပုံ ပြင်ရန်' },
   'profile.subtitle': { en: 'Manage your account information', mm: 'သင့်အကောင့်အချက်အလက်ကို စီမံပါ' },
   'profile.settings': { en: 'Settings', mm: 'ဆက်တင်များ' },
   'profile.logoutConfirm': { en: 'Logout Confirmation', mm: 'ထွက်ရန် အတည်ပြုခြင်း' },
@@ -2149,6 +2150,9 @@ const translations: Translations = {
   'editProfile.title': { en: 'Edit Profile', mm: 'ပရိုဖိုင်း ပြင်ဆင်ရန်' },
   'editProfile.subtitle': { en: 'Update your profile information', mm: 'သင့်ပရိုဖိုင်း အချက်အလက်များကို ပြင်ဆင်ရန်' },
   'editProfile.profileImage': { en: 'Profile Image', mm: 'ပုံ' },
+  'editProfile.coverImage': { en: 'Cover Image', mm: 'မျက်နှာဖုံးပုံ' },
+  'editProfile.uploadCoverImage': { en: 'Upload Cover Image', mm: 'မျက်နှာဖုံးပုံ တင်ရန်' },
+  'editProfile.images': { en: 'Profile Images', mm: 'ပရိုဖိုင်း ပုံများ' },
   'editProfile.basicInformation': { en: 'Basic Information', mm: 'အခြေခံ အချက်အလက်' },
   'editProfile.name': { en: 'Name', mm: 'အမည်' },
   'editProfile.namePlaceholder': { en: 'Enter your name', mm: 'သင့်အမည်ကို ထည့်သွင်းရန်' },
