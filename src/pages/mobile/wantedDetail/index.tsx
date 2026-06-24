@@ -30,6 +30,7 @@ import {
   AlertCircle,
   Sparkles,
 } from 'lucide-react';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 
 const AI_GRADIENT_COLOR = 'linear-gradient(to right, oklch(0.558 0.288 302.321) 0%, oklch(0.546 0.245 262.881) 100%)';
 
@@ -365,8 +366,8 @@ export default function MobileWantedDetail() {
                       : (t('wantedDetail.individual') || 'Individual')}
                   </p>
                   {wanted.user.member_level && (
-                    <Badge variant="outline" className="mt-1 text-xs">
-                      {wanted.user.member_level}
+                    <Badge variant="outline" className={`mt-1 text-xs ${getMemberLevelBadgeClass(wanted.user.member_level)}`}>
+                      {formatMemberLevelLabel(wanted.user.member_level)}
                     </Badge>
                   )}
                 </div>

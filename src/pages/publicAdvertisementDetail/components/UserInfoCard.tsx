@@ -6,6 +6,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import type { PublicAdvertisementDetailUser } from '@/types/publicAdvertisements';
 
 interface UserInfoCardProps {
@@ -34,8 +35,8 @@ export function UserInfoCard({
                 : (t('advertisementDetail.individual') || 'Individual')}
             </p>
             {user.member_level && (
-              <Badge variant="outline" className="mt-1 text-xs">
-                {user.member_level}
+              <Badge variant="outline" className={`mt-1 text-xs ${getMemberLevelBadgeClass(user.member_level)}`}>
+                {formatMemberLevelLabel(user.member_level)}
               </Badge>
             )}
           </div>

@@ -31,7 +31,7 @@ export interface Company {
   user_id: number;
   name: string;
   slug: string;
-  member_level: 'bronze' | 'silver' | 'gold' | 'platinum';
+  member_level: 'basic' | 'silver' | 'gold' | 'premium' | 'bronze' | 'platinum';
   email: string;
   company_type: CompanyType;
   verification_status: 'pending' | 'approved' | 'rejected';
@@ -41,10 +41,12 @@ export interface Company {
   township: Township;
   business_address: string;
   property_count: number;
+  advertisement_count?: number;
   view_count: number;
   contact_count: number;
   wanted_count?: number;
   company_profile: string;
+  cover_image_url?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

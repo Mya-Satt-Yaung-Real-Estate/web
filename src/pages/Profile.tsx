@@ -12,6 +12,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { cn } from '@/lib/utils';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 
 const DEFAULT_COVER_IMAGE = 'https://msy-demo.s3.ap-southeast-1.amazonaws.com/default/default-cover.jpeg';
 
@@ -262,8 +263,8 @@ export function Profile() {
                   </Label>
                   <p className="font-medium">
                     {user.member_level ? (
-                      <Badge className="bg-blue-100 text-blue-800 border-blue-300">
-                        {user.member_level}
+                      <Badge variant="outline" className={getMemberLevelBadgeClass(user.member_level)}>
+                        {formatMemberLevelLabel(user.member_level)}
                       </Badge>
                     ) : (
                       <span className="text-muted-foreground">-</span>

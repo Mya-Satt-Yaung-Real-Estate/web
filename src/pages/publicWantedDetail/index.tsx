@@ -40,6 +40,7 @@ import {
 import { ShareModal } from '@/components/ui/ShareModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { toast } from 'sonner';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import type { WantedListDetailResponse } from '@/types/wantedList';
 
 export default function PublicWantedDetail() {
@@ -613,8 +614,8 @@ export default function PublicWantedDetail() {
                               : (t('wantedDetail.individual') || 'Individual')}
                           </p>
                           {wanted.user.member_level && (
-                            <Badge variant="outline" className="mt-1 text-xs">
-                              {wanted.user.member_level}
+                            <Badge variant="outline" className={`mt-1 text-xs ${getMemberLevelBadgeClass(wanted.user.member_level)}`}>
+                              {formatMemberLevelLabel(wanted.user.member_level)}
                             </Badge>
                           )}
                         </div>

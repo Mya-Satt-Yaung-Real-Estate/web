@@ -20,6 +20,8 @@ import { CompanyAdvertisementListCard } from './CompanyAdvertisementListCard';
 import { CompanyPropertyGridCard } from './CompanyPropertyGridCard';
 import { CompanyPropertyListCard } from './CompanyPropertyListCard';
 import { WantedListingCard } from '@/pages/publicProperties/components/WantedListingCard';
+import { toast } from 'sonner';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import type { Property } from '@/types/properties';
 import type { Advertisement } from '@/types/advertisement';
 import type { WantedList as WantedListItem } from '@/types/wantedList';
@@ -35,9 +37,13 @@ import {
   Grid3x3,
   List,
   Megaphone,
-  Calendar,
   Search,
+  Share2,
+  CheckCircle,
+  Award,
 } from 'lucide-react';
+
+const DEFAULT_COVER_IMAGE = 'https://msy-demo.s3.ap-southeast-1.amazonaws.com/default/default-cover.jpeg';
 
 export default function CompanyDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -197,27 +203,6 @@ export default function CompanyDetail() {
   // API returns ApiResponse<CompanyDetailResponse>, so we need to unwrap
   const company = companyData.data.data;
 
-  // Get member level display
-  const getMemberLevelLabel = (level: string) => {
-    return level.charAt(0).toUpperCase() + level.slice(1);
-  };
-
-  // Get member level color
-  const getMemberLevelColor = (level: string) => {
-    switch (level) {
-      case 'platinum':
-        return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'gold':
-        return 'bg-amber-100 text-amber-800 border-amber-300';
-      case 'silver':
-        return 'bg-gray-100 text-gray-800 border-gray-300';
-      case 'bronze':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
-      default:
-        return 'bg-muted text-foreground border-border';
-    }
-  };
-
   const properties = allProperties;
   const propertiesPagination = propertiesData?.data?.pagination;
 
@@ -225,7 +210,33 @@ export default function CompanyDetail() {
   const advertisementsPagination = advertisementsData?.data?.pagination;
   const wantedLists = allWantedLists;
   const wantedListsPagination = wantedListsData?.data?.pagination;
-  const companySinceYear = company.createdAt ? new Date(company.createdAt).getFullYear() : null;
+  const coverImageUrl = company.cover_image_url || DEFAULT_COVER_IMAGE;
+  const wantedListCount = wantedListsPagination?.total ?? wantedLists.length;
+  const advertisementCount = company.advertisement_count ?? advertisementsPagination?.total ?? 0;
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/companies/${company.slug}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: company.name, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      toast.success(t('companies.linkCopied') || 'Link copied to clipboard');
+    } catch {
+      // User cancelled share or clipboard unavailable
+    }
+  };
+
+  const handleContact = () => {
+    if (company.phone) {
+      window.location.href = `tel:${company.phone}`;
+      return;
+    }
+    if (company.email) {
+      window.location.href = `mailto:${company.email}`;
+    }
+  };
 
   const handleLoadMoreProperties = () => {
     if (propertiesPagination && propertiesPage < propertiesPagination.last_page) {
@@ -250,62 +261,105 @@ export default function CompanyDetail() {
       <SEOHead seo={seo} path={`/companies/${slug}`} />
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-20 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Hero Banner */}
-          <div className="relative mb-6 overflow-hidden rounded-lg border border-primary/10 bg-gradient-to-br from-primary/20 via-primary/10 to-background shadow-sm">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(62,151,125,0.22),_transparent_36%),radial-gradient(circle_at_bottom_right,_rgba(62,151,125,0.14),_transparent_32%)]" />
-            <div className="relative flex min-h-[240px] items-end px-6 pb-6 pt-8 sm:px-8 lg:min-h-[280px] lg:px-12">
-              <div className="flex items-end gap-5 sm:gap-7">
-                <div className="h-32 w-32 flex-shrink-0 overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl sm:h-40 sm:w-40 lg:h-48 lg:w-48">
-                  <ImageWithFallback
-                    src={company.company_profile || '/jade.png'}
-                    alt={company.name}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+          {/* Cover + profile header */}
+          <Card className="mb-6 overflow-visible border-border/60 bg-background/95 shadow-sm">
+            <div className="relative">
+              <div className="relative aspect-[2/1] w-full overflow-hidden bg-muted sm:aspect-[3/1]">
+                <ImageWithFallback
+                  src={coverImageUrl}
+                  alt={`${company.name} cover`}
+                  className="h-full w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/90 to-transparent sm:h-20" />
+              </div>
 
-                <div className="min-w-0 text-foreground">
-                  <div className="mb-4 flex flex-wrap items-center gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight sm:text-4xl">{company.name}</h1>
-                    {company.verification_status === 'approved' && (
-                      <Badge className="bg-primary text-white shadow-md">
-                        {t('companies.verified')}
+              <div className="absolute bottom-0 left-3 z-10 h-24 w-24 translate-y-[65%] overflow-hidden rounded-full border-4 border-background bg-background shadow-lg sm:left-6 sm:h-36 sm:w-36 md:h-40 md:w-40 lg:left-8 lg:h-48 lg:w-48">
+                <ImageWithFallback
+                  src={company.company_profile || '/jade.png'}
+                  alt={company.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="px-4 pb-4 pt-0 sm:px-6 lg:px-8">
+              <div className="flex gap-3 sm:gap-4 md:gap-6">
+                <div
+                  className="w-24 flex-shrink-0 sm:w-36 md:w-40 lg:w-48"
+                  aria-hidden="true"
+                />
+                <div className="flex min-w-0 flex-1 flex-col gap-2 pt-4 sm:pt-5">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                      <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
+                        {company.name}
+                      </h1>
+                      {company.verification_status === 'approved' && (
+                        <Badge className="border-green-300 bg-green-100 text-green-800">
+                          <CheckCircle className="mr-1 h-3.5 w-3.5" />
+                          {t('companies.verified')}
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className={`${getMemberLevelBadgeClass(company.member_level)} shadow-sm`}>
+                        <Award className="mr-1 h-3.5 w-3.5" />
+                        {formatMemberLevelLabel(company.member_level)}
                       </Badge>
-                    )}
-                    <Badge variant="outline" className={`${getMemberLevelColor(company.member_level)} bg-white/90 shadow-sm`}>
-                      {getMemberLevelLabel(company.member_level)}
-                    </Badge>
+                    </div>
+                    <div className="flex w-full shrink-0 gap-2 md:w-auto">
+                      <Button variant="outline" size="sm" onClick={handleShare} className="flex-1 md:flex-none">
+                        <Share2 className="mr-2 h-4 w-4" />
+                        {t('companies.share')}
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleContact} disabled={!company.phone && !company.email} className="flex-1 md:flex-none">
+                        <Mail className="mr-2 h-4 w-4" />
+                        {t('companies.contact')}
+                      </Button>
+                    </div>
                   </div>
 
                   {company.company_type && (
-                    <div className="mb-5 text-base font-semibold text-primary sm:text-lg">
+                    <p className="text-sm font-medium text-muted-foreground sm:text-base">
                       {language === 'mm' ? company.company_type.name_mm : company.company_type.name_en}
-                    </div>
+                    </p>
                   )}
 
-                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                  <div className="flex flex-col gap-1.5 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:gap-y-1">
                     <span className="inline-flex items-center gap-1.5">
-                      <Home className="h-4 w-4" />
+                      <Home className="h-4 w-4 shrink-0" />
                       {company.property_count} {t('companies.properties')}
                     </span>
+                    <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden="true">·</span>
                     <span className="inline-flex items-center gap-1.5">
-                      <Eye className="h-4 w-4" />
+                      <Megaphone className="h-4 w-4 shrink-0" />
+                      {advertisementCount} {t('companies.advertisements')}
+                    </span>
+                    <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden="true">·</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Eye className="h-4 w-4 shrink-0" />
                       {company.view_count} {t('companies.views')}
                     </span>
+                    <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden="true">·</span>
                     <span className="inline-flex items-center gap-1.5">
-                      <Megaphone className="h-4 w-4" />
-                      {advertisementsPagination?.total ?? advertisements.length} {t('companies.tabs.advertisements')}
+                      <Search className="h-4 w-4 shrink-0" />
+                      {wantedListCount} {t('companies.tabs.wantedList') || 'Wanted List'}
                     </span>
-                    {companySinceYear && (
-                      <span className="inline-flex items-center gap-1.5">
-                        <Calendar className="h-4 w-4" />
-                        Since {companySinceYear}
-                      </span>
-                    )}
                   </div>
+
+                  {company.slug && (
+                    <a
+                      href={`${window.location.origin}/companies/${company.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex max-w-full items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+                    >
+                      <Globe className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="truncate">{`${window.location.host}/companies/${company.slug}`}</span>
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           <div className="grid gap-6 lg:grid-cols-4">
             {/* Company Sidebar */}
@@ -355,12 +409,6 @@ export default function CompanyDetail() {
                       <a href={`mailto:${company.email}`} className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary">
                         <Mail className="h-4 w-4 text-primary" />
                         {company.email}
-                      </a>
-                    )}
-                    {company.slug && (
-                      <a href={`${window.location.origin}/companies/${company.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary">
-                        <Globe className="h-4 w-4 text-primary" />
-                        <span className="truncate">{`${window.location.host}/companies/${company.slug}`}</span>
                       </a>
                     )}
                   </div>

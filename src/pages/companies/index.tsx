@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { SEOHead } from '@/components/seo/SEOHead';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { seoUtils } from '@/lib/seo';
-import { Building2, MapPin, Phone, Mail, Star, Eye, Home, Search, Globe } from 'lucide-react';
+import { Building2, MapPin, Phone, Mail, Eye, Home, Search, Globe, Megaphone } from 'lucide-react';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import { Pagination } from '@/components/ui/pagination';
 import { useCompanies } from '@/hooks/queries/useCompanies';
 import { useCompanyTypes } from '@/hooks/queries/useCompanyTypes';
@@ -209,13 +210,16 @@ export function Companies() {
                             )}
                           </div>
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                            <span className="capitalize">{company.member_level}</span>
-                            </div>
+                            <Badge variant="outline" className={getMemberLevelBadgeClass(company.member_level)}>
+                              {formatMemberLevelLabel(company.member_level)}
+                            </Badge>
                             <div className="flex items-center gap-1">
                               <Home className="h-4 w-4" />
                             <span>{company.property_count} {t('companies.properties')}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Megaphone className="h-4 w-4" />
+                            <span>{company.advertisement_count ?? 0} {t('companies.advertisements')}</span>
                             </div>
                           <div className="flex items-center gap-1">
                             <Eye className="h-4 w-4" />
