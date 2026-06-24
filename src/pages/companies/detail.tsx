@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useCompanyBySlug, useCompanyProperties, useCompanyAdvertisements, useCompanyWantedLists } from '@/hooks/queries/useCompanies';
+import { useCompanyBySlug, useCompanyProperties, useCompanyAdvertisements } from '@/hooks/queries/useCompanies';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,12 +19,10 @@ import { CompanyAdvertisementGridCard } from './CompanyAdvertisementGridCard';
 import { CompanyAdvertisementListCard } from './CompanyAdvertisementListCard';
 import { CompanyPropertyGridCard } from './CompanyPropertyGridCard';
 import { CompanyPropertyListCard } from './CompanyPropertyListCard';
-import { WantedListingCard } from '@/pages/publicProperties/components/WantedListingCard';
 import { toast } from 'sonner';
 import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import type { Property } from '@/types/properties';
 import type { Advertisement } from '@/types/advertisement';
-import type { WantedList as WantedListItem } from '@/types/wantedList';
 import {
   ArrowLeft,
   ArrowRight,
@@ -37,7 +35,6 @@ import {
   Grid3x3,
   List,
   Megaphone,
-  Search,
   Share2,
   CheckCircle,
   Award,
@@ -52,12 +49,10 @@ export default function CompanyDetail() {
   const [activeTab, setActiveTab] = useState('properties');
   const [propertiesPage, setPropertiesPage] = useState(1);
   const [advertisementsPage, setAdvertisementsPage] = useState(1);
-  const [wantedListsPage, setWantedListsPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [advertisementsViewMode, setAdvertisementsViewMode] = useState<'grid' | 'list'>('grid');
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [allAdvertisements, setAllAdvertisements] = useState<Advertisement[]>([]);
-  const [allWantedLists, setAllWantedLists] = useState<WantedListItem[]>([]);
 
   const { data: companyData, isLoading, error } = useCompanyBySlug(slug || '');
   const { data: propertiesData, isLoading: propertiesLoading, isFetching: propertiesFetching } = useCompanyProperties(
@@ -68,10 +63,6 @@ export default function CompanyDetail() {
     slug || '',
     { per_page: 12, page: advertisementsPage }
   );
-  const { data: wantedListsData, isLoading: wantedListsLoading, isFetching: wantedListsFetching } = useCompanyWantedLists(
-    slug || '',
-    { per_page: 12, page: wantedListsPage }
-  );
 
   // Reset properties when company changes
   useEffect(() => {
@@ -79,8 +70,6 @@ export default function CompanyDetail() {
     setPropertiesPage(1);
     setAllAdvertisements([]);
     setAdvertisementsPage(1);
-    setAllWantedLists([]);
-    setWantedListsPage(1);
   }, [slug]);
 
   // Reset data when switching tabs
@@ -95,11 +84,6 @@ export default function CompanyDetail() {
       // Switching TO advertisements tab - reset and reload
       setAllAdvertisements([]);
       setAdvertisementsPage(1);
-    }
-    if (prevTab.current !== 'wanted' && activeTab === 'wanted') {
-      // Switching TO wanted tab - reset and reload
-      setAllWantedLists([]);
-      setWantedListsPage(1);
     }
     prevTab.current = activeTab;
   }, [activeTab]);
@@ -139,22 +123,6 @@ export default function CompanyDetail() {
       }
     }
   }, [advertisementsData, advertisementsPage, activeTab]);
-
-  // Accumulate wanted lists when new page data arrives
-  useEffect(() => {
-    if (wantedListsData?.data?.data && activeTab === 'wanted') {
-      const newWantedLists = wantedListsData.data.data;
-      if (wantedListsPage === 1) {
-        setAllWantedLists(newWantedLists);
-      } else {
-        setAllWantedLists(prev => {
-          const existingIds = new Set(prev.map((wanted: WantedListItem) => wanted.id));
-          const uniqueNew = newWantedLists.filter((wanted: WantedListItem) => !existingIds.has(wanted.id));
-          return [...prev, ...uniqueNew];
-        });
-      }
-    }
-  }, [wantedListsData, wantedListsPage, activeTab]);
 
   if (isLoading) {
     return (
@@ -208,10 +176,7 @@ export default function CompanyDetail() {
 
   const advertisements = allAdvertisements;
   const advertisementsPagination = advertisementsData?.data?.pagination;
-  const wantedLists = allWantedLists;
-  const wantedListsPagination = wantedListsData?.data?.pagination;
   const coverImageUrl = company.cover_image_url || DEFAULT_COVER_IMAGE;
-  const wantedListCount = wantedListsPagination?.total ?? wantedLists.length;
   const advertisementCount = company.advertisement_count ?? advertisementsPagination?.total ?? 0;
 
   const handleShare = async () => {
@@ -247,12 +212,6 @@ export default function CompanyDetail() {
   const handleLoadMoreAdvertisements = () => {
     if (advertisementsPagination && advertisementsPage < advertisementsPagination.last_page) {
       setAdvertisementsPage(prev => prev + 1);
-    }
-  };
-
-  const handleLoadMoreWantedLists = () => {
-    if (wantedListsPagination && wantedListsPage < wantedListsPagination.last_page) {
-      setWantedListsPage(prev => prev + 1);
     }
   };
 
@@ -337,11 +296,6 @@ export default function CompanyDetail() {
                     <span className="inline-flex items-center gap-1.5">
                       <Eye className="h-4 w-4 shrink-0" />
                       {company.view_count} {t('companies.views')}
-                    </span>
-                    <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden="true">·</span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <Search className="h-4 w-4 shrink-0" />
-                      {wantedListCount} {t('companies.tabs.wantedList') || 'Wanted List'}
                     </span>
                   </div>
 
@@ -445,21 +399,14 @@ export default function CompanyDetail() {
                         className="h-11 min-w-[170px] flex-none rounded-full border border-primary/40 bg-background px-6 text-primary shadow-sm hover:bg-primary/10 data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md"
                       >
                         <Home className="mr-2 h-4 w-4" />
-                        {t('companies.viewProperties') || t('companies.tabs.properties')}
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="wanted"
-                        className="h-11 min-w-[170px] flex-none rounded-full border border-primary/40 bg-background px-6 text-primary shadow-sm hover:bg-primary/10 data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md"
-                      >
-                        <Search className="mr-2 h-4 w-4" />
-                        {t('companies.tabs.wantedList') || 'Wanted List'}
+                        {t('companies.viewProperties') || t('companies.tabs.properties')} ({company.property_count})
                       </TabsTrigger>
                       <TabsTrigger
                         value="advertisements"
                         className="h-11 min-w-[190px] flex-none rounded-full border border-primary/40 bg-background px-6 text-primary shadow-sm hover:bg-primary/10 data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md"
                       >
                         <Megaphone className="mr-2 h-4 w-4" />
-                        {t('companies.viewAdvertisement') || 'View Advertisement'}
+                        {t('companies.viewAdvertisement') || 'View Advertisement'} ({advertisementCount})
                       </TabsTrigger>
                     </TabsList>
 
@@ -575,70 +522,6 @@ export default function CompanyDetail() {
                       )}
                     </TabsContent>
 
-                    {/* Wanted List Tab */}
-                    <TabsContent value="wanted" className="mt-2">
-                      {wantedLists.length > 0 && !wantedListsLoading && (
-                        <div className="flex items-center justify-between mb-4">
-                          <Link to="/search?type=wanted">
-                            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10">
-                              {t('companies.viewAllWantedLists') || 'View all wanted lists'}
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          </Link>
-                        </div>
-                      )}
-
-                      {wantedListsLoading && wantedListsPage === 1 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {[...Array(6)].map((_, i) => (
-                            <Card key={i} className="overflow-hidden">
-                              <CardContent className="p-4 space-y-3">
-                                <div className="h-4 bg-gray-200 rounded animate-pulse" />
-                                <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-                                <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-                                <div className="h-10 bg-gray-200 rounded animate-pulse" />
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      ) : wantedLists.length === 0 ? (
-                        <div className="text-center py-12">
-                          <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">{t('search.noWantedListings') || 'No wanted listings found'}</h3>
-                          <p className="text-muted-foreground">{t('companies.noWantedListsDesc') || "This company hasn't posted any wanted lists yet."}</p>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            {wantedLists.map((wanted: WantedListItem) => (
-                              <WantedListingCard key={wanted.id} wanted={wanted} />
-                            ))}
-                          </div>
-
-                          {wantedListsPagination && wantedListsPage < wantedListsPagination.last_page && (
-                            <div className="flex justify-center mt-6">
-                              <Button
-                                variant="outline"
-                                size="lg"
-                                onClick={handleLoadMoreWantedLists}
-                                disabled={wantedListsFetching || wantedListsLoading}
-                                className="min-w-[200px]"
-                              >
-                                {wantedListsFetching || wantedListsLoading ? (
-                                  <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                                    {t('forms.loadMore')}...
-                                  </>
-                                ) : (
-                                  t('forms.loadMore')
-                                )}
-                              </Button>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </TabsContent>
-
                     {/* Advertisements Tab */}
                     <TabsContent value="advertisements" className="mt-2">
                       {/* View All Link and Toggle Buttons */}
@@ -703,8 +586,8 @@ export default function CompanyDetail() {
                       ) : advertisements.length === 0 ? (
                         <div className="text-center py-12">
                           <Megaphone className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">{t('advertisements.noResults')}</h3>
-                          <p className="text-muted-foreground">{t('advertisements.noResultsDesc') || "This company hasn't posted any advertisements yet."}</p>
+                          <h3 className="text-lg font-semibold mb-2">{t('companies.noAdvertisements')}</h3>
+                          <p className="text-muted-foreground">{t('companies.noAdvertisementsDesc')}</p>
                         </div>
                       ) : (
                         <>
@@ -712,7 +595,7 @@ export default function CompanyDetail() {
                           {advertisementsViewMode === 'grid' && (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                               {advertisements.map((advertisement: Advertisement) => (
-                                <CompanyAdvertisementGridCard key={advertisement.id} advertisement={advertisement} />
+                                <CompanyAdvertisementGridCard key={advertisement.id} advertisement={advertisement} companySlug={slug || ''} />
                               ))}
                             </div>
                           )}
@@ -721,7 +604,7 @@ export default function CompanyDetail() {
                           {advertisementsViewMode === 'list' && (
                             <div className="space-y-4 mb-6">
                               {advertisements.map((advertisement: Advertisement) => (
-                                <CompanyAdvertisementListCard key={advertisement.id} advertisement={advertisement} />
+                                <CompanyAdvertisementListCard key={advertisement.id} advertisement={advertisement} companySlug={slug || ''} />
                               ))}
                             </div>
                           )}

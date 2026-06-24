@@ -1017,6 +1017,8 @@ const translations: Translations = {
   'companies.viewAllWantedLists': { en: 'View all wanted lists', mm: 'ဝယ်ချင်/ငှားချင်သောစာရင်းအားလုံးကြည့်ရန်' },
   'companies.noProperties': { en: 'No Properties Found', mm: 'အိမ်ခြံမြေများမတွေ့ပါ' },
   'companies.noPropertiesDesc': { en: "This company hasn't listed any properties yet.", mm: 'ဤကုမ္ပဏီတွင် အိမ်ခြံမြေများ မရှိသေးပါ။' },
+  'companies.noAdvertisements': { en: 'No advertisements found', mm: 'ကြော်ငြာများ မတွေ့ရှိပါ' },
+  'companies.noAdvertisementsDesc': { en: "This company hasn't posted any advertisements yet.", mm: 'ဤကုမ္ပဏီသည် ကြော်ငြာများ မတင်ရသေးပါ။' },
   'companies.noWantedListsDesc': { en: "This company hasn't posted any wanted lists yet.", mm: 'ဤကုမ္ပဏီတွင် ဝယ်ချင်/ငှားချင်သော စာရင်းများ မရှိသေးပါ။' },
   'companies.comingSoon': { en: 'Coming Soon', mm: 'မကြာမီရောက်ရှိလာမည်' },
   'companies.comingSoonWanted': { en: 'Wanted List feature will be available soon.', mm: 'လိုချင်သောစာရင်း feature ကို မကြာမီတွင် ရရှိနိုင်မည်ဖြစ်ပါသည်။' },
@@ -1645,7 +1647,9 @@ const translations: Translations = {
   'advertisements.deleteSuccessTitle': { en: 'Success!', mm: 'အောင်မြင်ပါပြီ!' },
   'advertisements.errorDesc': { en: 'Something went wrong while loading your advertisements.', mm: 'သင့်ကြော်ငြာများဖွင့်ရာတွင်အမှားတစ်ခုခုဖြစ်ပွားခဲ့သည်။' },
   'advertisements.noAdvertisementsMatchFilters': { en: 'No advertisements match your filters', mm: 'သင့်စစ်ထုတ်မှုနှင့်ကိုက်ညီသောကြော်ငြာများမရှိပါ' },
-    'advertisements.locationNotSpecified': { en: 'Location not specified', mm: 'တည်နေရာမသတ်မှတ်ထားပါ' },
+  'advertisements.noResults': { en: 'No image available', mm: 'ပုံ မရှိပါ' },
+  'advertisements.noResultsDesc': { en: 'This advertisement has no image yet.', mm: 'ဤကြော်ငြာတွင် ပုံ မထည့်ရသေးပါ။' },
+  'advertisements.locationNotSpecified': { en: 'Location not specified', mm: 'တည်နေရာမသတ်မှတ်ထားပါ' },
   
   // Properties (My Properties List)
   'properties.title': { en: 'My Properties', mm: 'ကျွန်ုပ်၏အိမ်ခြံမြေများ' },

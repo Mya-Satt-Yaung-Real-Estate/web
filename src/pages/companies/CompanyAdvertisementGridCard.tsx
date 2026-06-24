@@ -1,19 +1,27 @@
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, Calendar, Heart, MapPin, Star } from 'lucide-react';
+import { Calendar, Eye, MapPin, Star, ThumbsUp } from 'lucide-react';
 
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  getCompanyAdvertisementTypeBadgeClass,
+  getCompanyAdvertisementTypeLabel,
+} from './companyAdvertisementCardUtils';
+import { useCompanyAdvertisementActions } from './useCompanyAdvertisementActions';
 import type { Advertisement } from '@/types/advertisement';
 
 interface CompanyAdvertisementGridCardProps {
   advertisement: Advertisement;
+  companySlug: string;
 }
 
-export function CompanyAdvertisementGridCard({ advertisement }: CompanyAdvertisementGridCardProps) {
+export function CompanyAdvertisementGridCard({ advertisement, companySlug }: CompanyAdvertisementGridCardProps) {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const { handleLike, isLiked, likeCount } = useCompanyAdvertisementActions(advertisement, companySlug);
 
   const getAdvertisementTitle = () => (language === 'mm' ? advertisement.title_mm : advertisement.title_en);
   const getAdvertisementLocation = () => {
@@ -22,76 +30,90 @@ export function CompanyAdvertisementGridCard({ advertisement }: CompanyAdvertise
     return region && township ? `${township}, ${region}` : '';
   };
 
+  const advertisementTypeLabel = getCompanyAdvertisementTypeLabel(advertisement.advertisement_type, t);
+  const advertisementTypeBadgeClass = getCompanyAdvertisementTypeBadgeClass(advertisement.advertisement_type);
+  const viewCount = advertisement.stats?.view_count ?? 0;
+
+  const goToDetail = () => navigate(`/advertisements/${advertisement.id}`);
+
   return (
-    <Card
-      className="group hover:shadow-2xl transition-all border-2 border-border/50 backdrop-blur-sm h-full flex flex-col overflow-hidden cursor-pointer shadow-md hover:border-primary/30"
-      onClick={() => navigate(`/advertisements/${advertisement.id}`)}
-    >
-      <div className={`relative h-48 overflow-hidden ${
-        advertisement.media?.primary_image ? '' : 'bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center'
-      }`}>
+    <Card className="group flex h-full flex-col overflow-hidden border border-border/50 shadow-lg transition-all hover:border-primary/30 hover:shadow-xl">
+      <div
+        className={`relative h-48 cursor-pointer overflow-hidden ${
+          advertisement.media?.primary_image ? '' : 'flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5'
+        }`}
+        onClick={goToDetail}
+      >
         <ImageWithFallback
           src={advertisement.media?.primary_image?.url || '/jade.png'}
           alt={getAdvertisementTitle()}
-          className={`group-hover:scale-105 transition-transform duration-300 ${
-            advertisement.media?.primary_image ? 'w-full h-full object-cover' : 'max-w-[80%] max-h-[80%] object-contain'
+          className={`transition-transform duration-300 group-hover:scale-105 ${
+            advertisement.media?.primary_image ? 'h-full w-full object-cover' : 'max-h-[80%] max-w-[80%] object-contain'
           }`}
         />
 
         {advertisement.is_featured && (
-          <div className="absolute top-3 left-3">
-            <Badge variant="outline" className="bg-yellow-500/90 text-yellow-900 border-yellow-500/50 backdrop-blur-sm text-xs">
-              <Star className="h-3 w-3 mr-1" />
+          <div className="absolute left-3 top-3">
+            <Badge variant="outline" className="border-yellow-500/50 bg-yellow-500/90 text-xs text-yellow-900 backdrop-blur-sm">
+              <Star className="mr-1 h-3 w-3" />
               {t('advertisements.featured')}
             </Badge>
           </div>
         )}
+
+        <div className="absolute right-3 top-3">
+          <Badge variant="outline" className={`text-xs backdrop-blur-sm ${advertisementTypeBadgeClass}`}>
+            {advertisementTypeLabel}
+          </Badge>
+        </div>
       </div>
 
       <CardHeader className="space-y-3 pb-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2">
+          <h3
+            className="line-clamp-2 cursor-pointer text-lg font-semibold transition-colors group-hover:text-primary"
+            onClick={goToDetail}
+          >
             {getAdvertisementTitle()}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {advertisement.description}
-          </p>
+          <p className="line-clamp-2 text-sm text-muted-foreground">{advertisement.description}</p>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col justify-between space-y-4">
+      <CardContent className="flex flex-1 flex-col justify-between space-y-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-          <span className="line-clamp-1">
-            {getAdvertisementLocation() || t('advertisements.locationNotSpecified')}
-          </span>
+          <MapPin className="h-4 w-4 shrink-0 text-primary" />
+          <span className="line-clamp-1">{getAdvertisementLocation() || t('advertisements.locationNotSpecified')}</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 py-2 border-t border-border/50">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-              <BarChart3 className="h-4 w-4 text-primary" />
-              <span className="font-medium">{advertisement.stats?.view_count ?? 0}</span>
-            </div>
-            <p className="text-xs text-muted-foreground">{t('advertisements.views')}</p>
+        <div className="flex items-center justify-between border-t border-border/50 py-3">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Eye className="h-4 w-4 text-primary" />
+            <span>{viewCount.toLocaleString()}</span>
           </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-              <Heart className="h-4 w-4 text-red-500" />
-              <span className="font-medium">{advertisement.stats?.favorite_count ?? 0}</span>
-            </div>
-            <p className="text-xs text-muted-foreground">{t('advertisements.favorites')}</p>
-          </div>
-        </div>
-
-        <div className="pt-2 border-t border-border/50">
+          <button
+            onClick={handleLike}
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1 transition-colors hover:bg-primary/10"
+          >
+            <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+            <span className={`text-sm ${isLiked ? 'text-primary' : 'text-muted-foreground'}`}>
+              {likeCount.toLocaleString()}
+            </span>
+          </button>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Calendar className="h-3.5 w-3.5" />
-            <span>
-              {t('advertisements.created')} {new Date(advertisement.dates?.created_at || Date.now()).toLocaleDateString()}
-            </span>
+            <span>{new Date(advertisement.dates?.created_at || Date.now()).toLocaleDateString()}</span>
           </div>
         </div>
+
+        <Button
+          onClick={goToDetail}
+          variant="outline"
+          size="sm"
+          className="w-full text-xs transition-all group-hover:border-0 group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-[#4a9b82] group-hover:text-white group-hover:shadow-lg hover:border-0 hover:bg-gradient-to-r hover:from-primary hover:to-[#4a9b82] hover:text-white hover:shadow-lg sm:text-sm"
+        >
+          {t('listings.viewDetails') || 'View Details'}
+        </Button>
       </CardContent>
     </Card>
   );
