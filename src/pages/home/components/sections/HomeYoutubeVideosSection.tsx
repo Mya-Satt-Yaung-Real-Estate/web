@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useHomeYoutubeVideos } from '@/hooks/queries/home';
 import type { YoutubeVideo } from '@/types/youtubeVideo';
 import { formatYoutubeViewCount, getYoutubeEmbedUrl } from '@/utils/youtube';
 
 function YoutubeVideoCard({ video }: { video: YoutubeVideo }) {
+  const { t } = useLanguage();
   const embedUrl = getYoutubeEmbedUrl(video.youtube_link);
 
   return (
@@ -31,7 +33,7 @@ function YoutubeVideoCard({ video }: { video: YoutubeVideo }) {
             className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted-foreground transition-colors hover:text-primary"
           >
             <PlayCircle className="h-12 w-12" />
-            <span className="text-sm font-medium">Open YouTube video</span>
+            <span className="text-sm font-medium">{t('homeTour.openVideo')}</span>
           </a>
         )}
       </div>
@@ -45,13 +47,13 @@ function YoutubeVideoCard({ video }: { video: YoutubeVideo }) {
         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Eye className="h-4 w-4" />
-            <span>{formatYoutubeViewCount(video.view_count)}</span>
+            <span>{formatYoutubeViewCount(video.view_count, t('homeTour.views'))}</span>
           </div>
           <Link
             to={`/youtube-videos/${video.slug}`}
             className="text-sm font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
           >
-            Watch Now
+            {t('homeTour.watchNow')}
           </Link>
         </div>
       </CardContent>
@@ -60,6 +62,7 @@ function YoutubeVideoCard({ video }: { video: YoutubeVideo }) {
 }
 
 export const HomeYoutubeVideosSection = memo(function HomeYoutubeVideosSection() {
+  const { t } = useLanguage();
   const { data, isLoading, error } = useHomeYoutubeVideos();
 
   const videos = useMemo(() => {
@@ -101,12 +104,12 @@ export const HomeYoutubeVideosSection = memo(function HomeYoutubeVideosSection()
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
           <div>
-            <h2>Jade Celebrity Home Tour</h2>
-            <p className="mt-4 text-muted-foreground">Watch the latest property videos and updates from Jade Property.</p>
+            <h2>{t('homeTour.title')}</h2>
+            <p className="mt-4 text-muted-foreground">{t('homeTour.subtitle')}</p>
           </div>
           <Button asChild variant="outline">
             <Link to="/youtube-videos">
-              View All
+              {t('homeTour.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

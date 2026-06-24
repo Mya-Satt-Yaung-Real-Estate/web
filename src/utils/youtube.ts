@@ -31,12 +31,15 @@ export function getYoutubeEmbedUrl(url: string): string | null {
   return null;
 }
 
-export function formatYoutubeViewCount(count: number | null | undefined): string {
+export function formatYoutubeViewCount(
+  count: number | null | undefined,
+  viewsLabel = 'views'
+): string {
   const value = count ?? 0;
   const formattedValue = new Intl.NumberFormat('en-US', {
     notation: 'compact',
     maximumFractionDigits: 1,
   }).format(value);
 
-  return `${formattedValue} views`;
+  return `${formattedValue} ${viewsLabel}`;
 }

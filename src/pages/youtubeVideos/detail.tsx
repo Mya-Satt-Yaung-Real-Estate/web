@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { ShareModal } from '@/components/ui/ShareModal';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useYoutubeVideo, useYoutubeVideos } from '@/hooks/queries/useYoutubeVideos';
 import { homeKeys } from '@/services/queries/home';
 import { youtubeVideoKeys } from '@/services/queries/youtubeVideos';
@@ -14,6 +15,7 @@ import type { YoutubeVideo, YoutubeVideoListResponse } from '@/types/youtubeVide
 import { formatYoutubeViewCount, getYoutubeEmbedUrl } from '@/utils/youtube';
 
 function RelatedYoutubeVideoCard({ video }: { video: YoutubeVideo }) {
+  const { t } = useLanguage();
   const embedUrl = getYoutubeEmbedUrl(video.youtube_link);
 
   return (
@@ -36,7 +38,7 @@ function RelatedYoutubeVideoCard({ video }: { video: YoutubeVideo }) {
             className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted-foreground transition-colors hover:text-primary"
           >
             <PlayCircle className="h-12 w-12" />
-            <span className="text-sm font-medium">Watch video</span>
+            <span className="text-sm font-medium">{t('homeTour.watchVideo')}</span>
           </a>
         )}
       </div>
@@ -52,13 +54,13 @@ function RelatedYoutubeVideoCard({ video }: { video: YoutubeVideo }) {
         <div className="mt-auto flex items-center justify-between gap-3 pt-1">
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Eye className="h-4 w-4" />
-            <span>{formatYoutubeViewCount(video.view_count)}</span>
+            <span>{formatYoutubeViewCount(video.view_count, t('homeTour.views'))}</span>
           </div>
           <Link
             to={`/youtube-videos/${video.slug}`}
             className="text-sm font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
           >
-            Watch Now
+            {t('homeTour.watchNow')}
           </Link>
         </div>
       </CardContent>
@@ -67,6 +69,7 @@ function RelatedYoutubeVideoCard({ video }: { video: YoutubeVideo }) {
 }
 
 export default function YoutubeVideoDetailPage() {
+  const { t } = useLanguage();
   const { slug } = useParams<{ slug: string }>();
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useYoutubeVideo(slug || '');
@@ -131,12 +134,12 @@ export default function YoutubeVideoDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-12 text-center">
-            <h1 className="mb-4 text-2xl font-bold">Video Not Found</h1>
-            <p className="mb-6 text-muted-foreground">The YouTube video you're looking for doesn't exist.</p>
+            <h1 className="mb-4 text-2xl font-bold">{t('homeTour.videoNotFound')}</h1>
+            <p className="mb-6 text-muted-foreground">{t('homeTour.videoNotFoundMessage')}</p>
             <Button asChild>
               <Link to="/youtube-videos">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Videos
+                {t('homeTour.backToVideos')}
               </Link>
             </Button>
           </div>
@@ -152,7 +155,7 @@ export default function YoutubeVideoDetailPage() {
       <SEOHead
         seo={{
           title: video.name,
-          description: video.description || 'Jade Celebrity Home Tour video.',
+          description: video.description || t('homeTour.defaultVideoDescription'),
           keywords: 'jade property, celebrity home tour, youtube video',
           image: '/jade.png',
           type: 'video.other',
@@ -165,7 +168,7 @@ export default function YoutubeVideoDetailPage() {
           <Button asChild variant="outline" size="sm">
             <Link to="/youtube-videos">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Videos
+              {t('homeTour.backToVideos')}
             </Link>
           </Button>
         </div>
@@ -188,7 +191,7 @@ export default function YoutubeVideoDetailPage() {
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted-foreground transition-colors hover:text-primary"
               >
                 <PlayCircle className="h-16 w-16" />
-                <span className="font-medium">Watch video</span>
+                <span className="font-medium">{t('homeTour.watchVideo')}</span>
               </a>
             )}
           </div>
@@ -200,7 +203,7 @@ export default function YoutubeVideoDetailPage() {
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Eye className="h-4 w-4" />
-                <span>{formatYoutubeViewCount(video.view_count)}</span>
+                <span>{formatYoutubeViewCount(video.view_count, t('homeTour.views'))}</span>
               </div>
             </div>
           </CardHeader>
@@ -217,7 +220,7 @@ export default function YoutubeVideoDetailPage() {
                 <ShareModal title={video.name} url={window.location.href}>
                   <Button variant="outline">
                     <Share2 className="mr-2 h-4 w-4" />
-                    Share this video
+                    {t('homeTour.shareVideo')}
                   </Button>
                 </ShareModal>
               </div>
@@ -229,14 +232,14 @@ export default function YoutubeVideoDetailPage() {
           <section className="mt-12">
             <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <h2 className="mb-4">More Videos</h2>
+                <h2 className="mb-4">{t('homeTour.moreVideos')}</h2>
                 <p className="text-muted-foreground">
-                  Watch more videos from Jade Celebrity Home Tour.
+                  {t('homeTour.moreVideosSubtitle')}
                 </p>
               </div>
               <Button asChild variant="outline">
                 <Link to="/youtube-videos">
-                  View All
+                  {t('homeTour.viewAll')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

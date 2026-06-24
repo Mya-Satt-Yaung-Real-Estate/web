@@ -1,6 +1,6 @@
 /**
  * Partner company logos — sidebar on public property detail (2×3 grid, paginated when >6).
- * Last page wraps so all 6 cells stay filled (e.g. 7 logos → page 2 shows #7 then #1–#5 again).
+ * Shows each approved partner once: 1 centered, 2–6 in grid, 7+ paginated (no duplicate fill).
  */
 
 import { memo, useEffect, useMemo, useState } from 'react';
@@ -48,11 +48,7 @@ export const PropertyDetailCompanyLogosCard = memo(function PropertyDetailCompan
   const pageSlots = useMemo((): CompanyLogoItem[] => {
     if (logos.length === 0) return [];
     const start = pageIndex * LOGOS_PER_PAGE;
-    const end = start + LOGOS_PER_PAGE;
-    if (end <= logos.length) {
-      return logos.slice(start, end);
-    }
-    return Array.from({ length: LOGOS_PER_PAGE }, (_, i) => logos[(start + i) % logos.length]);
+    return logos.slice(start, start + LOGOS_PER_PAGE);
   }, [logos, pageIndex]);
 
   useEffect(() => {
@@ -95,6 +91,9 @@ export const PropertyDetailCompanyLogosCard = memo(function PropertyDetailCompan
     return null;
   }
 
+  /**Used to determine if the company logos should be displayed in a single column or in a grid */
+  const isSingleCompany = pageSlots.length === 1;
+
   return (
     <>
       <Card
@@ -114,13 +113,17 @@ export const PropertyDetailCompanyLogosCard = memo(function PropertyDetailCompan
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="grid grid-cols-2 gap-4 place-items-center"
+            className={
+              isSingleCompany
+                ? 'flex justify-center'
+                : 'grid grid-cols-2 gap-4 place-items-center'
+            }
           >
-            {pageSlots.map((company, i) => (
+            {pageSlots.map((company) => (
                 <Link
-                  key={`${company.id}-${pageIndex}-${i}`}
+                  key={company.id}
                   to={`/companies/${company.slug}`}
-                  className="group flex w-full flex-col items-center p-3 text-center"
+                  className={`group flex flex-col items-center p-3 text-center${isSingleCompany ? '' : ' w-full'}`}
                   onMouseEnter={(event) => {
                     setHoveredCompany(company);
                     handleCompanyMouseMove(event);
