@@ -8,6 +8,7 @@ import { InfiniteScrollList } from '@/components/features/InfiniteScrollList';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useInfiniteProjects } from '@/hooks/queries/useProjects';
 import type { Project, ProjectCondition, ProjectFilters } from '@/types/projects';
+import { formatProjectPriceRange } from '@/lib/formatProjectPrice';
 
 interface ProjectListProps {
   filters?: ProjectFilters;
@@ -132,7 +133,9 @@ function ProjectCard({ project }: { project: Project }) {
           <div>
             <p className="mb-1 text-muted-foreground">{t('projects.priceRange') || 'Price Range'}</p>
             <p className="line-clamp-1 font-semibold text-primary">
-              {project.price?.range || t('projects.priceNotSpecified') || 'Price not specified'}
+              {formatProjectPriceRange(project.price?.range, project.price?.currency)
+                || t('projects.priceNotSpecified')
+                || 'Price not specified'}
             </p>
           </div>
           <div className="text-right">

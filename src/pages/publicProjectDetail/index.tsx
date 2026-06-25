@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useProject } from '@/hooks/queries/useProjects';
 import type { Project, ProjectCondition, ProjectPaymentPlan, ProjectUnitType } from '@/types/projects';
+import { formatProjectPriceRange } from '@/lib/formatProjectPrice';
 
 const projectCardClass = 'rounded-2xl border-primary/10 shadow-lg';
 
@@ -158,7 +159,11 @@ function ProjectSummaryCard({
         <div className="my-3 border-t border-border" />
 
         <p className="mb-1 text-xs text-muted-foreground sm:text-sm">{t('projects.priceRange') || 'Price Range'}</p>
-        <p className="mb-4 text-xl font-bold text-primary">{project.price?.range || t('projects.priceNotSpecified') || 'Price not specified'}</p>
+        <p className="mb-4 text-xl font-bold text-primary">
+          {formatProjectPriceRange(project.price?.range, project.price?.currency)
+            || t('projects.priceNotSpecified')
+            || 'Price not specified'}
+        </p>
 
         <div className="space-y-3.5">
           <Button

@@ -9,6 +9,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useHomeNewProjects } from '@/hooks/queries/home';
 import type { Project } from '@/types/projects';
+import { formatProjectPriceRange } from '@/lib/formatProjectPrice';
 
 const conditionLabels: Record<string, string> = {
   upcoming: 'Upcoming',
@@ -48,7 +49,7 @@ function HomeProjectCard({ project }: { project: Project }) {
   const township = language === 'mm' ? project.location?.township?.name_mm : project.location?.township?.name_en;
   const location = [township, region].filter(Boolean).join(', ');
   const imageUrl = project.primary_image?.url || project.media?.primary_image?.url || project.media?.images?.[0]?.url || '';
-  const price = project.price?.range || 'Price not specified';
+  const price = formatProjectPriceRange(project.price?.range, project.price?.currency) || 'Price not specified';
   const developerName = project.developer?.name || 'Developer not specified';
   const companySlug = project.developer?.user_type === 'company' ? project.developer.company_slug : null;
   const previewImages = (project.media?.images || [])

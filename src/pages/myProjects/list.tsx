@@ -28,6 +28,7 @@ import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { useDeleteMyProject } from '@/hooks/mutations/useProjectMutations';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { useMyProjects } from '@/hooks/queries/useProjects';
+import { formatProjectCurrencyLabel, formatProjectPriceRange } from '@/lib/formatProjectPrice';
 import { seoUtils } from '@/lib/seo';
 import type { Project, ProjectCondition, ProjectFilters, ProjectPublishStatus } from '@/types/projects';
 
@@ -138,16 +139,16 @@ export default function MyProjectsList() {
 
   const getPrice = (project: Project) => {
     if (project.price?.range) {
-      return project.price.range;
+      return formatProjectPriceRange(project.price.range, project.price.currency) || 'Price not specified';
     }
 
     const min = project.price?.min;
     const max = project.price?.max;
-    const currency = project.price?.currency || 'MMK';
+    const currencyLabel = formatProjectCurrencyLabel(project.price?.currency);
 
-    if (min && max) return `${min} - ${max} ${currency}`;
-    if (min) return `From ${min} ${currency}`;
-    if (max) return `Up to ${max} ${currency}`;
+    if (min && max) return `${min} - ${max} ${currencyLabel}`;
+    if (min) return `From ${min} ${currencyLabel}`;
+    if (max) return `Up to ${max} ${currencyLabel}`;
 
     return 'Price not specified';
   };

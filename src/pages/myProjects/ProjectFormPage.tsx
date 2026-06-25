@@ -424,7 +424,7 @@ export function ProjectFormPage({ mode, project, projectId, isLoading = false }:
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="MMK">MMK</SelectItem>
+                        <SelectItem value="MMK">MMK (Lakhs)</SelectItem>
                         <SelectItem value="USD">USD</SelectItem>
                         <SelectItem value="THB">THB</SelectItem>
                         <SelectItem value="CNY">CNY</SelectItem>
