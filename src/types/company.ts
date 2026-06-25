@@ -31,7 +31,7 @@ export interface Company {
   user_id: number;
   name: string;
   slug: string;
-  member_level: 'basic' | 'silver' | 'gold' | 'premium' | 'bronze' | 'platinum';
+  member_level: 'basic' | 'bronze' | 'silver' | 'gold' | 'premium';
   email: string;
   company_type: CompanyType;
   verification_status: 'pending' | 'approved' | 'rejected';
