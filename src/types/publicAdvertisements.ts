@@ -106,6 +106,10 @@ export interface PublicAdvertisementDetailUser {
   name: string;
   user_type: string;
   member_level: string;
+  is_company?: boolean;
+  company_id?: number | null;
+  company_slug?: string | null;
+  profile_image_url?: string | null;
 }
 
 export interface PublicAdvertisementDetailMediaImage {
