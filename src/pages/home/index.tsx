@@ -14,6 +14,7 @@ import {
   CompanyLogoSection,
   HomeGridAdsSection,
   HomeYoutubeVideosSection,
+  HomeExploreByCategorySection,
   HomeJadeMarketPropertiesSection,
   HomeNewProjectsSection,
   HomePopularPropertiesSection,
@@ -193,6 +194,9 @@ export const Home = memo(function Home() {
 
       {/* YouTube Videos */}
       <HomeYoutubeVideosSection />
+
+      {/* Explore by Category */}
+      <HomeExploreByCategorySection />
 
       {/* Home Block Ads */}
       <HomeBlockAdsCarousel />

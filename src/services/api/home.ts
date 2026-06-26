@@ -9,6 +9,7 @@ import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
 import type { YoutubeVideoListResponse } from '@/types/youtubeVideo';
 import type { HomeProjectListResponse } from '@/types/projects';
+import type { HomeExploreCategoryListResponse } from '@/types/homeExploreCategory';
 
 export type HomeAdvertisementType = 'for_sale' | 'for_rent';
 
@@ -137,6 +138,10 @@ export const homeApi = {
    */
   getNewProjects: () => {
     return api.get<HomeProjectListResponse>('/api/v1/frontend/public/home/new-projects');
+  },
+
+  getExploreCategories: () => {
+    return api.get<HomeExploreCategoryListResponse>('/api/v1/frontend/public/home/explore-categories');
   },
 };
 

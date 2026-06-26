@@ -21,4 +21,5 @@ export { useHomeYoutubeVideos } from './useHomeYoutubeVideos';
 export { useHomeJadeMarketProperties } from './useHomeJadeMarketProperties';
 export { useHomeNewProjects } from './useHomeNewProjects';
 export { useHomePopularProperties } from './useHomePopularProperties';
+export { useHomeExploreCategories } from './useHomeExploreCategories';
 
