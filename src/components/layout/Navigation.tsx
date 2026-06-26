@@ -10,6 +10,7 @@ import { MobileNavigation } from './mobile';
 
 import logoImage from '@/assets/jade.png';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,7 @@ import { NotificationDropdown } from '../common/NotificationDropdown';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNavigationData } from '../../hooks/useNavigationData';
+import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 
 
 // Reusable dropdown component
@@ -347,13 +349,17 @@ export function Navigation() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 backdrop-blur-xl bg-background/95 border-border/50">
                   <DropdownMenuLabel>
-                    <div className="flex flex-col space-y-2">
-                      <p className="truncate">{user?.name}</p>
-                      {user?.isGuest && (
-                        <span className="inline-block px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <p className="font-medium truncate w-fit max-w-full">{user?.name}</p>
+                      {user?.isGuest ? (
+                        <span className="inline-flex shrink-0 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20 text-xs">
                           Guest
                         </span>
-                      )}
+                      ) : user?.member_level ? (
+                        <Badge variant="outline" className={`shrink-0 text-xs ${getMemberLevelBadgeClass(user.member_level)}`}>
+                          {formatMemberLevelLabel(user.member_level)}
+                        </Badge>
+                      ) : null}
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

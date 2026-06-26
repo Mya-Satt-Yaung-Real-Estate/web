@@ -527,7 +527,7 @@ export default function CompanyDetail() {
                       {/* View All Link and Toggle Buttons */}
                       {advertisements.length > 0 && !advertisementsLoading && (
                         <div className="flex items-center justify-between mb-4">
-                          <Link to="/search?type=advertisement">
+                          <Link to="/search?type=advertisements">
                             <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10">
                               {t('ads.viewAll')}
                               <ArrowRight className="ml-2 h-4 w-4" />
