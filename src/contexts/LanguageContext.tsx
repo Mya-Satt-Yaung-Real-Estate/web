@@ -589,6 +589,9 @@ const translations: Translations = {
   'search.township': { en: 'Township', mm: 'မြို့နယ်' },
   'search.selectRegion': { en: 'Select Region', mm: 'တိုင်း/ပြည်နယ်ရွေးရန်' },
   'search.selectTownship': { en: 'Select Township', mm: 'မြို့နယ်ရွေးရန်' },
+  'search.searchRegion': { en: 'Search region...', mm: 'တိုင်း/ပြည်နယ် ရှာရန်...' },
+  'search.searchTownship': { en: 'Search township...', mm: 'မြို့နယ် ရှာရန်...' },
+  'search.noResults': { en: 'No results found', mm: 'ရလဒ်မတွေ့ပါ' },
   'search.allRegions': { en: 'All Regions', mm: 'တိုင်း/ပြည်နယ်အားလုံး' },
   'search.allTownships': { en: 'All Townships', mm: 'မြို့နယ်အားလုံး' },
   'search.priceRange': { en: 'Price Range', mm: 'ဈေးနှုန်းအကွာအဝေး' },
@@ -1084,7 +1087,6 @@ const translations: Translations = {
   // Search Forms
   'search.searchKnowledge': { en: 'Search knowledge...', mm: 'အသိပညာရှာဖွေရန်...' },
   'search.searchFAQ': { en: 'Search FAQ...', mm: 'မေးခွန်းများရှာဖွေရန်...' },
-  'search.noResults': { en: 'No results found', mm: 'ရလဒ်များမတွေ့ပါ' },
   'search.tryAgain': { en: 'Try different keywords', mm: 'အခြားသော့ချက်စာလုံးများကြိုးစားကြည့်ပါ' },
   'search.results': { en: 'Search Results', mm: 'ရှာဖွေရလဒ်များ' },
   'search.foundResults': { en: 'Found {count} result', mm: '{count} ရလဒ်တွေ့ရှိပါသည်' },

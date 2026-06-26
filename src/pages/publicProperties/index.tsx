@@ -147,6 +147,12 @@ export default function PublicProperties() {
       filters.property_condition = propertyCondition as 'ready' | 'some' | 'no';
     }
 
+    const regionId = searchParams.get('region_id');
+    if (regionId) filters.region_id = Number(regionId);
+
+    const townshipId = searchParams.get('township_id');
+    if (townshipId) filters.township_id = Number(townshipId);
+
     const userId = searchParams.get('user_id');
     if (userId) filters.user_id = Number(userId);
 

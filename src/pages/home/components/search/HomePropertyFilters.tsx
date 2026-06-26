@@ -5,21 +5,15 @@
  * Not reusable - specific to home page feature for easy maintenance.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Home, SlidersHorizontal, MapPin, Zap } from 'lucide-react';
+import { Search, SlidersHorizontal, MapPin, Zap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { LocationAutocomplete } from '@/components/ui/LocationAutocomplete';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
-import { useRegions } from '@/hooks/queries/useLocations';
+import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { HomeAdvancedSearchModal } from './HomeAdvancedSearchModal';
 import type { PropertyType } from '@/services/api/propertyTypes';
 
@@ -30,15 +24,25 @@ export function HomePropertyFilters() {
   
   // Get filter data
   const { data: propertyTypesData } = usePropertyTypes();
-  const { data: regionsResp } = useRegions();
+  const { data: regionsResp, isLoading: regionsLoading } = useRegions();
+  const { data: townshipsResp, isLoading: townshipsLoading } = useTownships();
   
   const propertyTypes = propertyTypesData?.data || [];
   const regions = regionsResp?.data || [];
+  const allTownships = townshipsResp?.data || [];
 
   // Local state for basic filters
   const [search, setSearch] = useState('');
-  const [propertyTypeId, setPropertyTypeId] = useState<string>('all');
   const [regionId, setRegionId] = useState<string>('all');
+  const [townshipId, setTownshipId] = useState<string>('all');
+
+  const filteredTownships = useMemo(() => {
+    if (regionId === 'all') {
+      return [];
+    }
+
+    return allTownships.filter((township: { region_id: number }) => String(township.region_id) === regionId);
+  }, [regionId, allTownships]);
 
   // Advanced filters state (will be set from modal)
   const [advancedFilters, setAdvancedFilters] = useState<{
@@ -61,80 +65,78 @@ export function HomePropertyFilters() {
 
   const handleSearch = (additionalFilters?: typeof advancedFilters) => {
     const params = new URLSearchParams();
-    
-    // Use provided filters or fall back to state
-    const filtersToUse = additionalFilters || advancedFilters;
+    const usingAdvanced = additionalFilters !== undefined;
     
     // Add basic filters
     if (search) {
       params.set('search', search);
     }
     
-    // Property Type - check additionalFilters first, then fall back to state
-    if (filtersToUse?.property_type_id !== undefined) {
-      params.set('property_type_id', String(filtersToUse.property_type_id));
-    } else if (propertyTypeId && propertyTypeId !== 'all') {
-      params.set('property_type_id', propertyTypeId);
+    // Property Type - from advanced filters only
+    if (usingAdvanced && additionalFilters?.property_type_id !== undefined) {
+      params.set('property_type_id', String(additionalFilters.property_type_id));
     }
     
-    // Region - check additionalFilters first, then fall back to state
-    if (filtersToUse?.region_id !== undefined) {
-      params.set('region_id', String(filtersToUse.region_id));
+    // Region - basic filters take priority unless advanced search was applied
+    if (usingAdvanced && additionalFilters?.region_id !== undefined) {
+      params.set('region_id', String(additionalFilters.region_id));
     } else if (regionId !== 'all') {
       params.set('region_id', regionId);
     }
     
     // Listing Type - from advanced filters only
-    if (filtersToUse?.listing_type_id !== undefined) {
-      params.set('listing_type_id', String(filtersToUse.listing_type_id));
+    if (usingAdvanced && additionalFilters?.listing_type_id !== undefined) {
+      params.set('listing_type_id', String(additionalFilters.listing_type_id));
     }
     
     // Premium - from advanced filters only
-    if (filtersToUse?.premium !== undefined) {
-      params.set('premium', String(filtersToUse.premium));
+    if (usingAdvanced && additionalFilters?.premium !== undefined) {
+      params.set('premium', String(additionalFilters.premium));
     }
     
     // Installment - from advanced filters only
-    if (filtersToUse?.installment !== undefined) {
-      params.set('installment', String(filtersToUse.installment));
+    if (usingAdvanced && additionalFilters?.installment !== undefined) {
+      params.set('installment', String(additionalFilters.installment));
     }
     
-    // Township - from advanced filters only
-    if (filtersToUse?.township_id !== undefined) {
-      params.set('township_id', String(filtersToUse.township_id));
+    // Township - basic filters take priority unless advanced search was applied
+    if (usingAdvanced && additionalFilters?.township_id !== undefined) {
+      params.set('township_id', String(additionalFilters.township_id));
+    } else if (townshipId !== 'all') {
+      params.set('township_id', townshipId);
     }
     
     // Property Condition - from advanced filters only
-    if (filtersToUse?.property_condition !== undefined) {
-      params.set('property_condition', filtersToUse.property_condition);
+    if (usingAdvanced && additionalFilters?.property_condition !== undefined) {
+      params.set('property_condition', additionalFilters.property_condition);
     }
     
     // Tan Tan Tan - from advanced filters only
-    if (filtersToUse?.tan_tan_tan !== undefined) {
-      params.set('tan_tan_tan', String(filtersToUse.tan_tan_tan));
+    if (usingAdvanced && additionalFilters?.tan_tan_tan !== undefined) {
+      params.set('tan_tan_tan', String(additionalFilters.tan_tan_tan));
     }
     
     // Add advanced filters
-    if (filtersToUse?.price_low_to_high !== undefined) {
-      params.set('price_low_to_high', String(filtersToUse.price_low_to_high));
+    if (usingAdvanced && additionalFilters?.price_low_to_high !== undefined) {
+      params.set('price_low_to_high', String(additionalFilters.price_low_to_high));
     }
-    if (filtersToUse?.bedrooms) {
-      params.set('bedrooms', String(filtersToUse.bedrooms));
+    if (usingAdvanced && additionalFilters?.bedrooms) {
+      params.set('bedrooms', String(additionalFilters.bedrooms));
     }
-    if (filtersToUse?.bathrooms) {
-      params.set('bathrooms', String(filtersToUse.bathrooms));
+    if (usingAdvanced && additionalFilters?.bathrooms) {
+      params.set('bathrooms', String(additionalFilters.bathrooms));
     }
-    if (filtersToUse?.min_area) {
-      params.set('min_area', String(filtersToUse.min_area));
+    if (usingAdvanced && additionalFilters?.min_area) {
+      params.set('min_area', String(additionalFilters.min_area));
     }
-    if (filtersToUse?.max_area) {
-      params.set('max_area', String(filtersToUse.max_area));
+    if (usingAdvanced && additionalFilters?.max_area) {
+      params.set('max_area', String(additionalFilters.max_area));
     }
-    if (filtersToUse?.min_price) {
-      params.set('min_price', String(filtersToUse.min_price));
+    if (usingAdvanced && additionalFilters?.min_price) {
+      params.set('min_price', String(additionalFilters.min_price));
     }
-    if (filtersToUse?.max_price) {
-      params.set('max_price', String(filtersToUse.max_price));
+    if (usingAdvanced && additionalFilters?.max_price) {
+      params.set('max_price', String(additionalFilters.max_price));
     }
     
     // Navigate to search page with filters
@@ -152,8 +154,9 @@ export function HomePropertyFilters() {
     return language === 'mm' ? type.name_mm : type.name_en;
   };
 
-  const getRegionName = (region: { name_en: string; name_mm: string }) => {
-    return language === 'mm' ? region.name_mm : region.name_en;
+  const handleRegionChange = (value: string) => {
+    setRegionId(value);
+    setTownshipId('all');
   };
 
   const handlePropertyTypeClick = (propertyTypeId: number) => {
@@ -185,7 +188,7 @@ export function HomePropertyFilters() {
         </div>
       )}
 
-      {/* Single Row: Search Input, Property Type, Region, Search Button, Filter Button */}
+      {/* Single Row: Search Input, Region, Township, Search Button, Filter Button */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
         {/* Search Input */}
         <div className="md:col-span-4 relative">
@@ -203,43 +206,35 @@ export function HomePropertyFilters() {
           />
         </div>
 
-        {/* Property Type Select */}
-        <div className="md:col-span-3">
-          <Select value={propertyTypeId} onValueChange={setPropertyTypeId}>
-            <SelectTrigger className="h-10 bg-background/50 border-border/50">
-              <Home className="h-4 w-4 mr-2 text-primary" />
-              <SelectValue placeholder={t('search.propertyType') || 'Property Type'} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('search.allTypes') || 'All Types'}</SelectItem>
-              {propertyTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id.toString()}>
-                  {getPropertyTypeName(type)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Region Filter */}
         <div className="md:col-span-2">
-          <Select 
-            value={regionId} 
-            onValueChange={setRegionId}
-          >
-            <SelectTrigger className="h-10 bg-background/50 border-border/50">
-              <MapPin className="h-4 w-4 mr-2 text-primary" />
-              <SelectValue placeholder={t('search.region') || 'Region'} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('search.allRegions') || 'All Regions'}</SelectItem>
-              {regions.map((region: any) => (
-                <SelectItem key={region.id} value={String(region.id)}>
-                  {getRegionName(region)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <LocationAutocomplete
+            value={regionId}
+            onValueChange={handleRegionChange}
+            options={regions}
+            language={language}
+            placeholder={t('search.selectRegion') || 'Select Region'}
+            allLabel={t('search.allRegions') || 'All Regions'}
+            emptyText={t('search.noResults') || 'No results found'}
+            loading={regionsLoading}
+            icon={<MapPin className="h-4 w-4" />}
+          />
+        </div>
+
+        {/* Township Filter */}
+        <div className="md:col-span-3">
+          <LocationAutocomplete
+            value={townshipId}
+            onValueChange={setTownshipId}
+            options={filteredTownships}
+            language={language}
+            placeholder={t('search.selectTownship') || 'Select Township'}
+            allLabel={t('search.allTownships') || 'All Townships'}
+            emptyText={t('search.noResults') || 'No results found'}
+            disabled={regionId === 'all'}
+            loading={townshipsLoading}
+            icon={<MapPin className="h-4 w-4" />}
+          />
         </div>
 
         {/* Search and Filter Buttons Container */}

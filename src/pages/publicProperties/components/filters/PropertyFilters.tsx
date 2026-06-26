@@ -1,33 +1,24 @@
 /**
  * Property Filters Component
- * 
+ *
  * Basic search filters for Property, Premium, Installment, and TanTanTan tabs.
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Home, Tag, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RotateCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { LocationAutocomplete } from '@/components/ui/LocationAutocomplete';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
-import { useListingTypes } from '@/hooks/queries/useProperties';
+import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { AdvancedSearchModal } from './AdvancedSearchModal';
-import type { PropertyType } from '@/services/api/propertyTypes';
-import type { ListingType } from '@/services/api/listingTypes';
 
 interface PropertyFiltersProps {
   onFilterChange?: (filters: {
     search?: string;
-    property_type_id?: number;
-    listing_type_id?: number;
+    region_id?: number;
+    township_id?: number;
   }) => void;
 }
 
@@ -35,42 +26,38 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
   const { t, language } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAdvancedModalOpen, setIsAdvancedModalOpen] = useState(false);
-  
-  // Get filter data
-  const { data: propertyTypesData } = usePropertyTypes();
-  const { data: listingTypesData } = useListingTypes();
-  
-  const propertyTypes = propertyTypesData?.data || [];
-  const listingTypes = listingTypesData?.data || [];
 
-  // Local state for filters
+  const { data: regionsResp, isLoading: regionsLoading } = useRegions();
+  const { data: townshipsResp, isLoading: townshipsLoading } = useTownships();
+
+  const regions = regionsResp?.data || [];
+  const allTownships = townshipsResp?.data || [];
+
   const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [propertyTypeId, setPropertyTypeId] = useState<string>(
-    searchParams.get('property_type_id') || 'all'
-  );
-  const [listingTypeId, setListingTypeId] = useState<string>(
-    searchParams.get('listing_type_id') || 'all'
-  );
+  const [regionId, setRegionId] = useState<string>(searchParams.get('region_id') || 'all');
+  const [townshipId, setTownshipId] = useState<string>(searchParams.get('township_id') || 'all');
 
-  // Sync with URL params
+  const filteredTownships = useMemo(() => {
+    if (regionId === 'all') {
+      return [];
+    }
+
+    return allTownships.filter((township: { region_id: number }) => String(township.region_id) === regionId);
+  }, [regionId, allTownships]);
+
   useEffect(() => {
-    const searchParam = searchParams.get('search') || '';
-    const propertyTypeParam = searchParams.get('property_type_id') || 'all';
-    const listingTypeParam = searchParams.get('listing_type_id') || 'all';
-    
-    setSearch(searchParam);
-    setPropertyTypeId(propertyTypeParam);
-    setListingTypeId(listingTypeParam);
+    setSearch(searchParams.get('search') || '');
+    setRegionId(searchParams.get('region_id') || 'all');
+    setTownshipId(searchParams.get('township_id') || 'all');
   }, [searchParams]);
 
-  // Update URL params when filters change
   const updateFilters = (updates: {
     search?: string;
-    property_type_id?: string;
-    listing_type_id?: string;
+    region_id?: string;
+    township_id?: string;
   }) => {
     const newParams = new URLSearchParams(searchParams);
-    
+
     if (updates.search !== undefined) {
       if (updates.search) {
         newParams.set('search', updates.search);
@@ -78,43 +65,41 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
         newParams.delete('search');
       }
     }
-    
-    if (updates.property_type_id !== undefined) {
-      if (updates.property_type_id && updates.property_type_id !== 'all') {
-        newParams.set('property_type_id', updates.property_type_id);
+
+    if (updates.region_id !== undefined) {
+      if (updates.region_id && updates.region_id !== 'all') {
+        newParams.set('region_id', updates.region_id);
       } else {
-        newParams.delete('property_type_id');
+        newParams.delete('region_id');
       }
     }
-    
-    if (updates.listing_type_id !== undefined) {
-      if (updates.listing_type_id && updates.listing_type_id !== 'all') {
-        newParams.set('listing_type_id', updates.listing_type_id);
+
+    if (updates.township_id !== undefined) {
+      if (updates.township_id && updates.township_id !== 'all') {
+        newParams.set('township_id', updates.township_id);
       } else {
-        newParams.delete('listing_type_id');
+        newParams.delete('township_id');
       }
     }
-    
-    // Reset to page 1 when filters change
+
     newParams.delete('page');
-    
     setSearchParams(newParams);
-    
-    // Notify parent component
+
     if (onFilterChange) {
       onFilterChange({
         search: updates.search !== undefined ? updates.search : search || undefined,
-        property_type_id: updates.property_type_id && updates.property_type_id !== 'all' 
-          ? Number(updates.property_type_id) 
-          : undefined,
-        listing_type_id: updates.listing_type_id && updates.listing_type_id !== 'all'
-          ? Number(updates.listing_type_id)
-          : undefined,
+        region_id:
+          updates.region_id && updates.region_id !== 'all'
+            ? Number(updates.region_id)
+            : undefined,
+        township_id:
+          updates.township_id && updates.township_id !== 'all'
+            ? Number(updates.township_id)
+            : undefined,
       });
     }
   };
 
-  // Handle advanced filter changes
   const handleAdvancedFilters = (filters: {
     tan_tan_tan?: boolean;
     premium?: boolean;
@@ -134,7 +119,6 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
   }) => {
     const newParams = new URLSearchParams(searchParams);
 
-    // Update advanced filter params
     if (filters.tan_tan_tan !== undefined) {
       newParams.set('tan_tan_tan', String(filters.tan_tan_tan));
     } else {
@@ -225,16 +209,13 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
       newParams.delete('max_price');
     }
 
-    // Reset to page 1 when filters change
     newParams.delete('page');
     setSearchParams(newParams);
   };
 
-  // Debounce search input
   useEffect(() => {
     const currentSearchParam = searchParams.get('search') || '';
-    
-    // Only update if search value is different from URL param
+
     if (search === currentSearchParam) {
       return;
     }
@@ -246,41 +227,32 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     return () => clearTimeout(timeoutId);
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handlePropertyTypeChange = (value: string) => {
-    setPropertyTypeId(value);
-    updateFilters({ property_type_id: value });
+  const handleRegionChange = (value: string) => {
+    setRegionId(value);
+    setTownshipId('all');
+    updateFilters({ region_id: value, township_id: 'all' });
   };
 
-  const handleListingTypeChange = (value: string) => {
-    setListingTypeId(value);
-    updateFilters({ listing_type_id: value });
-  };
-
-  const getPropertyTypeName = (type: PropertyType): string => {
-    return language === 'mm' ? type.name_mm : type.name_en;
-  };
-
-  const getListingTypeName = (type: ListingType): string => {
-    return language === 'mm' ? type.name_mm : type.name_en;
+  const handleTownshipChange = (value: string) => {
+    setTownshipId(value);
+    updateFilters({ township_id: value });
   };
 
   const handleResetFilters = () => {
     const newParams = new URLSearchParams();
-    
-    // Keep only the type parameter if it exists
+
     const typeParam = searchParams.get('type');
     if (typeParam) {
       newParams.set('type', typeParam);
     }
-    
+
     setSearchParams(newParams);
   };
 
   return (
     <div className="bg-card border border-border/50 rounded-xl p-4 sm:p-6 mb-6">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-        {/* Search Input */}
-        <div className="md:col-span-5 relative">
+        <div className="md:col-span-4 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={t('search.searchPlaceholder') || 'Search by title, description, owner name...'}
@@ -290,43 +262,35 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
           />
         </div>
 
-        {/* Property Type Select */}
         <div className="md:col-span-2">
-          <Select value={propertyTypeId} onValueChange={handlePropertyTypeChange}>
-            <SelectTrigger className="h-10 bg-background/50 border-border/50">
-              <Home className="h-4 w-4 mr-2 text-primary" />
-              <SelectValue placeholder={t('search.propertyType') || 'Property Type'} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('search.allTypes') || 'All Types'}</SelectItem>
-              {propertyTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id.toString()}>
-                  {getPropertyTypeName(type)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <LocationAutocomplete
+            value={regionId}
+            onValueChange={handleRegionChange}
+            options={regions}
+            language={language}
+            placeholder={t('search.selectRegion') || 'Select Region'}
+            allLabel={t('search.allRegions') || 'All Regions'}
+            emptyText={t('search.noResults') || 'No results found'}
+            loading={regionsLoading}
+            icon={<MapPin className="h-4 w-4" />}
+          />
         </div>
 
-        {/* Listing Type Select */}
-        <div className="md:col-span-2">
-          <Select value={listingTypeId} onValueChange={handleListingTypeChange}>
-            <SelectTrigger className="h-10 bg-background/50 border-border/50">
-              <Tag className="h-4 w-4 mr-2 text-primary" />
-              <SelectValue placeholder={t('search.listingType') || 'Listing Type'} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('search.allListingTypes') || 'All Listing Types'}</SelectItem>
-              {listingTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id.toString()}>
-                  {getListingTypeName(type)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="md:col-span-3">
+          <LocationAutocomplete
+            value={townshipId}
+            onValueChange={handleTownshipChange}
+            options={filteredTownships}
+            language={language}
+            placeholder={t('search.selectTownship') || 'Select Township'}
+            allLabel={t('search.allTownships') || 'All Townships'}
+            emptyText={t('search.noResults') || 'No results found'}
+            disabled={regionId === 'all'}
+            loading={townshipsLoading}
+            icon={<MapPin className="h-4 w-4" />}
+          />
         </div>
 
-        {/* Advanced Search and Reset Buttons */}
         <div className="md:col-span-3 flex gap-2">
           <Button
             variant="outline"
@@ -349,7 +313,6 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
         </div>
       </div>
 
-      {/* Advanced Search Modal */}
       <AdvancedSearchModal
         isOpen={isAdvancedModalOpen}
         onClose={() => setIsAdvancedModalOpen(false)}
@@ -358,4 +321,3 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     </div>
   );
 }
-
