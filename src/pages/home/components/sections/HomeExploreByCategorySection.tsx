@@ -1,5 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { memo, useMemo } from 'react';
 import { ArrowRight, type LucideIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -9,6 +8,7 @@ import {
   getHomeExploreCategoryIconStyle,
 } from '@/lib/homeExploreCategoryIcons';
 import type { HomeExploreCategory } from '@/types/homeExploreCategory';
+import { resolveExploreCategoryHref } from '@/lib/exploreCategoryNavigation';
 import { cn } from '@/lib/utils';
 
 /** sort_order 1 is reserved for the large featured card on the home page. */
@@ -35,7 +35,6 @@ const SmallCategoryCard = memo(function SmallCategoryCard({
   browseLabel,
   icon: Icon,
   iconStyle,
-  onNavigate,
 }: {
   category: HomeExploreCategory;
   label: string;
@@ -43,16 +42,19 @@ const SmallCategoryCard = memo(function SmallCategoryCard({
   browseLabel: string;
   icon: LucideIcon;
   iconStyle: { containerClass: string; iconClass: string };
-  onNavigate: (href: string) => void;
 }) {
-  const handleClick = useCallback(() => {
-    onNavigate(category.link_path);
-  }, [category.link_path, onNavigate]);
+  const href = useMemo(
+    () => resolveExploreCategoryHref(category.link_path),
+    [category.link_path],
+  );
+
+  if (!href) return null;
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className={cn(
         'group flex h-full min-h-[168px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center text-white sm:min-h-[180px]',
         'bg-gradient-to-br from-[#4a9b82] via-[#3d8f74] to-[#2f7a66]',
@@ -81,7 +83,7 @@ const SmallCategoryCard = memo(function SmallCategoryCard({
           <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
         </span>
       </div>
-    </button>
+    </a>
   );
 });
 
@@ -92,7 +94,6 @@ const FeaturedCategoryCard = memo(function FeaturedCategoryCard({
   browseLabel,
   icon: Icon,
   iconStyle,
-  onNavigate,
   rowSpanClass,
 }: {
   category: HomeExploreCategory;
@@ -101,17 +102,20 @@ const FeaturedCategoryCard = memo(function FeaturedCategoryCard({
   browseLabel: string;
   icon: LucideIcon;
   iconStyle: { containerClass: string; iconClass: string };
-  onNavigate: (href: string) => void;
   rowSpanClass: string;
 }) {
-  const handleClick = useCallback(() => {
-    onNavigate(category.link_path);
-  }, [category.link_path, onNavigate]);
+  const href = useMemo(
+    () => resolveExploreCategoryHref(category.link_path),
+    [category.link_path],
+  );
+
+  if (!href) return null;
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className={cn(
         'group col-span-2 flex h-full min-h-[280px] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl p-8 text-center text-white sm:min-h-[300px] lg:col-span-1 lg:min-h-0',
         rowSpanClass,
@@ -139,7 +143,7 @@ const FeaturedCategoryCard = memo(function FeaturedCategoryCard({
         {browseLabel}
         <ArrowRight className="h-4 w-4" aria-hidden />
       </span>
-    </button>
+    </a>
   );
 });
 
@@ -161,7 +165,6 @@ const FeaturedCategoryCardSkeleton = memo(function FeaturedCategoryCardSkeleton(
 
 export const HomeExploreByCategorySection = memo(function HomeExploreByCategorySection() {
   const { t, language } = useLanguage();
-  const navigate = useNavigate();
   const { data, isLoading } = useHomeExploreCategories();
 
   const categories = useMemo(() => {
@@ -179,10 +182,6 @@ export const HomeExploreByCategorySection = memo(function HomeExploreByCategoryS
     if (!featuredCategory) return [];
     return categories.filter((category) => category.id !== featuredCategory.id);
   }, [categories, featuredCategory]);
-
-  const handleNavigate = useCallback((href: string) => {
-    navigate(href);
-  }, [navigate]);
 
   const browseLabel = t('home.exploreByCategory.browse');
   const smallCount = smallCategories.length;
@@ -221,7 +220,6 @@ export const HomeExploreByCategorySection = memo(function HomeExploreByCategoryS
                   browseLabel={browseLabel}
                   icon={getHomeExploreCategoryIcon(featuredCategory.icon_key)}
                   iconStyle={getHomeExploreCategoryIconStyle(featuredCategory.icon_key)}
-                  onNavigate={handleNavigate}
                   rowSpanClass={featuredRowSpanClass}
                 />
               ) : null}
@@ -235,7 +233,6 @@ export const HomeExploreByCategorySection = memo(function HomeExploreByCategoryS
                   browseLabel={browseLabel}
                   icon={getHomeExploreCategoryIcon(category.icon_key)}
                   iconStyle={getHomeExploreCategoryIconStyle(category.icon_key)}
-                  onNavigate={handleNavigate}
                 />
               ))}
             </>

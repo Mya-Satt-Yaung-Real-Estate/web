@@ -1,7 +1,7 @@
 /**
  * Home Page Explore Categories Hook
  *
- * Fetches admin-managed explore-by-category cards (max 9 active).
+ * Fetches admin-managed explore-by-category cards (max 7 active).
  */
 
 import { useQuery } from '@tanstack/react-query';

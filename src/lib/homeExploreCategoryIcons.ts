@@ -13,6 +13,7 @@ import {
   Star,
   Tag,
   TrendingUp,
+  Youtube,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ const HOME_EXPLORE_CATEGORY_ICONS: Record<string, LucideIcon> = {
   star: Star,
   crown: Crown,
   home: Home,
+  youtube: Youtube,
 };
 
 const DEFAULT_ICON = Home;
@@ -96,6 +98,10 @@ const HOME_EXPLORE_CATEGORY_ICON_STYLES: Record<string, HomeExploreCategoryIconS
   },
   home: {
     containerClass: 'bg-white/25 ring-1 ring-white/30',
+    iconClass: 'text-white',
+  },
+  youtube: {
+    containerClass: 'bg-gradient-to-br from-red-500 to-red-600 shadow-md shadow-red-950/25 ring-1 ring-red-300/30',
     iconClass: 'text-white',
   },
 };
