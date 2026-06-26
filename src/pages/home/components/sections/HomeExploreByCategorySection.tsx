@@ -13,6 +13,8 @@ import { cn } from '@/lib/utils';
 
 /** sort_order 1 is reserved for the large featured card on the home page. */
 const FEATURED_SORT_ORDER = 1;
+/** 1 featured + 8 small cards in a 5-column, 2-row desktop grid. */
+const SMALL_CATEGORY_SKELETON_COUNT = 8;
 
 function getCategoryTitle(category: HomeExploreCategory, language: string): string {
   return language === 'mm' ? category.title_mm : category.title_en;
@@ -56,7 +58,7 @@ const SmallCategoryCard = memo(function SmallCategoryCard({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'group flex h-full min-h-[168px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center text-white sm:min-h-[180px]',
+        'group flex h-full min-h-[168px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center text-white sm:min-h-[180px] lg:min-h-0 lg:gap-2 lg:p-4',
         'bg-gradient-to-br from-[#4a9b82] via-[#3d8f74] to-[#2f7a66]',
         'shadow-md shadow-primary/10 transition-all duration-300',
         'hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 hover:ring-2 hover:ring-white/25',
@@ -72,9 +74,9 @@ const SmallCategoryCard = memo(function SmallCategoryCard({
         <Icon className={cn('h-4 w-4', iconStyle.iconClass)} strokeWidth={1.75} />
       </div>
       <div className="flex w-full flex-col items-center gap-2">
-        <span className="text-sm font-medium leading-snug sm:text-base">{label}</span>
+        <span className="text-sm font-medium leading-snug sm:text-base lg:text-sm">{label}</span>
         {description ? (
-          <p className="line-clamp-3 max-w-full px-1 text-xs leading-relaxed text-white/85 sm:text-sm">
+          <p className="line-clamp-3 max-w-full px-1 text-xs leading-relaxed text-white/85 sm:text-sm lg:line-clamp-2">
             {description}
           </p>
         ) : null}
@@ -94,7 +96,6 @@ const FeaturedCategoryCard = memo(function FeaturedCategoryCard({
   browseLabel,
   icon: Icon,
   iconStyle,
-  rowSpanClass,
 }: {
   category: HomeExploreCategory;
   title: string;
@@ -102,7 +103,6 @@ const FeaturedCategoryCard = memo(function FeaturedCategoryCard({
   browseLabel: string;
   icon: LucideIcon;
   iconStyle: { containerClass: string; iconClass: string };
-  rowSpanClass: string;
 }) {
   const href = useMemo(
     () => resolveExploreCategoryHref(category.link_path),
@@ -117,8 +117,7 @@ const FeaturedCategoryCard = memo(function FeaturedCategoryCard({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'group col-span-2 flex h-full min-h-[280px] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl p-8 text-center text-white sm:min-h-[300px] lg:col-span-1 lg:min-h-0',
-        rowSpanClass,
+        'group col-span-2 flex h-full min-h-[280px] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl p-8 text-center text-white sm:min-h-[300px] lg:col-span-1 lg:row-span-2 lg:min-h-0',
         'bg-[radial-gradient(circle_at_center,_#4a9b82_0%,_#2d6b58_45%,_#1a4d3f_100%)]',
         'shadow-lg shadow-primary/15 transition-all duration-300',
         'hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/25 hover:ring-2 hover:ring-white/25',
@@ -151,14 +150,10 @@ const SmallCategoryCardSkeleton = memo(function SmallCategoryCardSkeleton() {
   return <Skeleton className="min-h-[168px] rounded-2xl sm:min-h-[180px]" />;
 });
 
-const FeaturedCategoryCardSkeleton = memo(function FeaturedCategoryCardSkeleton({
-  rowSpanClass,
-}: {
-  rowSpanClass: string;
-}) {
+const FeaturedCategoryCardSkeleton = memo(function FeaturedCategoryCardSkeleton() {
   return (
     <Skeleton
-      className={cn('col-span-2 min-h-[280px] rounded-2xl sm:min-h-[300px] lg:col-span-1 lg:min-h-0', rowSpanClass)}
+      className="col-span-2 min-h-[280px] rounded-2xl sm:min-h-[300px] lg:col-span-1 lg:row-span-2 lg:min-h-0"
     />
   );
 });
@@ -184,9 +179,6 @@ export const HomeExploreByCategorySection = memo(function HomeExploreByCategoryS
   }, [categories, featuredCategory]);
 
   const browseLabel = t('home.exploreByCategory.browse');
-  const smallCount = smallCategories.length;
-  const featuredRowSpanClass = smallCount > 6 ? 'lg:row-span-3' : 'lg:row-span-2';
-  const gridRowsClass = smallCount > 6 ? 'lg:grid-rows-3' : 'lg:grid-rows-2';
 
   if (!isLoading && categories.length === 0) {
     return null;
@@ -202,11 +194,11 @@ export const HomeExploreByCategorySection = memo(function HomeExploreByCategoryS
           </p>
         </div>
 
-        <div className={cn('grid auto-rows-fr grid-cols-2 items-stretch gap-4 lg:grid-cols-4', gridRowsClass)}>
+        <div className="grid auto-rows-fr grid-cols-2 items-stretch gap-4 lg:grid-cols-5 lg:grid-rows-2">
           {isLoading ? (
             <>
-              <FeaturedCategoryCardSkeleton rowSpanClass={featuredRowSpanClass} />
-              {Array.from({ length: 6 }, (_, index) => (
+              <FeaturedCategoryCardSkeleton />
+              {Array.from({ length: SMALL_CATEGORY_SKELETON_COUNT }, (_, index) => (
                 <SmallCategoryCardSkeleton key={index} />
               ))}
             </>
@@ -220,7 +212,6 @@ export const HomeExploreByCategorySection = memo(function HomeExploreByCategoryS
                   browseLabel={browseLabel}
                   icon={getHomeExploreCategoryIcon(featuredCategory.icon_key)}
                   iconStyle={getHomeExploreCategoryIconStyle(featuredCategory.icon_key)}
-                  rowSpanClass={featuredRowSpanClass}
                 />
               ) : null}
 
