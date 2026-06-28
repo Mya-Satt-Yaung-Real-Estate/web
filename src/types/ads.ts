@@ -52,6 +52,18 @@ export interface DetailPageSidebarsAdsResponse {
   data: DetailPageSidebarsAdsData;
 }
 
+/** Grouped slides for home horizontal block (keys "1" = left, "2" = right). */
+export type HomeBlockAdsData = {
+  '1': SliderAd[];
+  '2': SliderAd[];
+};
+
+export interface HomeBlockAdsResponse {
+  success: boolean;
+  message: string;
+  data: HomeBlockAdsData;
+}
+
 /** Grouped slides for home 2×2 grid (keys "1".."4"). */
 export type HomeGridAdsData = {
   '1': SliderAd[];

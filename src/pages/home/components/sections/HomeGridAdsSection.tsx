@@ -18,7 +18,7 @@ const SLOT_HEIGHT_CLASSES = 'h-[220px]';
 
 const GRID_LAYOUT_CLASSES = 'grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-4 lg:gap-6';
 
-/** Must match progress bar animation duration (HomeBlockAdsCarousel). */
+/** Must match progress bar animation duration (HomeBlockAdsSection). */
 const AUTO_ADVANCE_MS = 6000;
 
 const DEFAULT_GRID_AD_IMAGE_URL =

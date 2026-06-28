@@ -6,7 +6,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useHomeBlockAds } from '@/hooks/queries/home';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'motion/react';
-import type { SliderAd } from '@/types/ads';
+import type { HomeBlockAdsData, SliderAd } from '@/types/ads';
+
+function flattenHomeBlockAds(payload: HomeBlockAdsData): SliderAd[] {
+  return [...(payload['1'] ?? []), ...(payload['2'] ?? [])];
+}
 
 export function HomeBlockAdsCarousel() {
   const { language } = useLanguage();
@@ -14,10 +18,11 @@ export function HomeBlockAdsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Transform API data
-  const sliderAds = useMemo(() => {
-    if (!data?.data?.data) return [];
-    return data.data.data;
+  // Transform grouped API data into a flat list for this carousel
+  const sliderAds = useMemo((): SliderAd[] => {
+    const payload = data?.data?.data;
+    if (!payload || typeof payload !== 'object') return [];
+    return flattenHomeBlockAds(payload as HomeBlockAdsData);
   }, [data]);
 
   // Auto-play effect

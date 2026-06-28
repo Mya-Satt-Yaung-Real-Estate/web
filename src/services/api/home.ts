@@ -4,7 +4,7 @@ import type { PublicAdvertisementListResponse } from '@/types/publicAdvertisemen
 import type { WantedListResponse } from '@/types/wantedList';
 import type { HousingEventListResponse } from '@/types/housingEvents';
 import type { LegacyTeamResponse } from '@/types/legacy';
-import type { SliderAdsResponse, DetailPageSidebarsAdsResponse, HomeGridAdsResponse } from '@/types/ads';
+import type { SliderAdsResponse, DetailPageSidebarsAdsResponse, HomeGridAdsResponse, HomeBlockAdsResponse } from '@/types/ads';
 import type { MapPropertiesResponse } from '@/types/mapProperties';
 import type { CompanyLogoListResponse } from '@/types/company';
 import type { YoutubeVideoListResponse } from '@/types/youtubeVideo';
@@ -84,7 +84,7 @@ export const homeApi = {
    * Get home block ads for home page (displayed after events section)
    */
   getHomeBlockAds: () => {
-    return api.get<SliderAdsResponse>('/api/v1/frontend/ads/home-block');
+    return api.get<HomeBlockAdsResponse>('/api/v1/frontend/ads/home-block');
   },
 
   /**

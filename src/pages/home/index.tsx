@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PropertyCarousel, HomeBlockAdsCarousel } from './components/carousel';
+import { PropertyCarousel } from './components/carousel';
 import { HomePropertyFilters } from './components/search';
 import { 
   FeaturedAdvertisementsSection,
@@ -13,6 +13,7 @@ import {
   PropertiesMapSection,
   CompanyLogoSection,
   HomeGridAdsSection,
+  HomeBlockAdsSection,
   HomeYoutubeVideosSection,
   HomeExploreByCategorySection,
   HomeJadeMarketPropertiesSection,
@@ -198,8 +199,8 @@ export const Home = memo(function Home() {
       {/* Explore by Category */}
       <HomeExploreByCategorySection />
 
-      {/* Home Block Ads */}
-      <HomeBlockAdsCarousel />
+      {/* Home Block Ads: 2 horizontal slots (left / right); grid_index 1–2 */}
+      <HomeBlockAdsSection />
 
       {/* Popular Properties */}
       <HomePopularPropertiesSection />

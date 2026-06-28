@@ -1,7 +1,7 @@
 /**
  * Home Page Block Ads Hook
  * 
- * Fetches home block ads for home page (displayed after events section).
+ * Fetches home block ads grouped by slot (left / right) for the home page.
  */
 
 import { useQuery } from '@tanstack/react-query';

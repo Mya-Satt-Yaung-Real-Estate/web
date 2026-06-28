@@ -9,6 +9,7 @@ export { RecommendedPropertyTypes } from './RecommendedPropertyTypes';
 export { PropertiesMapSection } from './PropertiesMapSection';
 export { CompanyLogoSection } from './CompanyLogoSection';
 export { HomeGridAdsSection } from './HomeGridAdsSection';
+export { HomeBlockAdsSection } from './HomeBlockAdsSection';
 export { HomeYoutubeVideosSection } from './HomeYoutubeVideosSection';
 export { HomeJadeMarketPropertiesSection } from './HomeJadeMarketPropertiesSection';
 export { HomeNewProjectsSection } from './HomeNewProjectsSection';
