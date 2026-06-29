@@ -6,8 +6,8 @@ import { HomePropertyFilters } from './components/search';
 import { 
   FeaturedAdvertisementsSection,
   PremiumPostsSection,
-  WantedListingsSection,
-  PropertyListingsSection,
+  // WantedListingsSection,
+  // PropertyListingsSection,
   EventsSection,
   LegalTeamSection,
   PropertiesMapSection,
@@ -206,10 +206,10 @@ export const Home = memo(function Home() {
       <HomePopularPropertiesSection />
 
       {/* Wanted Listings */}
-      <WantedListingsSection count={countsData?.data?.data?.wanted_listings_count} />
+      {/* <WantedListingsSection count={countsData?.data?.data?.wanted_listings_count} /> */}
 
       {/* Property Listings */}
-      <PropertyListingsSection count={countsData?.data?.data?.all_properties_count} />
+      {/* <PropertyListingsSection count={countsData?.data?.data?.all_properties_count} /> */}
 
       {/* Properties Map */}
       <PropertiesMapSection />
