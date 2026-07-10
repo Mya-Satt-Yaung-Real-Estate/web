@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
@@ -17,7 +18,8 @@ import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyTypes } from '@/hooks/queries/usePropertyTypes';
 import { useModal } from '@/contexts/ModalContext';
 import { useCreateMyProject, useUpdateMyProject } from '@/hooks/mutations/useProjectMutations';
-import type { Project, ProjectFormPayload, ProjectPaymentPlan, ProjectUnitType } from '@/types/projects';
+import { pointSettingsApi, type PointSettings } from '@/services/api/pointSettings';
+import type { Project, ProjectFormPayload, ProjectPaymentPlan, ProjectPublishStatus, ProjectUnitType } from '@/types/projects';
 
 type ProjectFormMode = 'create' | 'edit';
 
@@ -46,6 +48,23 @@ const cleanString = (value?: string | null) => {
   return trimmed ? trimmed : undefined;
 };
 
+type ProjectPointChargeType = 'upload' | 'upgrade' | null;
+
+const resolvePointChargeType = (
+  currentPublishStatus: ProjectPublishStatus | null,
+  newPublishStatus: ProjectPublishStatus,
+): ProjectPointChargeType => {
+  if (newPublishStatus !== 'published') {
+    return null;
+  }
+
+  if (!currentPublishStatus || currentPublishStatus !== 'published') {
+    return 'upload';
+  }
+
+  return 'upgrade';
+};
+
 export function ProjectFormPage({ mode, project, projectId, isLoading = false }: ProjectFormPageProps) {
   const navigate = useNavigate();
   const seo = seoUtils.getPageSEO(mode === 'create' ? 'createProject' : 'editProject');
@@ -66,6 +85,12 @@ export function ProjectFormPage({ mode, project, projectId, isLoading = false }:
   const [featureInput, setFeatureInput] = useState('');
   const [unitTypes, setUnitTypes] = useState<ProjectUnitType[]>([{ ...emptyUnitType }]);
   const [paymentPlans, setPaymentPlans] = useState<ProjectPaymentPlan[]>([{ ...emptyPaymentPlan }]);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pointSettings, setPointSettings] = useState<PointSettings | null>(null);
+  const [loadingPointSettings, setLoadingPointSettings] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState<ProjectFormPayload | null>(null);
+  const [pendingChargeType, setPendingChargeType] = useState<ProjectPointChargeType>(null);
+  const [originalPublishStatus, setOriginalPublishStatus] = useState<ProjectPublishStatus>('draft');
 
   const selectedRegionId = form.watch('region_id');
   const selectedCurrency = form.watch('currency') || 'MMK';
@@ -126,6 +151,7 @@ export function ProjectFormPage({ mode, project, projectId, isLoading = false }:
     form.setValue('completion_text', project.completion_text || '');
     form.setValue('condition', project.condition || 'upcoming');
     form.setValue('publish_status', project.publish_status || 'draft');
+    setOriginalPublishStatus(project.publish_status || 'draft');
     if (project.price?.min !== null && project.price?.min !== undefined) {
       form.setValue('price_min', Number(project.price.min));
     } else {
@@ -225,16 +251,7 @@ export function ProjectFormPage({ mode, project, projectId, isLoading = false }:
     };
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    const isValid = await form.trigger();
-    if (!isValid) {
-      return;
-    }
-
-    const payload = buildPayload(form.getValues());
-
+  const submitProject = async (payload: ProjectFormPayload) => {
     try {
       if (mode === 'create') {
         await createProject.mutateAsync(payload);
@@ -249,6 +266,54 @@ export function ProjectFormPage({ mode, project, projectId, isLoading = false }:
       const message = error?.response?.data?.message || error?.message || 'Failed to save project.';
       showError(message, 'Error');
     }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const isValid = await form.trigger();
+    if (!isValid) {
+      return;
+    }
+
+    const values = form.getValues();
+    const payload = buildPayload(values);
+    const currentStatus = mode === 'edit' ? originalPublishStatus : null;
+    const chargeType = resolvePointChargeType(currentStatus, values.publish_status);
+
+    if (!chargeType) {
+      await submitProject(payload);
+      return;
+    }
+
+    setPendingPayload(payload);
+    setPendingChargeType(chargeType);
+    setLoadingPointSettings(true);
+
+    try {
+      const response = await pointSettingsApi.getPointSettings();
+      setPointSettings(response.data?.data || null);
+    } catch (error) {
+      console.error('Failed to fetch point settings:', error);
+      showError('Failed to load point information. Please try again.', 'Error');
+      setLoadingPointSettings(false);
+      return;
+    }
+
+    setLoadingPointSettings(false);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    if (!pendingPayload) {
+      return;
+    }
+
+    setShowConfirmDialog(false);
+    await submitProject(pendingPayload);
+    setPendingPayload(null);
+    setPendingChargeType(null);
+    setPointSettings(null);
   };
 
   if (isLoading) {
@@ -634,6 +699,96 @@ export function ProjectFormPage({ mode, project, projectId, isLoading = false }:
           </form>
         </div>
       </div>
+
+      <Dialog
+        open={showConfirmDialog}
+        onOpenChange={(open) => {
+          setShowConfirmDialog(open);
+          if (!open) {
+            setPointSettings(null);
+            setPendingPayload(null);
+            setPendingChargeType(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader className="pb-4 border-b">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-semibold text-left">
+                  {pendingChargeType === 'upload' ? 'Confirm Publishing Project' : 'Confirm Project Update'}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1">
+                  {pendingChargeType === 'upload'
+                    ? 'Publishing this project will deduct points from your balance.'
+                    : 'Updating this published project will deduct points from your balance.'}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {loadingPointSettings ? (
+            <div className="py-10 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-[3px] border-primary border-t-transparent" />
+              <p className="mt-4 text-sm text-muted-foreground">Loading point information...</p>
+            </div>
+          ) : pointSettings ? (
+            <div className="py-4">
+              <div className="overflow-hidden border border-border rounded-lg">
+                <table className="w-full border-collapse">
+                  <tbody className="divide-y divide-border">
+                    {pendingChargeType === 'upload' && (
+                      <tr>
+                        <td className="px-4 py-3 text-sm font-medium">Upload Fee</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold">
+                          {pointSettings.upload_project_info?.point_amount || 0} Points
+                        </td>
+                      </tr>
+                    )}
+                    {pendingChargeType === 'upgrade' && (
+                      <tr>
+                        <td className="px-4 py-3 text-sm font-medium">Update Fee</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold">
+                          {pointSettings.update_project_info?.point_amount || 0} Points
+                        </td>
+                      </tr>
+                    )}
+                    <tr className="bg-muted/30">
+                      <td className="px-4 py-3 text-sm font-semibold">Total</td>
+                      <td className="px-4 py-3 text-sm text-right font-bold text-primary">
+                        {pendingChargeType === 'upload'
+                          ? (pointSettings.upload_project_info?.point_amount || 0)
+                          : (pointSettings.update_project_info?.point_amount || 0)}{' '}
+                        Points
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Draft projects are free. Published projects do not expire.
+              </p>
+            </div>
+          ) : null}
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              className="gradient-primary"
+              onClick={handleConfirmSubmit}
+              disabled={loadingPointSettings || saving || !pointSettings}
+            >
+              {saving ? 'Saving...' : 'Confirm & Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -19,6 +19,10 @@ export interface PremiumPropertyInfo {
   point_amount: number;
 }
 
+export interface ProjectPointInfo {
+  point_amount: number;
+}
+
 /** Cost to reveal contact / poster on a public wanted listing */
 export interface UnlockWantedInfo {
   point_amount: number;
@@ -32,6 +36,8 @@ export interface PointSettings {
   renewal_info: PointSettingsInfo;
   upload_info: PointSettingsInfo;
   premium_property_info: PremiumPropertyInfo;
+  upload_project_info?: ProjectPointInfo;
+  update_project_info?: ProjectPointInfo;
   payment_integration_status?: boolean;
   unlock_wanted_info?: UnlockWantedInfo;
   authorize_member_level?: AuthorizeMemberLevel;
