@@ -266,6 +266,11 @@ export default function MyPropertiesList() {
                               {t('categories.tantantan')}
                             </Badge>
                           )}
+                          {property.is_direct_owner && (
+                            <Badge variant="outline" className="bg-red-600/90 text-white border-red-600/50 backdrop-blur-sm">
+                              {t('categories.directOwner') || 'Direct Owner'}
+                            </Badge>
+                          )}
                         </div>
 
                         {/* Status and Verification Badges - Right Side */}

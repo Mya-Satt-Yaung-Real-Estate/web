@@ -72,6 +72,7 @@ const translations: Translations = {
   // Categories
   'categories.searchAllProperty': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
   'categories.tantantan': { en: 'Tantantan', mm: 'တန်တန်တန်' },
+  'categories.directOwner': { en: 'Direct Owner', mm: 'ပိုင်ရှင်တိုက်ရိုက်' },
   'categories.premiumProperties': { en: 'Premium Properties', mm: 'ပရီမီယံအိမ်ခြံမြေများ' },
   'categories.preSale': { en: 'Pre-Sale', mm: 'ကြိုတင်ရောင်းချမှု' },
   'categories.installment': { en: 'Installment', mm: 'အရစ်ကျ' },
@@ -1735,6 +1736,8 @@ const translations: Translations = {
   'createProperty.tanTanTan': { en: 'Tan Tan Tan', mm: 'တန်တန်တန်' },
   'createProperty.tanTanTanDesc': { en: 'Mark this property as Tan Tan Tan', mm: 'ဤအိမ်ခြံမြေကို တန်တန်တန် အဖြစ်မှတ်သားပါ' },
   'createProperty.isTrending': { en: 'Premium (Is Trending)', mm: 'ပရီမီယံ (ရေပန်းစားနေသည်)' },
+  'createProperty.directOwner': { en: 'Direct Owner', mm: 'ပိုင်ရှင်တိုက်ရိုက်' },
+  'createProperty.directOwnerDesc': { en: 'Mark this property as listed by the direct owner', mm: 'ဤအိမ်ခြံမြေကို ပိုင်ရှင်တိုက်ရိုက် အဖြစ်မှတ်သားပါ' },
   'createProperty.bankInstallment': { en: 'Bank Installment', mm: 'ဘဏ်အရစ်ကျ' },
   'createProperty.bankInstallmentDesc': { en: 'Bank installment available for this property', mm: 'ဤအိမ်ခြံမြေအတွက် ဘဏ်အရစ်ကျ ရရှိနိုင်သည်' },
   'createProperty.features': { en: 'Features', mm: 'အင်္ဂါရပ်များ' },

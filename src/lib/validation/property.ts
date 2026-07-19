@@ -127,6 +127,7 @@ export const createPropertySchema = (t: (key: string) => string) => z.object({
   status: z.enum(['draft', 'published', 'sold', 'rented']).default('published'),
   tan_tan_tan: z.boolean().default(false),
   is_trending: z.boolean().default(false),
+  is_direct_owner: z.boolean().default(false),
   bank_installment_available: z.boolean().default(false),
   media_ids: z.preprocess(
     (val) => (val === undefined || val === null ? [] : val),

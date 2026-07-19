@@ -117,6 +117,7 @@ export interface Property {
   is_featured: boolean;
   tan_tan_tan: boolean;
   is_trending: boolean;
+  is_direct_owner: boolean;
   code: string;
   slug: string;
   is_favorited: boolean;
