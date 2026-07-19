@@ -31,6 +31,7 @@ export default function CreateProperty() {
   const { t, language } = useLanguage();
   const { showSuccess, showError } = useModal();
   const { user } = useAuthStore();
+  const isIndividual = user?.user_type === 'individual';
 
   // Lookups
   const { data: regionsResp } = useRegions();
@@ -746,6 +747,28 @@ export default function CreateProperty() {
                         className="ml-4"
                       />
                     </div>
+
+                    {isIndividual ? (
+                      <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors">
+                        <div className="flex-1">
+                          <label
+                            htmlFor="is_direct_owner"
+                            className="text-sm font-medium leading-none block cursor-pointer mb-1"
+                          >
+                            {t('createProperty.directOwner') || 'Direct Owner'}
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            {t('createProperty.directOwnerDesc') || 'Mark this property as listed by the direct owner'}
+                          </p>
+                        </div>
+                        <Switch
+                          id="is_direct_owner"
+                          checked={form.watch('is_direct_owner') || false}
+                          onCheckedChange={(checked) => form.setValue('is_direct_owner', checked)}
+                          className="ml-4"
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </CardContent>

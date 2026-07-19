@@ -34,6 +34,7 @@ export default function EditProperty() {
   const { t, language } = useLanguage();
   const { showSuccess, showError } = useModal();
   const { user } = useAuthStore();
+  const isIndividual = user?.user_type === 'individual';
 
   // Fetch property data - will refetch on mount due to refetchOnMount: 'always' in useMyProperty hook
   const { data: propertyData, isLoading: propertyLoading, error: propertyError } = useMyProperty(slug || '');
@@ -266,6 +267,7 @@ export default function EditProperty() {
           }
         form.setValue('tan_tan_tan', property.tan_tan_tan || false, { shouldValidate: false, shouldDirty: false });
         form.setValue('is_trending', property.is_trending || false, { shouldValidate: false, shouldDirty: false });
+        form.setValue('is_direct_owner', property.is_direct_owner || false, { shouldValidate: false, shouldDirty: false });
         form.setValue('bank_installment_available', property.bank_installment_available || false, { shouldValidate: false, shouldDirty: false });
 
         // Features
@@ -1196,6 +1198,29 @@ export default function EditProperty() {
                         disabled={isEditingRestricted}
                       />
                     </div>
+
+                    {isIndividual ? (
+                      <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors">
+                        <div className="flex-1">
+                          <label
+                            htmlFor="is_direct_owner"
+                            className="text-sm font-medium leading-none block cursor-pointer mb-1"
+                          >
+                            {t('createProperty.directOwner') || 'Direct Owner'}
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            {t('createProperty.directOwnerDesc') || 'Mark this property as listed by the direct owner'}
+                          </p>
+                        </div>
+                        <Switch
+                          id="is_direct_owner"
+                          checked={form.watch('is_direct_owner') || false}
+                          onCheckedChange={(checked) => form.setValue('is_direct_owner', checked)}
+                          className="ml-4"
+                          disabled={isEditingRestricted}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </CardContent>

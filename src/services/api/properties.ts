@@ -23,11 +23,11 @@ export const propertyApi = {
   },
 
   /**
-   * Create a new property (authenticated)
+   * Create a new property (authenticated) — V2 supports Direct Owner
    */
   createMyProperty: (payload: any) => {
     return api.post<PropertyResponse>(
-      '/api/v1/frontend/my-properties',
+      '/api/v2/frontend/my-properties',
       payload
     );
   },
@@ -40,10 +40,10 @@ export const propertyApi = {
   },
 
   /**
-   * Update my property by slug (authenticated)
+   * Update my property by slug (authenticated) — V2 supports Direct Owner
    */
   updateMyProperty: (slug: string, payload: any) => {
-    return api.put<PropertyResponse>(`/api/v1/frontend/my-properties/${slug}`, payload);
+    return api.put<PropertyResponse>(`/api/v2/frontend/my-properties/${slug}`, payload);
   },
 
   /**
