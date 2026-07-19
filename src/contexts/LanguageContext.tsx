@@ -72,7 +72,7 @@ const translations: Translations = {
   // Categories
   'categories.searchAllProperty': { en: 'Search All Property', mm: 'အိမ်ခြံမြေအားလုံးရှာဖွေရန်' },
   'categories.tantantan': { en: 'Tantantan', mm: 'တန်တန်တန်' },
-  'categories.directOwner': { en: 'Direct Owner', mm: 'ပိုင်ရှင်တိုက်ရိုက်' },
+  'categories.directOwner': { en: 'Direct Owner', mm: 'ပိုင်ရှင်တိုက်ရိုက်' }, 
   'categories.premiumProperties': { en: 'Premium Properties', mm: 'ပရီမီယံအိမ်ခြံမြေများ' },
   'categories.preSale': { en: 'Pre-Sale', mm: 'ကြိုတင်ရောင်းချမှု' },
   'categories.installment': { en: 'Installment', mm: 'အရစ်ကျ' },
