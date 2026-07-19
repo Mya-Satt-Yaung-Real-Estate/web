@@ -28,6 +28,11 @@ export interface UnlockWantedInfo {
   point_amount: number;
 }
 
+/** Cost to reveal contact / owner on a public direct-owner property */
+export interface UnlockPropertyInfo {
+  point_amount: number;
+}
+
 export interface AuthorizeMemberLevel {
   premium_feature: string[];
 }
@@ -40,6 +45,7 @@ export interface PointSettings {
   update_project_info?: ProjectPointInfo;
   payment_integration_status?: boolean;
   unlock_wanted_info?: UnlockWantedInfo;
+  unlock_property_info?: UnlockPropertyInfo;
   authorize_member_level?: AuthorizeMemberLevel;
 }
 

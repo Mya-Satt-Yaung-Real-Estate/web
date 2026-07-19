@@ -164,10 +164,10 @@ export interface PublicPropertyLocation {
 
 export interface PublicPropertyContactInfo {
   owner_profile_image_url: string | null;
-  owner_name: string;
-  phone_numbers: string[];
-  email: string;
-  property_count: number;
+  owner_name: string | null;
+  phone_numbers: string[] | null;
+  email: string | null;
+  property_count: number | null;
   is_company?: boolean;
   company_name?: string | null;
   company_id?: number | null;
@@ -228,19 +228,22 @@ export interface PublicPropertyDetail {
   is_featured: boolean;
   tan_tan_tan: boolean;
   is_trending: boolean;
+  is_direct_owner?: boolean;
   premium?: boolean;
   code: string;
   status: string;
+  /** When true, contact_info and user are hidden until unlocked with points (V2 direct_owner). */
+  owner_information_lock?: boolean;
   is_favorited: boolean;
   is_liked: boolean;
   stats: PublicPropertyStats;
   dates: PublicPropertyDates;
   user: {
     id: number;
-    name: string;
-    user_type: string;
-    member_level: string;
-  };
+    name: string | null;
+    user_type: string | null;
+    member_level: string | null;
+  } | null;
   media: PublicPropertyMedia;
   comments: PublicPropertyComment[];
 }

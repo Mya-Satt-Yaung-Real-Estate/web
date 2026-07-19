@@ -5,11 +5,12 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePublicProperty } from '@/hooks/queries/usePublicProperties';
 import { publicPropertyApi } from '@/services/api/publicProperties';
 import { publicPropertyKeys } from '@/services/queries/publicProperties';
+import { pointSettingsApi } from '@/services/api/pointSettings';
 import { homeKeys } from '@/services/queries/home';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Helmet } from 'react-helmet-async';
@@ -21,12 +22,15 @@ import { PropertyGallery, PropertyDetailsCard, ContactOwnerCard, QuickActionsCar
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import type { PublicPropertyDetailResponse } from '@/types/publicProperties';
 
 export default function PublicPropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, language } = useLanguage();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, token, user } = useAuthStore();
   const queryClient = useQueryClient();
   
   const { data, isLoading, error } = usePublicProperty(slug || '');
@@ -35,6 +39,8 @@ export default function PublicPropertyDetail() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [unlockModalOpen, setUnlockModalOpen] = useState(false);
 
   // Favorite mutation - must be called before conditional returns
   const toggleFavoriteMutation = useMutation({
@@ -140,6 +146,73 @@ export default function PublicPropertyDetail() {
 
   // Prepare property data - use empty object as fallback to ensure hooks always run
   const property = data?.data?.data || null;
+  const isOwnerInfoLocked = Boolean(property?.owner_information_lock);
+
+  const {
+    data: pointSettings,
+    isLoading: isPointSettingsLoading,
+    isError: isPointSettingsError,
+  } = useQuery({
+    queryKey: ['point-settings'],
+    queryFn: async () => {
+      const response = await pointSettingsApi.getPointSettings();
+      return response.data?.data;
+    },
+    enabled: isOwnerInfoLocked || unlockModalOpen,
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+
+  const unlockPointAmount = pointSettings?.unlock_property_info?.point_amount;
+
+  const userPointBalance =
+    user?.current_point ?? user?.point_balance ?? user?.points ?? 0;
+
+  const hasInsufficientPoints =
+    Boolean(token) &&
+    unlockPointAmount != null &&
+    !isPointSettingsLoading &&
+    userPointBalance < unlockPointAmount;
+
+  const insufficientFromApi =
+    !!unlockError &&
+    /insufficient|not enough points|required points/i.test(unlockError.toLowerCase());
+
+  const insufficientMode = hasInsufficientPoints || insufficientFromApi;
+
+  const unlockMutation = useMutation({
+    mutationFn: async () => {
+      const res = await publicPropertyApi.unlockPublicPropertyDetail(slug || '');
+      return res.data as PublicPropertyDetailResponse;
+    },
+    onMutate: () => setUnlockError(null),
+    onSuccess: (response) => {
+      setUnlockModalOpen(false);
+      queryClient.invalidateQueries({ queryKey: publicPropertyKeys.detail(slug || '') });
+
+      const apiMessage = response?.message?.trim();
+      if (apiMessage) {
+        toast.success(apiMessage);
+      } else if (unlockPointAmount != null) {
+        toast.success(
+          language === 'mm'
+            ? `ပွိုင့် ${unlockPointAmount} ဖြတ်ထားပြီး ဆက်သွယ်ရန်အချက်အလက် ဖွင့်ပြီးပါပြီ။`
+            : `${unlockPointAmount} points deducted. Contact details are now visible.`
+        );
+      } else {
+        toast.success(
+          language === 'mm'
+            ? 'ဆက်သွယ်ရန်အချက်အလက် ဖွင့်ပြီးပါပြီ။'
+            : 'Contact information unlocked successfully.'
+        );
+      }
+    },
+    onError: (err: Error) => {
+      const msg = err.message || 'Unlock failed';
+      setUnlockError(msg);
+      toast.error(msg);
+    },
+  });
 
   // Initialize favorite and like state from API
   useEffect(() => {
@@ -426,6 +499,32 @@ export default function PublicPropertyDetail() {
     }
   };
 
+  const handleRequestUnlock = () => {
+    setUnlockError(null);
+    setUnlockModalOpen(true);
+  };
+
+  const handleConfirmUnlock = () => {
+    if (!slug) {
+      setUnlockModalOpen(false);
+      return;
+    }
+    if (!token) {
+      setUnlockModalOpen(false);
+      navigate(`/signin?redirect=${encodeURIComponent(location.pathname + location.search)}`);
+      return;
+    }
+    if (insufficientMode) {
+      setUnlockModalOpen(false);
+      setUnlockError(null);
+      navigate(
+        `/point-management?returnTo=${encodeURIComponent(location.pathname + location.search)}`
+      );
+      return;
+    }
+    unlockMutation.mutate();
+  };
+
 
   return (
     <>
@@ -529,6 +628,10 @@ export default function PublicPropertyDetail() {
                   contactInfo={property.contact_info}
                   onContactOwner={handleContactOwner}
                   t={t}
+                  isLocked={isOwnerInfoLocked}
+                  unlockPointAmount={unlockPointAmount}
+                  language={language === 'mm' ? 'mm' : 'en'}
+                  onRequestUnlock={handleRequestUnlock}
                 />
               )}
 
@@ -564,6 +667,130 @@ export default function PublicPropertyDetail() {
         </div>
       </div>
 
+      <ConfirmModal
+        isOpen={unlockModalOpen}
+        onClose={() => {
+          setUnlockModalOpen(false);
+          setUnlockError(null);
+        }}
+        onConfirm={handleConfirmUnlock}
+        title={
+          insufficientMode
+            ? language === 'mm'
+              ? 'ပွိုင့်မလုံလောက်ပါ'
+              : 'Not enough points'
+            : language === 'mm'
+              ? 'ဆက်သွယ်ရန်အချက်အလက် ဖွင့်မည်'
+              : 'Unlock contact information'
+        }
+        message={
+          <div className="space-y-3">
+            {insufficientMode ? (
+              language === 'mm' ? (
+                <>
+                  {hasInsufficientPoints && unlockPointAmount != null ? (
+                    <p>
+                      အချက်အလက်များကို ကြည့်ရန်အတွက် <strong>{unlockPointAmount}</strong> ပွိုင့် လိုအပ်ပါသည်။
+                      သင့်လက်ကျန်မှာ{' '}
+                      <strong>{userPointBalance}</strong> ပွိုင့် သာရှိပါသည်။
+                    </p>
+                  ) : (
+                    <p className="text-red-600">{unlockError}</p>
+                  )}
+                  <p className="text-gray-600 text-sm">
+                    ပွိုင့်ဝယ်ယူရန် <strong>ပွိုင့် ရောင်းသော</strong> စာမျက်နှာသို့ သွားပါ။ ပွိုင့် ဖြည့်သွင်းပြီးလျှင် ဤစာမျက်နှာသို့ ပြန်လာပြီး ဖွင့်ကြည့်နိုင်ပါပြီ။
+                  </p>
+                </>
+              ) : (
+                <>
+                  {hasInsufficientPoints && unlockPointAmount != null ? (
+                    <p>
+                      You need <strong>{unlockPointAmount}</strong> points to unlock contact
+                      details. Your current balance is <strong>{userPointBalance}</strong> points.
+                    </p>
+                  ) : (
+                    <p className="text-red-600">{unlockError}</p>
+                  )}
+                  <p className="text-gray-600 text-sm">
+                    Go to <strong>Point Management</strong> to purchase or top up points. After your balance
+                    is sufficient, return here and unlock again.
+                  </p>
+                </>
+              )
+            ) : language === 'mm' ? (
+              <>
+                <p>
+                  ဤပစ္စည်း၏ <strong>ဆက်သွယ်ရန်အချက်အလက်</strong> ကို ကြည့်ရန် ပွိုင့်ပေးဆောင်ရပါမည်။
+                </p>
+                <p>
+                  ကုန်ကျပွိုင့် —{' '}
+                  {isPointSettingsLoading ? (
+                    <span className="inline-block align-middle h-4 w-12 rounded bg-gray-200 animate-pulse" />
+                  ) : unlockPointAmount != null ? (
+                    <strong className="text-gray-900">{unlockPointAmount}</strong>
+                  ) : (
+                    <span className="text-gray-500">—</span>
+                  )}
+                  {isPointSettingsError ? ' (ကုန်ကျပွိုင့်မဖတ်ရပါ)' : ''}
+                </p>
+                <p className="text-gray-600 text-sm">
+                  အတည်ပြုပြီးနောက် သင့်အကောင့်မှ ပွိုင့်ဖြတ်တောက်မည်ဖြစ်ပြီး ဤပစ္စည်းအတွက်သာ အသုံးပြုမည်ဖြစ်သည်။
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  If you want to view <strong>contact information</strong> (name, phone, email) for this
+                  property, you need to pay points to unlock them.
+                </p>
+                <p>
+                  Unlock cost:{' '}
+                  {isPointSettingsLoading ? (
+                    <span className="inline-block align-middle h-4 w-12 rounded bg-gray-200 animate-pulse" />
+                  ) : unlockPointAmount != null ? (
+                    <strong className="text-gray-900">{unlockPointAmount}</strong>
+                  ) : (
+                    <span className="text-gray-500">—</span>
+                  )}{' '}
+                  points
+                  {isPointSettingsError ? ' (could not load current cost)' : ''}.
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Points are deducted from your balance when you confirm. This unlock applies to this property only.
+                </p>
+              </>
+            )}
+            {!insufficientMode && unlockError ? (
+              <p className="text-sm text-red-600 pt-1">{unlockError}</p>
+            ) : null}
+          </div>
+        }
+        confirmText={
+          insufficientMode
+            ? language === 'mm'
+              ? 'ပွိုင့် ဝယ်ရန် နိုပ်ပါ။'
+              : 'Go to Point Market!'
+            : token
+              ? language === 'mm'
+                ? isPointSettingsLoading
+                  ? 'စောင့်ပါ…'
+                  : unlockPointAmount != null
+                    ? `ပွိုင့် ${unlockPointAmount} ဖြင့်ဖွင့်မည်`
+                    : 'ပွိုင့်ဖြင့် ဖွင့်မည်'
+                : isPointSettingsLoading
+                  ? 'Loading…'
+                  : unlockPointAmount != null
+                    ? `Pay ${unlockPointAmount} points and unlock`
+                    : 'Pay points and unlock'
+              : language === 'mm'
+                ? 'ဝင်ရောက်မည်'
+                : 'Sign in'
+        }
+        cancelText={language === 'mm' ? 'မလုပ်တော့ပါ' : 'Cancel'}
+        confirmVariant="default"
+        isLoading={unlockMutation.isPending}
+        size="lg"
+      />
     </>
   );
 }

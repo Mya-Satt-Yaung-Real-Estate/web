@@ -58,7 +58,14 @@ export const publicPropertyApi = {
   },
 
   getPublicPropertyBySlug: (slug: string) => {
-    return api.get<PublicPropertyDetailResponse>(`/api/v1/frontend/public/properties/${slug}`);
+    return api.get<PublicPropertyDetailResponse>(`/api/v2/frontend/public/properties/${slug}`);
+  },
+
+  /**
+   * Unlock contact / owner info on a direct-owner property (points).
+   */
+  unlockPublicPropertyDetail: (slug: string) => {
+    return api.post<PublicPropertyDetailResponse>(`/api/v2/frontend/unlock/property/${slug}`);
   },
 
   /**
