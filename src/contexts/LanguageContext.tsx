@@ -7,7 +7,7 @@ interface Translations {
     en: string;
     mm: string;
   };
-}
+} 
 
 const translations: Translations = {
   // Navigation
