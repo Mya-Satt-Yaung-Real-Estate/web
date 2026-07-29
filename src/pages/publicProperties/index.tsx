@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, ProjectList, AdvertisementList, EventList, WantedList } from './components';
-import { PropertyFilters, ProjectFilters, AdvertisementFilters, WantedFilters, EventFilters } from './components/filters';
+import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, ProjectList, AdvertisementList, EventList, WantedList, ShareProfitList } from './components';
+import { PropertyFilters, ProjectFilters, AdvertisementFilters, WantedFilters, ShareProfitFilters, EventFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStatisticsCounts } from '@/hooks/queries/useStatisticsCounts';
+import { useShareProfitStatistics } from '@/hooks/queries/useShareProfitStatistics';
 import { usePublicProperties } from '@/hooks/queries/usePublicProperties';
 import type { PublicPropertyFilters } from '@/types/publicProperties';
 import type { PublicAdvertisementFilters } from '@/types/publicAdvertisements';
 import type { WantedListFilters } from '@/services/api/wantedList';
+import type { ShareProfitListFilters } from '@/services/api/shareProfitListing';
+import type { ShareProfitWantedType } from '@/types/shareProfitListing';
 import type { HousingEventFilters } from '@/types/housingEvents';
 import type { ProjectCondition, ProjectFilters as PublicProjectFilters } from '@/types/projects';
 
@@ -222,6 +225,56 @@ export default function PublicProperties() {
     return filters;
   };
 
+  const getShareProfitFiltersFromParams = (): ShareProfitListFilters => {
+    const filters: ShareProfitListFilters = {
+      per_page: 30,
+      page: 1,
+    };
+
+    const search = searchParams.get('search');
+    if (search) filters.search = search;
+
+    const propertyTypeId = searchParams.get('property_type_id');
+    if (propertyTypeId) filters.property_type_id = Number(propertyTypeId);
+
+    const preferRegionId = searchParams.get('prefer_region_id');
+    if (preferRegionId) filters.prefer_region_id = Number(preferRegionId);
+
+    const preferTownshipId = searchParams.get('prefer_township_id');
+    if (preferTownshipId) filters.prefer_township_id = Number(preferTownshipId);
+
+    const wantedType = searchParams.get('wanted_type');
+    if (
+      wantedType &&
+      (wantedType === 'buyer' ||
+        wantedType === 'renter' ||
+        wantedType === 'seller' ||
+        wantedType === 'share_profit')
+    ) {
+      filters.wanted_type = wantedType as ShareProfitWantedType;
+    }
+
+    const minBudget = searchParams.get('min_budget');
+    if (minBudget) filters.min_budget = Number(minBudget);
+
+    const maxBudget = searchParams.get('max_budget');
+    if (maxBudget) filters.max_budget = Number(maxBudget);
+
+    const minArea = searchParams.get('min_area');
+    if (minArea) filters.min_area = Number(minArea);
+
+    const maxArea = searchParams.get('max_area');
+    if (maxArea) filters.max_area = Number(maxArea);
+
+    const bedrooms = searchParams.get('bedrooms');
+    if (bedrooms) filters.bedrooms = Number(bedrooms);
+
+    const bathrooms = searchParams.get('bathrooms');
+    if (bathrooms) filters.bathrooms = Number(bathrooms);
+
+    return filters;
+  };
+
   const getEventFiltersFromParams = (): HousingEventFilters => {
     const perPageParam = 20;
     const filters: HousingEventFilters = {
@@ -284,11 +337,13 @@ export default function PublicProperties() {
   const { data: popularData, isLoading: isPopularLoading } = usePublicProperties(filters, { enabled: isPopularProperties });
   const advertisementFilters = getAdvertisementFiltersFromParams();
   const wantedFilters = getWantedFiltersFromParams();
+  const shareProfitFilters = getShareProfitFiltersFromParams();
   const eventFilters = getEventFiltersFromParams();
   const projectFilters = getProjectFiltersFromParams();
   
   // Fetch statistics counts from API
   const { data: countsData } = useStatisticsCounts();
+  const { data: shareProfitStatsData } = useShareProfitStatistics();
   
   const propertyCount = countsData?.data?.data?.all_properties_count ?? 0;
   const premiumCount = countsData?.data?.data?.premium_properties_count ?? 0;
@@ -299,6 +354,7 @@ export default function PublicProperties() {
   const advertisementCount = countsData?.data?.data?.advertisements_count ?? 0;
   const eventCount = countsData?.data?.data?.housing_events_count ?? 0;
   const wantedCount = countsData?.data?.data?.wanted_listings_count ?? 0;
+  const shareProfitCount = shareProfitStatsData?.data?.data?.total ?? 0;
 
   const getResultsText = () => {
     let count = propertyCount;
@@ -318,6 +374,8 @@ export default function PublicProperties() {
       count = eventCount;
     } else if (activeTab === 'wanted') {
       count = wantedCount;
+    } else if (activeTab === 'share-profit') {
+      count = shareProfitCount;
     }
     
     const isPlural = count !== 1;
@@ -345,6 +403,9 @@ export default function PublicProperties() {
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'wanted') {
       const text = isPlural ? t('search.wantedFoundPlural') : t('search.wantedFound');
+      return text.replace('{count}', count.toString());
+    } else if (activeTab === 'share-profit') {
+      const text = isPlural ? t('search.shareProfitFoundPlural') : t('search.shareProfitFound');
       return text.replace('{count}', count.toString());
     } else {
       const text = isPlural ? t('search.propertyFoundPlural') : t('search.propertyFound');
@@ -393,6 +454,8 @@ export default function PublicProperties() {
                     ? t('events.tabLabel') || 'Events'
                     : activeTab === 'wanted'
                     ? t('search.wanted')
+                    : activeTab === 'share-profit'
+                    ? t('search.shareProfit')
                     : t('search.properties')}
                 </h1>
                 <p className="text-muted-foreground mt-2">
@@ -404,7 +467,7 @@ export default function PublicProperties() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
               <div className="w-full overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
-                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-9 gap-1 sm:gap-0 inline-flex sm:inline-grid">
+                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-10 gap-1 sm:gap-0 inline-flex sm:inline-grid">
                 
                 <TabsTrigger 
                   value="property"
@@ -463,6 +526,13 @@ export default function PublicProperties() {
                 </TabsTrigger>
 
                 <TabsTrigger
+                  value="share-profit"
+                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
+                >
+                  {t('search.shareProfit') || 'Share Profit'} ({shareProfitCount})
+                </TabsTrigger>
+
+                <TabsTrigger
                   value="projects"
                   className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
@@ -490,6 +560,10 @@ export default function PublicProperties() {
               {/* Wanted Filters - Show for Wanted tab */}
               {activeTab === 'wanted' && (
                 <WantedFilters />
+              )}
+
+              {activeTab === 'share-profit' && (
+                <ShareProfitFilters />
               )}
 
               {/* Event Filters - Show for Events tab */}
@@ -548,6 +622,12 @@ export default function PublicProperties() {
               {activeTab === 'wanted' && (
                 <TabsContent value="wanted" className="space-y-4">
                   <WantedList filters={wantedFilters} />
+                </TabsContent>
+              )}
+
+              {activeTab === 'share-profit' && (
+                <TabsContent value="share-profit" className="space-y-4">
+                  <ShareProfitList filters={shareProfitFilters} />
                 </TabsContent>
               )}
             </Tabs>

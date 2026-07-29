@@ -43,6 +43,10 @@ const LoanCalculator = lazyWithRetry(() => import('../pages/calculators/loanCalc
 const PublicWantedList = lazyWithRetry(() => import('../pages/publicWantedListings/list').then(module => ({ default: module.default })));
 const PublicWantedDetail = lazyWithRetry(() => import('../pages/publicWantedDetail').then(module => ({ default: module.default })));
 
+// Public Share Profit Listings pages
+const PublicShareProfitList = lazyWithRetry(() => import('../pages/publicShareProfitListings/list').then(module => ({ default: module.default })));
+const PublicShareProfitDetail = lazyWithRetry(() => import('../pages/publicShareProfitDetail').then(module => ({ default: module.default })));
+
 // Public Properties pages
 const PublicProperties = lazyWithRetry(() => import('../pages/publicProperties').then(module => ({ default: module.default })));
 const PublicPropertyDetail = lazyWithRetry(() => import('../pages/publicPropertyDetail').then(module => ({ default: module.default })));
@@ -295,6 +299,22 @@ export const publicRoutes = [
     element: (
       <Suspense fallback={<PageLoader />}>
         <PublicWantedDetail />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/public-share-profit-list',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicShareProfitList />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/share-profit/:slug',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PublicShareProfitDetail />
       </Suspense>
     ),
   },

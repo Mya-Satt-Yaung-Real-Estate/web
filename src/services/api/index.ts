@@ -25,6 +25,7 @@ export { newsApi } from './news';
 export { companiesApi } from './companies';
 export { companyTypesApi } from './companyTypes';
 export { wantingListApi } from './wantingList';
+export { shareProfitListingApi } from './shareProfitListing';
 export { loanRequestApi } from './loanRequest';
 export { aiAssistantApi } from './aiAssistant';
 export { notificationApi } from './notifications';

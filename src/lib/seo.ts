@@ -54,6 +54,14 @@ export const pageSEO: Record<string, SEOConfig> = {
     url: 'https://jade-property.com/public-wanted-list',
     type: 'website'
   },
+  publicShareProfitList: {
+    title: 'Share Profit Listings - Jade Property',
+    description: 'Browse share profit property listings from buyers, renters, sellers, and share profit partners in Myanmar.',
+    keywords: 'share profit listings, property partnership, buyers, renters, sellers, Myanmar property',
+    image: '/assets/jade.png',
+    url: 'https://jade-property.com/public-share-profit-list',
+    type: 'website'
+  },
   loanCalculator: {
     title: 'Loan Calculator - Calculate Monthly Payments | Jade Property',
     description: 'Calculate your monthly loan payments, total costs, and affordability for property loans. Free loan calculator with EMI schedule and payment breakdown.',

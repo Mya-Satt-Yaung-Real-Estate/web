@@ -17,4 +17,5 @@ export * from './news';
 export * from './companies';
 export * from './companyTypes';
 export * from './wantingList';
+export * from './shareProfitListing';
 export * from './home';
