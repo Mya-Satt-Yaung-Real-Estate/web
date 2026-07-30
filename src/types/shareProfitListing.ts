@@ -134,3 +134,39 @@ export interface ShareProfitStatisticsResponse {
   message: string;
   data: ShareProfitStatistics;
 }
+
+export interface ShareProfitOwnerFilters {
+  search?: string;
+  wanted_type?: ShareProfitWantedType;
+  verification_status?: 'pending' | 'approved' | 'rejected';
+  property_type_id?: number;
+  prefer_region_id?: number;
+  prefer_township_id?: number;
+  per_page?: number;
+  page?: number;
+  sort_by?: string;
+  sort_direction?: 'asc' | 'desc';
+}
+
+export interface ShareProfitCreateData {
+  wanted_type: ShareProfitWantedType;
+  property_type_id: number;
+  title: string;
+  prefer_region_id: number;
+  prefer_township_id: number;
+  name: string;
+  phone: string;
+  description?: string;
+  min_budget?: number;
+  max_budget?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  min_area?: number;
+  max_area?: number;
+  additional_requirement?: string;
+  email?: string;
+  status?: 'draft' | 'published';
+  media_ids: number[];
+}
+
+export type ShareProfitUpdateData = ShareProfitCreateData;

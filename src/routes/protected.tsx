@@ -8,6 +8,10 @@ const MyWantedList = lazyWithRetry(() => import('../pages/myWantedListings/list'
 const CreateWantedList = lazyWithRetry(() => import('../pages/myWantedListings/create'));
 const EditWantedList = lazyWithRetry(() => import('../pages/myWantedListings/edit'));
 const WantingListDetail = lazyWithRetry(() => import('../pages/myWantedListings/detail'));
+const MyShareProfitList = lazyWithRetry(() => import('../pages/myShareProfitListings/list'));
+const CreateShareProfitListing = lazyWithRetry(() => import('../pages/myShareProfitListings/create'));
+const EditShareProfitListing = lazyWithRetry(() => import('../pages/myShareProfitListings/edit'));
+const MyShareProfitDetail = lazyWithRetry(() => import('../pages/myShareProfitListings/detail'));
 const AppointmentList = lazyWithRetry(() => import('../pages/appointments/list'));
 const EditAppointment = lazyWithRetry(() => import('../pages/appointments/edit'));
 const MyAdvertisementsList = lazyWithRetry(() => import('../pages/myAdvertisements/list'));
@@ -68,6 +72,46 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <WantingListDetail />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-share-profit-listings/list',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyShareProfitList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-share-profit-listings/create',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <CreateShareProfitListing />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-share-profit-listings/edit/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditShareProfitListing />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-share-profit-listings/detail/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyShareProfitDetail />
         </Suspense>
       </ProtectedRoute>
     ),

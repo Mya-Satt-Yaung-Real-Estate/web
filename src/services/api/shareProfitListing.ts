@@ -1,8 +1,11 @@
 import { api } from './client';
 import type {
+  ShareProfitCreateData,
   ShareProfitDetailResponse,
   ShareProfitListResponse,
+  ShareProfitOwnerFilters,
   ShareProfitStatisticsResponse,
+  ShareProfitUpdateData,
   ShareProfitWantedType,
 } from '@/types/shareProfitListing';
 
@@ -37,5 +40,36 @@ export const shareProfitListingApi = {
 
   getPublicStatistics: () => {
     return api.get<ShareProfitStatisticsResponse>('/api/v2/frontend/public/share-profit-listings/statistics');
+  },
+
+  /** Owner (auth) CRUD — Website V2 */
+  getOwnerListings: (filters: ShareProfitOwnerFilters = {}) => {
+    return api.get<ShareProfitListResponse>('/api/v2/frontend/share-profit-listings', {
+      params: filters,
+    });
+  },
+
+  getOwnerDetail: (slug: string) => {
+    return api.get<ShareProfitDetailResponse>(`/api/v2/frontend/share-profit-listings/${slug}`);
+  },
+
+  create: (data: ShareProfitCreateData) => {
+    return api.post<ShareProfitDetailResponse>('/api/v2/frontend/share-profit-listings', data);
+  },
+
+  update: (slug: string, data: ShareProfitUpdateData) => {
+    return api.put<ShareProfitDetailResponse>(`/api/v2/frontend/share-profit-listings/${slug}`, data);
+  },
+
+  remove: (slug: string) => {
+    return api.delete<ShareProfitDetailResponse>(`/api/v2/frontend/share-profit-listings/${slug}`);
+  },
+
+  toggleStatus: (slug: string) => {
+    return api.patch<ShareProfitDetailResponse>(`/api/v2/frontend/share-profit-listings/${slug}/toggle-status`);
+  },
+
+  getOwnerStatistics: () => {
+    return api.get<ShareProfitStatisticsResponse>('/api/v2/frontend/share-profit-listings/statistics');
   },
 };

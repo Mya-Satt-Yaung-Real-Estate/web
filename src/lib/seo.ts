@@ -130,10 +130,24 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
+  myShareProfitList: {
+    title: 'My Share Profit Listings - Jade Property',
+    description: 'Manage your share profit listings.',
+    keywords: 'share profit listings, manage listings, Jade Property',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
   createWantedList: {
     title: 'Create Wanted Listing - Jade Property',
     description: 'Create a new wanted listing.',
     keywords: 'create wanted listing, property requirements',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  createShareProfitList: {
+    title: 'Create Share Profit Listing - Jade Property',
+    description: 'Create a new share profit listing.',
+    keywords: 'create share profit listing, property partnership',
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
