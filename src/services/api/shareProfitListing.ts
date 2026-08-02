@@ -39,6 +39,10 @@ export const shareProfitListingApi = {
     return api.get<ShareProfitDetailResponse>(`/api/v2/frontend/public/share-profit-listings/${slug}`);
   },
 
+  unlockPublicDetail: (slug: string) => {
+    return api.post<ShareProfitDetailResponse>(`/api/v2/frontend/unlock/share-profit-listing/${slug}`);
+  },
+
   getPublicStatistics: () => {
     return api.get<ShareProfitStatisticsResponse>('/api/v2/frontend/public/share-profit-listings/statistics');
   },

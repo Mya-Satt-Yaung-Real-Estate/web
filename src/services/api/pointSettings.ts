@@ -33,6 +33,11 @@ export interface UnlockPropertyInfo {
   point_amount: number;
 }
 
+/** Cost to reveal contact / poster on a public share profit listing */
+export interface UnlockShareProfitInfo {
+  point_amount: number;
+}
+
 export interface AuthorizeMemberLevel {
   premium_feature: string[];
 }
@@ -46,6 +51,7 @@ export interface PointSettings {
   payment_integration_status?: boolean;
   unlock_wanted_info?: UnlockWantedInfo;
   unlock_property_info?: UnlockPropertyInfo;
+  unlock_share_profit_info?: UnlockShareProfitInfo;
   authorize_member_level?: AuthorizeMemberLevel;
 }
 
