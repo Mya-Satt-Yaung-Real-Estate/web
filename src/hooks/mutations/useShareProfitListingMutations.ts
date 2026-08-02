@@ -54,3 +54,16 @@ export const useToggleShareProfitListingStatus = () => {
     },
   });
 };
+
+export const useRenewShareProfitListing = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (slug: string) => shareProfitListingApi.renew(slug),
+    onSuccess: (_response, slug) => {
+      queryClient.invalidateQueries({ queryKey: shareProfitListingKeys.ownerLists() });
+      queryClient.invalidateQueries({ queryKey: shareProfitListingKeys.ownerDetail(slug) });
+      queryClient.invalidateQueries({ queryKey: shareProfitListingKeys.ownerStatistics() });
+    },
+  });
+};

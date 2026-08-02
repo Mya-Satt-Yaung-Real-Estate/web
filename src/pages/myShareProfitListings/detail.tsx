@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, MapPin, DollarSign, Home, Bed, Bath, Square, Phone, Mail, Edit, Trash2,
-  CheckCircle, Clock, ChevronLeft, ChevronRight,
+  CheckCircle, Clock, ChevronLeft, ChevronRight, RefreshCw,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,12 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { useMyShareProfitListing } from '@/hooks/queries/useMyShareProfitListings';
-import { useDeleteShareProfitListing, useToggleShareProfitListingStatus } from '@/hooks/mutations';
+import {
+  useDeleteShareProfitListing,
+  useRenewShareProfitListing,
+  useToggleShareProfitListingStatus,
+} from '@/hooks/mutations';
+import { shareProfitListingApi } from '@/services/api/shareProfitListing';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -30,6 +35,7 @@ export default function MyShareProfitDetail() {
   const listing = response?.data?.data;
   const deleteMutation = useDeleteShareProfitListing();
   const toggleMutation = useToggleShareProfitListingStatus();
+  const renewMutation = useRenewShareProfitListing();
   const { showSuccess, showError } = useModal();
   const { isOpen: isConfirmOpen, options: confirmOptions, isLoading: isConfirmLoading, showConfirm, hideConfirm, handleConfirm } = useConfirmModal();
 
@@ -108,6 +114,53 @@ export default function MyShareProfitDetail() {
     });
   };
 
+  const handleRenew = async () => {
+    if (!slug) return;
+
+    let renewalDays = 30;
+    let pointCost = 0;
+
+    try {
+      const statsResponse = await shareProfitListingApi.getOwnerStatistics();
+      renewalDays = statsResponse.data?.data?.renewal?.days ?? 30;
+      pointCost = statsResponse.data?.data?.renewal?.point_cost ?? 0;
+    } catch {
+      /**
+       * Keep defaults if statistics fail; renew API still validates points.
+       */
+    }
+
+    showConfirm({
+      title: language === 'mm' ? 'သက်တမ်းတိုးရန်' : 'Renew Listing',
+      message: language === 'mm'
+        ? `သက်တမ်း ${renewalDays} ရက် တိုးမည်။ ပွိုင့် ${pointCost} နှုတ်မည်။ လက်ကျန်လုံလောက်မှသာ အောင်မြင်ပါမည်။`
+        : `Extend expiry by ${renewalDays} days. ${pointCost} points will be charged. Renew succeeds only if your balance is enough.`,
+      confirmText: language === 'mm' ? 'သက်တမ်းတိုးမည်' : 'Confirm & Renew',
+      cancelText: t('editWantedList.cancel') || 'Cancel',
+      onConfirm: () => {
+        return new Promise<void>((resolve, reject) => {
+          renewMutation.mutate(slug, {
+            onSuccess: (apiResponse) => {
+              const pointsConsumed = apiResponse.data?.data?.renewal_info?.points_consumed ?? pointCost;
+              showSuccess(
+                language === 'mm'
+                  ? `သက်တမ်းတိုးပြီးပါပြီ။ ${pointsConsumed} ပွိုင့် အသုံးပြုခဲ့သည်။`
+                  : `Listing renewed. Points used: ${pointsConsumed}.`,
+                t('editWantedList.successTitle') || 'Success!'
+              );
+              refetch();
+              resolve();
+            },
+            onError: (err: Error) => {
+              showError(err.message, t('editWantedList.errorTitle'));
+              reject(err);
+            },
+          });
+        });
+      },
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-24 pb-12">
@@ -147,6 +200,17 @@ export default function MyShareProfitDetail() {
               {language === 'mm' ? 'စာရင်းသို့ ပြန်သွားရန်' : 'Back to Listings'}
             </Button>
             <div className="flex gap-2 flex-wrap">
+              {listing.status.is_expired && (
+                <Button
+                  variant="outline"
+                  onClick={handleRenew}
+                  disabled={renewMutation.isPending}
+                  className="border-amber-500/30 text-amber-700 hover:bg-amber-500/10 hover:text-amber-800"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  {language === 'mm' ? 'သက်တမ်းတိုးမည်' : 'Renew'}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 onClick={handleToggle}

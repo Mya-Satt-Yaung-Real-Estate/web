@@ -127,6 +127,24 @@ export interface ShareProfitStatistics {
     seller: number;
     share_profit: number;
   };
+  renewal?: {
+    days: number;
+    point_cost: number;
+  };
+}
+
+export interface ShareProfitRenewResponse {
+  success: boolean;
+  message: string;
+  data: {
+    listing: ShareProfitListingDetail;
+    renewal_info: {
+      previous_expiry: string | null;
+      new_expiry: string | null;
+      duration_days: number;
+      points_consumed: number;
+    };
+  };
 }
 
 export interface ShareProfitStatisticsResponse {

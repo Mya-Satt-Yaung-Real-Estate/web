@@ -4,6 +4,7 @@ import type {
   ShareProfitDetailResponse,
   ShareProfitListResponse,
   ShareProfitOwnerFilters,
+  ShareProfitRenewResponse,
   ShareProfitStatisticsResponse,
   ShareProfitUpdateData,
   ShareProfitWantedType,
@@ -67,6 +68,10 @@ export const shareProfitListingApi = {
 
   toggleStatus: (slug: string) => {
     return api.patch<ShareProfitDetailResponse>(`/api/v2/frontend/share-profit-listings/${slug}/toggle-status`);
+  },
+
+  renew: (slug: string) => {
+    return api.post<ShareProfitRenewResponse>(`/api/v2/frontend/share-profit-listings/${slug}/renew`);
   },
 
   getOwnerStatistics: () => {
