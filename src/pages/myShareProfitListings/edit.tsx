@@ -188,7 +188,7 @@ export default function EditShareProfitListing() {
       title: t('editWantedList.confirmDeleteTitle') || 'Confirm Delete',
       message: language === 'mm'
         ? 'ဤအကျိုးတူရ စာရင်းကို ဖျက်မှာ သေချာပါသလား။'
-        : 'Are you sure you want to delete this share profit listing?',
+        : 'Are you sure you want to delete this partnership post?',
       confirmText: t('myWantedList.delete'),
       cancelText: t('editWantedList.cancel') || 'Cancel',
       confirmVariant: 'destructive',
@@ -227,7 +227,7 @@ export default function EditShareProfitListing() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                {language === 'mm' ? 'အကျိုးတူရ စာရင်း ပြင်ဆင်ရန်' : 'Edit Share Profit Listing'}
+                {language === 'mm' ? 'အကျိုးတူရ စာရင်း ပြင်ဆင်ရန်' : 'Edit Partnership Post'}
               </h1>
             </div>
             <div className="flex gap-2">
@@ -267,9 +267,9 @@ export default function EditShareProfitListing() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="buyer">{t('myWantedList.buyer')}</SelectItem>
-                          <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                           <SelectItem value="seller">{t('search.seller') || 'Seller'}</SelectItem>
-                          <SelectItem value="share_profit">{t('search.shareProfit')}</SelectItem>
+                          <SelectItem value="for_rent">{t('search.partnershipForRent') || 'For Rent'}</SelectItem>
+                          <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormField>

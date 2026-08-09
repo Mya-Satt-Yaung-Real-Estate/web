@@ -104,10 +104,10 @@ export default function CreateShareProfitListing() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                {language === 'mm' ? 'အကျိုးတူရ စာရင်း ဖန်တီးရန်' : 'Create Share Profit Listing'}
+                {language === 'mm' ? 'အကျိုးတူရ စာရင်း ဖန်တီးရန်' : 'Create Partnership Post'}
               </h1>
               <p className="text-muted-foreground mt-2">
-                {language === 'mm' ? 'အကျိုးတူရ အိမ်ခြံမြေ လိုအပ်ချက်ကို တင်ပါ' : 'Post your share profit property requirement'}
+                {language === 'mm' ? 'အကျိုးတူရ အိမ်ခြံမြေ လိုအပ်ချက်ကို တင်ပါ' : 'Post your partnership property requirement'}
               </p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="hover:bg-primary/10">
@@ -141,9 +141,9 @@ export default function CreateShareProfitListing() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="buyer">{t('myWantedList.buyer')}</SelectItem>
-                          <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                           <SelectItem value="seller">{t('search.seller') || 'Seller'}</SelectItem>
-                          <SelectItem value="share_profit">{t('search.shareProfit')}</SelectItem>
+                          <SelectItem value="for_rent">{t('search.partnershipForRent') || 'For Rent'}</SelectItem>
+                          <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormField>

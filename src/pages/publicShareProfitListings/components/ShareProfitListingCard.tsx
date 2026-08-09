@@ -31,7 +31,7 @@ function getWantedTypeColor(wantedType: string): string {
       return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
     case 'seller':
       return 'bg-orange-500/10 text-orange-600 border-orange-500/20';
-    case 'share_profit':
+    case 'for_rent':
       return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
     default:
       return 'bg-primary/5 text-primary border-primary/20';

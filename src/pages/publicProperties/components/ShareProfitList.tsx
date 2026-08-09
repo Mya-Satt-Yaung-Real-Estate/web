@@ -56,7 +56,7 @@ export function ShareProfitList({ filters }: ShareProfitListProps) {
       <Card className="p-12 text-center">
         <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <h3 className="mb-2">
-          {language === 'mm' ? 'အကျိုးတူရ စာရင်းမတွေ့ပါ' : 'No share profit listings found'}
+          {language === 'mm' ? 'အကျိုးတူရ စာရင်းမတွေ့ပါ' : 'No partnership posts found'}
         </h3>
         <p className="text-muted-foreground">
           {t('search.tryAdjustingFilters') || 'Try adjusting your search or filters'}

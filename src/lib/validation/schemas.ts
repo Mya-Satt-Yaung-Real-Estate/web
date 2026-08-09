@@ -173,7 +173,7 @@ export const createShareProfitListingSchema = (t: (key: string) => string) => z.
       message: t('validation.wantedType.required')
     })
     .refine((val) => {
-      return val === 'buyer' || val === 'renter' || val === 'seller' || val === 'share_profit';
+      return val === 'buyer' || val === 'seller' || val === 'for_rent' || val === 'renter';
     }, {
       message: t('validation.wantedType.invalid')
     }),

@@ -46,7 +46,7 @@ export function useNavigationData() {
       { name: t('publicAdvertisements.tabLabel'), path: '/search?type=advertisements', icon: Megaphone },
       { name: t('services.housingEvent'), path: '/search?type=events', icon: Calendar },
       { name: language === 'mm' ? 'လိုချင်သောစာရင်း' : 'Wanted List', path: '/search?type=wanted', icon: FileText },
-      { name: language === 'mm' ? 'အကျိုးတူရ' : 'Share Profit', path: '/search?type=share-profit', icon: Handshake },
+      { name: language === 'mm' ? 'အကျိုးတူရ' : 'Partnership Posts', path: '/search?type=share-profit', icon: Handshake },
       { name: language === 'mm' ? 'တန်တန်တန်အိမ်ခြံမြေ' : 'TanTanTan Property', path: '/search?type=tantantan', icon: Grid3x3 },
     ],
     
@@ -54,7 +54,7 @@ export function useNavigationData() {
       { name: t('createListing.propertyPost'), path: '/my-properties', icon: HomeIcon },
       { name: t('createListing.projectListing'), path: '/my-projects', icon: Building2 },
       { name: t('createListing.wantedPost'), path: '/my-wanted-listings/list', icon: Search },
-      { name: language === 'mm' ? 'အကျိုးတူရ' : 'Share Profit', path: '/my-share-profit-listings/list', icon: Handshake },
+      { name: language === 'mm' ? 'အကျိုးတူရ' : 'Partnership Posts', path: '/my-share-profit-listings/list', icon: Handshake },
       { name: t('createListing.advertisementPost'), path: '/advertisements', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
       { name: t('createListing.giveYourReview'), path: '/reviews', icon: Star },

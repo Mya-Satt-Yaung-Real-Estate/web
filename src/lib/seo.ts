@@ -55,9 +55,9 @@ export const pageSEO: Record<string, SEOConfig> = {
     type: 'website'
   },
   publicShareProfitList: {
-    title: 'Share Profit Listings - Jade Property',
-    description: 'Browse share profit property listings from buyers, renters, sellers, and share profit partners in Myanmar.',
-    keywords: 'share profit listings, property partnership, buyers, renters, sellers, Myanmar property',
+    title: 'Partnership Posts - Jade Property',
+    description: 'Browse partnership posts from buyers, sellers, for rent, and renters in Myanmar.',
+    keywords: 'partnership posts, property partnership, buyers, sellers, for rent, renters, Myanmar property',
     image: '/assets/jade.png',
     url: 'https://jade-property.com/public-share-profit-list',
     type: 'website'
@@ -131,9 +131,9 @@ export const pageSEO: Record<string, SEOConfig> = {
     robots: 'noindex, nofollow'
   },
   myShareProfitList: {
-    title: 'My Share Profit Listings - Jade Property',
-    description: 'Manage your share profit listings.',
-    keywords: 'share profit listings, manage listings, Jade Property',
+    title: 'My Partnership Posts - Jade Property',
+    description: 'Manage your partnership posts.',
+    keywords: 'partnership posts, manage listings, Jade Property',
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
@@ -145,9 +145,9 @@ export const pageSEO: Record<string, SEOConfig> = {
     robots: 'noindex, nofollow'
   },
   createShareProfitList: {
-    title: 'Create Share Profit Listing - Jade Property',
-    description: 'Create a new share profit listing.',
-    keywords: 'create share profit listing, property partnership',
+    title: 'Create Partnership Post - Jade Property',
+    description: 'Create a new partnership post.',
+    keywords: 'create partnership post, property partnership',
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },

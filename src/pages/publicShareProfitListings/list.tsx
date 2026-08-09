@@ -108,12 +108,12 @@ export default function PublicShareProfitList() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-              {language === 'mm' ? 'အကျိုးတူရ စာရင်း' : 'Share Profit Listings'}
+              {language === 'mm' ? 'အကျိုးတူရ စာရင်း' : 'Partnership Posts'}
             </h1>
             <p className="text-muted-foreground mt-2">
               {language === 'mm'
                 ? 'အကျိုးတူရ အိမ်ခြံမြေ လိုချင်သူများနှင့် ရောင်းချသူများကို ရှာဖွေပါ'
-                : 'Browse share profit property listings from buyers, renters, and sellers'}
+                : 'Browse partnership posts from buyers, sellers, for rent, and renters'}
             </p>
           </div>
 
@@ -123,7 +123,7 @@ export default function PublicShareProfitList() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder={language === 'mm' ? 'ရှာဖွေရန်...' : 'Search share profit listings...'}
+                    placeholder={language === 'mm' ? 'ရှာဖွေရန်...' : 'Search partnership posts...'}
                     value={filters.search}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
                     className="pl-10"
@@ -141,9 +141,9 @@ export default function PublicShareProfitList() {
                     <SelectContent>
                       <SelectItem value="all">{language === 'mm' ? 'အားလုံး' : 'All Types'}</SelectItem>
                       <SelectItem value="buyer">{language === 'mm' ? 'ဝယ်သူ' : 'Buyer'}</SelectItem>
-                      <SelectItem value="renter">{language === 'mm' ? 'ငှားသူ' : 'Renter'}</SelectItem>
                       <SelectItem value="seller">{language === 'mm' ? 'ရောင်းသူ' : 'Seller'}</SelectItem>
-                      <SelectItem value="share_profit">{language === 'mm' ? 'အကျိုးတူရ' : 'Share Profit'}</SelectItem>
+                      <SelectItem value="for_rent">{language === 'mm' ? 'ငှားမည့်သူ' : 'For Rent'}</SelectItem>
+                      <SelectItem value="renter">{language === 'mm' ? 'ငှားချင်သူ' : 'Renter'}</SelectItem>
                     </SelectContent>
                   </Select>
 

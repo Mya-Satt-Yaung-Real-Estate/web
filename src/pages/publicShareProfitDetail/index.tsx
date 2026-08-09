@@ -71,7 +71,7 @@ function getWantedTypeColor(wantedType: string): string {
       return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
     case 'seller':
       return 'bg-orange-500/10 text-orange-600 border-orange-500/20';
-    case 'share_profit':
+    case 'for_rent':
       return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
     default:
       return 'bg-primary/5 text-primary border-primary/20';
@@ -300,7 +300,7 @@ export default function PublicShareProfitDetail() {
         seo={{
           title,
           description: description.substring(0, 160),
-          keywords: `${title}, ${getLocation()}, ${getPropertyType()}, ${listing.wanted_type_label}, share profit`,
+          keywords: `${title}, ${getLocation()}, ${getPropertyType()}, ${listing.wanted_type_label}, partnership`,
           image: seoImage,
         }}
         path={`/share-profit/${slug}`}
@@ -730,7 +730,7 @@ export default function PublicShareProfitDetail() {
               <>
                 <p>
                   If you want to view <strong>contact information</strong> (name, phone, email) and{' '}
-                  <strong>posted-by details</strong> for this share profit listing, you need to pay points to unlock them.
+                  <strong>posted-by details</strong> for this partnership post, you need to pay points to unlock them.
                 </p>
                 <p>
                   Unlock cost:{' '}

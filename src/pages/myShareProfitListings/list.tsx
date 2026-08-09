@@ -82,7 +82,7 @@ export default function MyShareProfitList() {
       title: t('editWantedList.confirmDeleteTitle') || 'Confirm Delete',
       message: language === 'mm'
         ? 'ဤအကျိုးတူရ စာရင်းကို ဖျက်မှာ သေချာပါသလား။'
-        : 'Are you sure you want to delete this share profit listing?',
+        : 'Are you sure you want to delete this partnership post?',
       confirmText: t('myWantedList.delete'),
       cancelText: t('editWantedList.cancel') || 'Cancel',
       confirmVariant: 'destructive',
@@ -140,10 +140,10 @@ export default function MyShareProfitList() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
               <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                {language === 'mm' ? 'ကျွန်ုပ်၏ အကျိုးတူရ စာရင်းများ' : 'My Share Profit Listings'}
+                {language === 'mm' ? 'ကျွန်ုပ်၏ အကျိုးတူရ စာရင်းများ' : 'My Partnership Posts'}
               </h1>
               <p className="text-muted-foreground mt-2">
-                {language === 'mm' ? 'အကျိုးတူရ စာရင်းများကို စီမံပါ' : 'Manage your share profit listings'}
+                {language === 'mm' ? 'အကျိုးတူရ စာရင်းများကို စီမံပါ' : 'Manage your partnership posts'}
               </p>
             </div>
             <Link to="/my-share-profit-listings/create">
@@ -186,9 +186,9 @@ export default function MyShareProfitList() {
                     <SelectContent>
                       <SelectItem value="all">{t('myWantedList.allTypes')}</SelectItem>
                       <SelectItem value="buyer">{t('myWantedList.buyer')}</SelectItem>
-                      <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                       <SelectItem value="seller">{t('search.seller') || 'Seller'}</SelectItem>
-                      <SelectItem value="share_profit">{t('search.shareProfit')}</SelectItem>
+                      <SelectItem value="for_rent">{t('search.partnershipForRent') || 'For Rent'}</SelectItem>
+                      <SelectItem value="renter">{t('myWantedList.renter')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select

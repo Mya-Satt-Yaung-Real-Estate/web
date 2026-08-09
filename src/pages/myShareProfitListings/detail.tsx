@@ -73,7 +73,7 @@ export default function MyShareProfitDetail() {
       title: t('editWantedList.confirmDeleteTitle') || 'Confirm Delete',
       message: language === 'mm'
         ? 'ဤအကျိုးတူရ စာရင်းကို ဖျက်မှာ သေချာပါသလား။'
-        : 'Are you sure you want to delete this share profit listing?',
+        : 'Are you sure you want to delete this partnership post?',
       confirmText: t('myWantedList.delete'),
       cancelText: t('editWantedList.cancel') || 'Cancel',
       confirmVariant: 'destructive',

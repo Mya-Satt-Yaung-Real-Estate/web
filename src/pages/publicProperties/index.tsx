@@ -249,7 +249,7 @@ export default function PublicProperties() {
       (wantedType === 'buyer' ||
         wantedType === 'renter' ||
         wantedType === 'seller' ||
-        wantedType === 'share_profit')
+        wantedType === 'for_rent')
     ) {
       filters.wanted_type = wantedType as ShareProfitWantedType;
     }
@@ -529,7 +529,7 @@ export default function PublicProperties() {
                   value="share-profit"
                   className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
                 >
-                  {t('search.shareProfit') || 'Share Profit'} ({shareProfitCount})
+                  {t('search.shareProfit') || 'Partnership Posts'} ({shareProfitCount})
                 </TabsTrigger>
 
                 <TabsTrigger

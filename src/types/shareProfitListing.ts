@@ -4,7 +4,7 @@
 
 import type { PropertyPagination } from './properties';
 
-export type ShareProfitWantedType = 'buyer' | 'renter' | 'seller' | 'share_profit';
+export type ShareProfitWantedType = 'buyer' | 'seller' | 'for_rent' | 'renter';
 
 export interface ShareProfitPropertyType {
   id: number;
@@ -123,9 +123,9 @@ export interface ShareProfitStatistics {
   total: number;
   by_type: {
     buyer: number;
-    renter: number;
     seller: number;
-    share_profit: number;
+    for_rent: number;
+    renter: number;
   };
   renewal?: {
     days: number;
