@@ -6,6 +6,8 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { FeatureBadge } from '@/components/ui/FeatureBadge';
+import { ExpiryBadge } from '@/components/ui/ExpiryBadge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Package, Star } from 'lucide-react';
 import type { PointPackage } from '@/types/points';
@@ -35,7 +37,19 @@ export function PackageCard({ package: pkg, onPurchase, isLoading }: PackageCard
   };
 
   return (
-    <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
+    <Card className="relative h-full flex flex-col hover:shadow-lg transition-shadow">
+      {pkg.feature && (
+        <div className="absolute top-3 left-3 z-10">
+          <FeatureBadge label={pkg.feature} />
+        </div>
+      )}
+      {pkg.expiry_days != null && (
+        <div className="absolute top-3 right-3 z-10">
+          <ExpiryBadge
+            label={`${formatNumber(pkg.expiry_days)} ${t('points.packages.days') || 'days'}`}
+          />
+        </div>
+      )}
       <CardContent className="p-6 pt-8 flex flex-col flex-1">
         {/* Package Header */}
         <div className="text-center mb-4">

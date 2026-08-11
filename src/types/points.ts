@@ -18,6 +18,8 @@ export interface PointPackage {
   formatted_price: string;
   description_en?: string;
   description_mm?: string;
+  feature?: string | null;
+  expiry_days?: number | null;
 }
 
 // ============================================================================

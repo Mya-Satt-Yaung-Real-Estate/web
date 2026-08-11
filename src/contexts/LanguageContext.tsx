@@ -2251,6 +2251,7 @@ const translations: Translations = {
   'points.packages.error': { en: 'Error Loading Packages', mm: 'ပက်ကေ့ချ်များဖွင့်ရာတွင်အမှား' },
   'points.packages.errorMessage': { en: 'Failed to load point packages. Please try again later.', mm: 'ပွိုင့်ပက်ကေ့ချ်များဖွင့်ရန်မအောင်မြင်ပါ။ ကျေးဇူးပြု၍နောက်မှထပ်ကြိုးစားပါ။' },
   'points.packages.noPackages': { en: 'No packages available at the moment', mm: 'လက်ရှိတွင်ပက်ကေ့ချ်များမရှိပါ' },
+  'points.packages.days': { en: 'days', mm: 'ရက်' },
   'points.transactions.title': { en: 'Transaction History', mm: 'အရောင်းအဝယ်မှတ်တမ်း' },
   'points.transactions.comingSoon': { en: 'Transaction List - Coming Soon', mm: 'အရောင်းအဝယ်စာရင်း - မကြာမီရောက်ရှိလာမည်' },
   'points.transactions.error': { en: 'Error Loading Transactions', mm: 'အရောင်းအဝယ်များဖွင့်ရာတွင်အမှား' },
