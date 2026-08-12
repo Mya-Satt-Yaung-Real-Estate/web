@@ -82,9 +82,10 @@ export default function EditShareProfitListing() {
     }
 
     const regionId = listing.preferred_location.region.id;
-    const townshipId = listing.preferred_location.township.id;
-    const townshipExists = townships.some(
-      (t) => t.id === townshipId && t.region_id === regionId
+    const townshipId = listing.preferred_location.township?.id;
+    const townshipExists = Boolean(
+      townshipId &&
+        townships.some((t) => t.id === townshipId && t.region_id === regionId)
     );
 
     const images = listing.media?.images || [];
@@ -106,7 +107,7 @@ export default function EditShareProfitListing() {
       name: listing.contact.name || '',
       phone: listing.contact.phone || '',
       email: listing.contact.email || '',
-      additional_requirement: listing.additional_requirement || '',
+      address: listing.address || '',
       media_ids: ids,
     } as ShareProfitUpdateData);
 
@@ -139,7 +140,7 @@ export default function EditShareProfitListing() {
       property_type_id: data.property_type_id,
       title: data.title,
       prefer_region_id: data.prefer_region_id,
-      prefer_township_id: data.prefer_township_id,
+      prefer_township_id: data.prefer_township_id || undefined,
       name: data.name,
       phone: data.phone,
       description: data.description || undefined,
@@ -149,7 +150,7 @@ export default function EditShareProfitListing() {
       bathrooms: data.bathrooms || undefined,
       min_area: data.min_area || undefined,
       max_area: data.max_area || undefined,
-      additional_requirement: data.additional_requirement || undefined,
+      address: data.address || undefined,
       email: data.email || undefined,
       media_ids: mediaIds,
     };
@@ -215,7 +216,7 @@ export default function EditShareProfitListing() {
 
   const handleRegionChange = (value: string) => {
     form.setValue('prefer_region_id', parseInt(value, 10));
-    form.setValue('prefer_township_id', 0);
+    form.setValue('prefer_township_id', undefined);
   };
 
   return (
@@ -323,10 +324,10 @@ export default function EditShareProfitListing() {
                         </SelectContent>
                       </Select>
                     </FormField>
-                    <FormField name="prefer_township_id" label={t('createWantedList.township')} error={errors.prefer_township_id} required>
+                    <FormField name="prefer_township_id" label={t('createWantedList.township')} error={errors.prefer_township_id}>
                       <Select
                         value={form.watch('prefer_township_id')?.toString() || ''}
-                        onValueChange={(value) => form.setValue('prefer_township_id', parseInt(value, 10))}
+                        onValueChange={(value) => form.setValue('prefer_township_id', value ? parseInt(value, 10) : undefined)}
                         disabled={!watchedRegionId}
                       >
                         <SelectTrigger>
@@ -342,6 +343,9 @@ export default function EditShareProfitListing() {
                       </Select>
                     </FormField>
                   </div>
+                  <FormField name="address" label={t('createWantedList.address')} error={errors.address}>
+                    <Textarea {...form.register('address')} rows={2} placeholder={t('createWantedList.addressPlaceholder')} />
+                  </FormField>
                 </CardContent>
               </Card>
 
@@ -445,20 +449,6 @@ export default function EditShareProfitListing() {
                       <Input {...form.register('email')} type="email" />
                     </FormField>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <User className="h-5 w-5 text-primary" />
-                    {t('createWantedList.additionalRequirements')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField name="additional_requirement" label={t('createWantedList.specialRequirements')} error={errors.additional_requirement}>
-                    <Textarea {...form.register('additional_requirement')} rows={3} />
-                  </FormField>
                 </CardContent>
               </Card>
 

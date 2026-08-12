@@ -22,7 +22,7 @@ export interface ShareProfitPreferredLocation {
     id: number;
     name_en: string;
     name_mm: string;
-  };
+  } | null;
 }
 
 export interface ShareProfitBudget {
@@ -102,7 +102,7 @@ export interface ShareProfitListingDetailUser {
 }
 
 export interface ShareProfitListingDetail extends ShareProfitListing {
-  additional_requirement?: string;
+  address?: string | null;
   user: ShareProfitListingDetailUser | null;
 }
 
@@ -171,7 +171,7 @@ export interface ShareProfitCreateData {
   property_type_id: number;
   title: string;
   prefer_region_id: number;
-  prefer_township_id: number;
+  prefer_township_id?: number;
   name: string;
   phone: string;
   description?: string;
@@ -181,7 +181,7 @@ export interface ShareProfitCreateData {
   bathrooms?: number;
   min_area?: number;
   max_area?: number;
-  additional_requirement?: string;
+  address?: string;
   email?: string;
   status?: 'draft' | 'published';
   media_ids: number[];

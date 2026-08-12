@@ -51,10 +51,12 @@ export function ShareProfitListingCard({ listing }: ShareProfitListingCardProps)
     const region = language === 'mm'
       ? listing.preferred_location.region.name_mm
       : listing.preferred_location.region.name_en;
-    const township = language === 'mm'
-      ? listing.preferred_location.township.name_mm
-      : listing.preferred_location.township.name_en;
-    return `${township}, ${region}`;
+    const township = listing.preferred_location.township
+      ? (language === 'mm'
+        ? listing.preferred_location.township.name_mm
+        : listing.preferred_location.township.name_en)
+      : null;
+    return township ? `${township}, ${region}` : region;
   };
 
   const getStatusLabel = () => {

@@ -51,10 +51,12 @@ export default function MyShareProfitDetail() {
     const region = language === 'mm'
       ? listing.preferred_location.region.name_mm
       : listing.preferred_location.region.name_en;
-    const township = language === 'mm'
-      ? listing.preferred_location.township.name_mm
-      : listing.preferred_location.township.name_en;
-    return `${township}, ${region}`;
+    const township = listing.preferred_location.township
+      ? (language === 'mm'
+        ? listing.preferred_location.township.name_mm
+        : listing.preferred_location.township.name_en)
+      : null;
+    return township ? `${township}, ${region}` : region;
   };
 
   const handleDelete = () => {
@@ -344,12 +346,12 @@ export default function MyShareProfitDetail() {
                     </p>
                   </div>
 
-                  {listing.additional_requirement && (
+                  {listing.address && (
                     <>
                       <Separator />
                       <div>
-                        <h3 className="mb-2 text-sm font-semibold">{t('wantedDetail.additionalRequirements')}</h3>
-                        <p className="text-muted-foreground whitespace-pre-wrap">{listing.additional_requirement}</p>
+                        <h3 className="mb-2 text-sm font-semibold">{t('createWantedList.address') || 'Address'}</h3>
+                        <p className="text-muted-foreground whitespace-pre-wrap">{listing.address}</p>
                       </div>
                     </>
                   )}

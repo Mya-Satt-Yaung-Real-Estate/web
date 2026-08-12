@@ -30,7 +30,7 @@ export const useFormValidation = <T extends FieldValues>(
       max_area: undefined,
       email: '',
       description: '',
-      additional_requirement: ''
+      address: ''
     } as any
   });
   

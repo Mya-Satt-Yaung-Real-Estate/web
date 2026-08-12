@@ -202,15 +202,14 @@ export const createShareProfitListingSchema = (t: (key: string) => string) => z.
     message: t('validation.region.required')
   }).transform((val) => Number(val)),
 
-  prefer_township_id: z.any().refine((val) => {
-    if (val === '' || val === null || val === undefined) {
-      return false;
-    }
-    const num = Number(val);
-    return !isNaN(num) && num > 0;
-  }, {
-    message: t('validation.township.required')
-  }).transform((val) => Number(val)),
+  prefer_township_id: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined || val === 0) return undefined;
+      const num = Number(val);
+      return isNaN(num) || num <= 0 ? undefined : num;
+    },
+    z.number().optional()
+  ),
 
   name: z.string()
     .min(1, t('validation.name.required'))
@@ -295,7 +294,7 @@ export const createShareProfitListingSchema = (t: (key: string) => string) => z.
       .optional()
   ),
 
-  additional_requirement: z.string().optional(),
+  address: z.string().optional(),
 
   status: z.enum(['draft', 'published']).optional(),
 

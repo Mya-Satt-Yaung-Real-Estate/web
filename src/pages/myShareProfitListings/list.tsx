@@ -127,8 +127,10 @@ export default function MyShareProfitList() {
     const loc = listing.preferred_location;
     if (!loc) return t('myWantedList.locationNotSpecified');
     const region = language === 'mm' ? loc.region.name_mm : loc.region.name_en;
-    const township = language === 'mm' ? loc.township.name_mm : loc.township.name_en;
-    return `${township}, ${region}`;
+    const township = loc.township
+      ? (language === 'mm' ? loc.township.name_mm : loc.township.name_en)
+      : null;
+    return township ? `${township}, ${region}` : region;
   };
 
   return (
