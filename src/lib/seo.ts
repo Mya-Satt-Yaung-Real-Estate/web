@@ -151,6 +151,14 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
+  activityDetail: {
+    title: 'Activity - Jade Property',
+    description: 'View activity posts from companies and the Jade Property platform.',
+    keywords: 'activities, activity posts, Jade Property',
+    image: '/assets/jade.png',
+    url: 'https://jade-property.com/activities',
+    type: 'article'
+  },
   myActivities: {
     title: 'My Activities - Jade Property',
     description: 'Manage your activity posts.',

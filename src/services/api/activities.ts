@@ -8,8 +8,13 @@ import type {
 } from '@/types/activity';
 
 const BASE = '/api/v2/frontend/my-activities';
+const PUBLIC_BASE = '/api/v2/frontend/public/activities';
 
 export const activityApi = {
+  getPublicDetail: (slug: string) => {
+    return api.get<ActivityDetailResponse>(`${PUBLIC_BASE}/${slug}`);
+  },
+
   getOwnerListings: (filters: ActivityOwnerFilters = {}) => {
     return api.get<ActivityListResponse>(BASE, { params: filters });
   },

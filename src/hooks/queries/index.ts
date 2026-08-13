@@ -22,5 +22,6 @@ export * from './useCompanyTypes';
 export * from './useProjects';
 export * from './useWantingList';
 export * from './useMyActivities';
+export * from './usePublicActivity';
 export * from './useAiAssistant';
 export * from './home';
