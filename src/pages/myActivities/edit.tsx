@@ -18,7 +18,7 @@ export default function EditActivity() {
           <Card className="glass border-border/50">
             <CardContent className="py-12 text-center space-y-4">
               <h2 className="text-xl font-semibold">
-                {t('myActivities.notFound') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှု မတွေ့ပါ' : 'Activity not found')}
+                {t('myActivities.notFound') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများ မတွေ့ပါ' : 'Activity not found')}
               </h2>
               <Button asChild variant="outline">
                 <Link to="/my-activities/list">{t('myWantedList.backToList')}</Link>

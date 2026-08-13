@@ -78,7 +78,7 @@ export default function MyActivitiesList() {
       title: t('myActivities.deleteConfirmTitle') || (language === 'mm' ? 'ဖျက်ရန် အတည်ပြုပါ' : 'Confirm delete'),
       message:
         language === 'mm'
-          ? 'ဤလုပ်ငန်းလှုပ်ရှားမှုကို ဖျက်မှာ သေချာပါသလား။'
+          ? 'ဤလုပ်ဆောင်မှု မှတ်တမ်းကို ဖျက်မှာ သေချာပါသလား။'
           : 'Are you sure you want to delete this activity?',
       confirmText: t('myWantedList.delete'),
       cancelText: t('createWantedList.cancel') || 'Cancel',
@@ -125,10 +125,10 @@ export default function MyActivitiesList() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
               <h1 className="bg-gradient-to-r from-primary via-[#4a9b82] to-primary bg-clip-text text-transparent">
-                {t('myActivities.title') || (language === 'mm' ? 'ကျွန်ုပ်၏ လုပ်ငန်းလှုပ်ရှားမှုများ' : 'My Activities')}
+                {t('myActivities.title') || (language === 'mm' ? 'ကျွန်ုပ်၏ လုပ်ဆောင်မှု မှတ်တမ်းများ' : 'My Activities')}
               </h1>
               <p className="text-muted-foreground mt-2">
-                {t('myActivities.description') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှုများကို စီမံပါ' : 'Manage your activity posts')}
+                {t('myActivities.description') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများကို စီမံပါ' : 'Manage your activity posts')}
               </p>
             </div>
             <Link to="/my-activities/create">
@@ -146,7 +146,7 @@ export default function MyActivitiesList() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     <Input
-                      placeholder={t('myActivities.searchPlaceholder') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှုများ ရှာရန်...' : 'Search your activities...')}
+                      placeholder={t('myActivities.searchPlaceholder') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများ ရှာရန်...' : 'Search your activities...')}
                       value={search}
                       onChange={(e) => {
                         setSearch(e.target.value);
@@ -216,17 +216,17 @@ export default function MyActivitiesList() {
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <ImageIcon className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">
-                  {t('myActivities.emptyTitle') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှု မရှိသေးပါ' : 'No activities found')}
+                  {t('myActivities.emptyTitle') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများ မရှိသေးပါ' : 'No activities found')}
                 </h3>
                 <p className="text-muted-foreground mb-4 text-center">
                   {hasActiveFilters
                     ? (t('myWantedList.noListingsMatchFilters') || 'No listings match your current filters.')
-                    : (t('myActivities.emptyMessage') || (language === 'mm' ? 'သင့်မှာ လုပ်ငန်းလှုပ်ရှားမှု မရှိသေးပါ။' : "You haven't created any activities yet."))}
+                    : (t('myActivities.emptyMessage') || (language === 'mm' ? 'သင့်မှာ လုပ်ဆောင်မှု မှတ်တမ်းများ မရှိသေးပါ။' : "You haven't created any activities yet."))}
                 </p>
                 <Link to="/my-activities/create">
                   <Button className="gradient-primary">
                     <Plus className="h-4 w-4 mr-2" />
-                    {t('myActivities.createFirst') || (language === 'mm' ? 'ပထမဆုံး လုပ်ငန်းလှုပ်ရှားမှု ဖန်တီးပါ' : 'Create your first activity')}
+                    {t('myActivities.createFirst') || (language === 'mm' ? 'ပထမဆုံး လုပ်ဆောင်မှု မှတ်တမ်း ဖန်တီးပါ' : 'Create your first activity')}
                   </Button>
                 </Link>
               </CardContent>

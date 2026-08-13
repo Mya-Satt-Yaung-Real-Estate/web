@@ -180,7 +180,7 @@ export function ActivityFormPage({ mode, activity, slug, isLoading = false }: Ac
         title: t('myActivities.publishConfirmTitle') || (language === 'mm' ? 'ထုတ်ဝေရန် အတည်ပြုပါ' : 'Confirm publish'),
         message:
           language === 'mm'
-            ? `ဤလုပ်ငန်းလှုပ်ရှားမှုကို ထုတ်ဝေပါက ${uploadPointCost} ပွိုင့် ကုန်ကျပါမည်။ ဆက်လုပ်မှာ သေချာပါသလား။`
+            ? `ဤလုပ်ဆောင်မှု မှတ်တမ်းကို ထုတ်ဝေပါက ${uploadPointCost} ပွိုင့် ကုန်ကျပါမည်။ ဆက်လုပ်မှာ သေချာပါသလား။`
             : `Publishing this activity will cost ${uploadPointCost} points. Do you want to continue?`,
         confirmText: t('myActivities.publish') || (language === 'mm' ? 'ထုတ်ဝေရန်' : 'Publish'),
         cancelText: t('createWantedList.cancel') || 'Cancel',
@@ -199,7 +199,7 @@ export function ActivityFormPage({ mode, activity, slug, isLoading = false }: Ac
       title: t('myActivities.deleteConfirmTitle') || (language === 'mm' ? 'ဖျက်ရန် အတည်ပြုပါ' : 'Confirm delete'),
       message:
         language === 'mm'
-          ? 'ဤလုပ်ငန်းလှုပ်ရှားမှုကို ဖျက်မှာ သေချာပါသလား။'
+          ? 'ဤလုပ်ဆောင်မှု မှတ်တမ်းကို ဖျက်မှာ သေချာပါသလား။'
           : 'Are you sure you want to delete this activity?',
       confirmText: t('myWantedList.delete'),
       cancelText: t('createWantedList.cancel') || 'Cancel',
@@ -229,8 +229,8 @@ export function ActivityFormPage({ mode, activity, slug, isLoading = false }: Ac
 
   const pageTitle =
     mode === 'create'
-      ? t('myActivities.createTitle') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှု ဖန်တီးရန်' : 'Create Activity')
-      : t('myActivities.editTitle') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှု ပြင်ဆင်ရန်' : 'Edit Activity');
+      ? t('myActivities.createTitle') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများ ဖန်တီးရန်' : 'Create Activity')
+      : t('myActivities.editTitle') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများ ပြင်ဆင်ရန်' : 'Edit Activity');
 
   return (
     <>
@@ -284,7 +284,7 @@ export function ActivityFormPage({ mode, activity, slug, isLoading = false }: Ac
                     <Textarea
                       {...form.register('description')}
                       rows={6}
-                      placeholder={t('myActivities.descriptionPlaceholder') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှုကို အသေးစိတ် ရေးပါ...' : 'Describe this activity...')}
+                      placeholder={t('myActivities.descriptionPlaceholder') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းကို အသေးစိတ် ရေးပါ...' : 'Describe this activity...')}
                     />
                   </FormField>
 
