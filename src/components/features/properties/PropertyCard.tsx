@@ -6,6 +6,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { PremiumBadge } from './PremiumBadge';
 import { TanTanTanBadge } from './TanTanTanBadge';
 import { InstallmentBadge } from './InstallmentBadge';
+import { DirectOwnerBadge } from './DirectOwnerBadge';
 import { MapPin, Bed, Bath, Square, ThumbsUp, MessageCircle, Heart, Eye, DollarSign } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
@@ -134,6 +135,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           {property.premium && <PremiumBadge />}
           {property.tan_tan_tan && <TanTanTanBadge />}
           {property.bank_installment_available && <InstallmentBadge />}
+          {property.is_direct_owner && <DirectOwnerBadge />}
           {property.is_featured && (
             <Badge className="bg-gradient-to-r from-primary to-[#4a9b82] text-white border-0 shadow-lg">
               {t('listings.featured') || 'Featured'}

@@ -45,6 +45,15 @@ export const publicPropertyApi = {
     });
   },
 
+  getDirectOwnerProperties: (filters: Omit<PublicPropertyFilters, 'direct_owner'> = {}) => {
+    return api.get<PublicPropertyListResponse>('/api/v1/frontend/public/properties', {
+      params: {
+        ...filters,
+        direct_owner: true,
+      },
+    });
+  },
+
   getPropertiesByListingType: (
     listingTypeId: number,
     filters: Omit<PublicPropertyFilters, 'listing_type_id'> = {}

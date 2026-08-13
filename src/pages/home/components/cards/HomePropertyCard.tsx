@@ -154,6 +154,11 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
               <span className="text-xs sm:text-sm">{t('listings.installment') || 'Installment'}</span>
             </Badge>
           )}
+          {property.is_direct_owner && (
+            <Badge className="bg-gradient-to-r from-sky-500 to-blue-600 text-white border-0 shadow-lg text-xs">
+              {t('search.directOwner') || 'Direct Owner Post'}
+            </Badge>
+          )}
           {property.is_featured && (
             <Badge className="bg-gradient-to-r from-primary to-[#4a9b82] text-white border-0 shadow-lg">
               {t('listings.featured') || 'Featured'}
@@ -164,13 +169,13 @@ export function HomePropertyCard({ property }: HomePropertyCardProps) {
         <div className="absolute top-3 right-3 flex flex-col gap-2">
           <Badge 
             variant="secondary" 
-            className="text-white border-0 shadow-lg bg-gradient-to-r from-primary to-[#4a9b82]"
+            className="text-xs text-white border-0 shadow-lg bg-gradient-to-r from-primary to-[#4a9b82]"
           >
             {getPropertyType()}
           </Badge>
           <Badge 
             variant="secondary" 
-            className="text-white border-0 shadow-lg bg-gradient-to-r from-purple-500 to-purple-600"
+            className="text-xs text-white border-0 shadow-lg bg-gradient-to-r from-purple-500 to-purple-600"
           >
             {getListingType()}
           </Badge>

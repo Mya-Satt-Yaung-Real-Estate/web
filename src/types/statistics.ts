@@ -17,6 +17,7 @@ export interface StatisticsCounts {
   installment_properties_count: number;
   lawyers_count: number;
   tan_tan_tan_properties_count: number;
+  direct_owner_properties_count: number;
   cities_covered_count: number;
   years_of_experience: number;
 }

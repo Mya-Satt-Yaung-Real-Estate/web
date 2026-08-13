@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, ProjectList, AdvertisementList, EventList, WantedList, ShareProfitList } from './components';
+import { PremiumPropertiesList, JadeMarketplacePropertiesList, PropertyList, TanTanTanPropertiesList, InstallmentPropertiesList, DirectOwnerPropertiesList, ProjectList, AdvertisementList, EventList, WantedList, ShareProfitList } from './components';
 import { PropertyFilters, ProjectFilters, AdvertisementFilters, WantedFilters, ShareProfitFilters, EventFilters } from './components/filters';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
@@ -16,6 +16,9 @@ import type { ShareProfitListFilters } from '@/services/api/shareProfitListing';
 import type { ShareProfitWantedType } from '@/types/shareProfitListing';
 import type { HousingEventFilters } from '@/types/housingEvents';
 import type { ProjectCondition, ProjectFilters as PublicProjectFilters } from '@/types/projects';
+
+const searchTabPillClass =
+  'h-10 w-full flex-none rounded-full border-0 bg-muted/70 px-3 text-xs font-medium text-foreground whitespace-nowrap shadow-none sm:text-sm hover:bg-muted data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-none';
 
 export default function PublicProperties() {
   const { t } = useLanguage();
@@ -61,6 +64,7 @@ export default function PublicProperties() {
     newParams.delete('premium');
     newParams.delete('jade_market');
     newParams.delete('installment');
+    newParams.delete('direct_owner');
     newParams.delete('price_low_to_high');
     newParams.delete('property_condition');
     newParams.delete('condition');
@@ -140,6 +144,10 @@ export default function PublicProperties() {
     const installment = searchParams.get('installment');
     if (installment === 'true') filters.installment = true;
     if (installment === 'false') filters.installment = false;
+
+    const directOwner = searchParams.get('direct_owner');
+    if (directOwner === 'true') filters.direct_owner = true;
+    if (directOwner === 'false') filters.direct_owner = false;
 
     const priceLowToHigh = searchParams.get('price_low_to_high');
     if (priceLowToHigh === 'true') filters.price_low_to_high = true;
@@ -350,6 +358,7 @@ export default function PublicProperties() {
   const jadeMarketplaceCount = countsData?.data?.data?.jade_market_properties_count ?? 0;
   const tanTanTanCount = countsData?.data?.data?.tan_tan_tan_properties_count ?? 0;
   const installmentCount = countsData?.data?.data?.installment_properties_count ?? 0;
+  const directOwnerCount = countsData?.data?.data?.direct_owner_properties_count ?? 0;
   const projectCount = countsData?.data?.data?.projects_count ?? 0;
   const advertisementCount = countsData?.data?.data?.advertisements_count ?? 0;
   const eventCount = countsData?.data?.data?.housing_events_count ?? 0;
@@ -366,6 +375,8 @@ export default function PublicProperties() {
       count = tanTanTanCount;
     } else if (activeTab === 'installment') {
       count = installmentCount;
+    } else if (activeTab === 'direct-owner') {
+      count = directOwnerCount;
     } else if (activeTab === 'projects') {
       count = projectCount;
     } else if (activeTab === 'advertisements') {
@@ -391,6 +402,9 @@ export default function PublicProperties() {
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'installment') {
       const text = isPlural ? t('search.installmentFoundPlural') : t('search.installmentFound');
+      return text.replace('{count}', count.toString());
+    } else if (activeTab === 'direct-owner') {
+      const text = isPlural ? t('search.directOwnerFoundPlural') : t('search.directOwnerFound');
       return text.replace('{count}', count.toString());
     } else if (activeTab === 'projects') {
       const text = isPlural ? t('search.projectsFoundPlural') : t('search.projectsFound');
@@ -446,6 +460,8 @@ export default function PublicProperties() {
                     ? t('search.tanTanTan')
                     : activeTab === 'installment'
                     ? t('listings.installment')
+                    : activeTab === 'direct-owner'
+                    ? t('search.directOwner')
                     : activeTab === 'projects'
                     ? t('search.projects')
                     : activeTab === 'advertisements'
@@ -464,86 +480,54 @@ export default function PublicProperties() {
               </div>
             </div>
 
-            {/* Tabs */}
+            {/* Tabs — pill grid: 7 on first row, 4 on second row */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
-              <div className="w-full overflow-x-auto pb-2 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0">
-                <TabsList className="w-full min-w-max sm:min-w-0 sm:grid sm:grid-cols-10 gap-1 sm:gap-0 inline-flex sm:inline-grid">
-                
-                <TabsTrigger 
-                  value="property"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.properties') || 'Properties'} ({propertyCount})
-                </TabsTrigger>
+              <TabsList
+                className="flex !h-auto w-full flex-col items-stretch gap-2 bg-transparent p-0"
+                style={{ height: 'auto' }}
+              >
+                <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                  <TabsTrigger value="property" className={searchTabPillClass}>
+                    {t('search.properties') || 'Properties'} ({propertyCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="premium" className={searchTabPillClass}>
+                    {t('search.premium') || 'Premium'} ({premiumCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="marketplace" className={searchTabPillClass}>
+                    {t('search.marketplace') || 'Marketplace'} ({jadeMarketplaceCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="tantantan" className={searchTabPillClass}>
+                    {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="installment" className={searchTabPillClass}>
+                    {t('listings.installment') || 'Installment'} ({installmentCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="advertisements" className={searchTabPillClass}>
+                    {t('publicAdvertisements.tabLabel') || 'Ads'} ({advertisementCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="events" className={searchTabPillClass}>
+                    {t('events.tabLabel') || 'Events'} ({eventCount})
+                  </TabsTrigger>
+                </div>
 
-                <TabsTrigger 
-                  value="premium"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.premium') || 'Premium'} ({premiumCount})
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="marketplace"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.marketplace') || 'Marketplace'} ({jadeMarketplaceCount})
-                </TabsTrigger>
-
-                <TabsTrigger 
-                  value="tantantan"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.tanTanTan') || 'Tan Tan Tan'} ({tanTanTanCount})
-                </TabsTrigger>
-
-                <TabsTrigger 
-                  value="installment"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('listings.installment') || 'Installment'} ({installmentCount})
-                </TabsTrigger>
-
-                <TabsTrigger 
-                  value="advertisements"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('publicAdvertisements.tabLabel') || 'Ads'} ({advertisementCount})
-                </TabsTrigger>
-
-                <TabsTrigger 
-                  value="events"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('events.tabLabel') || 'Events'} ({eventCount})
-                </TabsTrigger>
-
-                <TabsTrigger 
-                  value="wanted"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.wanted') || 'Wanted'} ({wantedCount})
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="share-profit"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.shareProfit') || 'Partnership Posts'} ({shareProfitCount})
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="projects"
-                  className="data-[state=active]:text-primary whitespace-nowrap flex-shrink-0 sm:flex-shrink text-xs sm:text-sm"
-                >
-                  {t('search.projects') || 'Projects'} ({projectCount})
-                </TabsTrigger>
-                
-                </TabsList>
-              </div>
+                <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                  <TabsTrigger value="wanted" className={searchTabPillClass}>
+                    {t('search.wanted') || 'Wanted'} ({wantedCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="share-profit" className={searchTabPillClass}>
+                    {t('search.shareProfit') || 'Partnership Posts'} ({shareProfitCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="projects" className={searchTabPillClass}>
+                    {t('search.projects') || 'Projects'} ({projectCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="direct-owner" className={searchTabPillClass}>
+                    {t('search.directOwner') || 'Direct Owner Post'} ({directOwnerCount})
+                  </TabsTrigger>
+                </div>
+              </TabsList>
 
               {/* Property Filters - Show for property-related tabs */}
-              {(activeTab === 'property' || activeTab === 'premium' || activeTab === 'marketplace' || activeTab === 'installment' || activeTab === 'tantantan') && (
+              {(activeTab === 'property' || activeTab === 'premium' || activeTab === 'marketplace' || activeTab === 'installment' || activeTab === 'tantantan' || activeTab === 'direct-owner') && (
                 <PropertyFilters />
               )}
 
@@ -592,6 +576,12 @@ export default function PublicProperties() {
               {activeTab === 'installment' && (
                 <TabsContent value="installment" className="space-y-4">
                   <InstallmentPropertiesList filters={filters} />
+                </TabsContent>
+              )}
+
+              {activeTab === 'direct-owner' && (
+                <TabsContent value="direct-owner" className="space-y-4">
+                  <DirectOwnerPropertiesList filters={filters} />
                 </TabsContent>
               )}
 

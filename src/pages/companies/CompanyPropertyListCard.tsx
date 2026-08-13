@@ -5,6 +5,7 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { InstallmentBadge } from '@/components/features/properties/InstallmentBadge';
 import { PremiumBadge } from '@/components/features/properties/PremiumBadge';
 import { TanTanTanBadge } from '@/components/features/properties/TanTanTanBadge';
+import { DirectOwnerBadge } from '@/components/features/properties/DirectOwnerBadge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -50,7 +51,8 @@ export function CompanyPropertyListCard({ property, companySlug }: CompanyProper
     property.is_trending ? 'premium' : null,
     property.tan_tan_tan ? 'tantan' : null,
     property.bank_installment_available ? 'installment' : null,
-  ].filter(Boolean).slice(0, 2);
+    property.is_direct_owner ? 'direct_owner' : null,
+  ].filter(Boolean).slice(0, 3);
 
   const goToDetail = () => navigate(`/properties/${property.slug}`);
 
@@ -74,6 +76,7 @@ export function CompanyPropertyListCard({ property, companySlug }: CompanyProper
               {featureBadges.includes('premium') && <PremiumBadge />}
               {featureBadges.includes('tantan') && <TanTanTanBadge />}
               {featureBadges.includes('installment') && <InstallmentBadge />}
+              {featureBadges.includes('direct_owner') && <DirectOwnerBadge />}
             </div>
           )}
         </div>

@@ -21,6 +21,9 @@ export const publicPropertyKeys = {
   installment: () => [...publicPropertyKeys.all, 'installment'] as const,
   installmentList: (filters?: Omit<PublicPropertyFilters, 'installment'>) => 
     [...publicPropertyKeys.installment(), filters] as const,
+  directOwner: () => [...publicPropertyKeys.all, 'direct-owner'] as const,
+  directOwnerList: (filters?: Omit<PublicPropertyFilters, 'direct_owner'>) =>
+    [...publicPropertyKeys.directOwner(), filters] as const,
   details: () => [...publicPropertyKeys.all, 'detail'] as const,
   detail: (slug: string) => [...publicPropertyKeys.details(), slug] as const,
   related: () => [...publicPropertyKeys.all, 'related'] as const,
@@ -51,6 +54,10 @@ export const publicPropertyQueries = {
 
   getInstallmentProperties: (filters?: Omit<PublicPropertyFilters, 'installment'>) => {
     return publicPropertyApi.getInstallmentProperties(filters);
+  },
+
+  getDirectOwnerProperties: (filters?: Omit<PublicPropertyFilters, 'direct_owner'>) => {
+    return publicPropertyApi.getDirectOwnerProperties(filters);
   },
 
   getPublicPropertyBySlug: (slug: string) => {

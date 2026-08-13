@@ -75,6 +75,11 @@ export function CompanyPropertyGridCard({ property, companySlug }: CompanyProper
               <span className="text-xs sm:text-sm">{t('listings.installment') || 'Installment'}</span>
             </Badge>
           )}
+          {property.is_direct_owner && (
+            <Badge className="border-0 bg-gradient-to-r from-sky-500 to-blue-600 text-xs text-white shadow-lg">
+              {t('search.directOwner') || 'Direct Owner Post'}
+            </Badge>
+          )}
           {property.is_featured && (
             <Badge className="border-0 bg-gradient-to-r from-primary to-[#4a9b82] text-white shadow-lg">
               {t('listings.featured') || 'Featured'}

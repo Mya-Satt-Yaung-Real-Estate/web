@@ -12,7 +12,7 @@ import {
   Search, Grid3x3, Star, Home as HomeIcon, Calculator,
   Calendar, Megaphone, BookOpen, HelpCircle, Mail, Info,
   Scale, Banknote, Building2, FileText, Building, Briefcase, TrendingUp, Users,
-  ShoppingCart, Eye, Handshake,
+  ShoppingCart, Eye, Handshake, User,
 } from 'lucide-react';
 
 // Icon mapping for company types
@@ -47,6 +47,7 @@ export function useNavigationData() {
       { name: t('services.housingEvent'), path: '/search?type=events', icon: Calendar },
       { name: language === 'mm' ? 'လိုချင်သောစာရင်း' : 'Wanted List', path: '/search?type=wanted', icon: FileText },
       { name: language === 'mm' ? 'အကျိုးတူရ' : 'Partnership Posts', path: '/search?type=share-profit', icon: Handshake },
+      { name: t('search.directOwner') || (language === 'mm' ? 'ပိုင်ရှင်တိုက်ရိုက်' : 'Direct Owner Post'), path: '/search?type=direct-owner', icon: User },
       { name: language === 'mm' ? 'တန်တန်တန်အိမ်ခြံမြေ' : 'TanTanTan Property', path: '/search?type=tantantan', icon: Grid3x3 },
     ],
     

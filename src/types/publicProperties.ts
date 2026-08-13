@@ -55,6 +55,7 @@ export interface PublicProperty {
   tan_tan_tan: boolean;
   premium: boolean;
   bank_installment_available: boolean;
+  is_direct_owner?: boolean;
   code: string;
   is_favorited?: boolean;
   is_liked?: boolean;
@@ -90,6 +91,7 @@ export interface PublicPropertyFilters {
   premium?: boolean;
   jade_market?: boolean;
   installment?: boolean;
+  direct_owner?: boolean;
 
   // Search and basic filters
   search?: string;
