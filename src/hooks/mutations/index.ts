@@ -11,6 +11,7 @@
 export * from './usePropertyMutations';
 export * from './useWantingListMutations';
 export * from './useShareProfitListingMutations';
+export * from './useActivityMutations';
 export * from './useChangePassword';
 export * from './useUpdateProfile';
 export * from './useLogin';

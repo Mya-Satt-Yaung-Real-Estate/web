@@ -9,6 +9,7 @@ import type { CompaniesResponse, CompanyDetailResponse, CompanyFilters } from '@
 import type { PropertyListResponse } from '@/types/properties';
 import type { AdvertisementListResponse } from '@/types/advertisement';
 import type { WantedListResponse } from '@/types/wantedList';
+import type { ActivityListResponse } from '@/types/activity';
 
 // ============================================================================
 // COMPANIES API FUNCTIONS
@@ -61,6 +62,15 @@ export const companiesApi = {
    */
   getCompanyWantedLists: (slug: string, params?: { per_page?: number; page?: number }) => {
     return api.get<WantedListResponse>(`/api/v1/frontend/companies/${slug}/wanted-lists`, {
+      params,
+    });
+  },
+
+  /**
+   * Get company activities by slug
+   */
+  getCompanyActivities: (slug: string, params?: { per_page?: number; page?: number; search?: string }) => {
+    return api.get<ActivityListResponse>(`/api/v1/frontend/companies/${slug}/activities`, {
       params,
     });
   },

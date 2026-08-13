@@ -12,6 +12,9 @@ const MyShareProfitList = lazyWithRetry(() => import('../pages/myShareProfitList
 const CreateShareProfitListing = lazyWithRetry(() => import('../pages/myShareProfitListings/create'));
 const EditShareProfitListing = lazyWithRetry(() => import('../pages/myShareProfitListings/edit'));
 const MyShareProfitDetail = lazyWithRetry(() => import('../pages/myShareProfitListings/detail'));
+const MyActivitiesList = lazyWithRetry(() => import('../pages/myActivities/list'));
+const CreateActivity = lazyWithRetry(() => import('../pages/myActivities/create'));
+const EditActivity = lazyWithRetry(() => import('../pages/myActivities/edit'));
 const AppointmentList = lazyWithRetry(() => import('../pages/appointments/list'));
 const EditAppointment = lazyWithRetry(() => import('../pages/appointments/edit'));
 const MyAdvertisementsList = lazyWithRetry(() => import('../pages/myAdvertisements/list'));
@@ -112,6 +115,36 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <MyShareProfitDetail />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-activities/list',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyActivitiesList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-activities/create',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <CreateActivity />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-activities/edit/:slug',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditActivity />
         </Suspense>
       </ProtectedRoute>
     ),

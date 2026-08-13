@@ -42,6 +42,7 @@ export interface Company {
   business_address: string;
   property_count: number;
   advertisement_count?: number;
+  activity_count?: number;
   view_count: number;
   contact_count: number;
   wanted_count?: number;

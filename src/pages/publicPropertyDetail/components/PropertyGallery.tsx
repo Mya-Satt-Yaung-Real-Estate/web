@@ -11,6 +11,7 @@ import { ShareModal } from '@/components/ui/ShareModal';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { TanTanTanBadge } from '@/components/features/properties/TanTanTanBadge';
 import { PremiumBadge } from '@/components/features/properties/PremiumBadge';
+import { DirectOwnerBadge } from '@/components/features/properties/DirectOwnerBadge';
 import {
   Heart,
   Share2,
@@ -243,6 +244,7 @@ export function PropertyGallery({
               )}
               {property.tan_tan_tan && <TanTanTanBadge />}
               {(property.premium || property.is_trending) && <PremiumBadge />}
+              {property.is_direct_owner && <DirectOwnerBadge />}
               {property.is_featured && (
                 <Badge className="bg-gradient-to-r from-primary to-[#4a9b82] text-white border-0">
                   <Star className="h-3 w-3 mr-1 fill-white" />

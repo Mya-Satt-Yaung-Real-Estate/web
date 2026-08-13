@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useCompanyBySlug, useCompanyProperties, useCompanyAdvertisements } from '@/hooks/queries/useCompanies';
+import { useCompanyBySlug, useCompanyProperties, useCompanyAdvertisements, useCompanyActivities } from '@/hooks/queries/useCompanies';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,10 +19,13 @@ import { CompanyAdvertisementGridCard } from './CompanyAdvertisementGridCard';
 import { CompanyAdvertisementListCard } from './CompanyAdvertisementListCard';
 import { CompanyPropertyGridCard } from './CompanyPropertyGridCard';
 import { CompanyPropertyListCard } from './CompanyPropertyListCard';
+import { CompanyActivityGridCard } from './CompanyActivityGridCard';
+import { CompanyActivityListCard } from './CompanyActivityListCard';
 import { toast } from 'sonner';
 import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import type { Property } from '@/types/properties';
 import type { Advertisement } from '@/types/advertisement';
+import type { Activity } from '@/types/activity';
 import {
   ArrowLeft,
   ArrowRight,
@@ -35,6 +38,7 @@ import {
   Grid3x3,
   List,
   Megaphone,
+  Images,
   Share2,
   CheckCircle,
   Award,
@@ -49,10 +53,13 @@ export default function CompanyDetail() {
   const [activeTab, setActiveTab] = useState('properties');
   const [propertiesPage, setPropertiesPage] = useState(1);
   const [advertisementsPage, setAdvertisementsPage] = useState(1);
+  const [activitiesPage, setActivitiesPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [advertisementsViewMode, setAdvertisementsViewMode] = useState<'grid' | 'list'>('grid');
+  const [activitiesViewMode, setActivitiesViewMode] = useState<'grid' | 'list'>('list');
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [allAdvertisements, setAllAdvertisements] = useState<Advertisement[]>([]);
+  const [allActivities, setAllActivities] = useState<Activity[]>([]);
 
   const { data: companyData, isLoading, error } = useCompanyBySlug(slug || '');
   const { data: propertiesData, isLoading: propertiesLoading, isFetching: propertiesFetching } = useCompanyProperties(
@@ -63,6 +70,10 @@ export default function CompanyDetail() {
     slug || '',
     { per_page: 12, page: advertisementsPage }
   );
+  const { data: activitiesData, isLoading: activitiesLoading, isFetching: activitiesFetching } = useCompanyActivities(
+    slug || '',
+    { per_page: 12, page: activitiesPage }
+  );
 
   // Reset properties when company changes
   useEffect(() => {
@@ -70,6 +81,8 @@ export default function CompanyDetail() {
     setPropertiesPage(1);
     setAllAdvertisements([]);
     setAdvertisementsPage(1);
+    setAllActivities([]);
+    setActivitiesPage(1);
   }, [slug]);
 
   // Reset data when switching tabs
@@ -84,6 +97,10 @@ export default function CompanyDetail() {
       // Switching TO advertisements tab - reset and reload
       setAllAdvertisements([]);
       setAdvertisementsPage(1);
+    }
+    if (prevTab.current !== 'activities' && activeTab === 'activities') {
+      setAllActivities([]);
+      setActivitiesPage(1);
     }
     prevTab.current = activeTab;
   }, [activeTab]);
@@ -123,6 +140,21 @@ export default function CompanyDetail() {
       }
     }
   }, [advertisementsData, advertisementsPage, activeTab]);
+
+  useEffect(() => {
+    if (activitiesData?.data?.data && activeTab === 'activities') {
+      const newActivities = activitiesData.data.data;
+      if (activitiesPage === 1) {
+        setAllActivities(newActivities);
+      } else {
+        setAllActivities((prev) => {
+          const existingIds = new Set(prev.map((activity) => activity.id));
+          const uniqueNew = newActivities.filter((activity) => !existingIds.has(activity.id));
+          return [...prev, ...uniqueNew];
+        });
+      }
+    }
+  }, [activitiesData, activitiesPage, activeTab]);
 
   if (isLoading) {
     return (
@@ -176,8 +208,11 @@ export default function CompanyDetail() {
 
   const advertisements = allAdvertisements;
   const advertisementsPagination = advertisementsData?.data?.pagination;
+  const activities = allActivities;
+  const activitiesPagination = activitiesData?.data?.pagination;
   const coverImageUrl = company.cover_image_url || DEFAULT_COVER_IMAGE;
   const advertisementCount = company.advertisement_count ?? advertisementsPagination?.total ?? 0;
+  const activityCount = company.activity_count ?? activitiesPagination?.total ?? 0;
 
   const handleShare = async () => {
     const url = `${window.location.origin}/companies/${company.slug}`;
@@ -212,6 +247,12 @@ export default function CompanyDetail() {
   const handleLoadMoreAdvertisements = () => {
     if (advertisementsPagination && advertisementsPage < advertisementsPagination.last_page) {
       setAdvertisementsPage(prev => prev + 1);
+    }
+  };
+
+  const handleLoadMoreActivities = () => {
+    if (activitiesPagination && activitiesPage < activitiesPagination.last_page) {
+      setActivitiesPage((prev) => prev + 1);
     }
   };
 
@@ -291,6 +332,11 @@ export default function CompanyDetail() {
                     <span className="inline-flex items-center gap-1.5">
                       <Megaphone className="h-4 w-4 shrink-0" />
                       {advertisementCount} {t('companies.advertisements')}
+                    </span>
+                    <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden="true">·</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Images className="h-4 w-4 shrink-0" />
+                      {activityCount} {t('companies.activities')}
                     </span>
                     <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden="true">·</span>
                     <span className="inline-flex items-center gap-1.5">
@@ -407,6 +453,13 @@ export default function CompanyDetail() {
                       >
                         <Megaphone className="mr-2 h-4 w-4" />
                         {t('companies.viewAdvertisement') || 'View Advertisement'} ({advertisementCount})
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="activities"
+                        className="h-11 min-w-[170px] flex-none rounded-full border border-primary/40 bg-background px-6 text-primary shadow-sm hover:bg-primary/10 data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md"
+                      >
+                        <Images className="mr-2 h-4 w-4" />
+                        {t('companies.viewActivities')} ({activityCount})
                       </TabsTrigger>
                     </TabsList>
 
@@ -622,6 +675,106 @@ export default function CompanyDetail() {
                                 {advertisementsFetching || advertisementsLoading ? (
                                   <>
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                                    {t('forms.loadMore')}...
+                                  </>
+                                ) : (
+                                  t('forms.loadMore')
+                                )}
+                              </Button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="activities" className="mt-2">
+                      {activities.length > 0 && !activitiesLoading && (
+                        <div className="mb-4 flex items-center justify-end">
+                          <div className="inline-flex items-center gap-1 rounded-lg border border-border/50 bg-muted/50 p-1">
+                            <Button
+                              variant={activitiesViewMode === 'grid' ? 'default' : 'ghost'}
+                              size="sm"
+                              onClick={() => setActivitiesViewMode('grid')}
+                              className="h-8 px-3"
+                            >
+                              <Grid3x3 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant={activitiesViewMode === 'list' ? 'default' : 'ghost'}
+                              size="sm"
+                              onClick={() => setActivitiesViewMode('list')}
+                              className="h-8 px-3"
+                            >
+                              <List className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {activitiesLoading && activitiesPage === 1 ? (
+                        activitiesViewMode === 'grid' ? (
+                          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {[...Array(6)].map((_, i) => (
+                              <Card key={i} className="overflow-hidden">
+                                <div className="h-48 animate-pulse bg-gray-200" />
+                                <CardContent className="space-y-3 p-4">
+                                  <div className="h-4 animate-pulse rounded bg-gray-200" />
+                                  <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {[...Array(6)].map((_, i) => (
+                              <Card key={i} className="overflow-hidden">
+                                <div className="flex flex-col gap-4 p-4 sm:flex-row">
+                                  <div className="h-48 w-full animate-pulse rounded-lg bg-gray-200 sm:h-40 sm:w-64" />
+                                  <div className="flex-1 space-y-3">
+                                    <div className="h-4 animate-pulse rounded bg-gray-200" />
+                                    <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+                                  </div>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        )
+                      ) : activities.length === 0 ? (
+                        <div className="py-12 text-center">
+                          <Images className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                          <h3 className="mb-2 text-lg font-semibold">{t('companies.noActivities')}</h3>
+                          <p className="text-muted-foreground">{t('companies.noActivitiesDesc')}</p>
+                        </div>
+                      ) : (
+                        <>
+                          {activitiesViewMode === 'grid' && (
+                            <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                              {activities.map((activity) => (
+                                <CompanyActivityGridCard key={activity.id} activity={activity} />
+                              ))}
+                            </div>
+                          )}
+
+                          {activitiesViewMode === 'list' && (
+                            <div className="mb-6 space-y-4">
+                              {activities.map((activity) => (
+                                <CompanyActivityListCard key={activity.id} activity={activity} />
+                              ))}
+                            </div>
+                          )}
+
+                          {activitiesPagination && activitiesPage < activitiesPagination.last_page && (
+                            <div className="mt-6 flex justify-center">
+                              <Button
+                                variant="outline"
+                                size="lg"
+                                onClick={handleLoadMoreActivities}
+                                disabled={activitiesFetching || activitiesLoading}
+                                className="min-w-[200px]"
+                              >
+                                {activitiesFetching || activitiesLoading ? (
+                                  <>
+                                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-primary"></div>
                                     {t('forms.loadMore')}...
                                   </>
                                 ) : (

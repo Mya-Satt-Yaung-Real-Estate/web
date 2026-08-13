@@ -82,3 +82,15 @@ export function useCompanyWantedLists(slug: string, params?: { per_page?: number
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
+
+/**
+ * Get company activities by slug
+ */
+export function useCompanyActivities(slug: string, params?: { per_page?: number; page?: number; search?: string }) {
+  return useQuery({
+    queryKey: companiesKeys.activitiesList(slug, params),
+    queryFn: () => companiesQueries.getCompanyActivities(slug, params),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });
+}

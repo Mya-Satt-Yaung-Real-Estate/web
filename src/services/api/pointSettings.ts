@@ -38,6 +38,11 @@ export interface UnlockShareProfitInfo {
   point_amount: number;
 }
 
+/** Cost to publish an activity */
+export interface ActivityUploadInfo {
+  point_amount: number;
+}
+
 export interface AuthorizeMemberLevel {
   premium_feature: string[];
 }
@@ -52,6 +57,7 @@ export interface PointSettings {
   unlock_wanted_info?: UnlockWantedInfo;
   unlock_property_info?: UnlockPropertyInfo;
   unlock_share_profit_info?: UnlockShareProfitInfo;
+  upload_activity_info?: ActivityUploadInfo;
   authorize_member_level?: AuthorizeMemberLevel;
 }
 

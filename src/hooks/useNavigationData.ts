@@ -12,7 +12,7 @@ import {
   Search, Grid3x3, Star, Home as HomeIcon, Calculator,
   Calendar, Megaphone, BookOpen, HelpCircle, Mail, Info,
   Scale, Banknote, Building2, FileText, Building, Briefcase, TrendingUp, Users,
-  ShoppingCart, Eye, Handshake, User,
+  ShoppingCart, Eye, Handshake, User, Images,
 } from 'lucide-react';
 
 // Icon mapping for company types
@@ -56,6 +56,7 @@ export function useNavigationData() {
       { name: t('createListing.projectListing'), path: '/my-projects', icon: Building2 },
       { name: t('createListing.wantedPost'), path: '/my-wanted-listings/list', icon: Search },
       { name: language === 'mm' ? 'အကျိုးတူရ' : 'Partnership Posts', path: '/my-share-profit-listings/list', icon: Handshake },
+      { name: t('createListing.activityPost') || (language === 'mm' ? 'လုပ်ငန်းလှုပ်ရှားမှု' : 'Activities'), path: '/my-activities/list', icon: Images },
       { name: t('createListing.advertisementPost'), path: '/advertisements', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
       { name: t('createListing.giveYourReview'), path: '/reviews', icon: Star },

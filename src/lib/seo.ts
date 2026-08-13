@@ -151,6 +151,27 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
+  myActivities: {
+    title: 'My Activities - Jade Property',
+    description: 'Manage your activity posts.',
+    keywords: 'my activities, activity posts, Jade Property',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  createActivity: {
+    title: 'Create Activity - Jade Property',
+    description: 'Create a new activity post.',
+    keywords: 'create activity, activity post, Jade Property',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  editActivity: {
+    title: 'Edit Activity - Jade Property',
+    description: 'Edit your activity post.',
+    keywords: 'edit activity, activity post, Jade Property',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
   myProperties: {
     title: 'My Properties - Jade Property',
     description: 'Manage your property listings.',

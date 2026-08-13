@@ -27,6 +27,9 @@ export const companiesKeys = {
   wantedLists: (slug: string) => [...companiesKeys.detailBySlug(slug), 'wanted-lists'] as const,
   wantedListsList: (slug: string, params?: { per_page?: number; page?: number }) =>
     [...companiesKeys.wantedLists(slug), params] as const,
+  activities: (slug: string) => [...companiesKeys.detailBySlug(slug), 'activities'] as const,
+  activitiesList: (slug: string, params?: { per_page?: number; page?: number; search?: string }) =>
+    [...companiesKeys.activities(slug), params] as const,
 } as const;
 
 // ============================================================================
@@ -74,5 +77,9 @@ export const companiesQueries = {
    */
   getCompanyWantedLists: (slug: string, params?: { per_page?: number; page?: number }) => {
     return companiesApi.getCompanyWantedLists(slug, params);
+  },
+
+  getCompanyActivities: (slug: string, params?: { per_page?: number; page?: number; search?: string }) => {
+    return companiesApi.getCompanyActivities(slug, params);
   },
 };
