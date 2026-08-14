@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useCompanyBySlug, useCompanyProperties, useCompanyAdvertisements, useCompanyActivities } from '@/hooks/queries/useCompanies';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,8 @@ import { CompanyPropertyGridCard } from './CompanyPropertyGridCard';
 import { CompanyPropertyListCard } from './CompanyPropertyListCard';
 import { CompanyActivityGridCard } from './CompanyActivityGridCard';
 import { CompanyActivityListCard } from './CompanyActivityListCard';
+import { CompanyHomeAdCard } from './CompanyHomeAdCard';
+import { isHomeAdLocationState } from '@/lib/homeAdNavigation';
 import { toast } from 'sonner';
 import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 import type { Property } from '@/types/properties';
@@ -48,6 +50,7 @@ const DEFAULT_COVER_IMAGE = 'https://msy-demo.s3.ap-southeast-1.amazonaws.com/de
 
 export default function CompanyDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
   const { t, language } = useLanguage();
   const seo = seoUtils.getPageSEO('companies');
   const [activeTab, setActiveTab] = useState('properties');
@@ -434,7 +437,10 @@ export default function CompanyDetail() {
               </Card>
             </aside>
 
-            <main className="lg:col-span-3">
+            <main className="space-y-4 lg:col-span-3">
+              {isHomeAdLocationState(location.state)
+                && location.state.homeAd.user?.company?.slug === company.slug
+                && <CompanyHomeAdCard ad={location.state.homeAd} />}
               {/* Tabs Section */}
               <Card className="bg-background/95 border-border/60 shadow-lg">
                 <CardContent className="!pt-6 px-6 pb-6">

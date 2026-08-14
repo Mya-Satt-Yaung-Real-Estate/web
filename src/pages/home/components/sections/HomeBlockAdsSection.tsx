@@ -7,6 +7,7 @@ import { useHomeBlockAds } from '@/hooks/queries/home';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'motion/react';
 import type { HomeBlockAdsData, SliderAd } from '@/types/ads';
+import { HomeAdTargetLink } from '@/lib/homeAdNavigation';
 
 /** API `grid_index` 1–2: left (1) and right (2) horizontal block slots. */
 const SLOT_KEYS = ['1', '2'] as const;
@@ -84,12 +85,10 @@ function BlockSlotCarousel({ slides }: { slides: SliderAd[] }) {
     >
       <div className={shellClass}>
         {isClickable && (
-          <a
-            href={href}
-            target={opensInNewTab ? '_blank' : undefined}
-            rel={opensInNewTab ? 'noopener noreferrer' : undefined}
+          <HomeAdTargetLink
+            ad={currentAd}
             className="absolute inset-0 z-0 rounded-lg"
-            aria-label={linkLabel}
+            ariaLabel={linkLabel}
           />
         )}
         <div className="absolute inset-0 z-[1] pointer-events-none">

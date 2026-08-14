@@ -1063,6 +1063,7 @@ const translations: Translations = {
   'companies.views': { en: 'Views', mm: 'ကြည့်ရှုမှု' },
   'companies.wantedList': { en: 'Wanted List', mm: 'လိုချင်သောစာရင်း' },
   'companies.about': { en: 'About', mm: 'အကြောင်း' },
+  'companies.homeAd': { en: 'Advertisement', mm: 'ကြော်ငြာ' },
   'companies.location': { en: 'Location', mm: 'တည်နေရာ' },
   'companies.contactInformation': { en: 'Contact Information', mm: 'ဆက်သွယ်ရေးအချက်အလက်များ' },
   'companies.noDescription': { en: 'No description provided.', mm: 'ဖော်ပြချက်မရှိပါ။' },
