@@ -93,6 +93,9 @@ export interface ExtendedUser {
   cover_image_url?: string | null;
   current_point: number;
   unread_notification_count?: number; // Unread notification count from profile
+  /** True when user is in property_note.approver_user_ids. */
+  is_property_note_approver?: boolean;
+  property_note_access?: boolean;
   // Company-specific fields at root level
   company_type_id?: number;
   region_id?: number;

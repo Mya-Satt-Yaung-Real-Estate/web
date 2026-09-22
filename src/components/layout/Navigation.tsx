@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import {
   Menu, User, LogOut, Globe, X, ChevronDown,
   Building2, Star, Award, Heart, Eye,
-  Settings, Info, MessageSquare
+  Settings, Info, MessageSquare, ClipboardList
 } from 'lucide-react';
 import { useIsMobileOrTablet } from '../../hooks/useMediaQuery';
 import { MobileNavigation } from './mobile';
@@ -24,6 +24,7 @@ import { NotificationDropdown } from '../common/NotificationDropdown';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useNavigationData } from '../../hooks/useNavigationData';
+import { useSyncAuthProfileFlags } from '../../hooks/useSyncAuthProfileFlags';
 import { formatMemberLevelLabel, getMemberLevelBadgeClass } from '@/lib/memberLevel';
 
 
@@ -68,6 +69,9 @@ export function Navigation() {
   const { language, setLanguage, t } = useLanguage();
   const isMobileOrTablet = useIsMobileOrTablet();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isApprover = Boolean(user?.is_property_note_approver);
+
+  useSyncAuthProfileFlags(isAuthenticated);
 
   const navigationData = useNavigationData();
   const isActive = (path: string) => location.pathname === path;
@@ -408,6 +412,12 @@ export function Navigation() {
                       <Award className="mr-2 h-4 w-4" />
                       {t('services.pointManagement')}
                     </DropdownMenuItem>
+                    {isApprover && (
+                      <DropdownMenuItem onClick={() => navigate('/my-property-notes/approvals')}>
+                        <ClipboardList className="mr-2 h-4 w-4" />
+                        {language === 'mm' ? 'PN Unlock တောင်းဆိုမှုများ' : 'PN Unlock Requests'}
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => navigate('/feedback')}>
                       <MessageSquare className="mr-2 h-4 w-4" />
                       {t('services.applyFeedback')}

@@ -1,5 +1,6 @@
 import { propertyNoteApi } from '../api/propertyNote';
 import type {
+  PropertyNoteApprovalFilters,
   PropertyNoteListFilters,
   PropertyNoteMapFilters,
   PropertyNotePinType,
@@ -17,6 +18,9 @@ export const propertyNoteKeys = {
   mapDetails: () => [...propertyNoteKeys.all, 'map-detail'] as const,
   mapDetail: (id: number, pinType: PropertyNotePinType) =>
     [...propertyNoteKeys.mapDetails(), id, pinType] as const,
+  approvals: () => [...propertyNoteKeys.all, 'approvals'] as const,
+  approvalList: (filters?: PropertyNoteApprovalFilters) =>
+    [...propertyNoteKeys.approvals(), filters] as const,
 };
 
 export const propertyNoteQueries = {
@@ -26,4 +30,6 @@ export const propertyNoteQueries = {
   getMap: (filters?: PropertyNoteMapFilters) => propertyNoteApi.getMap(filters),
   getMapDetail: (id: number, pinType: PropertyNotePinType) =>
     propertyNoteApi.getMapDetail(id, pinType),
+  getApprovals: (filters?: PropertyNoteApprovalFilters) =>
+    propertyNoteApi.getApprovals(filters),
 };

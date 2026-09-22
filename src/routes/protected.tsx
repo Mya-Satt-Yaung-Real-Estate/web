@@ -15,6 +15,7 @@ const MyShareProfitDetail = lazyWithRetry(() => import('../pages/myShareProfitLi
 const MyPropertyNotesHub = lazyWithRetry(() => import('../pages/myPropertyNotes'));
 const MyPropertyNotesMap = lazyWithRetry(() => import('../pages/myPropertyNotes/map'));
 const MyPropertyNotesList = lazyWithRetry(() => import('../pages/myPropertyNotes/list'));
+const PropertyNoteApprovals = lazyWithRetry(() => import('../pages/myPropertyNotes/approvals'));
 const CreatePropertyNote = lazyWithRetry(() => import('../pages/myPropertyNotes/create'));
 const EditPropertyNote = lazyWithRetry(() => import('../pages/myPropertyNotes/edit'));
 const MyPropertyNoteDetail = lazyWithRetry(() => import('../pages/myPropertyNotes/detail'));
@@ -121,6 +122,16 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <MyPropertyNotesList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes/approvals',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <PropertyNoteApprovals />
         </Suspense>
       </ProtectedRoute>
     ),

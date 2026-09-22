@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { propertyNoteKeys, propertyNoteQueries } from '@/services/queries/propertyNote';
 import type {
+  PropertyNoteApprovalFilters,
   PropertyNoteListFilters,
   PropertyNoteMapFilters,
   PropertyNotePinType,
@@ -53,5 +54,17 @@ export function usePropertyNoteMapDetail(
     queryFn: () => propertyNoteQueries.getMapDetail(id, pinType),
     enabled: enabled && id > 0,
     staleTime: 0,
+  });
+}
+
+export function usePropertyNoteApprovals(
+  filters: PropertyNoteApprovalFilters = {},
+  enabled = true
+) {
+  return useQuery({
+    queryKey: propertyNoteKeys.approvalList(filters),
+    queryFn: () => propertyNoteQueries.getApprovals(filters),
+    enabled,
+    staleTime: 30 * 1000,
   });
 }

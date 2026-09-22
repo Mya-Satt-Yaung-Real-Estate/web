@@ -66,3 +66,26 @@ export function useDeletePropertyNote() {
     },
   });
 }
+
+export function useApprovePropertyNoteRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => propertyNoteApi.approveRequest(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: propertyNoteKeys.approvals() });
+    },
+  });
+}
+
+export function useRejectPropertyNoteRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, rejectReason }: { id: number; rejectReason?: string }) =>
+      propertyNoteApi.rejectRequest(id, rejectReason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: propertyNoteKeys.approvals() });
+    },
+  });
+}

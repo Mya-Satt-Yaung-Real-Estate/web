@@ -1,5 +1,14 @@
 import { Link } from 'react-router-dom';
-import { MapPinned, List, Lock, Unlock, Coins, CalendarDays, AlertCircle } from 'lucide-react';
+import {
+  MapPinned,
+  List,
+  Lock,
+  Unlock,
+  Coins,
+  CalendarDays,
+  AlertCircle,
+  ClipboardList,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,8 +17,10 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
+import { useAuthStore } from '@/stores/authStore';
 import { usePropertyNoteAccess } from '@/hooks/queries/usePropertyNotes';
 import { useUnlockPropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
+import { useSyncAuthProfileFlags } from '@/hooks/useSyncAuthProfileFlags';
 import type { PropertyNoteAccess } from '@/types/propertyNote';
 
 /**
@@ -19,6 +30,9 @@ export default function MyPropertyNotesHub() {
   const seo = seoUtils.getPageSEO('myPropertyNotes');
   const { language } = useLanguage();
   const { showSuccess, showError } = useModal();
+  const user = useAuthStore((s) => s.user);
+  const isApprover = Boolean(user?.is_property_note_approver);
+  useSyncAuthProfileFlags(true);
   const { data: response, isLoading, error, refetch } = usePropertyNoteAccess();
   const unlockMutation = useUnlockPropertyNote();
 
@@ -83,6 +97,29 @@ export default function MyPropertyNotesHub() {
             : 'Keep your own map notes. Unlock access first to use the map and history.'}
         </p>
       </div>
+
+      {isApprover && (
+        <Card className="mb-6 border-amber-200 bg-amber-50/40">
+          <CardContent className="!p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2 font-medium text-gray-900">
+                <ClipboardList className="h-5 w-5 text-amber-700" />
+                {mm ? 'Approver — Unlock တောင်းဆိုမှုများ' : 'Approver — Unlock requests'}
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                {mm
+                  ? 'Admin အတည်ပြုပြီးသား တောင်းဆိုမှုများကို နောက်ဆုံး အတည်ပြု / ငြင်းပယ်ပါ။'
+                  : 'Final approve or reject requests that admin already passed.'}
+              </p>
+            </div>
+            <Button asChild className="w-fit shrink-0">
+              <Link to="/my-property-notes/approvals">
+                {mm ? 'တောင်းဆိုမှုများ' : 'Open requests'}
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {isLoading && (
         <Card>

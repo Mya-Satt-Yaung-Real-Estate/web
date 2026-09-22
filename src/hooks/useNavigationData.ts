@@ -7,12 +7,13 @@
 import { useMemo } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useCompanyTypes } from './queries/useCompanyTypes';
+import { useAuthStore } from '../stores/authStore';
 import type { CompanyType } from '../types';
 import {
   Search, Grid3x3, Star, Home as HomeIcon, Calculator,
   Calendar, Megaphone, BookOpen, HelpCircle, Mail, Info,
   Scale, Banknote, Building2, FileText, Building, Briefcase, TrendingUp, Users,
-  ShoppingCart, Eye, Handshake, User, Images, StickyNote,
+  ShoppingCart, Eye, Handshake, User, Images, StickyNote, ClipboardList,
 } from 'lucide-react';
 
 // Icon mapping for company types
@@ -30,6 +31,7 @@ export function useNavigationData() {
   const { t, language } = useLanguage();
   const { data: companyTypesResponse } = useCompanyTypes();
   const companyTypes = companyTypesResponse?.data?.data || [];
+  const isApprover = Boolean(useAuthStore((s) => s.user)?.is_property_note_approver);
 
   const navigationData = useMemo(() => ({
     navLinks: [
@@ -61,6 +63,15 @@ export function useNavigationData() {
         path: '/my-property-notes',
         icon: StickyNote,
       },
+      ...(isApprover
+        ? [
+            {
+              name: language === 'mm' ? 'PN Unlock တောင်းဆိုမှုများ' : 'PN Unlock Requests',
+              path: '/my-property-notes/approvals',
+              icon: ClipboardList,
+            },
+          ]
+        : []),
       { name: t('createListing.activityPost') || (language === 'mm' ? 'လုပ်ဆောင်မှု မှတ်တမ်းများ' : 'Activities'), path: '/my-activities/list', icon: Images },
       { name: t('createListing.advertisementPost'), path: '/advertisements', icon: Megaphone },
       { name: t('createListing.appointmentRequest'), path: '/appointments', icon: Calendar },
@@ -95,7 +106,7 @@ export function useNavigationData() {
         icon: getCompanyTypeIcon(type.name_en),
       })),
     ],
-  }), [t, language, companyTypes]);
+  }), [t, language, companyTypes, isApprover]);
 
   return navigationData;
 }

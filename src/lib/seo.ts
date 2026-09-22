@@ -158,6 +158,13 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
+  myPropertyNotesApprovals: {
+    title: 'Property Note Unlock Requests - Jade Property',
+    description: 'Approve or reject Property Note unlock requests.',
+    keywords: 'property note approver, unlock requests',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
   myPropertyNotesCreate: {
     title: 'Create Property Note - Jade Property',
     description: 'Create a new property note.',

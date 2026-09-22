@@ -204,3 +204,57 @@ export interface PropertyNoteCreateData {
 }
 
 export type PropertyNoteUpdateData = Partial<PropertyNoteCreateData>;
+
+/** Approver list filter — never includes raw pending. */
+export type PropertyNoteApprovalFilterStatus =
+  | 'admin_approved'
+  | 'approved'
+  | 'rejected'
+  | 'all';
+
+export interface PropertyNoteApprovalUser {
+  id: number;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  user_type: string;
+  current_point_balance: number;
+}
+
+export interface PropertyNoteApprovalItem {
+  id: number;
+  status: PropertyNoteAccessStatus;
+  source: string | null;
+  points_amount: number;
+  reject_reason: string | null;
+  requested_at: string | null;
+  admin_approved_at: string | null;
+  approved_at: string | null;
+  expires_at: string | null;
+  user: PropertyNoteApprovalUser | null;
+  admin: { id: number; name: string } | null;
+}
+
+export interface PropertyNoteApprovalStatistics {
+  total: number;
+  pending: number;
+  admin_approved: number;
+  approved: number;
+  rejected: number;
+}
+
+export interface PropertyNoteApprovalsListBody {
+  success: boolean;
+  message: string;
+  data: PropertyNoteApprovalItem[];
+  statistics: PropertyNoteApprovalStatistics;
+  pending_count: number;
+  pagination: PropertyNotePagination;
+}
+
+export interface PropertyNoteApprovalFilters {
+  status?: PropertyNoteApprovalFilterStatus;
+  search?: string;
+  page?: number;
+  per_page?: number;
+}

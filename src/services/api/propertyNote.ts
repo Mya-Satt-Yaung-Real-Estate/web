@@ -2,6 +2,9 @@ import { api } from './client';
 import type {
   PropertyNoteApiBody,
   PropertyNoteAccess,
+  PropertyNoteApprovalFilters,
+  PropertyNoteApprovalItem,
+  PropertyNoteApprovalsListBody,
   PropertyNoteCreateData,
   PropertyNoteDetail,
   PropertyNoteListFilters,
@@ -66,5 +69,27 @@ export const propertyNoteApi = {
 
   remove: (id: number) => {
     return api.delete<PropertyNoteApiBody<null>>(`${BASE}/${id}`);
+  },
+
+  getApprovals: (filters: PropertyNoteApprovalFilters = {}) => {
+    return api.get<PropertyNoteApprovalsListBody>(`${BASE}/approvals`, {
+      params: {
+        ...filters,
+        per_page: filters.per_page ?? 20,
+      },
+    });
+  },
+
+  approveRequest: (id: number) => {
+    return api.post<PropertyNoteApiBody<PropertyNoteApprovalItem>>(
+      `${BASE}/approvals/${id}/approve`
+    );
+  },
+
+  rejectRequest: (id: number, rejectReason?: string) => {
+    return api.post<PropertyNoteApiBody<PropertyNoteApprovalItem>>(
+      `${BASE}/approvals/${id}/reject`,
+      rejectReason ? { reject_reason: rejectReason } : {}
+    );
   },
 };

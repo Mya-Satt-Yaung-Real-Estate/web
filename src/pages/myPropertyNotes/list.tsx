@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   MapPinned,
   MapPin,
+  ClipboardList,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,9 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
+import { useAuthStore } from '@/stores/authStore';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
+import { useSyncAuthProfileFlags } from '@/hooks/useSyncAuthProfileFlags';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyNoteAccess, usePropertyNotes } from '@/hooks/queries/usePropertyNotes';
 import { useDeletePropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
@@ -50,6 +53,8 @@ export default function MyPropertyNotesListPage() {
   const { language } = useLanguage();
   const mm = language === 'mm';
   const { showSuccess, showError } = useModal();
+  const isApprover = Boolean(useAuthStore((s) => s.user)?.is_property_note_approver);
+  useSyncAuthProfileFlags(true);
   const {
     isOpen: isConfirmOpen,
     options: confirmOptions,
@@ -169,6 +174,14 @@ export default function MyPropertyNotesListPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {isApprover && (
+              <Button variant="outline" asChild>
+                <Link to="/my-property-notes/approvals">
+                  <ClipboardList className="h-4 w-4 mr-2" />
+                  {mm ? 'တောင်းဆိုမှုများ' : 'Requests'}
+                </Link>
+              </Button>
+            )}
             <Button variant="outline" asChild>
               <Link to="/my-property-notes/map">
                 <MapPinned className="h-4 w-4 mr-2" />
