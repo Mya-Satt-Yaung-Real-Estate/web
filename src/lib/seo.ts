@@ -137,6 +137,48 @@ export const pageSEO: Record<string, SEOConfig> = {
     image: '/assets/jade.png',
     robots: 'noindex, nofollow'
   },
+  myPropertyNotes: {
+    title: 'Property Notes - Jade Property',
+    description: 'Unlock and manage your private property map notes.',
+    keywords: 'property notes, map notes, unlock',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  myPropertyNotesMap: {
+    title: 'Property Note Map - Jade Property',
+    description: 'View your property notes and properties on the map.',
+    keywords: 'property note map, map pins',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  myPropertyNotesList: {
+    title: 'Property Note History - Jade Property',
+    description: 'Manage your property note history.',
+    keywords: 'property notes history, list',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  myPropertyNotesCreate: {
+    title: 'Create Property Note - Jade Property',
+    description: 'Create a new property note.',
+    keywords: 'create property note',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  myPropertyNotesEdit: {
+    title: 'Edit Property Note - Jade Property',
+    description: 'Edit your property note.',
+    keywords: 'edit property note',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
+  myPropertyNotesDetail: {
+    title: 'Property Note Detail - Jade Property',
+    description: 'View property note details.',
+    keywords: 'property note detail',
+    image: '/assets/jade.png',
+    robots: 'noindex, nofollow'
+  },
   createWantedList: {
     title: 'Create Wanted Listing - Jade Property',
     description: 'Create a new wanted listing.',

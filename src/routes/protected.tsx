@@ -12,6 +12,12 @@ const MyShareProfitList = lazyWithRetry(() => import('../pages/myShareProfitList
 const CreateShareProfitListing = lazyWithRetry(() => import('../pages/myShareProfitListings/create'));
 const EditShareProfitListing = lazyWithRetry(() => import('../pages/myShareProfitListings/edit'));
 const MyShareProfitDetail = lazyWithRetry(() => import('../pages/myShareProfitListings/detail'));
+const MyPropertyNotesHub = lazyWithRetry(() => import('../pages/myPropertyNotes'));
+const MyPropertyNotesMap = lazyWithRetry(() => import('../pages/myPropertyNotes/map'));
+const MyPropertyNotesList = lazyWithRetry(() => import('../pages/myPropertyNotes/list'));
+const CreatePropertyNote = lazyWithRetry(() => import('../pages/myPropertyNotes/create'));
+const EditPropertyNote = lazyWithRetry(() => import('../pages/myPropertyNotes/edit'));
+const MyPropertyNoteDetail = lazyWithRetry(() => import('../pages/myPropertyNotes/detail'));
 const MyActivitiesList = lazyWithRetry(() => import('../pages/myActivities/list'));
 const CreateActivity = lazyWithRetry(() => import('../pages/myActivities/create'));
 const EditActivity = lazyWithRetry(() => import('../pages/myActivities/edit'));
@@ -85,6 +91,66 @@ export const protectedRoutes = [
       <ProtectedRoute>
         <Suspense fallback={<PageLoader />}>
           <MyShareProfitList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyPropertyNotesHub />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes/map',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyPropertyNotesMap />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes/list',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyPropertyNotesList />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes/create',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <CreatePropertyNote />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes/:id/edit',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <EditPropertyNote />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/my-property-notes/:id',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <MyPropertyNoteDetail />
         </Suspense>
       </ProtectedRoute>
     ),
