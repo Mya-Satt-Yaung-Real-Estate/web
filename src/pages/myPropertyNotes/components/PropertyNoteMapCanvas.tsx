@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tag, Phone, MapPin, ExternalLink } from 'lucide-react';
@@ -21,19 +21,43 @@ if (typeof window !== 'undefined') {
   });
 }
 
-const NOTE_ICON = L.divIcon({
-  className: '',
-  html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:#d97706;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></span>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
+/** Below this zoom: dense dots. At/above: location pins. */
+const PIN_ZOOM_THRESHOLD = 14;
 
-const PROPERTY_ICON = L.divIcon({
-  className: '',
-  html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:#2563eb;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></span>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
+function makeDotIcon(color: string): L.DivIcon {
+  return L.divIcon({
+    className: '',
+    html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></span>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+}
+
+/**
+ * Teardrop map pin (SVG) — tip sits on the lat/lng.
+ */
+function makePinIcon(color: string): L.DivIcon {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40" aria-hidden="true">
+      <path fill="${color}" stroke="#fff" stroke-width="2"
+        d="M14 1.5C7.1 1.5 1.5 7.1 1.5 14c0 9.4 10.4 22.2 11.8 23.8a1 1 0 0 0 1.4 0C15.1 36.2 26.5 23.4 26.5 14 26.5 7.1 20.9 1.5 14 1.5z"/>
+      <circle cx="14" cy="14" r="5" fill="#fff"/>
+    </svg>
+  `.trim();
+
+  return L.divIcon({
+    className: '',
+    html: svg,
+    iconSize: [28, 40],
+    iconAnchor: [14, 40],
+    popupAnchor: [0, -36],
+  });
+}
+
+const NOTE_DOT = makeDotIcon('#d97706');
+const PROPERTY_DOT = makeDotIcon('#2563eb');
+const NOTE_PIN = makePinIcon('#d97706');
+const PROPERTY_PIN = makePinIcon('#2563eb');
 
 function FitBounds({ pins }: { pins: PropertyNoteMapPin[] }) {
   const map = useMap();
@@ -54,6 +78,21 @@ function FitBounds({ pins }: { pins: PropertyNoteMapPin[] }) {
   return null;
 }
 
+/**
+ * Push current zoom to parent so markers can switch icon style.
+ */
+function ZoomWatcher({ onZoom }: { onZoom: (zoom: number) => void }) {
+  const map = useMapEvents({
+    zoomend: () => onZoom(map.getZoom()),
+  });
+
+  useEffect(() => {
+    onZoom(map.getZoom());
+  }, [map, onZoom]);
+
+  return null;
+}
+
 interface PropertyNoteMapCanvasProps {
   pins: PropertyNoteMapPin[];
   language: string;
@@ -67,6 +106,8 @@ export function PropertyNoteMapCanvas({
 }: PropertyNoteMapCanvasProps) {
   const defaultCenter: [number, number] = useMemo(() => [16.8661, 96.1951], []);
   const mm = language === 'mm';
+  const [zoom, setZoom] = useState(12);
+  const usePins = zoom >= PIN_ZOOM_THRESHOLD;
 
   return (
     <MapContainer
@@ -80,6 +121,8 @@ export function PropertyNoteMapCanvas({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
+      <ZoomWatcher onZoom={setZoom} />
 
       {pins.map((pin) => {
         if (pin.latitude == null || pin.longitude == null) return null;
@@ -95,11 +138,20 @@ export function PropertyNoteMapCanvas({
             : pin.township.name_en
           : null;
 
+        const icon =
+          pin.pin_type === 'note'
+            ? usePins
+              ? NOTE_PIN
+              : NOTE_DOT
+            : usePins
+              ? PROPERTY_PIN
+              : PROPERTY_DOT;
+
         return (
           <Marker
             key={`${pin.pin_type}-${pin.id}`}
             position={[pin.latitude, pin.longitude]}
-            icon={pin.pin_type === 'note' ? NOTE_ICON : PROPERTY_ICON}
+            icon={icon}
           >
             <Popup>
               <div className="min-w-[220px] max-w-[280px] p-1 space-y-2">

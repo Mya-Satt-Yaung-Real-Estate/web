@@ -210,6 +210,7 @@ export type PropertyNoteApprovalFilterStatus =
   | 'admin_approved'
   | 'approved'
   | 'rejected'
+  | 'revoked'
   | 'all';
 
 export interface PropertyNoteApprovalUser {
@@ -241,6 +242,7 @@ export interface PropertyNoteApprovalStatistics {
   admin_approved: number;
   approved: number;
   rejected: number;
+  revoked: number;
 }
 
 export interface PropertyNoteApprovalsListBody {

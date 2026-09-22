@@ -235,15 +235,21 @@ export default function MyPropertyNotesHub() {
                   <Unlock className="h-4 w-4" />
                   {mm ? 'Access ဖွင့်ပြီးပါပြီ' : 'Access unlocked'}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">
-                  {access.remaining_days != null
-                    ? mm
-                      ? `ကျန်ရှိရက် — ${access.remaining_days} ရက်`
-                      : `${access.remaining_days} days remaining`
-                    : mm
-                      ? 'သက်တမ်း ကန့်သတ်မရှိ'
-                      : 'No expiry shown'}
-                  {access.expires_at ? ` · ${access.expires_at}` : ''}
+                <p className="text-sm mt-1">
+                  {access.remaining_days != null ? (
+                    <span className="font-semibold text-amber-700">
+                      {mm
+                        ? `ကျန်ရှိရက် — ${access.remaining_days} ရက်`
+                        : `${access.remaining_days} days remaining`}
+                    </span>
+                  ) : (
+                    <span className="text-gray-600">
+                      {mm ? 'သက်တမ်း ကန့်သတ်မရှိ' : 'No expiry shown'}
+                    </span>
+                  )}
+                  {access.expires_at ? (
+                    <span className="text-amber-600/80"> · {access.expires_at}</span>
+                  ) : null}
                 </p>
               </div>
             </CardContent>

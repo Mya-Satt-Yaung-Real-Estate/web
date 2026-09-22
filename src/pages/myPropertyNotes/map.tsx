@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw, Search, StickyNote, Home, ExternalLink } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Search, StickyNote, Home, ExternalLink, Tag, CircleDot, Ruler, MapPin, Phone } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -333,42 +333,60 @@ export default function MyPropertyNotesMapPage() {
                   />
                 )}
 
-                <div className="space-y-2 text-sm">
+                <div className="space-y-3 text-sm">
                   {detail.listing_type && (
-                    <p>
-                      <span className="text-gray-500">{mm ? 'အမျိုးအစား' : 'Listing'}: </span>
-                      {mm ? detail.listing_type.name_mm : detail.listing_type.name_en}
-                    </p>
+                    <div className="flex items-start gap-2.5">
+                      <Tag className="h-4 w-4 mt-0.5 shrink-0 text-amber-700" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'အမျိုးအစား' : 'Listing'}: </span>
+                        {mm ? detail.listing_type.name_mm : detail.listing_type.name_en}
+                      </p>
+                    </div>
                   )}
                   {detail.status && (
-                    <p>
-                      <span className="text-gray-500">{mm ? 'အခြေအနေ' : 'Status'}: </span>
-                      {detail.status}
-                    </p>
+                    <div className="flex items-start gap-2.5">
+                      <CircleDot className="h-4 w-4 mt-0.5 shrink-0 text-green-700" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'အခြေအနေ' : 'Status'}: </span>
+                        {detail.status}
+                      </p>
+                    </div>
                   )}
                   {(detail.length_ft != null || detail.width_ft != null) && (
-                    <p>
-                      <span className="text-gray-500">{mm ? 'အတိုင်းအတာ' : 'Size'}: </span>
-                      {detail.length_ft ?? '-'}' × {detail.width_ft ?? '-'}'
-                    </p>
+                    <div className="flex items-start gap-2.5">
+                      <Ruler className="h-4 w-4 mt-0.5 shrink-0 text-gray-600" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'အတိုင်းအတာ' : 'Size'}: </span>
+                        {detail.length_ft ?? '-'}' × {detail.width_ft ?? '-'}'
+                      </p>
+                    </div>
                   )}
                   {detail.location?.location_string && (
-                    <p>
-                      <span className="text-gray-500">{mm ? 'တည်နေရာ' : 'Location'}: </span>
-                      {detail.location.location_string}
-                    </p>
+                    <div className="flex items-start gap-2.5">
+                      <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-blue-700" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'တည်နေရာ' : 'Location'}: </span>
+                        {detail.location.location_string}
+                      </p>
+                    </div>
                   )}
                   {detail.location?.address && (
-                    <p>
-                      <span className="text-gray-500">{mm ? 'လိပ်စာ' : 'Address'}: </span>
-                      {detail.location.address}
-                    </p>
+                    <div className="flex items-start gap-2.5">
+                      <Home className="h-4 w-4 mt-0.5 shrink-0 text-blue-600" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'လိပ်စာ' : 'Address'}: </span>
+                        {detail.location.address}
+                      </p>
+                    </div>
                   )}
                   {detail.phone_numbers?.length > 0 && (
-                    <p>
-                      <span className="text-gray-500">{mm ? 'ဖုန်း' : 'Phone'}: </span>
-                      {detail.phone_numbers.join(', ')}
-                    </p>
+                    <div className="flex items-start gap-2.5">
+                      <Phone className="h-4 w-4 mt-0.5 shrink-0 text-emerald-700" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'ဖုန်း' : 'Phone'}: </span>
+                        {detail.phone_numbers.join(', ')}
+                      </p>
+                    </div>
                   )}
                 </div>
 

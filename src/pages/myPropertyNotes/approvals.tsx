@@ -45,6 +45,7 @@ function approvalStatusClass(status: string | null): string {
   if (status === 'admin_approved') return 'bg-amber-600 text-white hover:bg-amber-600 border-transparent';
   if (status === 'approved') return 'bg-green-600 text-white hover:bg-green-600 border-transparent';
   if (status === 'rejected') return 'bg-red-600 text-white hover:bg-red-600 border-transparent';
+  if (status === 'revoked') return 'bg-slate-700 text-white hover:bg-slate-700 border-transparent';
   return 'bg-gray-500 text-white hover:bg-gray-500 border-transparent';
 }
 
@@ -221,7 +222,7 @@ export default function PropertyNoteApprovalsPage() {
         </div>
 
         {statistics && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
             <Card>
               <CardContent className="!p-4">
                 <div className="text-xs text-gray-500">{mm ? 'စောင့်ဆိုင်း' : 'Ready'}</div>
@@ -238,6 +239,12 @@ export default function PropertyNoteApprovalsPage() {
               <CardContent className="!p-4">
                 <div className="text-xs text-gray-500">{mm ? 'ငြင်းပယ်' : 'Rejected'}</div>
                 <div className="text-xl font-semibold text-red-700">{statistics.rejected}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="!p-4">
+                <div className="text-xs text-gray-500">{mm ? 'ပယ်ဖျက်' : 'Revoked'}</div>
+                <div className="text-xl font-semibold text-slate-700">{statistics.revoked ?? 0}</div>
               </CardContent>
             </Card>
             <Card>
@@ -281,6 +288,7 @@ export default function PropertyNoteApprovalsPage() {
                   </SelectItem>
                   <SelectItem value="approved">{mm ? 'အတည်ပြုပြီး' : 'Approved'}</SelectItem>
                   <SelectItem value="rejected">{mm ? 'ငြင်းပယ်' : 'Rejected'}</SelectItem>
+                  <SelectItem value="revoked">{mm ? 'ပယ်ဖျက်' : 'Revoked'}</SelectItem>
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
