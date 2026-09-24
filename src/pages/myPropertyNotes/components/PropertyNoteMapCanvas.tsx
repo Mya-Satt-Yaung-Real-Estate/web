@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tag, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Tag, Phone, MapPin, ExternalLink, Hash, Banknote } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import type { PropertyNoteMapPin } from '@/types/propertyNote';
 
@@ -136,7 +136,15 @@ export function PropertyNoteMapCanvas({
           ? mm
             ? pin.township.name_mm
             : pin.township.name_en
-          : null;
+          : pin.region
+            ? mm
+              ? pin.region.name_mm
+              : pin.region.name_en
+            : null;
+        const priceLabel =
+          pin.price_display && pin.price_display.trim() && pin.price_display.trim() !== '.'
+            ? pin.price_display.trim()
+            : null;
 
         const icon =
           pin.pin_type === 'note'
@@ -168,35 +176,42 @@ export function PropertyNoteMapCanvas({
                   </Badge>
                 </div>
 
-                {pin.code && (
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Tag className="h-3 w-3" />
-                    <span>{pin.code}</span>
-                  </div>
-                )}
+                <div className="space-y-1.5 text-xs text-muted-foreground">
+                  {pin.code && (
+                    <div className="flex items-start gap-1.5">
+                      <Hash className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-600" />
+                      <span>{pin.code}</span>
+                    </div>
+                  )}
 
-                {(listingName || placeName) && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    {listingName && <span>{listingName}</span>}
-                    {placeName && (
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {placeName}
-                      </span>
-                    )}
-                  </div>
-                )}
+                  {listingName && (
+                    <div className="flex items-start gap-1.5">
+                      <Tag className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-700" />
+                      <span>{listingName}</span>
+                    </div>
+                  )}
 
-                {pin.price_display && (
-                  <p className="text-xs font-medium text-gray-900">{pin.price_display}</p>
-                )}
+                  {placeName && (
+                    <div className="flex items-start gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-700" />
+                      <span>{placeName}</span>
+                    </div>
+                  )}
 
-                {pin.phone_numbers?.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Phone className="h-3 w-3" />
-                    <span>{pin.phone_numbers[0]}</span>
-                  </div>
-                )}
+                  {priceLabel && (
+                    <div className="flex items-start gap-1.5">
+                      <Banknote className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-700" />
+                      <span className="font-medium text-gray-900">{priceLabel}</span>
+                    </div>
+                  )}
+
+                  {pin.phone_numbers?.length > 0 && (
+                    <div className="flex items-start gap-1.5">
+                      <Phone className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-700" />
+                      <span>{pin.phone_numbers[0]}</span>
+                    </div>
+                  )}
+                </div>
 
                 {pin.pin_type === 'property' && pin.slug ? (
                   <>

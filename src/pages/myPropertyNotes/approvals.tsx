@@ -7,6 +7,13 @@ import {
   CheckCircle2,
   XCircle,
   ClipboardList,
+  UserRound,
+  Phone,
+  Mail,
+  Coins,
+  Clock,
+  ShieldCheck,
+  MessageSquareWarning,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,6 +54,25 @@ function approvalStatusClass(status: string | null): string {
   if (status === 'rejected') return 'bg-red-600 text-white hover:bg-red-600 border-transparent';
   if (status === 'revoked') return 'bg-slate-700 text-white hover:bg-slate-700 border-transparent';
   return 'bg-gray-500 text-white hover:bg-gray-500 border-transparent';
+}
+
+/**
+ * Short human labels for badges (not raw API status).
+ */
+function approvalStatusLabel(status: string | null, mm: boolean): string {
+  if (status === 'admin_approved') return mm ? 'အတည်ပြုရန်' : 'Ready';
+  if (status === 'approved') return mm ? 'အတည်ပြုပြီး' : 'Approved';
+  if (status === 'rejected') return mm ? 'ငြင်းပယ်' : 'Rejected';
+  if (status === 'revoked') return mm ? 'ပယ်ဖျက်' : 'Revoked';
+  if (status === 'pending') return mm ? 'စောင့်ဆိုင်း' : 'Pending';
+  return status || '—';
+}
+
+/**
+ * True when this row can be approve/reject by website Approver.
+ */
+function canApproveOrReject(status: string | null): boolean {
+  return status === 'admin_approved';
 }
 
 function getErrorMessage(err: unknown, fallback: string): string {
@@ -92,7 +118,7 @@ export default function PropertyNoteApprovalsPage() {
       status,
       search: search.trim() || undefined,
       page: currentPage,
-      per_page: 20,
+      per_page: 10,
     },
     isSynced && isApprover
   );
@@ -178,9 +204,63 @@ export default function PropertyNoteApprovalsPage() {
     );
   };
 
+  /**
+   * Always show Approve / Reject icons; disable when row is not Ready.
+   */
+  const renderActionButtons = (item: PropertyNoteApprovalItem, fullWidth = false) => {
+    const canAct = canApproveOrReject(item.status);
+    const disabledHint = mm
+      ? 'Ready အခြေအနေမှသာ လုပ်နိုင်သည်'
+      : 'Only Ready requests can be actioned';
+    const busy = approveMutation.isPending || rejectMutation.isPending;
+
+    return (
+      <div className={`inline-flex gap-1.5 ${fullWidth ? 'w-full' : 'justify-end'}`}>
+        <Button
+          type="button"
+          size="icon"
+          variant="outline"
+          className={`h-8 w-8 ${fullWidth ? 'flex-1' : ''} ${
+            canAct
+              ? 'text-green-700 border-green-200 hover:bg-green-50'
+              : 'text-gray-400'
+          }`}
+          disabled={!canAct || busy}
+          title={canAct ? (mm ? 'အတည်ပြု' : 'Approve') : disabledHint}
+          aria-label={mm ? 'အတည်ပြု' : 'Approve'}
+          onClick={() => {
+            if (!canAct) return;
+            handleApprove(item);
+          }}
+        >
+          <CheckCircle2 className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant="outline"
+          className={`h-8 w-8 ${fullWidth ? 'flex-1' : ''} ${
+            canAct
+              ? 'text-red-700 border-red-200 hover:bg-red-50'
+              : 'text-gray-400'
+          }`}
+          disabled={!canAct || busy}
+          title={canAct ? (mm ? 'ငြင်းပယ်' : 'Reject') : disabledHint}
+          aria-label={mm ? 'ငြင်းပယ်' : 'Reject'}
+          onClick={() => {
+            if (!canAct) return;
+            openRejectDialog(item);
+          }}
+        >
+          <XCircle className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  };
+
   if (!isSynced) {
     return (
-      <div className="container mx-auto px-4 pt-24 pb-6 max-w-5xl">
+      <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
         <Skeleton className="h-10 w-64 mb-4" />
         <Skeleton className="h-28 w-full" />
       </div>
@@ -195,7 +275,7 @@ export default function PropertyNoteApprovalsPage() {
     <>
       <SEOHead seo={seo} path="/my-property-notes/approvals" />
 
-      <div className="container mx-auto px-4 pt-24 pb-6 max-w-5xl">
+      <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <Button variant="ghost" size="sm" asChild className="mb-1 -ml-2">
@@ -206,7 +286,7 @@ export default function PropertyNoteApprovalsPage() {
             </Button>
             <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
               <ClipboardList className="h-6 w-6" />
-              {mm ? 'Unlock တောင်းဆိုမှုများ' : 'Unlock Requests'}
+              {mm ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals'}
             </h1>
             <p className="text-sm text-gray-600 mt-1">
               {mm
@@ -330,68 +410,166 @@ export default function PropertyNoteApprovalsPage() {
         )}
 
         {!isLoading && !error && items.length > 0 && (
-          <div className="space-y-3 mb-6">
-            {items.map((item) => {
-              const canAct = item.status === 'admin_approved';
-              return (
-                <Card key={item.id}>
-                  <CardContent className="!p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                    <div className="space-y-2 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium text-gray-900">
-                          {item.user?.name || (mm ? 'အမည်မရှိ' : 'Unknown user')}
-                        </span>
-                        <Badge className={approvalStatusClass(item.status)}>{item.status}</Badge>
-                      </div>
-                      <div className="text-sm text-gray-600 space-y-0.5">
-                        {item.user?.phone && <div>{item.user.phone}</div>}
-                        {item.user?.email && <div className="truncate">{item.user.email}</div>}
-                        <div>
-                          {mm ? 'ပွိုင့်' : 'Points'}: {item.points_amount}
-                          {' · '}
-                          {mm ? 'လက်ကျန်' : 'Balance'}: {item.user?.current_point_balance ?? '—'}
-                        </div>
-                        <div>
-                          {mm ? 'တောင်းဆို' : 'Requested'}: {item.requested_at || '—'}
-                          {item.admin_approved_at
-                            ? ` · Admin: ${item.admin_approved_at}${item.admin?.name ? ` (${item.admin.name})` : ''}`
-                            : ''}
-                        </div>
-                        {item.reject_reason && (
-                          <div className="text-red-700">
-                            {mm ? 'အကြောင်းပြချက်' : 'Reason'}: {item.reject_reason}
-                          </div>
-                        )}
-                      </div>
-                    </div>
+          <>
+            {/**
+             * Desktop: scan-friendly table. Mobile: compact actionable cards.
+             */}
+            <Card className="mb-6 overflow-hidden hidden md:block">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
+                      <th className="px-4 py-3 font-medium">{mm ? 'အသုံးပြုသူ' : 'User'}</th>
+                      <th className="px-4 py-3 font-medium">{mm ? 'ဆက်သွယ်ရန်' : 'Contact'}</th>
+                      <th className="px-4 py-3 font-medium">{mm ? 'ပွိုင့်' : 'Points'}</th>
+                      <th className="px-4 py-3 font-medium">{mm ? 'တောင်းဆိုချိန်' : 'Requested'}</th>
+                      <th className="px-4 py-3 font-medium">{mm ? 'အခြေအနေ' : 'Status'}</th>
+                      <th className="px-4 py-3 font-medium text-right">
+                        {mm ? 'လုပ်ဆောင်ရန်' : 'Actions'}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item) => {
+                      const canAct = item.status === 'admin_approved';
+                      return (
+                        <tr
+                          key={item.id}
+                          className={`border-b last:border-0 ${
+                            canAct ? 'bg-amber-50/70' : 'bg-background'
+                          }`}
+                        >
+                          <td className="px-4 py-3 align-top">
+                            <div className="flex items-start gap-2 min-w-0">
+                              <UserRound className="h-4 w-4 mt-0.5 shrink-0 text-gray-400" />
+                              <div className="min-w-0">
+                                <div className="font-medium text-gray-900 truncate">
+                                  {item.user?.name || (mm ? 'အမည်မရှိ' : 'Unknown')}
+                                </div>
+                                {item.admin?.name && item.admin_approved_at && (
+                                  <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                                    <ShieldCheck className="h-3 w-3 shrink-0 text-blue-700" />
+                                    {item.admin.name}
+                                  </div>
+                                )}
+                                {item.reject_reason && (
+                                  <div className="flex items-start gap-1 text-xs text-red-600 mt-0.5">
+                                    <MessageSquareWarning className="h-3 w-3 shrink-0 mt-0.5" />
+                                    <span className="line-clamp-2">{item.reject_reason}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 align-top text-gray-600">
+                            {item.user?.phone ? (
+                              <div className="flex items-center gap-1.5">
+                                <Phone className="h-3.5 w-3.5 shrink-0 text-emerald-700" />
+                                <span>{item.user.phone}</span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
+                            {item.user?.email && (
+                              <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5 min-w-0">
+                                <Mail className="h-3 w-3 shrink-0 text-blue-600" />
+                                <span className="truncate max-w-[160px]">{item.user.email}</span>
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 align-top text-gray-700 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <Coins className="h-3.5 w-3.5 text-amber-700" />
+                              <span className="font-medium">{item.points_amount}</span>
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              {mm ? 'လက်ကျန်' : 'Bal'}: {item.user?.current_point_balance ?? '—'}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 align-top text-gray-600 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5 text-gray-400" />
+                              <span>{item.requested_at || '—'}</span>
+                            </div>
+                            {item.admin_approved_at && (
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                Admin: {item.admin_approved_at}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 align-top">
+                            <Badge className={approvalStatusClass(item.status)}>
+                              {approvalStatusLabel(item.status, mm)}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 align-top text-right">
+                            {renderActionButtons(item)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
 
-                    {canAct && (
-                      <div className="flex flex-wrap gap-2 shrink-0">
-                        <Button
-                          size="sm"
-                          onClick={() => handleApprove(item)}
-                          disabled={approveMutation.isPending}
-                        >
-                          <CheckCircle2 className="h-4 w-4 mr-1" />
-                          {mm ? 'အတည်ပြု' : 'Approve'}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-700 border-red-200 hover:bg-red-50"
-                          onClick={() => openRejectDialog(item)}
-                          disabled={rejectMutation.isPending}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          {mm ? 'ငြင်းပယ်' : 'Reject'}
-                        </Button>
+            <div className="md:hidden space-y-2 mb-6">
+              {items.map((item) => {
+                const canAct = item.status === 'admin_approved';
+                return (
+                  <Card
+                    key={item.id}
+                    className={canAct ? 'border-amber-300 bg-amber-50/50' : undefined}
+                  >
+                    <CardContent className="!p-3 space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 font-medium text-gray-900">
+                            <UserRound className="h-4 w-4 shrink-0 text-gray-400" />
+                            <span className="truncate">
+                              {item.user?.name || (mm ? 'အမည်မရှိ' : 'Unknown')}
+                            </span>
+                          </div>
+                          {item.user?.phone && (
+                            <div className="flex items-center gap-1.5 text-sm text-gray-600 mt-0.5">
+                              <Phone className="h-3.5 w-3.5 text-emerald-700" />
+                              {item.user.phone}
+                            </div>
+                          )}
+                        </div>
+                        <Badge className={`${approvalStatusClass(item.status)} shrink-0`}>
+                          {approvalStatusLabel(item.status, mm)}
+                        </Badge>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-600">
+                        <span className="inline-flex items-center gap-1">
+                          <Coins className="h-3.5 w-3.5 text-amber-700" />
+                          {item.points_amount}
+                          <span className="text-gray-400">
+                            · {mm ? 'လက်ကျန်' : 'bal'} {item.user?.current_point_balance ?? '—'}
+                          </span>
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5 text-gray-400" />
+                          {item.requested_at || '—'}
+                        </span>
+                      </div>
+
+                      {item.reject_reason && (
+                        <p className="flex items-start gap-1 text-xs text-red-600">
+                          <MessageSquareWarning className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                          <span className="line-clamp-2">{item.reject_reason}</span>
+                        </p>
+                      )}
+
+                      <div className="pt-1">{renderActionButtons(item, true)}</div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {pagination && pagination.last_page > 1 && (

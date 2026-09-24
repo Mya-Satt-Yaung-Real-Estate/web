@@ -1,9 +1,26 @@
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, MapPin } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Maximize2,
+  Trash2,
+  MapPin,
+  X,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
@@ -19,7 +36,7 @@ import {
   useDeletePropertyNote,
   useUpdatePropertyNoteStatus,
 } from '@/hooks/mutations/usePropertyNoteMutations';
-import type { PropertyNoteStatus } from '@/types/propertyNote';
+import type { PropertyNoteMediaImage, PropertyNoteStatus } from '@/types/propertyNote';
 
 function statusBadgeClass(status: PropertyNoteStatus | string): string {
   if (status === 'active') return 'bg-green-600 text-white hover:bg-green-600 border-transparent';
@@ -59,6 +76,74 @@ export default function MyPropertyNoteDetailPage() {
 
   const deleteMutation = useDeletePropertyNote();
   const statusMutation = useUpdatePropertyNoteStatus();
+
+  /**
+   * Fullscreen lightbox index — null means closed.
+   */
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const images: PropertyNoteMediaImage[] = note?.images?.length
+    ? note.images
+    : note?.primary_image
+      ? [note.primary_image]
+      : [];
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setLightboxIndex(null);
+        return;
+      }
+      if (images.length < 2) return;
+      if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) =>
+          prev === null ? null : prev > 0 ? prev - 1 : images.length - 1
+        );
+      } else if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) =>
+          prev === null ? null : prev < images.length - 1 ? prev + 1 : 0
+        );
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [lightboxIndex, images.length]);
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+  };
+
+  const imageSrc = (img: PropertyNoteMediaImage): string =>
+    img.url || img.medium_url || img.small_url || img.thumbnail_url || '';
+
+  /**
+   * Thumbnail with top-right maximize control.
+   */
+  const renderPhotoThumb = (img: PropertyNoteMediaImage, index: number) => (
+    <div key={img.id} className="relative group">
+      <ImageWithFallback
+        src={img.medium_url || img.url || img.small_url || ''}
+        alt={note?.note_code || 'Photo'}
+        className="h-36 w-full object-cover rounded-md"
+      />
+      <button
+        type="button"
+        onClick={() => openLightbox(index)}
+        className="absolute top-2 right-2 size-8 rounded-md bg-white/90 border shadow-sm flex items-center justify-center hover:bg-white"
+        title={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
+        aria-label={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
+      >
+        <Maximize2 className="h-4 w-4 text-gray-700" />
+      </button>
+    </div>
+  );
 
   const handleStatus = (status: 'sold' | 'rented') => {
     if (!note || note.is_locked) return;
@@ -140,12 +225,6 @@ export default function MyPropertyNoteDetailPage() {
     return <Navigate to="/my-property-notes/list" replace />;
   }
 
-  const images = note?.images?.length
-    ? note.images
-    : note?.primary_image
-      ? [note.primary_image]
-      : [];
-
   return (
     <>
       <SEOHead seo={seo} path={`/my-property-notes/${noteId}`} />
@@ -219,16 +298,36 @@ export default function MyPropertyNoteDetailPage() {
             </div>
 
             {images.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {images.map((img) => (
-                  <ImageWithFallback
-                    key={img.id}
-                    src={img.medium_url || img.url || img.small_url || ''}
-                    alt={note.note_code}
-                    className="h-36 w-full object-cover rounded-md"
+              images.length > 3 ? (
+                /**
+                 * More than 3 photos: show ~3 at a time with prev/next scroll.
+                 */
+                <Carousel
+                  opts={{ align: 'start', slidesToScroll: 1 }}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-2">
+                    {images.map((img, index) => (
+                      <CarouselItem
+                        key={img.id}
+                        className="pl-2 basis-1/2 sm:basis-1/3"
+                      >
+                        {renderPhotoThumb(img, index)}
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious
+                    className="left-2 top-1/2 z-10 border bg-white/90 shadow-sm disabled:opacity-40"
                   />
-                ))}
-              </div>
+                  <CarouselNext
+                    className="right-2 top-1/2 z-10 border bg-white/90 shadow-sm disabled:opacity-40"
+                  />
+                </Carousel>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {images.map((img, index) => renderPhotoThumb(img, index))}
+                </div>
+              )
             )}
 
             <Card>
@@ -261,6 +360,72 @@ export default function MyPropertyNoteDetailPage() {
           </div>
         )}
       </div>
+
+      {lightboxIndex !== null && images[lightboxIndex] && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex flex-col"
+          onClick={() => setLightboxIndex(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={mm ? 'ပုံ ချဲ့ကြည့်ရန်' : 'Image maximize view'}
+        >
+          <div className="fixed top-0 left-0 right-0 z-20 flex justify-end p-4 pointer-events-none">
+            <button
+              type="button"
+              onClick={() => setLightboxIndex(null)}
+              className="size-12 rounded-full bg-white/95 flex items-center justify-center hover:bg-white shadow-lg pointer-events-auto"
+              title={mm ? 'ပိတ်ရန် (Esc)' : 'Close (Esc)'}
+            >
+              <X className="h-6 w-6 text-black" />
+            </button>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center p-4 relative min-h-0">
+            {images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxIndex((prev) =>
+                      prev === null ? null : prev > 0 ? prev - 1 : images.length - 1
+                    );
+                  }}
+                  className="fixed left-4 top-1/2 -translate-y-1/2 z-20 size-12 sm:size-14 rounded-full bg-white/95 flex items-center justify-center hover:bg-white shadow-lg pointer-events-auto"
+                  title={mm ? 'ယခင်' : 'Previous'}
+                >
+                  <ChevronLeft className="h-7 w-7 text-black" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxIndex((prev) =>
+                      prev === null ? null : prev < images.length - 1 ? prev + 1 : 0
+                    );
+                  }}
+                  className="fixed right-4 top-1/2 -translate-y-1/2 z-20 size-12 sm:size-14 rounded-full bg-white/95 flex items-center justify-center hover:bg-white shadow-lg pointer-events-auto"
+                  title={mm ? 'နောက်' : 'Next'}
+                >
+                  <ChevronRight className="h-7 w-7 text-black" />
+                </button>
+              </>
+            )}
+            <img
+              src={imageSrc(images[lightboxIndex])}
+              alt={note?.note_code || 'Photo'}
+              className="max-w-full max-h-full object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+
+          {images.length > 1 && (
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 bg-white/95 px-4 py-2 rounded-full text-sm font-semibold text-black shadow-lg pointer-events-none">
+              {lightboxIndex + 1} / {images.length}
+            </div>
+          )}
+        </div>
+      )}
 
       <ConfirmModal
         isOpen={isConfirmOpen}

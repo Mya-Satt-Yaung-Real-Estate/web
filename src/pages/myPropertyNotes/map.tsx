@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw, Search, StickyNote, Home, ExternalLink, Tag, CircleDot, Ruler, MapPin, Phone } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Search, StickyNote, Home, ExternalLink, Tag, CircleDot, Ruler, MapPin, Phone, List } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -119,9 +119,9 @@ export default function MyPropertyNotesMapPage() {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <Button variant="ghost" size="sm" asChild className="mb-1 -ml-2">
-              <Link to="/my-property-notes">
+              <Link to="/my-property-notes/list">
                 <ArrowLeft className="h-4 w-4 mr-1" />
-                {mm ? 'ပြန်သွားရန်' : 'Back'}
+                {mm ? 'စာရင်းသို့' : 'Back to list'}
               </Link>
             </Button>
             <h1 className="text-2xl font-semibold text-gray-900">
@@ -134,21 +134,29 @@ export default function MyPropertyNotesMapPage() {
             </p>
           </div>
 
-          {counts && (
-            <div className="flex flex-wrap gap-2 sm:pt-8">
-              <Badge className="gap-1 border-amber-600/30 bg-amber-600 text-white hover:bg-amber-600">
-                <StickyNote className="h-3 w-3" />
-                {mm ? 'မှတ်စု' : 'Notes'}: {counts.notes}
-              </Badge>
-              <Badge className="gap-1 border-blue-600/30 bg-blue-600 text-white hover:bg-blue-600">
-                <Home className="h-3 w-3" />
-                {mm ? 'အိမ်' : 'Properties'}: {counts.properties}
-              </Badge>
-              <Badge variant="secondary">
-                {mm ? 'စုစုပေါင်း' : 'Total'}: {counts.total}
-              </Badge>
-            </div>
-          )}
+          <div className="flex flex-col items-stretch sm:items-end gap-2 sm:pt-8">
+            <Button variant="outline" asChild>
+              <Link to="/my-property-notes/list">
+                <List className="h-4 w-4 mr-2" />
+                {mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
+              </Link>
+            </Button>
+            {counts && (
+              <div className="flex flex-wrap gap-2">
+                <Badge className="gap-1 border-amber-600/30 bg-amber-600 text-white hover:bg-amber-600">
+                  <StickyNote className="h-3 w-3" />
+                  {mm ? 'မှတ်စု' : 'Notes'}: {counts.notes}
+                </Badge>
+                <Badge className="gap-1 border-blue-600/30 bg-blue-600 text-white hover:bg-blue-600">
+                  <Home className="h-3 w-3" />
+                  {mm ? 'အိမ်' : 'Properties'}: {counts.properties}
+                </Badge>
+                <Badge variant="secondary">
+                  {mm ? 'စုစုပေါင်း' : 'Total'}: {counts.total}
+                </Badge>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

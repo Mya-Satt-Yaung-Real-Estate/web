@@ -66,7 +66,7 @@ export function useNavigationData() {
       ...(isApprover
         ? [
             {
-              name: language === 'mm' ? 'PN Unlock တောင်းဆိုမှုများ' : 'PN Unlock Requests',
+              name: language === 'mm' ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals',
               path: '/my-property-notes/approvals',
               icon: ClipboardList,
             },

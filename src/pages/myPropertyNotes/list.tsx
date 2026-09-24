@@ -167,7 +167,7 @@ export default function MyPropertyNotesListPage() {
               </Link>
             </Button>
             <h1 className="text-2xl font-semibold text-gray-900">
-              {mm ? 'မှတ်စု စာရင်း' : 'Property Note History'}
+              {mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
             </h1>
             <p className="text-sm text-gray-600 mt-1">
               {mm ? 'ကိုယ်ပိုင် မှတ်စုများကို စီမံပါ' : 'Manage your own property notes'}
@@ -178,7 +178,7 @@ export default function MyPropertyNotesListPage() {
               <Button variant="outline" asChild>
                 <Link to="/my-property-notes/approvals">
                   <ClipboardList className="h-4 w-4 mr-2" />
-                  {mm ? 'တောင်းဆိုမှုများ' : 'Requests'}
+                  {mm ? 'အတည်ပြုမှုများ' : 'Approvals'}
                 </Link>
               </Button>
             )}

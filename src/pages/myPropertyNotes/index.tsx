@@ -104,7 +104,7 @@ export default function MyPropertyNotesHub() {
             <div>
               <div className="flex items-center gap-2 font-medium text-gray-900">
                 <ClipboardList className="h-5 w-5 text-amber-700" />
-                {mm ? 'Approver — Unlock တောင်းဆိုမှုများ' : 'Approver — Unlock requests'}
+                {mm ? 'Approver — Property Note အတည်ပြုမှုများ' : 'Approver — Property Note Approvals'}
               </div>
               <p className="text-sm text-gray-600 mt-1">
                 {mm
@@ -114,7 +114,7 @@ export default function MyPropertyNotesHub() {
             </div>
             <Button asChild className="w-fit shrink-0">
               <Link to="/my-property-notes/approvals">
-                {mm ? 'တောင်းဆိုမှုများ' : 'Open requests'}
+                {mm ? 'အတည်ပြုမှုများ' : 'Open approvals'}
               </Link>
             </Button>
           </CardContent>
@@ -276,7 +276,7 @@ export default function MyPropertyNotesHub() {
               <CardContent className="!p-6 flex flex-col justify-center space-y-3 min-h-[160px]">
                 <div className="flex items-center gap-2 font-medium text-gray-900">
                   <List className="h-5 w-5" />
-                  {mm ? 'မှတ်စု စာရင်း' : 'History list'}
+                  {mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
                 </div>
                 <p className="text-sm text-gray-600">
                   {mm
