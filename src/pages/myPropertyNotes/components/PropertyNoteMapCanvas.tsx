@@ -54,10 +54,12 @@ function makePinIcon(color: string): L.DivIcon {
   });
 }
 
-const NOTE_DOT = makeDotIcon('#d97706');
+const NOTE_DOT = makeDotIcon('#dc2626');
 const PROPERTY_DOT = makeDotIcon('#2563eb');
-const NOTE_PIN = makePinIcon('#d97706');
+const SELECTED_DOT = makeDotIcon('#16a34a');
+const NOTE_PIN = makePinIcon('#dc2626');
 const PROPERTY_PIN = makePinIcon('#2563eb');
+const SELECTED_PIN = makePinIcon('#16a34a');
 
 function FitBounds({ pins }: { pins: PropertyNoteMapPin[] }) {
   const map = useMap();
@@ -97,17 +99,32 @@ interface PropertyNoteMapCanvasProps {
   pins: PropertyNoteMapPin[];
   language: string;
   onViewDetails: (pin: PropertyNoteMapPin) => void;
+  /**
+   * Last clicked pin — shown green (Selected).
+   */
+  activePin?: PropertyNoteMapPin | null;
+  /**
+   * Marker click only (popup). Does not open the sidebar.
+   */
+  onPinClick?: (pin: PropertyNoteMapPin) => void;
+}
+
+function pinKey(pin: PropertyNoteMapPin): string {
+  return `${String(pin.pin_type)}-${String(pin.id)}`;
 }
 
 export function PropertyNoteMapCanvas({
   pins,
   language,
   onViewDetails,
+  activePin = null,
+  onPinClick,
 }: PropertyNoteMapCanvasProps) {
   const defaultCenter: [number, number] = useMemo(() => [16.8661, 96.1951], []);
   const mm = language === 'mm';
   const [zoom, setZoom] = useState(12);
   const usePins = zoom >= PIN_ZOOM_THRESHOLD;
+  const activeKey = activePin ? pinKey(activePin) : null;
 
   return (
     <MapContainer
@@ -128,26 +145,25 @@ export function PropertyNoteMapCanvas({
         if (pin.latitude == null || pin.longitude == null) return null;
 
         const listingName = pin.listing_type
-          ? mm
-            ? pin.listing_type.name_mm
-            : pin.listing_type.name_en
+          ? String(mm ? pin.listing_type.name_mm : pin.listing_type.name_en)
           : null;
         const placeName = pin.township
-          ? mm
-            ? pin.township.name_mm
-            : pin.township.name_en
+          ? String(mm ? pin.township.name_mm : pin.township.name_en)
           : pin.region
-            ? mm
-              ? pin.region.name_mm
-              : pin.region.name_en
+            ? String(mm ? pin.region.name_mm : pin.region.name_en)
             : null;
+        const priceRaw = pin.price_display;
         const priceLabel =
-          pin.price_display && pin.price_display.trim() && pin.price_display.trim() !== '.'
-            ? pin.price_display.trim()
+          typeof priceRaw === 'string' && priceRaw.trim() && priceRaw.trim() !== '.'
+            ? priceRaw.trim()
             : null;
 
-        const icon =
-          pin.pin_type === 'note'
+        const isActive = activeKey === pinKey(pin);
+        const icon = isActive
+          ? usePins
+            ? SELECTED_PIN
+            : SELECTED_DOT
+          : pin.pin_type === 'note'
             ? usePins
               ? NOTE_PIN
               : NOTE_DOT
@@ -157,22 +173,33 @@ export function PropertyNoteMapCanvas({
 
         return (
           <Marker
-            key={`${pin.pin_type}-${pin.id}`}
-            position={[pin.latitude, pin.longitude]}
+            key={pinKey(pin)}
+            position={[Number(pin.latitude), Number(pin.longitude)]}
             icon={icon}
+            eventHandlers={{
+              click: () => onPinClick?.(pin),
+            }}
           >
             <Popup>
               <div className="min-w-[220px] max-w-[280px] p-1 space-y-2">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-sm leading-snug line-clamp-2">{pin.title}</h3>
+                  <h3 className="font-semibold text-sm leading-snug line-clamp-2">
+                    {pin.title != null ? String(pin.title) : ''}
+                  </h3>
                   <Badge
-                    className={`shrink-0 text-[10px] text-white ${
+                    className={`shrink-0 text-[10px] !text-white ${
                       pin.pin_type === 'note'
-                        ? 'bg-amber-600 hover:bg-amber-600'
-                        : 'bg-blue-600 hover:bg-blue-600'
+                        ? '!bg-red-600 hover:!bg-red-600'
+                        : '!bg-blue-600 hover:!bg-blue-600'
                     }`}
                   >
-                    {pin.pin_type === 'note' ? (mm ? 'မှတ်စု' : 'Note') : mm ? 'အိမ်' : 'Property'}
+                    {pin.pin_type === 'note'
+                      ? mm
+                        ? 'မှတ်စု'
+                        : 'Note'
+                      : mm
+                        ? 'အိမ်'
+                        : 'Property'}
                   </Badge>
                 </div>
 
@@ -208,17 +235,29 @@ export function PropertyNoteMapCanvas({
                   {pin.phone_numbers?.length > 0 && (
                     <div className="flex items-start gap-1.5">
                       <Phone className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-700" />
-                      <span>{pin.phone_numbers[0]}</span>
+                      <span>{String(pin.phone_numbers[0])}</span>
                     </div>
                   )}
                 </div>
 
                 {pin.pin_type === 'property' && pin.slug ? (
                   <>
-                    <Button size="sm" className="w-full" asChild>
-                      <Link to={`/properties/${pin.slug}`} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                        {mm ? 'Property အသေးစိတ်' : 'View property details'}
+                    {/**
+                     * Leaflet sets `.leaflet-container a { color }` — force primary-foreground so this matches the sheet CTA.
+                     */}
+                    <Button
+                      size="sm"
+                      className="w-full !text-primary-foreground hover:!text-primary-foreground"
+                      asChild
+                    >
+                      <Link
+                        to={`/properties/${pin.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="!text-primary-foreground hover:!text-primary-foreground"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        {mm ? 'Property အသေးစိတ် ကြည့်ရန်' : 'View property details'}
                       </Link>
                     </Button>
                     <Button

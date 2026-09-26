@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +21,7 @@ import {
   usePropertyNoteDetail,
 } from '@/hooks/queries/usePropertyNotes';
 import { useUpdatePropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
+import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
 import type { PropertyNoteUpdateData } from '@/types/propertyNote';
 import type { PropertyNoteFormData } from '@/lib/validation/propertyNote';
 
@@ -161,20 +161,18 @@ export default function EditPropertyNotePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-6 max-w-3xl">
+    <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
       <SEOHead seo={seo} path={`/my-property-notes/${noteId}/edit`} />
 
-      <Button variant="ghost" size="sm" asChild className="mb-3 -ml-2">
-        <Link to={`/my-property-notes/${noteId}`}>
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          {mm ? 'အသေးစိတ်သို့' : 'Back to detail'}
-        </Link>
-      </Button>
-
-      <h1 className="text-2xl font-semibold text-gray-900 mb-4">
-        {mm ? 'မှတ်စု ပြင်ဆင်ရန်' : 'Edit Property Note'}
-        {note?.note_code ? ` · ${note.note_code}` : ''}
-      </h1>
+      <PropertyNotePageHeader
+        title={
+          mm
+            ? `မှတ်စု ပြင်ဆင်ရန်${note?.note_code ? ` · ${note.note_code}` : ''}`
+            : `Edit Property Note${note?.note_code ? ` · ${note.note_code}` : ''}`
+        }
+        backTo={`/my-property-notes/${noteId}`}
+        backLabel={mm ? 'အသေးစိတ်သို့' : 'Back to detail'}
+      />
 
       {(accessLoading || detailLoading || !hydrated) && (
         <div className="space-y-3">

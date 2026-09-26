@@ -7,10 +7,7 @@ import {
   Trash2,
   Eye,
   RotateCcw,
-  ArrowLeft,
-  MapPinned,
   MapPin,
-  ClipboardList,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,9 +22,9 @@ import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
-import { useAuthStore } from '@/stores/authStore';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { useSyncAuthProfileFlags } from '@/hooks/useSyncAuthProfileFlags';
+import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyNoteAccess, usePropertyNotes } from '@/hooks/queries/usePropertyNotes';
 import { useDeletePropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
@@ -53,7 +50,6 @@ export default function MyPropertyNotesListPage() {
   const { language } = useLanguage();
   const mm = language === 'mm';
   const { showSuccess, showError } = useModal();
-  const isApprover = Boolean(useAuthStore((s) => s.user)?.is_property_note_approver);
   useSyncAuthProfileFlags(true);
   const {
     isOpen: isConfirmOpen,
@@ -158,44 +154,12 @@ export default function MyPropertyNotesListPage() {
       <SEOHead seo={seo} path="/my-property-notes/list" />
 
       <div className="container mx-auto px-4 pt-24 pb-6 max-w-7xl">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" asChild className="mb-1 -ml-2">
-              <Link to="/my-property-notes">
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                {mm ? 'ပြန်သွားရန်' : 'Back'}
-              </Link>
-            </Button>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              {mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
-            </h1>
-            <p className="text-sm text-gray-600 mt-1">
-              {mm ? 'ကိုယ်ပိုင် မှတ်စုများကို စီမံပါ' : 'Manage your own property notes'}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {isApprover && (
-              <Button variant="outline" asChild>
-                <Link to="/my-property-notes/approvals">
-                  <ClipboardList className="h-4 w-4 mr-2" />
-                  {mm ? 'အတည်ပြုမှုများ' : 'Approvals'}
-                </Link>
-              </Button>
-            )}
-            <Button variant="outline" asChild>
-              <Link to="/my-property-notes/map">
-                <MapPinned className="h-4 w-4 mr-2" />
-                {mm ? 'မြေပုံ' : 'Map'}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link to="/my-property-notes/create">
-                <Plus className="h-4 w-4 mr-2" />
-                {mm ? 'မှတ်စု အသစ်' : 'Create note'}
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <PropertyNotePageHeader
+          title={mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
+          description={mm ? 'ကိုယ်ပိုင် မှတ်စုများကို စီမံပါ' : 'Manage your own property notes'}
+          backTo="/my-property-notes"
+          backLabel={mm ? 'ပြန်သွားရန်' : 'Back'}
+        />
 
         <Card className="mb-6">
           <CardContent className="!p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">

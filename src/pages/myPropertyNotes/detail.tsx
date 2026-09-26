@@ -1,7 +1,6 @@
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
-  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Edit,
@@ -28,6 +27,7 @@ import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
+import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
 import {
   usePropertyNoteAccess,
   usePropertyNoteDetail,
@@ -230,12 +230,9 @@ export default function MyPropertyNoteDetailPage() {
       <SEOHead seo={seo} path={`/my-property-notes/${noteId}`} />
 
       <div className="container mx-auto px-4 pt-24 pb-6 max-w-4xl">
-        <Button variant="ghost" size="sm" asChild className="mb-3 -ml-2">
-          <Link to="/my-property-notes/list">
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            {mm ? 'စာရင်းသို့' : 'Back to list'}
-          </Link>
-        </Button>
+        <PropertyNotePageHeader
+          title={note?.note_code || (mm ? 'မှတ်စု အသေးစိတ်' : 'Property Note Detail')}
+        />
 
         {(accessLoading || isLoading) && (
           <div className="space-y-3">
@@ -261,7 +258,6 @@ export default function MyPropertyNoteDetailPage() {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl font-semibold text-gray-900">{note.note_code}</h1>
                   <Badge className={statusBadgeClass(note.status)}>{note.status}</Badge>
                   {note.is_locked && (
                     <Badge variant="outline">{mm ? 'ပြင်မရ' : 'Locked'}</Badge>

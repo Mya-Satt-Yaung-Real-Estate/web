@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import {
-  ArrowLeft,
   Search,
   RotateCcw,
   CheckCircle2,
   XCircle,
-  ClipboardList,
   UserRound,
   Phone,
   Mail,
-  Coins,
   Clock,
   ShieldCheck,
   MessageSquareWarning,
@@ -43,6 +40,7 @@ import {
   useApprovePropertyNoteRequest,
   useRejectPropertyNoteRequest,
 } from '@/hooks/mutations/usePropertyNoteMutations';
+import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
 import type {
   PropertyNoteApprovalFilterStatus,
   PropertyNoteApprovalItem,
@@ -276,30 +274,23 @@ export default function PropertyNoteApprovalsPage() {
       <SEOHead seo={seo} path="/my-property-notes/approvals" />
 
       <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" asChild className="mb-1 -ml-2">
-              <Link to="/my-property-notes">
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                {mm ? 'ပြန်သွားရန်' : 'Back'}
-              </Link>
-            </Button>
-            <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-              <ClipboardList className="h-6 w-6" />
-              {mm ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals'}
-            </h1>
-            <p className="text-sm text-gray-600 mt-1">
-              {mm
-                ? 'Admin အတည်ပြုပြီးသား တောင်းဆိုမှုများကို နောက်ဆုံး အတည်ပြု / ငြင်းပယ်ပါ။'
-                : 'Final approve or reject requests that admin already passed.'}
-            </p>
-          </div>
-          {pendingCount > 0 && (
-            <Badge className="bg-amber-600 text-white hover:bg-amber-600 border-transparent w-fit">
-              {mm ? `စောင့်ဆိုင်း ${pendingCount}` : `${pendingCount} waiting`}
-            </Badge>
-          )}
-        </div>
+        <PropertyNotePageHeader
+          title={mm ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals'}
+          description={
+            mm
+              ? 'Admin အတည်ပြုပြီးသား တောင်းဆိုမှုများကို နောက်ဆုံး အတည်ပြု / ငြင်းပယ်ပါ။'
+              : 'Final approve or reject requests that admin already passed.'
+          }
+          backTo="/my-property-notes"
+          backLabel={mm ? 'ပြန်သွားရန်' : 'Back'}
+          extra={
+            pendingCount > 0 ? (
+              <Badge className="bg-amber-600 text-white hover:bg-amber-600 border-transparent w-fit">
+                {mm ? `စောင့်ဆိုင်း ${pendingCount}` : `${pendingCount} waiting`}
+              </Badge>
+            ) : null
+          }
+        />
 
         {statistics && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
@@ -421,7 +412,9 @@ export default function PropertyNoteApprovalsPage() {
                     <tr className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
                       <th className="px-4 py-3 font-medium">{mm ? 'အသုံးပြုသူ' : 'User'}</th>
                       <th className="px-4 py-3 font-medium">{mm ? 'ဆက်သွယ်ရန်' : 'Contact'}</th>
+                      {/* Points column hidden — restore when needed.
                       <th className="px-4 py-3 font-medium">{mm ? 'ပွိုင့်' : 'Points'}</th>
+                      */}
                       <th className="px-4 py-3 font-medium">{mm ? 'တောင်းဆိုချိန်' : 'Requested'}</th>
                       <th className="px-4 py-3 font-medium">{mm ? 'အခြေအနေ' : 'Status'}</th>
                       <th className="px-4 py-3 font-medium text-right">
@@ -477,6 +470,7 @@ export default function PropertyNoteApprovalsPage() {
                               </div>
                             )}
                           </td>
+                          {/* Points column hidden — restore when needed.
                           <td className="px-4 py-3 align-top text-gray-700 whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
                               <Coins className="h-3.5 w-3.5 text-amber-700" />
@@ -486,6 +480,7 @@ export default function PropertyNoteApprovalsPage() {
                               {mm ? 'လက်ကျန်' : 'Bal'}: {item.user?.current_point_balance ?? '—'}
                             </div>
                           </td>
+                          */}
                           <td className="px-4 py-3 align-top text-gray-600 whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
                               <Clock className="h-3.5 w-3.5 text-gray-400" />
@@ -543,6 +538,7 @@ export default function PropertyNoteApprovalsPage() {
                       </div>
 
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-600">
+                        {/* Points row hidden — restore when needed.
                         <span className="inline-flex items-center gap-1">
                           <Coins className="h-3.5 w-3.5 text-amber-700" />
                           {item.points_amount}
@@ -550,6 +546,7 @@ export default function PropertyNoteApprovalsPage() {
                             · {mm ? 'လက်ကျန်' : 'bal'} {item.user?.current_point_balance ?? '—'}
                           </span>
                         </span>
+                        */}
                         <span className="inline-flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5 text-gray-400" />
                           {item.requested_at || '—'}
