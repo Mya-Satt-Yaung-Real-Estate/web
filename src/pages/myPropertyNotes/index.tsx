@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { seoUtils } from '@/lib/seo';
@@ -156,19 +155,6 @@ export default function MyPropertyNotesHub() {
             </div>
           </CardHeader>
           <CardContent className="!p-6 !pt-2 space-y-4">
-            {access.status === 'pending' || access.status === 'admin_approved' ? (
-              <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                {mm
-                  ? 'တောင်းဆိုမှု စောင့်ဆိုင်းနေသည်။ အတည်ပြုပြီးမှ map သုံးနိုင်ပါမည်။'
-                  : 'Your unlock request is pending approval. You can use the map after approval.'}
-                {access.status && (
-                  <Badge variant="secondary" className="ml-2 align-middle">
-                    {access.status}
-                  </Badge>
-                )}
-              </div>
-            ) : null}
-
             {access.status === 'rejected' && access.reject_reason ? (
               <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                 {mm ? 'ငြင်းပယ်ခံရသည် — ' : 'Rejected — '}
@@ -203,11 +189,7 @@ export default function MyPropertyNotesHub() {
             <div className="flex flex-wrap gap-2">
               <Button
                 onClick={handleUnlock}
-                disabled={
-                  unlockMutation.isPending ||
-                  access.status === 'pending' ||
-                  access.status === 'admin_approved'
-                }
+                disabled={unlockMutation.isPending}
               >
                 <Unlock className="h-4 w-4 mr-2" />
                 {unlockMutation.isPending
