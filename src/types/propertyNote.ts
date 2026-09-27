@@ -222,6 +222,13 @@ export interface PropertyNoteApprovalUser {
   current_point_balance: number;
 }
 
+/**
+ * Who acted (approve / reject / revoke), or "System approved".
+ */
+export interface PropertyNoteApprovalActionBy {
+  name: string;
+}
+
 export interface PropertyNoteApprovalItem {
   id: number;
   status: PropertyNoteAccessStatus;
@@ -232,6 +239,7 @@ export interface PropertyNoteApprovalItem {
   admin_approved_at: string | null;
   approved_at: string | null;
   expires_at: string | null;
+  action_by: PropertyNoteApprovalActionBy | null;
   user: PropertyNoteApprovalUser | null;
   admin: { id: number; name: string } | null;
 }

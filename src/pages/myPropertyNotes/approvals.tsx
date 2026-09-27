@@ -417,6 +417,9 @@ export default function PropertyNoteApprovalsPage() {
                       */}
                       <th className="px-4 py-3 font-medium">{mm ? 'တောင်းဆိုချိန်' : 'Requested'}</th>
                       <th className="px-4 py-3 font-medium">{mm ? 'အခြေအနေ' : 'Status'}</th>
+                      <th className="px-4 py-3 font-medium">
+                        {mm ? 'လုပ်ဆောင်သူ' : 'Action By'}
+                      </th>
                       <th className="px-4 py-3 font-medium text-right">
                         {mm ? 'လုပ်ဆောင်ရန်' : 'Actions'}
                       </th>
@@ -497,6 +500,9 @@ export default function PropertyNoteApprovalsPage() {
                               {approvalStatusLabel(item.status, mm)}
                             </Badge>
                           </td>
+                          <td className="px-4 py-3 align-top text-gray-700">
+                            {item.action_by?.name || '—'}
+                          </td>
                           <td className="px-4 py-3 align-top text-right">
                             {renderActionButtons(item)}
                           </td>
@@ -550,6 +556,10 @@ export default function PropertyNoteApprovalsPage() {
                         <span className="inline-flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5 text-gray-400" />
                           {item.requested_at || '—'}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <ShieldCheck className="h-3.5 w-3.5 text-blue-700" />
+                          {item.action_by?.name || '—'}
                         </span>
                       </div>
 
