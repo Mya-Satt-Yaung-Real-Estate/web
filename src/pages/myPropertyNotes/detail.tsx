@@ -17,8 +17,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  type CarouselApi,
 } from '@/components/ui/carousel';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -28,6 +27,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PHOTO_NAV_BUTTON,
+  PROPERTY_NOTE_PHOTO_NAV_ICON,
+} from './photoNavStyles';
 import {
   usePropertyNoteAccess,
   usePropertyNoteDetail,
@@ -81,6 +84,10 @@ export default function MyPropertyNoteDetailPage() {
    * Fullscreen lightbox index — null means closed.
    */
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  /**
+   * Embla API for gallery prev/next — custom buttons (same style as map sheet).
+   */
+  const [galleryApi, setGalleryApi] = useState<CarouselApi>();
 
   const images: PropertyNoteMediaImage[] = note?.images?.length
     ? note.images
@@ -136,11 +143,11 @@ export default function MyPropertyNoteDetailPage() {
       <button
         type="button"
         onClick={() => openLightbox(index)}
-        className="absolute top-2 right-2 size-8 rounded-md bg-white/90 border shadow-sm flex items-center justify-center hover:bg-white"
+        className={`absolute top-2 right-2 z-10 flex items-center justify-center ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
         title={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
         aria-label={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
       >
-        <Maximize2 className="h-4 w-4 text-gray-700" />
+        <Maximize2 className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
       </button>
     </div>
   );
@@ -299,8 +306,9 @@ export default function MyPropertyNoteDetailPage() {
                  * More than 3 photos: show ~3 at a time with prev/next scroll.
                  */
                 <Carousel
-                  opts={{ align: 'start', slidesToScroll: 1 }}
-                  className="w-full"
+                  opts={{ align: 'start', slidesToScroll: 1, loop: true }}
+                  setApi={setGalleryApi}
+                  className="relative w-full"
                 >
                   <CarouselContent className="-ml-2">
                     {images.map((img, index) => (
@@ -312,12 +320,22 @@ export default function MyPropertyNoteDetailPage() {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious
-                    className="left-2 top-1/2 z-10 border bg-white/90 shadow-sm disabled:opacity-40"
-                  />
-                  <CarouselNext
-                    className="right-2 top-1/2 z-10 border bg-white/90 shadow-sm disabled:opacity-40"
-                  />
+                  <button
+                    type="button"
+                    className={`absolute left-2 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                    onClick={() => galleryApi?.scrollPrev()}
+                    aria-label={mm ? 'ယခင်ပုံ' : 'Previous photo'}
+                  >
+                    <ChevronLeft className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                  </button>
+                  <button
+                    type="button"
+                    className={`absolute right-2 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                    onClick={() => galleryApi?.scrollNext()}
+                    aria-label={mm ? 'နောက်ပုံ' : 'Next photo'}
+                  >
+                    <ChevronRight className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                  </button>
                 </Carousel>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -387,10 +405,10 @@ export default function MyPropertyNoteDetailPage() {
                       prev === null ? null : prev > 0 ? prev - 1 : images.length - 1
                     );
                   }}
-                  className="fixed left-4 top-1/2 -translate-y-1/2 z-20 size-12 sm:size-14 rounded-full bg-white/95 flex items-center justify-center hover:bg-white shadow-lg pointer-events-auto"
+                  className={`fixed left-4 top-1/2 z-20 -translate-y-1/2 flex items-center justify-center pointer-events-auto ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
                   title={mm ? 'ယခင်' : 'Previous'}
                 >
-                  <ChevronLeft className="h-7 w-7 text-black" />
+                  <ChevronLeft className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
                 </button>
                 <button
                   type="button"
@@ -400,10 +418,10 @@ export default function MyPropertyNoteDetailPage() {
                       prev === null ? null : prev < images.length - 1 ? prev + 1 : 0
                     );
                   }}
-                  className="fixed right-4 top-1/2 -translate-y-1/2 z-20 size-12 sm:size-14 rounded-full bg-white/95 flex items-center justify-center hover:bg-white shadow-lg pointer-events-auto"
+                  className={`fixed right-4 top-1/2 z-20 -translate-y-1/2 flex items-center justify-center pointer-events-auto ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
                   title={mm ? 'နောက်' : 'Next'}
                 >
-                  <ChevronRight className="h-7 w-7 text-black" />
+                  <ChevronRight className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
                 </button>
               </>
             )}

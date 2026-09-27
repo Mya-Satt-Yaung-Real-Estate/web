@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LazyImage } from './LazyImage'
 
 const ERROR_IMG_SRC =
@@ -12,6 +12,13 @@ export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElemen
   }
 
   const { src, alt, style, className, ...rest } = props
+
+  /**
+   * New src must clear sticky error state (carousel / gallery swaps).
+   */
+  useEffect(() => {
+    setDidError(false)
+  }, [src])
 
   return didError ? (
     <div

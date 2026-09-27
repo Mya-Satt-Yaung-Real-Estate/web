@@ -54,6 +54,16 @@ export function LazyImage({
     return () => observer.disconnect();
   }, []);
 
+  /**
+   * When src changes (e.g. photo carousel), reset so the new URL can load.
+   * Without this, isLoaded stays true and the first image sticks forever.
+   */
+  useEffect(() => {
+    setIsLoaded(false);
+    setHasError(false);
+    setImageSrc(placeholder);
+  }, [src, placeholder]);
+
   useEffect(() => {
     if (isInView && !isLoaded && !hasError) {
       const img = new Image();

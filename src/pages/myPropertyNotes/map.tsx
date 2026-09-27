@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import {
   RotateCcw,
@@ -12,6 +12,8 @@ import {
   MapPin,
   Phone,
   Maximize2,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,11 +46,23 @@ import {
 } from '@/hooks/queries/usePropertyNotes';
 import { PropertyNoteMapCanvas } from './components/PropertyNoteMapCanvas';
 import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PHOTO_NAV_BUTTON,
+  PROPERTY_NOTE_PHOTO_NAV_ICON,
+} from './photoNavStyles';
 import type {
   PropertyNoteMapFilters,
   PropertyNoteMapPin,
+  PropertyNoteMediaImage,
   PropertyNoteStatus,
 } from '@/types/propertyNote';
+
+/**
+ * Prefer medium/full URL for map sheet gallery.
+ */
+function mapSheetImageSrc(img: PropertyNoteMediaImage): string {
+  return img.medium_url || img.url || img.small_url || img.thumbnail_url || '';
+}
 
 /**
  * Property Note map — pins for own/see-others notes + properties.
@@ -73,6 +87,10 @@ export default function MyPropertyNotesMapPage() {
    * Large dialog map — hide inline map while open (avoids dual Leaflet instances).
    */
   const [isMapMaximized, setIsMapMaximized] = useState(false);
+  /**
+   * Sheet photo carousel index (reset when pin/detail changes).
+   */
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   const { data: accessResponse, isLoading: accessLoading } = usePropertyNoteAccess();
   const access = accessResponse?.data?.data;
@@ -120,6 +138,17 @@ export default function MyPropertyNotesMapPage() {
   );
 
   const detail = detailResponse?.data?.data;
+
+  const sheetImages = useMemo((): PropertyNoteMediaImage[] => {
+    if (!detail) return [];
+    if (detail.images?.length) return detail.images;
+    if (detail.primary_image) return [detail.primary_image];
+    return [];
+  }, [detail]);
+
+  useEffect(() => {
+    setPhotoIndex(0);
+  }, [selectedPin?.id, selectedPin?.pin_type, detail?.id]);
 
   const hasActiveFilters = Boolean(
     filters.note_code || filters.status || filters.region_id || filters.township_id
@@ -409,17 +438,46 @@ export default function MyPropertyNotesMapPage() {
 
             {!detailLoading && detail && (
               <>
-                {(detail.primary_image?.url || detail.primary_image?.medium_url) && (
-                  <ImageWithFallback
-                    src={
-                      detail.primary_image.medium_url ||
-                      detail.primary_image.url ||
-                      detail.primary_image.small_url ||
-                      ''
-                    }
-                    alt={detail.code || 'pin'}
-                    className="w-full h-44 object-cover rounded-md"
-                  />
+                {sheetImages.length > 0 && (
+                  <div className="relative w-full">
+                    <ImageWithFallback
+                      key={sheetImages[photoIndex]?.id ?? photoIndex}
+                      src={mapSheetImageSrc(sheetImages[photoIndex] ?? sheetImages[0])}
+                      alt={detail.code || 'pin'}
+                      className="w-full h-44 object-cover rounded-md"
+                    />
+                    {sheetImages.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          className={`absolute left-2 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                          onClick={() =>
+                            setPhotoIndex((prev) =>
+                              prev > 0 ? prev - 1 : sheetImages.length - 1
+                            )
+                          }
+                          aria-label={mm ? 'ယခင်ပုံ' : 'Previous photo'}
+                        >
+                          <ChevronLeft className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                        </button>
+                        <button
+                          type="button"
+                          className={`absolute right-2 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                          onClick={() =>
+                            setPhotoIndex((prev) =>
+                              prev < sheetImages.length - 1 ? prev + 1 : 0
+                            )
+                          }
+                          aria-label={mm ? 'နောက်ပုံ' : 'Next photo'}
+                        >
+                          <ChevronRight className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                        </button>
+                        <div className="absolute bottom-2 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/55 px-2 py-0.5 text-xs text-white">
+                          {photoIndex + 1} / {sheetImages.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 )}
 
                 <div className="space-y-3 text-sm">
