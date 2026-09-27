@@ -110,7 +110,10 @@ export default function MyPropertyNotesMapPage() {
   const apiFilters: PropertyNoteMapFilters = useMemo(() => {
     const result: PropertyNoteMapFilters = { paginate: false };
     if (filters.note_code.trim()) result.note_code = filters.note_code.trim();
-    if (filters.status) result.status = filters.status;
+    /**
+     * Status filter removed — map API returns active notes only.
+     */
+    // if (filters.status) result.status = filters.status;
     if (filters.region_id) result.region_id = parseInt(filters.region_id, 10);
     if (filters.township_id) result.township_id = parseInt(filters.township_id, 10);
     return result;
@@ -151,7 +154,7 @@ export default function MyPropertyNotesMapPage() {
   }, [selectedPin?.id, selectedPin?.pin_type, detail?.id]);
 
   const hasActiveFilters = Boolean(
-    filters.note_code || filters.status || filters.region_id || filters.township_id
+    filters.note_code || filters.region_id || filters.township_id
   );
 
   const resetFilters = () => {
@@ -196,7 +199,7 @@ export default function MyPropertyNotesMapPage() {
        * CardContent defaults to pt-0 — force full padding so filters are not flush to the card top.
        */}
       <Card className="mb-6">
-        <CardContent className="!p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <CardContent className="!p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="relative lg:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -207,6 +210,9 @@ export default function MyPropertyNotesMapPage() {
             />
           </div>
 
+          {/**
+           * Status filter hidden — map shows active notes only (API filters sold/rented out).
+           *
           <Select
             value={filters.status || 'all'}
             onValueChange={(value) =>
@@ -226,6 +232,7 @@ export default function MyPropertyNotesMapPage() {
               <SelectItem value="rented">{mm ? 'ငှားပြီး' : 'Rented'}</SelectItem>
             </SelectContent>
           </Select>
+           */}
 
           <Select
             value={filters.region_id || 'all'}
