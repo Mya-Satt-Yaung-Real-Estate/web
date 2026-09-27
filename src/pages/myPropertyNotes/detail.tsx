@@ -285,12 +285,16 @@ export default function MyPropertyNoteDetailPage() {
                         {mm ? 'ပြင်ရန်' : 'Edit'}
                       </Link>
                     </Button>
-                    <Button variant="outline" onClick={() => handleStatus('sold')}>
-                      {mm ? 'Sold' : 'Mark sold'}
-                    </Button>
-                    <Button variant="outline" onClick={() => handleStatus('rented')}>
-                      {mm ? 'Rented' : 'Mark rented'}
-                    </Button>
+                    {note.listing_type?.slug === 'for-sale' && (
+                      <Button variant="outline" onClick={() => handleStatus('sold')}>
+                        {mm ? 'Sold' : 'Mark sold'}
+                      </Button>
+                    )}
+                    {note.listing_type?.slug === 'for-rent' && (
+                      <Button variant="outline" onClick={() => handleStatus('rented')}>
+                        {mm ? 'Rented' : 'Mark rented'}
+                      </Button>
+                    )}
                     <Button variant="outline" className="text-red-600" onClick={handleDelete}>
                       <Trash2 className="h-4 w-4 mr-1" />
                       {mm ? 'ဖျက်ရန်' : 'Delete'}
