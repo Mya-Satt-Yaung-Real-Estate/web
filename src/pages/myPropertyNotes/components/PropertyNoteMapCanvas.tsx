@@ -36,8 +36,18 @@ if (typeof window !== 'undefined') {
 /** Below this zoom: smaller circles. At/above: larger circles. */
 const PIN_ZOOM_THRESHOLD = 14;
 
+/**
+ * Always-available fallback (no network) — avoids browser broken-image icon.
+ */
 const DEFAULT_AVATAR =
-  'https://msy-demo.s3.ap-southeast-1.amazonaws.com/default/profile.jpeg';
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
+      '<rect width="64" height="64" fill="#e5e7eb"/>' +
+      '<circle cx="32" cy="24" r="12" fill="#9ca3af"/>' +
+      '<path d="M8 58c0-13.3 10.7-24 24-24s24 10.7 24 24" fill="#9ca3af"/>' +
+      '</svg>'
+  );
 
 /** Legend colors: Notes=blue, Property=red, Selected=green (ring). */
 const NOTE_PIN_COLOR = '#2563eb';
@@ -55,6 +65,7 @@ function escapeAttr(value: string): string {
 /**
  * Circular logo/avatar pin (no teardrop).
  * Property = red ring, Note = blue ring, Selected = green ring.
+ * Broken remote URLs fall back to DEFAULT_AVATAR via onerror.
  */
 function makeCircleLogoIcon(
   imageUrl: string,
@@ -68,10 +79,11 @@ function makeCircleLogoIcon(
     ? '0 0 0 2px rgba(22,163,74,.35), 0 2px 6px rgba(0,0,0,.35)'
     : '0 1px 4px rgba(0,0,0,.35)';
   const safeUrl = escapeAttr(imageUrl);
+  const safeFallback = escapeAttr(DEFAULT_AVATAR);
 
   return L.divIcon({
     className: 'msy-pn-map-pin',
-    html: `<span style="display:block;box-sizing:border-box;width:${size}px;height:${size}px;border-radius:9999px;overflow:hidden;border:${borderWidth}px solid ${borderColor};box-shadow:${shadow};background:#fff"><img src="${safeUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" /></span>`,
+    html: `<span style="display:block;box-sizing:border-box;width:${size}px;height:${size}px;border-radius:9999px;overflow:hidden;border:${borderWidth}px solid ${borderColor};box-shadow:${shadow};background:#fff"><img src="${safeUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.onerror=null;this.src='${safeFallback}'" /></span>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
     popupAnchor: [0, -size / 2],
