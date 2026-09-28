@@ -179,11 +179,11 @@ export default function MyPropertyNotesMapPage() {
         extra={
           counts ? (
             <>
-              <Badge className="gap-1 border-transparent !bg-red-600 !text-white hover:!bg-red-700">
+              <Badge className="gap-1 border-transparent !bg-blue-600 !text-white hover:!bg-blue-700">
                 <StickyNote className="h-3 w-3" />
                 {mm ? 'မှတ်စု' : 'Notes'}: {Number(counts.notes)}
               </Badge>
-              <Badge className="gap-1 border-transparent !bg-blue-600 !text-white hover:!bg-blue-700">
+              <Badge className="gap-1 border-transparent !bg-red-600 !text-white hover:!bg-red-700">
                 <Home className="h-3 w-3" />
                 {mm ? 'အိမ်' : 'Properties'}: {Number(counts.properties)}
               </Badge>
@@ -321,18 +321,33 @@ export default function MyPropertyNotesMapPage() {
                 {!isMapMaximized && (
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-600" />
-                          {mm ? 'မှတ်စု' : 'Notes'}
+                          <span
+                            className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                            style={{ borderColor: '#dc2626' }}
+                          />
+                          <span className="font-medium text-gray-700">
+                            {mm ? 'အိမ်' : 'Property'}
+                          </span>
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600" />
-                          {mm ? 'အိမ်' : 'Property'}
+                          <span
+                            className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                            style={{ borderColor: '#2563eb' }}
+                          />
+                          <span className="font-medium text-gray-700">
+                            {mm ? 'မှတ်စု' : 'Notes'}
+                          </span>
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-600" />
-                          {mm ? 'ရွေးထား' : 'Selected'}
+                          <span
+                            className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                            style={{ borderColor: '#16a34a' }}
+                          />
+                          <span className="font-medium text-gray-700">
+                            {mm ? 'ရွေးထား' : 'Selected'}
+                          </span>
                         </span>
                       </div>
                       <Button

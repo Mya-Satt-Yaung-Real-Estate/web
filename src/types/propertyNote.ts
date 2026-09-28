@@ -88,6 +88,12 @@ export interface PropertyNoteDetail extends PropertyNoteListItem {
   images: PropertyNoteMediaImage[];
 }
 
+export interface PropertyNoteMapPinOwner {
+  type: 'user' | 'company';
+  name: string | null;
+  avatar_url: string;
+}
+
 export interface PropertyNoteMapPin {
   pin_type: PropertyNotePinType;
   id: number;
@@ -102,6 +108,10 @@ export interface PropertyNoteMapPin {
   region: PropertyNoteNamedPlace | null;
   township: PropertyNoteNamedPlace | null;
   primary_image: PropertyNoteMediaImage | null;
+  /**
+   * Note owner avatar for map pin. Null on property pins (use Jade logo).
+   */
+  owner?: PropertyNoteMapPinOwner | null;
   latitude: number | null;
   longitude: number | null;
 }

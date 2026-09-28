@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tag, Phone, MapPin, ExternalLink, Hash, Banknote } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+import jadeLogo from '@/assets/jade.png';
 import type { PropertyNoteMapPin } from '@/types/propertyNote';
 
 /**
@@ -19,47 +20,63 @@ if (typeof window !== 'undefined') {
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   });
+
+  /**
+   * Default .leaflet-div-icon gray border clips our colored ring — clear it once.
+   */
+  if (!document.getElementById('msy-pn-map-pin-css')) {
+    const style = document.createElement('style');
+    style.id = 'msy-pn-map-pin-css';
+    style.textContent =
+      '.msy-pn-map-pin.leaflet-div-icon{background:transparent!important;border:none!important;}';
+    document.head.appendChild(style);
+  }
 }
 
-/** Below this zoom: dense dots. At/above: location pins. */
+/** Below this zoom: smaller circles. At/above: larger circles. */
 const PIN_ZOOM_THRESHOLD = 14;
 
-function makeDotIcon(color: string): L.DivIcon {
-  return L.divIcon({
-    className: '',
-    html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></span>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-  });
+const DEFAULT_AVATAR =
+  'https://msy-demo.s3.ap-southeast-1.amazonaws.com/default/profile.jpeg';
+
+/** Legend colors: Notes=blue, Property=red, Selected=green (ring). */
+const NOTE_PIN_COLOR = '#2563eb';
+const PROPERTY_PIN_COLOR = '#dc2626';
+const SELECTED_PIN_COLOR = '#16a34a';
+
+function escapeAttr(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 /**
- * Teardrop map pin (SVG) — tip sits on the lat/lng.
+ * Circular logo/avatar pin (no teardrop).
+ * Property = red ring, Note = blue ring, Selected = green ring.
  */
-function makePinIcon(color: string): L.DivIcon {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40" aria-hidden="true">
-      <path fill="${color}" stroke="#fff" stroke-width="2"
-        d="M14 1.5C7.1 1.5 1.5 7.1 1.5 14c0 9.4 10.4 22.2 11.8 23.8a1 1 0 0 0 1.4 0C15.1 36.2 26.5 23.4 26.5 14 26.5 7.1 20.9 1.5 14 1.5z"/>
-      <circle cx="14" cy="14" r="5" fill="#fff"/>
-    </svg>
-  `.trim();
+function makeCircleLogoIcon(
+  imageUrl: string,
+  ringColor: string,
+  size: number,
+  selected: boolean
+): L.DivIcon {
+  const borderColor = selected ? SELECTED_PIN_COLOR : ringColor;
+  const borderWidth = selected ? 4 : 3;
+  const shadow = selected
+    ? '0 0 0 2px rgba(22,163,74,.35), 0 2px 6px rgba(0,0,0,.35)'
+    : '0 1px 4px rgba(0,0,0,.35)';
+  const safeUrl = escapeAttr(imageUrl);
 
   return L.divIcon({
-    className: '',
-    html: svg,
-    iconSize: [28, 40],
-    iconAnchor: [14, 40],
-    popupAnchor: [0, -36],
+    className: 'msy-pn-map-pin',
+    html: `<span style="display:block;box-sizing:border-box;width:${size}px;height:${size}px;border-radius:9999px;overflow:hidden;border:${borderWidth}px solid ${borderColor};box-shadow:${shadow};background:#fff"><img src="${safeUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" /></span>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2],
   });
 }
-
-const NOTE_DOT = makeDotIcon('#dc2626');
-const PROPERTY_DOT = makeDotIcon('#2563eb');
-const SELECTED_DOT = makeDotIcon('#16a34a');
-const NOTE_PIN = makePinIcon('#dc2626');
-const PROPERTY_PIN = makePinIcon('#2563eb');
-const SELECTED_PIN = makePinIcon('#16a34a');
 
 function FitBounds({ pins }: { pins: PropertyNoteMapPin[] }) {
   const map = useMap();
@@ -81,7 +98,7 @@ function FitBounds({ pins }: { pins: PropertyNoteMapPin[] }) {
 }
 
 /**
- * Push current zoom to parent so markers can switch icon style.
+ * Push current zoom to parent so markers can switch icon size.
  */
 function ZoomWatcher({ onZoom }: { onZoom: (zoom: number) => void }) {
   const map = useMapEvents({
@@ -100,7 +117,7 @@ interface PropertyNoteMapCanvasProps {
   language: string;
   onViewDetails: (pin: PropertyNoteMapPin) => void;
   /**
-   * Last clicked pin — shown green (Selected).
+   * Last clicked pin — green ring.
    */
   activePin?: PropertyNoteMapPin | null;
   /**
@@ -113,6 +130,13 @@ function pinKey(pin: PropertyNoteMapPin): string {
   return `${String(pin.pin_type)}-${String(pin.id)}`;
 }
 
+function resolvePinImage(pin: PropertyNoteMapPin): string {
+  if (pin.pin_type === 'property') {
+    return jadeLogo;
+  }
+  return pin.owner?.avatar_url?.trim() || DEFAULT_AVATAR;
+}
+
 export function PropertyNoteMapCanvas({
   pins,
   language,
@@ -123,8 +147,22 @@ export function PropertyNoteMapCanvas({
   const defaultCenter: [number, number] = useMemo(() => [16.8661, 96.1951], []);
   const mm = language === 'mm';
   const [zoom, setZoom] = useState(12);
-  const usePins = zoom >= PIN_ZOOM_THRESHOLD;
+  const pinSize = zoom >= PIN_ZOOM_THRESHOLD ? 36 : 28;
   const activeKey = activePin ? pinKey(activePin) : null;
+
+  /**
+   * Cache DivIcons by image+color+size+selected so Leaflet does not thrash.
+   */
+  const iconCache = useMemo(() => new Map<string, L.DivIcon>(), [pinSize]);
+
+  const getIcon = (imageUrl: string, color: string, selected: boolean): L.DivIcon => {
+    const key = `${imageUrl}|${color}|${pinSize}|${selected ? 1 : 0}`;
+    const cached = iconCache.get(key);
+    if (cached) return cached;
+    const icon = makeCircleLogoIcon(imageUrl, color, pinSize, selected);
+    iconCache.set(key, icon);
+    return icon;
+  };
 
   return (
     <MapContainer
@@ -159,17 +197,9 @@ export function PropertyNoteMapCanvas({
             : null;
 
         const isActive = activeKey === pinKey(pin);
-        const icon = isActive
-          ? usePins
-            ? SELECTED_PIN
-            : SELECTED_DOT
-          : pin.pin_type === 'note'
-            ? usePins
-              ? NOTE_PIN
-              : NOTE_DOT
-            : usePins
-              ? PROPERTY_PIN
-              : PROPERTY_DOT;
+        const pinColor =
+          pin.pin_type === 'note' ? NOTE_PIN_COLOR : PROPERTY_PIN_COLOR;
+        const icon = getIcon(resolvePinImage(pin), pinColor, isActive);
 
         return (
           <Marker
@@ -189,8 +219,8 @@ export function PropertyNoteMapCanvas({
                   <Badge
                     className={`shrink-0 text-[10px] !text-white ${
                       pin.pin_type === 'note'
-                        ? '!bg-red-600 hover:!bg-red-600'
-                        : '!bg-blue-600 hover:!bg-blue-600'
+                        ? '!bg-blue-600 hover:!bg-blue-600'
+                        : '!bg-red-600 hover:!bg-red-600'
                     }`}
                   >
                     {pin.pin_type === 'note'
