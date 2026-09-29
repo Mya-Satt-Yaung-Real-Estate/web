@@ -54,6 +54,10 @@ export interface PropertyNoteAccess {
    * True when usable User+Device grant exists but no Any-device (web denied).
    */
   blocked_by_device_grant?: boolean;
+  /**
+   * True when access was revoked and Admin has not re-granted yet.
+   */
+  blocked_by_revoke?: boolean;
 }
 
 export interface PropertyNoteUnlockResult {

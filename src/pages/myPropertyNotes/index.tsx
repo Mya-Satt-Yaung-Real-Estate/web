@@ -76,19 +76,27 @@ export default function MyPropertyNotesHub() {
           response?: {
             data?: {
               message?: string;
-              errors?: { blocked_by_device_grant?: boolean };
+              errors?: {
+                blocked_by_device_grant?: boolean;
+                blocked_by_revoke?: boolean;
+              };
             };
           };
           message?: string;
         };
         const blockedByDevice = Boolean(errBody.response?.data?.errors?.blocked_by_device_grant);
+        const blockedByRevoke = Boolean(errBody.response?.data?.errors?.blocked_by_revoke);
         const message = blockedByDevice
           ? mm
-            ? 'Property Note access ကို သတ်မှတ် device အတွက်သာ ပေးထားပါသည်။ Point ဖြင့် ထပ်ဖွင့်၍ မရပါ။ Website သို့မဟုတ် အခြား device အတွက် Admin ထံ ဆက်သွယ်ပါ။'
-            : 'Your access is for a specific device only. You cannot unlock with points. Please contact admin for website or another device.'
-          : errBody.response?.data?.message ||
-            errBody.message ||
-            (mm ? 'ဖွင့်၍မရပါ' : 'Unable to unlock');
+            ? 'သတ်မှတ် device အတွက်သာ ခွင့်ပြုထားပါသည်။ Admin ထံ ဆက်သွယ်ပါ။'
+            : 'Access is for a specific device only. Please contact admin.'
+          : blockedByRevoke
+            ? mm
+              ? 'Access ရုပ်သိမ်းထားပါသည်။ Admin ထံ ဆက်သွယ်ပါ။'
+              : 'Access was revoked. Please contact admin.'
+            : errBody.response?.data?.message ||
+              errBody.message ||
+              (mm ? 'ဖွင့်၍မရပါ' : 'Unable to unlock');
         showError(message, mm ? 'အမှား' : 'Error');
       },
     });
@@ -166,9 +174,13 @@ export default function MyPropertyNotesHub() {
                   ? mm
                     ? 'Website တွင် အသုံးပြု၍ မရပါ'
                     : 'Not available on website'
-                  : mm
-                    ? 'Access ဖွင့်ရန်'
-                    : 'Unlock access'}
+                  : access.blocked_by_revoke
+                    ? mm
+                      ? 'Access ရုပ်သိမ်းထားပါသည်'
+                      : 'Access revoked'
+                    : mm
+                      ? 'Access ဖွင့်ရန်'
+                      : 'Unlock access'}
               </h2>
             </div>
           </CardHeader>
@@ -176,8 +188,16 @@ export default function MyPropertyNotesHub() {
             {access.blocked_by_device_grant ? (
               <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
                 {mm
-                  ? 'Property Note access ကို သတ်မှတ် device အတွက်သာ ပေးထားပါသည်။ Website တွင် မသုံးနိုင်ပါ။ Point ဖြင့် ထပ်ဖွင့်၍ မရပါ။ Website သို့မဟုတ် Any device အတွက် Admin ထံ ဆက်သွယ်ပါ။'
-                  : 'Your Property Note access is for a specific device only. The website cannot be used with that access. Unlocking with points is not available. Please contact admin for website or Any-device access.'}
+                  ? 'သတ်မှတ် device အတွက်သာ ခွင့်ပြုထားပါသည်။ Website မသုံးနိုင်ပါ။ Admin ထံ ဆက်သွယ်ပါ။'
+                  : 'Access is for a specific device only. Please contact admin.'}
+              </div>
+            ) : null}
+
+            {access.blocked_by_revoke ? (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                {mm
+                  ? 'Access ရုပ်သိမ်းထားပါသည်။ Admin ထံ ဆက်သွယ်ပါ။'
+                  : 'Access was revoked. Please contact admin.'}
               </div>
             ) : null}
 
@@ -188,7 +208,7 @@ export default function MyPropertyNotesHub() {
               </div>
             ) : null}
 
-            {!access.blocked_by_device_grant ? (
+            {!access.blocked_by_device_grant && !access.blocked_by_revoke ? (
               <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
               <div className="rounded-md border p-3 flex items-start gap-2">
