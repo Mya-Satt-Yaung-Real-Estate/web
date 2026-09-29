@@ -72,11 +72,23 @@ export default function MyPropertyNotesHub() {
         showSuccess(res.data?.message || (mm ? 'ပြီးပါပြီ' : 'Done'), mm ? 'အောင်မြင်ပါသည်' : 'Success');
       },
       onError: (err: unknown) => {
-        const message =
-          (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data
-            ?.message ||
-          (err as { message?: string })?.message ||
-          (mm ? 'ဖွင့်၍မရပါ' : 'Unable to unlock');
+        const errBody = err as {
+          response?: {
+            data?: {
+              message?: string;
+              errors?: { blocked_by_device_grant?: boolean };
+            };
+          };
+          message?: string;
+        };
+        const blockedByDevice = Boolean(errBody.response?.data?.errors?.blocked_by_device_grant);
+        const message = blockedByDevice
+          ? mm
+            ? 'Property Note access ကို သတ်မှတ် device အတွက်သာ ပေးထားပါသည်။ Point ဖြင့် ထပ်ဖွင့်၍ မရပါ။ Website သို့မဟုတ် အခြား device အတွက် Admin ထံ ဆက်သွယ်ပါ။'
+            : 'Your access is for a specific device only. You cannot unlock with points. Please contact admin for website or another device.'
+          : errBody.response?.data?.message ||
+            errBody.message ||
+            (mm ? 'ဖွင့်၍မရပါ' : 'Unable to unlock');
         showError(message, mm ? 'အမှား' : 'Error');
       },
     });
@@ -150,11 +162,25 @@ export default function MyPropertyNotesHub() {
             <div className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-amber-600" />
               <h2 className="text-lg font-medium">
-                {mm ? 'Access ဖွင့်ရန်' : 'Unlock access'}
+                {access.blocked_by_device_grant
+                  ? mm
+                    ? 'Website တွင် အသုံးပြု၍ မရပါ'
+                    : 'Not available on website'
+                  : mm
+                    ? 'Access ဖွင့်ရန်'
+                    : 'Unlock access'}
               </h2>
             </div>
           </CardHeader>
           <CardContent className="!p-6 !pt-2 space-y-4">
+            {access.blocked_by_device_grant ? (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                {mm
+                  ? 'Property Note access ကို သတ်မှတ် device အတွက်သာ ပေးထားပါသည်။ Website တွင် မသုံးနိုင်ပါ။ Point ဖြင့် ထပ်ဖွင့်၍ မရပါ။ Website သို့မဟုတ် Any device အတွက် Admin ထံ ဆက်သွယ်ပါ။'
+                  : 'Your Property Note access is for a specific device only. The website cannot be used with that access. Unlocking with points is not available. Please contact admin for website or Any-device access.'}
+              </div>
+            ) : null}
+
             {access.status === 'rejected' && access.reject_reason ? (
               <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                 {mm ? 'ငြင်းပယ်ခံရသည် — ' : 'Rejected — '}
@@ -162,6 +188,8 @@ export default function MyPropertyNotesHub() {
               </div>
             ) : null}
 
+            {!access.blocked_by_device_grant ? (
+              <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
               <div className="rounded-md border p-3 flex items-start gap-2">
                 <Coins className="h-4 w-4 mt-0.5 text-gray-500" />
@@ -204,6 +232,8 @@ export default function MyPropertyNotesHub() {
                 <Link to="/point-management">{mm ? 'ပွိုင့် ဝယ်ရန်' : 'Buy points'}</Link>
               </Button>
             </div>
+              </>
+            ) : null}
           </CardContent>
         </Card>
       )}

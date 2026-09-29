@@ -50,6 +50,10 @@ export interface PropertyNoteAccess {
   expires_at: string | null;
   remaining_days: number | null;
   reject_reason: string | null;
+  /**
+   * True when usable User+Device grant exists but no Any-device (web denied).
+   */
+  blocked_by_device_grant?: boolean;
 }
 
 export interface PropertyNoteUnlockResult {
