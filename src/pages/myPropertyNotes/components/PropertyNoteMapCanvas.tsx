@@ -21,8 +21,8 @@ if (typeof window !== 'undefined') {
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   });
 
-  /**
-   * Default .leaflet-div-icon gray border clips our colored ring — clear it once.
+  /*
+  Default .leaflet-div-icon gray border clips our colored ring — clear it once.
    */
   if (!document.getElementById('msy-pn-map-pin-css')) {
     const style = document.createElement('style');
