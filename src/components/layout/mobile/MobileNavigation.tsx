@@ -251,7 +251,7 @@ export function MobileNavigation() {
                     {isApprover && (
                       <DropdownMenuItem onClick={() => navigate('/my-property-notes/approvals')}>
                         <ClipboardList className="mr-2 h-4 w-4" />
-                        {language === 'mm' ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals'}
+                        {language === 'mm' ? 'အိမ်ခြံမြေမှတ်စု အတည်ပြုမှုများ' : 'Property Note Approvals'}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={() => navigate('/feedback')}>

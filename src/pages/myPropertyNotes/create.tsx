@@ -99,7 +99,7 @@ export default function CreatePropertyNotePage() {
       <SEOHead seo={seo} path="/my-property-notes/create" />
 
       <PropertyNotePageHeader
-        title={mm ? 'မှတ်စု အသစ်' : 'Create Property Note'}
+        title={mm ? 'အိမ်ခြံမြေမှတ်စု အသစ်' : 'Create Property Note'}
       />
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -238,7 +238,7 @@ export default function MyPropertyNoteDetailPage() {
 
       <div className="container mx-auto px-4 pt-24 pb-6 max-w-4xl">
         <PropertyNotePageHeader
-          title={note?.note_code || (mm ? 'မှတ်စု အသေးစိတ်' : 'Property Note Detail')}
+          title={note?.note_code || (mm ? 'အိမ်ခြံမြေမှတ်စု အသေးစိတ်' : 'Property Note Detail')}
         />
 
         {(accessLoading || isLoading) && (

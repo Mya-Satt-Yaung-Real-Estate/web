@@ -155,7 +155,7 @@ export default function MyPropertyNotesListPage() {
 
       <div className="container mx-auto px-4 pt-24 pb-6 max-w-7xl">
         <PropertyNotePageHeader
-          title={mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
+          title={mm ? 'အိမ်ခြံမြေမှတ်စုများ စာရင်း' : 'Property Note List'}
           description={mm ? 'ကိုယ်ပိုင် မှတ်စုများကို စီမံပါ' : 'Manage your own property notes'}
           backTo="/my-property-notes"
           backLabel={mm ? 'ပြန်သွားရန်' : 'Back'}

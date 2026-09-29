@@ -275,7 +275,7 @@ export default function PropertyNoteApprovalsPage() {
 
       <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
         <PropertyNotePageHeader
-          title={mm ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals'}
+          title={mm ? 'အိမ်ခြံမြေမှတ်စု အတည်ပြုမှုများ' : 'Property Note Approvals'}
           description={
             mm
               ? 'Admin အတည်ပြုပြီးသား တောင်းဆိုမှုများကို နောက်ဆုံး အတည်ပြု / ငြင်းပယ်ပါ။'
@@ -442,12 +442,6 @@ export default function PropertyNoteApprovalsPage() {
                                 <div className="font-medium text-gray-900 truncate">
                                   {item.user?.name || (mm ? 'အမည်မရှိ' : 'Unknown')}
                                 </div>
-                                {item.admin?.name && item.admin_approved_at && (
-                                  <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-                                    <ShieldCheck className="h-3 w-3 shrink-0 text-blue-700" />
-                                    {item.admin.name}
-                                  </div>
-                                )}
                                 {item.reject_reason && (
                                   <div className="flex items-start gap-1 text-xs text-red-600 mt-0.5">
                                     <MessageSquareWarning className="h-3 w-3 shrink-0 mt-0.5" />

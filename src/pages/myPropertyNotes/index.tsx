@@ -46,7 +46,7 @@ export default function MyPropertyNotesHub() {
         const result = res.data?.data;
         if (result?.already_unlocked) {
           showSuccess(
-            mm ? 'Property Note ကို ဖွင့်ပြီးသားဖြစ်သည်။' : 'Property Note is already unlocked.',
+            mm ? 'အိမ်ခြံမြေမှတ်စုကို ဖွင့်ပြီးသားဖြစ်သည်။' : 'Property Note is already unlocked.',
             mm ? 'အောင်မြင်ပါသည်' : 'Success'
           );
           return;
@@ -108,7 +108,7 @@ export default function MyPropertyNotesHub() {
 
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">
-          {mm ? 'ပိုင်ဆိုင်မှု မှတ်စု (Property Notes)' : 'Property Notes'}
+          {mm ? 'အိမ်ခြံမြေမှတ်စုများ' : 'Property Notes'}
         </h1>
         <p className="mt-1 text-sm text-gray-600">
           {mm
@@ -123,7 +123,7 @@ export default function MyPropertyNotesHub() {
             <div>
               <div className="flex items-center gap-2 font-medium text-gray-900">
                 <ClipboardList className="h-5 w-5 text-amber-700" />
-                {mm ? 'Approver — Property Note အတည်ပြုမှုများ' : 'Approver — Property Note Approvals'}
+                {mm ? 'အိမ်ခြံမြေမှတ်စု အတည်ပြုမှုများ' : 'Approver — Property Note Approvals'}
               </div>
               <p className="text-sm text-gray-600 mt-1">
                 {mm
@@ -271,7 +271,7 @@ export default function MyPropertyNotesHub() {
                   {access.remaining_days != null ? (
                     <span className="font-semibold text-amber-700">
                       {mm
-                        ? `ကျန်ရှိရက် — ${access.remaining_days} ရက်`
+                        ? `လက်ကျန်ရက် — ${access.remaining_days} ရက်`
                         : `${access.remaining_days} days remaining`}
                     </span>
                   ) : (
@@ -308,7 +308,7 @@ export default function MyPropertyNotesHub() {
               <CardContent className="!p-6 flex flex-col justify-center space-y-3 min-h-[160px]">
                 <div className="flex items-center gap-2 font-medium text-gray-900">
                   <List className="h-5 w-5" />
-                  {mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
+                  {mm ? 'အိမ်ခြံမြေမှတ်စုများ စာရင်း' : 'Property Note List'}
                 </div>
                 <p className="text-sm text-gray-600">
                   {mm

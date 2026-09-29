@@ -87,13 +87,13 @@ export function PropertyNotePageHeader({
                 <Button variant={onList ? 'secondary' : 'outline'} asChild>
                   <Link to="/my-property-notes/list">
                     <List className="h-4 w-4 mr-2" />
-                    {mm ? 'မှတ်စု စာရင်း' : 'Property Note List'}
+                    {mm ? 'အိမ်ခြံမြေမှတ်စုများ စာရင်း' : 'Property Note List'}
                   </Link>
                 </Button>
                 <Button variant={onCreate ? 'secondary' : 'default'} asChild>
                   <Link to="/my-property-notes/create">
                     <Plus className="h-4 w-4 mr-2" />
-                    {mm ? 'မှတ်စု အသစ်' : 'Create Note'}
+                    {mm ? 'အိမ်ခြံမြေမှတ်စု အသစ်' : 'Create Note'}
                   </Link>
                 </Button>
               </>

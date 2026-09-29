@@ -52,6 +52,7 @@ import {
 } from './photoNavStyles';
 import type {
   PropertyNoteMapFilters,
+  PropertyNoteMapLocation,
   PropertyNoteMapPin,
   PropertyNoteMediaImage,
   PropertyNoteStatus,
@@ -62,6 +63,59 @@ import type {
  */
 function mapSheetImageSrc(img: PropertyNoteMediaImage): string {
   return img.medium_url || img.url || img.small_url || img.thumbnail_url || '';
+}
+
+/**
+ * Township + region in the active UI language (API location_string is EN-only).
+ */
+function formatMapLocationLine(
+  location: PropertyNoteMapLocation | null | undefined,
+  mm: boolean
+): string | null {
+  if (!location) return null;
+  const parts = [
+    location.township
+      ? mm
+        ? location.township.name_mm
+        : location.township.name_en
+      : null,
+    location.region ? (mm ? location.region.name_mm : location.region.name_en) : null,
+  ].filter((p): p is string => Boolean(p && String(p).trim()));
+  if (parts.length > 0) return parts.join(', ');
+  return location.location_string?.trim() || null;
+}
+
+/**
+ * Road / ward / township / region in UI language (note pins). Property freeform address as fallback.
+ */
+function formatMapAddressLine(
+  location: PropertyNoteMapLocation | null | undefined,
+  mm: boolean
+): string | null {
+  if (!location) return null;
+  const parts = [
+    location.road,
+    location.ward,
+    location.township
+      ? mm
+        ? location.township.name_mm
+        : location.township.name_en
+      : null,
+    location.region ? (mm ? location.region.name_mm : location.region.name_en) : null,
+  ].filter((p): p is string => Boolean(p && String(p).trim()));
+  if (parts.length > 0) return parts.join(', ');
+  return location.address?.trim() || null;
+}
+
+/**
+ * Note/property status label for map sheet.
+ */
+function formatMapStatusLabel(status: string | null | undefined, mm: boolean): string {
+  if (!status) return '—';
+  if (status === 'active') return mm ? 'အသက်ဝင်' : 'Active';
+  if (status === 'sold') return mm ? 'ရောင်းပြီး' : 'Sold';
+  if (status === 'rented') return mm ? 'ငှားပြီး' : 'Rented';
+  return status;
 }
 
 /**
@@ -175,7 +229,7 @@ export default function MyPropertyNotesMapPage() {
       <SEOHead seo={seo} path="/my-property-notes/map" />
 
       <PropertyNotePageHeader
-        title={mm ? 'Property Note မြေပုံ' : 'Property Note Map'}
+        title={mm ? 'အိမ်ခြံမြေမှတ်စုများ မြေပုံ' : 'Property Note Map'}
         extra={
           counts ? (
             <>
@@ -435,7 +489,7 @@ export default function MyPropertyNotesMapPage() {
             <SheetDescription>
               {selectedPin?.pin_type === 'note'
                 ? mm
-                  ? 'Property Note'
+                  ? 'အိမ်ခြံမြေမှတ်စု'
                   : 'Property Note'
                 : mm
                   ? 'အိမ်ခြံမြေ'
@@ -517,7 +571,7 @@ export default function MyPropertyNotesMapPage() {
                       <CircleDot className="h-4 w-4 mt-0.5 shrink-0 text-green-700" />
                       <p>
                         <span className="text-gray-500">{mm ? 'အခြေအနေ' : 'Status'}: </span>
-                        {detail.status}
+                        {formatMapStatusLabel(detail.status, mm)}
                       </p>
                     </div>
                   )}
@@ -530,24 +584,32 @@ export default function MyPropertyNotesMapPage() {
                       </p>
                     </div>
                   )}
-                  {detail.location?.location_string && (
-                    <div className="flex items-start gap-2.5">
-                      <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-blue-700" />
-                      <p>
-                        <span className="text-gray-500">{mm ? 'တည်နေရာ' : 'Location'}: </span>
-                        {detail.location.location_string}
-                      </p>
-                    </div>
-                  )}
-                  {detail.location?.address && (
-                    <div className="flex items-start gap-2.5">
-                      <Home className="h-4 w-4 mt-0.5 shrink-0 text-blue-600" />
-                      <p>
-                        <span className="text-gray-500">{mm ? 'လိပ်စာ' : 'Address'}: </span>
-                        {detail.location.address}
-                      </p>
-                    </div>
-                  )}
+                  {(() => {
+                    const locationLine = formatMapLocationLine(detail.location, mm);
+                    const addressLine = formatMapAddressLine(detail.location, mm);
+                    return (
+                      <>
+                        {locationLine && (
+                          <div className="flex items-start gap-2.5">
+                            <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-blue-700" />
+                            <p>
+                              <span className="text-gray-500">{mm ? 'တည်နေရာ' : 'Location'}: </span>
+                              {locationLine}
+                            </p>
+                          </div>
+                        )}
+                        {addressLine && (
+                          <div className="flex items-start gap-2.5">
+                            <Home className="h-4 w-4 mt-0.5 shrink-0 text-blue-600" />
+                            <p>
+                              <span className="text-gray-500">{mm ? 'လိပ်စာ' : 'Address'}: </span>
+                              {addressLine}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                   {detail.phone_numbers?.length > 0 && (
                     <div className="flex items-start gap-2.5">
                       <Phone className="h-4 w-4 mt-0.5 shrink-0 text-emerald-700" />

@@ -167,7 +167,7 @@ export default function EditPropertyNotePage() {
       <PropertyNotePageHeader
         title={
           mm
-            ? `မှတ်စု ပြင်ဆင်ရန်${note?.note_code ? ` · ${note.note_code}` : ''}`
+            ? `အိမ်ခြံမြေမှတ်စု ပြင်ဆင်ရန်${note?.note_code ? ` · ${note.note_code}` : ''}`
             : `Edit Property Note${note?.note_code ? ` · ${note.note_code}` : ''}`
         }
         backTo={`/my-property-notes/${noteId}`}

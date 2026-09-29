@@ -59,14 +59,14 @@ export function useNavigationData() {
       { name: t('createListing.wantedPost'), path: '/my-wanted-listings/list', icon: Search },
       { name: language === 'mm' ? 'အကျိုးတူရ' : 'Partnership Posts', path: '/my-share-profit-listings/list', icon: Handshake },
       {
-        name: language === 'mm' ? 'ပိုင်ဆိုင်မှု မှတ်စု' : 'Property Notes',
+        name: language === 'mm' ? 'အိမ်ခြံမြေမှတ်စုများ' : 'Property Notes',
         path: '/my-property-notes',
         icon: StickyNote,
       },
       ...(isApprover
         ? [
             {
-              name: language === 'mm' ? 'Property Note အတည်ပြုမှုများ' : 'Property Note Approvals',
+              name: language === 'mm' ? 'အိမ်ခြံမြေမှတ်စု အတည်ပြုမှုများ' : 'Property Note Approvals',
               path: '/my-property-notes/approvals',
               icon: ClipboardList,
             },

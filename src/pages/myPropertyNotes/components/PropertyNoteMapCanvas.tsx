@@ -202,6 +202,17 @@ export function PropertyNoteMapCanvas({
           : pin.region
             ? String(mm ? pin.region.name_mm : pin.region.name_en)
             : null;
+        /**
+         * Note pin title from API uses EN listing name — swap to MM when needed.
+         */
+        const popupTitle =
+          pin.pin_type === 'note' &&
+          mm &&
+          pin.listing_type?.name_en &&
+          pin.listing_type?.name_mm &&
+          pin.title.includes(pin.listing_type.name_en)
+            ? pin.title.replace(pin.listing_type.name_en, pin.listing_type.name_mm)
+            : pin.title;
         const priceRaw = pin.price_display;
         const priceLabel =
           typeof priceRaw === 'string' && priceRaw.trim() && priceRaw.trim() !== '.'
@@ -226,7 +237,7 @@ export function PropertyNoteMapCanvas({
               <div className="min-w-[220px] max-w-[280px] p-1 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-sm leading-snug line-clamp-2">
-                    {pin.title != null ? String(pin.title) : ''}
+                    {popupTitle != null ? String(popupTitle) : ''}
                   </h3>
                   <Badge
                     className={`shrink-0 text-[10px] !text-white ${
