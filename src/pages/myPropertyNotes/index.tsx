@@ -37,6 +37,8 @@ export default function MyPropertyNotesHub() {
 
   const access = response?.data?.data as PropertyNoteAccess | undefined;
   const isAllowed = Boolean(access?.is_allowed);
+  const isAwaitingApproval =
+    access?.status === 'pending' || access?.status === 'admin_approved';
 
   const mm = language === 'mm';
 
@@ -58,6 +60,7 @@ export default function MyPropertyNotesHub() {
               : 'Request submitted. Please wait for approval.',
             mm ? 'ပို့ပြီးပါပြီ' : 'Submitted'
           );
+          void refetch();
           return;
         }
         if (result?.is_allowed) {
@@ -79,13 +82,26 @@ export default function MyPropertyNotesHub() {
               errors?: {
                 blocked_by_device_grant?: boolean;
                 blocked_by_revoke?: boolean;
+                already_pending?: boolean;
+                status?: string;
               };
             };
           };
           message?: string;
         };
-        const blockedByDevice = Boolean(errBody.response?.data?.errors?.blocked_by_device_grant);
-        const blockedByRevoke = Boolean(errBody.response?.data?.errors?.blocked_by_revoke);
+        const errors = errBody.response?.data?.errors;
+        if (errors?.already_pending || errors?.status === 'pending' || errors?.status === 'admin_approved') {
+          showSuccess(
+            mm
+              ? 'တောင်းဆိုမှု ရှိပြီးသားဖြစ်သည်။ အတည်ပြုချက် စောင့်ပေးပါ။'
+              : 'Request already submitted. Please wait for approval.',
+            mm ? 'စောင့်ဆိုင်းနေသည်' : 'Waiting'
+          );
+          void refetch();
+          return;
+        }
+        const blockedByDevice = Boolean(errors?.blocked_by_device_grant);
+        const blockedByRevoke = Boolean(errors?.blocked_by_revoke);
         const message = blockedByDevice
           ? mm
             ? 'သတ်မှတ် device အတွက်သာ ခွင့်ပြုထားပါသည်။ Admin ထံ ဆက်သွယ်ပါ။'
@@ -201,6 +217,18 @@ export default function MyPropertyNotesHub() {
               </div>
             ) : null}
 
+            {isAwaitingApproval ? (
+              <div className="rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                {access.status === 'admin_approved'
+                  ? mm
+                    ? 'Approver အတည်ပြုချက် စောင့်နေပါသည်။ ပွိုင့်ကို အတည်ပြုပြီးမှ ဖြတ်ပါမည်။'
+                    : 'Waiting for Approver. Points are charged only when finally approved.'
+                  : mm
+                    ? 'Admin အတည်ပြုချက် စောင့်နေပါသည်။'
+                    : 'Waiting for Admin approval.'}
+              </div>
+            ) : null}
+
             {access.status === 'rejected' && access.reject_reason ? (
               <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                 {mm ? 'ငြင်းပယ်ခံရသည် — ' : 'Rejected — '}
@@ -208,7 +236,7 @@ export default function MyPropertyNotesHub() {
               </div>
             ) : null}
 
-            {!access.blocked_by_device_grant && !access.blocked_by_revoke ? (
+            {!access.blocked_by_device_grant && !access.blocked_by_revoke && !isAwaitingApproval ? (
               <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
               <div className="rounded-md border p-3 flex items-start gap-2">
