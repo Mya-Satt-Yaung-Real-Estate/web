@@ -90,10 +90,19 @@ export interface PropertyNoteListItem {
   updated_at: string | null;
 }
 
+export interface PropertyNoteBoundaryGeoJson {
+  type: 'Polygon';
+  coordinates: [number, number][][];
+}
+
 export interface PropertyNoteDetail extends PropertyNoteListItem {
   length_ft: number | null;
   width_ft: number | null;
   images: PropertyNoteMediaImage[];
+  /**
+   * Optional desired-area polygon (GeoJSON). Null on older notes.
+   */
+  boundary?: PropertyNoteBoundaryGeoJson | null;
 }
 
 export interface PropertyNoteMapPinOwner {
@@ -122,6 +131,10 @@ export interface PropertyNoteMapPin {
   owner?: PropertyNoteMapPinOwner | null;
   latitude: number | null;
   longitude: number | null;
+  /**
+   * Desired-area polygon when set (notes only). Null on property pins / old notes.
+   */
+  boundary?: PropertyNoteBoundaryGeoJson | null;
 }
 
 export interface PropertyNoteMapLocation {
@@ -218,6 +231,10 @@ export interface PropertyNoteCreateData {
   width_ft?: number | null;
   latitude: number;
   longitude: number;
+  /**
+   * GeoJSON Polygon for desired area (web create required).
+   */
+  boundary: PropertyNoteBoundaryGeoJson;
   media_ids: number[];
 }
 

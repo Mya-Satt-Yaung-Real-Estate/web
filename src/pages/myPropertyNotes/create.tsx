@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { MediaUpload } from '@/components/MediaUpload';
-import { MapLocationPicker } from '@/components/MapLocationPicker';
+import { MapAreaPicker } from '@/components/MapAreaPicker';
 import { FormField } from '@/components/forms';
 import { seoUtils } from '@/lib/seo';
 import { createPropertyNoteSchema } from '@/lib/validation';
@@ -69,6 +69,7 @@ export default function CreatePropertyNotePage() {
       width_ft: data.width_ft ?? null,
       latitude: data.latitude,
       longitude: data.longitude,
+      boundary: data.boundary!,
       media_ids: mediaIds,
     };
 
@@ -199,22 +200,24 @@ export default function CreatePropertyNotePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{mm ? 'မြေပုံ တည်နေရာ' : 'Map location'}</CardTitle>
+            <CardTitle className="text-base">{mm ? 'Desired area (မြေပုံ)' : 'Desired area on map'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {(errors.latitude || errors.longitude) && (
+            {(errors.boundary || errors.latitude || errors.longitude) && (
               <p className="text-sm text-red-500">
-                {errors.latitude?.message || errors.longitude?.message}
+                {errors.boundary?.message || errors.latitude?.message || errors.longitude?.message}
               </p>
             )}
-            <MapLocationPicker
-              variant="inline"
+            <MapAreaPicker
+              requireBoundary
               mapHeightClassName="h-[55vh] min-h-[400px]"
               latitude={form.watch('latitude')}
               longitude={form.watch('longitude')}
-              onLocationSelect={(lat, lng) => {
-                form.setValue('latitude', lat, { shouldValidate: true });
-                form.setValue('longitude', lng, { shouldValidate: true });
+              boundary={form.watch('boundary') ?? null}
+              onAreaChange={({ boundary, latitude, longitude }) => {
+                form.setValue('boundary', boundary, { shouldValidate: true });
+                form.setValue('latitude', latitude, { shouldValidate: true });
+                form.setValue('longitude', longitude, { shouldValidate: true });
               }}
             />
           </CardContent>

@@ -7,10 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { MediaUpload } from '@/components/MediaUpload';
-import { MapLocationPicker } from '@/components/MapLocationPicker';
+import { MapAreaPicker } from '@/components/MapAreaPicker';
 import { FormField } from '@/components/forms';
 import { seoUtils } from '@/lib/seo';
-import { createPropertyNoteSchema } from '@/lib/validation';
+import { updatePropertyNoteSchema } from '@/lib/validation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
 import { useFormValidation } from '@/hooks/useFormValidation';
@@ -23,7 +23,7 @@ import {
 import { useUpdatePropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
 import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
 import type { PropertyNoteUpdateData } from '@/types/propertyNote';
-import type { PropertyNoteFormData } from '@/lib/validation/propertyNote';
+import type { PropertyNoteUpdateFormData } from '@/lib/validation/propertyNote';
 
 /**
  * Edit Property Note — blocked when sold/rented (is_locked).
@@ -53,7 +53,7 @@ export default function EditPropertyNotePage() {
   const { data: townshipsData } = useTownships();
   const { data: listingTypesResp } = useListingTypes();
   const updateMutation = useUpdatePropertyNote();
-  const { form, errors } = useFormValidation(createPropertyNoteSchema);
+  const { form, errors } = useFormValidation(updatePropertyNoteSchema);
 
   const regions = regionsData?.data || [];
   const allTownships = townshipsData?.data || [];
@@ -80,6 +80,7 @@ export default function EditPropertyNotePage() {
       width_ft: note.width_ft,
       latitude: note.latitude ?? undefined,
       longitude: note.longitude ?? undefined,
+      boundary: note.boundary ?? null,
       media_ids: note.images?.map((img) => img.id) || [],
     });
 
@@ -112,7 +113,7 @@ export default function EditPropertyNotePage() {
     }));
   }, [note]);
 
-  const onSubmit = (data: PropertyNoteFormData) => {
+  const onSubmit = (data: PropertyNoteUpdateFormData) => {
     if (!note) return;
 
     const payload: PropertyNoteUpdateData = {
@@ -127,6 +128,10 @@ export default function EditPropertyNotePage() {
       longitude: data.longitude,
       media_ids: mediaIds,
     };
+
+    if (data.boundary) {
+      payload.boundary = data.boundary;
+    }
 
     updateMutation.mutate(
       { id: note.id, data: payload },
@@ -279,22 +284,24 @@ export default function EditPropertyNotePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{mm ? 'မြေပုံ တည်နေရာ' : 'Map location'}</CardTitle>
+              <CardTitle className="text-base">{mm ? 'Desired area (မြေပုံ)' : 'Desired area on map'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {(errors.latitude || errors.longitude) && (
+              {(errors.boundary || errors.latitude || errors.longitude) && (
                 <p className="text-sm text-red-500">
-                  {errors.latitude?.message || errors.longitude?.message}
+                  {errors.boundary?.message || errors.latitude?.message || errors.longitude?.message}
                 </p>
               )}
-              <MapLocationPicker
-                variant="inline"
+              <MapAreaPicker
+                requireBoundary={false}
                 mapHeightClassName="h-[55vh] min-h-[400px]"
                 latitude={form.watch('latitude')}
                 longitude={form.watch('longitude')}
-                onLocationSelect={(lat, lng) => {
-                  form.setValue('latitude', lat, { shouldValidate: true });
-                  form.setValue('longitude', lng, { shouldValidate: true });
+                boundary={form.watch('boundary') ?? null}
+                onAreaChange={({ boundary, latitude, longitude }) => {
+                  form.setValue('boundary', boundary, { shouldValidate: true });
+                  form.setValue('latitude', latitude, { shouldValidate: true });
+                  form.setValue('longitude', longitude, { shouldValidate: true });
                 }}
               />
             </CardContent>

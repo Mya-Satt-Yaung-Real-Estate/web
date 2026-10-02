@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap, useMapEvents } from 'react-leaflet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tag, Phone, MapPin, ExternalLink, Hash, Banknote } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import jadeLogo from '@/assets/jade.png';
-import type { PropertyNoteMapPin } from '@/types/propertyNote';
+import type { PropertyNoteBoundaryGeoJson, PropertyNoteMapPin } from '@/types/propertyNote';
 
 /**
  * Leaflet default icon paths break under Vite bundling — restore CDN icons.
@@ -33,8 +33,17 @@ if (typeof window !== 'undefined') {
   }
 }
 
-/** Below this zoom: smaller circles. At/above: larger circles. */
+/** Below this zoom: smaller circles / hide boundaries. At/above: larger + show area. */
 const PIN_ZOOM_THRESHOLD = 14;
+
+/**
+ * GeoJSON [lng,lat] ring → Leaflet [lat,lng] positions.
+ */
+function boundaryToPositions(boundary: PropertyNoteBoundaryGeoJson): [number, number][] | null {
+  const ring = boundary.coordinates?.[0];
+  if (!Array.isArray(ring) || ring.length < 4) return null;
+  return ring.map(([lng, lat]) => [lat, lng]);
+}
 
 /**
  * Always-available fallback (no network) — avoids browser broken-image icon.
@@ -164,8 +173,12 @@ export function PropertyNoteMapCanvas({
 
   /**
    * Cache DivIcons by image+color+size+selected so Leaflet does not thrash.
+   * Recreate the Map when pinSize changes so stale icon sizes are dropped.
    */
-  const iconCache = useMemo(() => new Map<string, L.DivIcon>(), [pinSize]);
+  const iconCache = useMemo(() => {
+    void pinSize;
+    return new Map<string, L.DivIcon>();
+  }, [pinSize]);
 
   const getIcon = (imageUrl: string, color: string, selected: boolean): L.DivIcon => {
     const key = `${imageUrl}|${color}|${pinSize}|${selected ? 1 : 0}`;
@@ -190,6 +203,34 @@ export function PropertyNoteMapCanvas({
       />
 
       <ZoomWatcher onZoom={setZoom} />
+
+      {/**
+       * Show desired-area polygons when zoomed in (same threshold as large pins).
+       */}
+      {zoom >= PIN_ZOOM_THRESHOLD
+        ? pins.map((pin) => {
+            if (pin.pin_type !== 'note' || !pin.boundary) return null;
+            const positions = boundaryToPositions(pin.boundary);
+            if (!positions) return null;
+            const isActive = activeKey === pinKey(pin);
+            const color = isActive ? SELECTED_PIN_COLOR : NOTE_PIN_COLOR;
+            return (
+              <Polygon
+                key={`boundary-${pinKey(pin)}`}
+                positions={positions}
+                pathOptions={{
+                  color,
+                  weight: isActive ? 3 : 2,
+                  fillColor: color,
+                  fillOpacity: isActive ? 0.28 : 0.18,
+                }}
+                eventHandlers={{
+                  click: () => onPinClick?.(pin),
+                }}
+              />
+            );
+          })
+        : null}
 
       {pins.map((pin) => {
         if (pin.latitude == null || pin.longitude == null) return null;
