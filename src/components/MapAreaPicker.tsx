@@ -6,6 +6,42 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
 import { Button } from '@/components/ui/button';
+
+/**
+ * leaflet-draw: on touch/pointer browsers, a click within ~10px of the first
+ * vertex auto-finishes the polygon (often right after the 3rd point).
+ * Skip that branch so users can keep adding corners until Finish / first-vertex click.
+ */
+type DrawPolylineProto = {
+  _endPoint: (clientX: number, clientY: number, e: L.LeafletMouseEvent) => void;
+};
+
+const drawPolylineProto = (
+  L.Draw as unknown as { Polyline: { prototype: DrawPolylineProto } }
+).Polyline.prototype;
+const originalDrawEndPoint = drawPolylineProto._endPoint;
+
+if (!(drawPolylineProto as { __msySkipTouchAutoFinish?: boolean }).__msySkipTouchAutoFinish) {
+  drawPolylineProto._endPoint = function (
+    this: unknown,
+    clientX: number,
+    clientY: number,
+    e: L.LeafletMouseEvent
+  ) {
+    /**
+     * L.Browser.touch is typed read-only; mutate for this call only.
+     */
+    const browserFlags = L.Browser as unknown as { touch: boolean };
+    const previousTouch = browserFlags.touch;
+    browserFlags.touch = false;
+    try {
+      return originalDrawEndPoint.call(this, clientX, clientY, e);
+    } finally {
+      browserFlags.touch = previousTouch;
+    }
+  };
+  (drawPolylineProto as { __msySkipTouchAutoFinish?: boolean }).__msySkipTouchAutoFinish = true;
+}
 import {
   Dialog,
   DialogContent,
@@ -138,8 +174,8 @@ export function MapAreaPicker({
 
   const hint = requireBoundary
     ? mm
-      ? 'Polygon tool နှိပ်ပြီး area ဆွဲပါ (အနည်းဆုံး ၃ ချက်)'
-      : 'Use the polygon tool to draw the desired area (min 3 points)'
+      ? 'Polygon tool → ထောင့်တွေ ဆက်နှိပ် (၃ ချက်အထက်) → ပုံစံပြည့်မှ Finish (သို့ ပထမအမှတ်ကို နှိပ်၍ ပိတ်)။'
+      : 'Polygon tool → keep clicking corners (more than 3 OK) → Finish when done (or click the first point to close).'
     : mm
       ? 'Area ဆွဲနိုင်သည် (မဆွဲရင် pin တည်နေရာသာ သိမ်းမည်)'
       : 'Optional: draw an area, or keep the pin only';
@@ -286,7 +322,11 @@ function DrawAreaControl({
       position: 'topright',
       draw: {
         polygon: {
-          allowIntersection: false,
+          /**
+           * false rejects some valid next corners (false-positive intersection).
+           * Prefer free drawing; API still validates a closed polygon.
+           */
+          allowIntersection: true,
           showArea: true,
           shapeOptions: {
             color: '#3B8880',
