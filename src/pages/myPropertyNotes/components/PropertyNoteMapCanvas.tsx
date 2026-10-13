@@ -173,34 +173,34 @@ function createHtmlPin(
 }
 
 function buildInfoHtml(pin: PropertyNoteMapPin, mm: boolean): string {
-  const listingName = pin.listing_type
-    ? String(mm ? pin.listing_type.name_mm : pin.listing_type.name_en)
-    : null;
-  const placeName = pin.township
-    ? String(mm ? pin.township.name_mm : pin.township.name_en)
-    : pin.region
-      ? String(mm ? pin.region.name_mm : pin.region.name_en)
-      : null;
-  const popupTitle =
-    pin.pin_type === 'note' &&
-    mm &&
-    pin.listing_type?.name_en &&
-    pin.listing_type?.name_mm &&
-    pin.title.includes(pin.listing_type.name_en)
-      ? pin.title.replace(pin.listing_type.name_en, pin.listing_type.name_mm)
-      : pin.title;
-  const priceRaw = pin.price_display;
-  const priceLabel =
-    typeof priceRaw === 'string' && priceRaw.trim() && priceRaw.trim() !== '.'
-      ? priceRaw.trim()
-      : null;
+        const listingName = pin.listing_type
+          ? String(mm ? pin.listing_type.name_mm : pin.listing_type.name_en)
+          : null;
+        const placeName = pin.township
+          ? String(mm ? pin.township.name_mm : pin.township.name_en)
+          : pin.region
+            ? String(mm ? pin.region.name_mm : pin.region.name_en)
+            : null;
+        const popupTitle =
+          pin.pin_type === 'note' &&
+          mm &&
+          pin.listing_type?.name_en &&
+          pin.listing_type?.name_mm &&
+          pin.title.includes(pin.listing_type.name_en)
+            ? pin.title.replace(pin.listing_type.name_en, pin.listing_type.name_mm)
+            : pin.title;
+        const priceRaw = pin.price_display;
+        const priceLabel =
+          typeof priceRaw === 'string' && priceRaw.trim() && priceRaw.trim() !== '.'
+            ? priceRaw.trim()
+            : null;
   const badge =
-    pin.pin_type === 'note'
-      ? mm
-        ? 'မှတ်စု'
-        : 'Note'
-      : mm
-        ? 'အိမ်'
+                      pin.pin_type === 'note'
+                      ? mm
+                        ? 'မှတ်စု'
+                        : 'Note'
+                      : mm
+                        ? 'အိမ်'
         : 'Property';
   const badgeBg = pin.pin_type === 'note' ? '#2563eb' : '#dc2626';
   const detailsLabel =
@@ -230,7 +230,7 @@ function buildInfoHtml(pin: PropertyNoteMapPin, mm: boolean): string {
     <div style="display:flex;gap:8px;align-items:flex-start;justify-content:space-between">
       <div style="font-weight:600;font-size:13px;line-height:1.3">${escapeHtml(String(popupTitle ?? ''))}</div>
       <span style="flex-shrink:0;font-size:10px;color:#fff;background:${badgeBg};border-radius:9999px;padding:2px 8px">${escapeHtml(badge)}</span>
-    </div>
+                </div>
     ${rows.join('')}
     ${propertyLink}
     <button type="button" data-pn-details="1" style="display:block;width:100%;margin-top:8px;padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0;background:#fff;font-size:12px;cursor:pointer">${escapeHtml(detailsLabel)}</button>
@@ -566,12 +566,12 @@ export function PropertyNoteMapCanvas({
       {loadError ? (
         <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-red-50 p-4 text-sm text-red-700">
           {loadError}
-        </div>
+                    </div>
       ) : null}
       {!ready && !loadError ? (
         <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-muted/40 text-sm text-muted-foreground">
           {mm ? 'မြေပုံ တင်နေသည်…' : 'Loading map…'}
-        </div>
+                    </div>
       ) : null}
 
       {/* Same chrome as create/edit maximize — search + maximize, no Draw */}
@@ -586,13 +586,13 @@ export function PropertyNoteMapCanvas({
               className="h-10 border-border/80 bg-white pl-9 shadow-md dark:bg-background"
               autoComplete="off"
             />
-          </div>
+                    </div>
           {/* No Draw on list — order: Maximize · Map/Satellite */}
           <div className="flex h-10 shrink-0 items-center gap-2">
-            <Button
+                    <Button
               type="button"
               variant="outline"
-              size="sm"
+                      size="sm"
               onClick={() => void toggleMapFullscreen()}
               className={MAP_TOOL_ICON_BTN}
               title={isMapFullscreen ? (mm ? 'ပိတ်ရန်' : 'Exit') : mm ? 'ချဲ့ရန်' : 'Maximize'}
@@ -602,7 +602,7 @@ export function PropertyNoteMapCanvas({
               ) : (
                 <Maximize2 className="h-5 w-5" strokeWidth={2.5} />
               )}
-            </Button>
+                    </Button>
             <select
               aria-label={mm ? 'မြေပုံ အမျိုးအစား' : 'Map type'}
               value={mapTypeId}
@@ -619,7 +619,7 @@ export function PropertyNoteMapCanvas({
             </select>
           </div>
         </div>
-      </div>
+              </div>
 
       <div ref={mapElRef} className="h-full w-full min-h-[360px]" />
     </div>

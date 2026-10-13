@@ -316,6 +316,9 @@ export default function MyPropertyNotesListPage() {
                     <CardHeader className="pb-2 space-y-1">
                       <div className="font-semibold text-gray-900">{note.note_code}</div>
                       {listingName && <div className="text-sm text-gray-600">{listingName}</div>}
+                      {note.price_display && (
+                        <div className="text-sm font-medium text-primary">{note.price_display}</div>
+                      )}
                       {place && (
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <MapPin className="h-3 w-3" />

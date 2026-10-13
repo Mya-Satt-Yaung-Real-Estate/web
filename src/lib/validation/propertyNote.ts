@@ -55,6 +55,31 @@ export const createPropertyNoteSchema = (t: (key: string) => string) =>
         return Number.isNaN(num) ? null : num;
       }),
 
+    area_acre: z
+      .any()
+      .optional()
+      .nullable()
+      .transform((val) => {
+        if (val === '' || val === null || val === undefined) return null;
+        const num = Number(val);
+        return Number.isNaN(num) ? null : num;
+      }),
+
+    price_amount: z
+      .any()
+      .optional()
+      .nullable()
+      .transform((val) => {
+        if (val === '' || val === null || val === undefined) return null;
+        const num = Number(val);
+        return Number.isNaN(num) ? null : num;
+      }),
+
+    currency: z
+      .enum(['MMK', 'USD', 'THB', 'CNY'])
+      .optional()
+      .nullable(),
+
     latitude: z
       .any()
       .refine((val) => {
@@ -153,6 +178,31 @@ export const updatePropertyNoteSchema = (t: (key: string) => string) =>
         const num = Number(val);
         return Number.isNaN(num) ? null : num;
       }),
+
+    area_acre: z
+      .any()
+      .optional()
+      .nullable()
+      .transform((val) => {
+        if (val === '' || val === null || val === undefined) return null;
+        const num = Number(val);
+        return Number.isNaN(num) ? null : num;
+      }),
+
+    price_amount: z
+      .any()
+      .optional()
+      .nullable()
+      .transform((val) => {
+        if (val === '' || val === null || val === undefined) return null;
+        const num = Number(val);
+        return Number.isNaN(num) ? null : num;
+      }),
+
+    currency: z
+      .enum(['MMK', 'USD', 'THB', 'CNY'])
+      .optional()
+      .nullable(),
 
     latitude: z
       .any()

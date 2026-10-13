@@ -510,6 +510,24 @@ export default function MyPropertyNotesMapPage() {
                       </p>
                     </div>
                   )}
+                  {detail.area_acre != null && (
+                    <div className="flex items-start gap-2.5">
+                      <Ruler className="h-4 w-4 mt-0.5 shrink-0 text-gray-600" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'ဧရိယာ' : 'Area'}: </span>
+                        {detail.area_acre} {mm ? 'ဧက' : 'acre'}
+                      </p>
+                    </div>
+                  )}
+                  {detail.price_display && (
+                    <div className="flex items-start gap-2.5">
+                      <CircleDot className="h-4 w-4 mt-0.5 shrink-0 text-amber-700" />
+                      <p>
+                        <span className="text-gray-500">{mm ? 'ဈေးနှုန်း' : 'Price'}: </span>
+                        {detail.price_display}
+                      </p>
+                    </div>
+                  )}
                   {(() => {
                     const locationLine = formatMapLocationLine(detail.location, mm);
                     const addressLine = formatMapAddressLine(detail.location, mm);

@@ -357,6 +357,18 @@ export default function MyPropertyNoteDetailPage() {
                     {note.length_ft ?? '-'}' × {note.width_ft ?? '-'}'
                   </p>
                 )}
+                {note.area_acre != null && (
+                  <p>
+                    <span className="text-gray-500">{mm ? 'ဧရိယာ' : 'Area'}: </span>
+                    {note.area_acre} {mm ? 'ဧက' : 'acre'}
+                  </p>
+                )}
+                {note.price_display && (
+                  <p>
+                    <span className="text-gray-500">{mm ? 'ဈေးနှုန်း' : 'Price'}: </span>
+                    {note.price_display}
+                  </p>
+                )}
                 <p className="flex items-start gap-1">
                   <MapPin className="h-4 w-4 mt-0.5 text-gray-400" />
                   <span>

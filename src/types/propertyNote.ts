@@ -83,6 +83,10 @@ export interface PropertyNoteListItem {
   township: PropertyNoteNamedPlace | null;
   ward: string | null;
   road: string | null;
+  area_acre: number | null;
+  price_amount: number | null;
+  currency: string | null;
+  price_display: string | null;
   latitude: number | null;
   longitude: number | null;
   primary_image: PropertyNoteMediaImage | null;
@@ -98,6 +102,10 @@ export interface PropertyNoteBoundaryGeoJson {
 export interface PropertyNoteDetail extends PropertyNoteListItem {
   length_ft: number | null;
   width_ft: number | null;
+  area_acre: number | null;
+  price_amount: number | null;
+  currency: string | null;
+  price_display: string | null;
   images: PropertyNoteMediaImage[];
   /**
    * Optional desired-area polygon (GeoJSON). Null on older notes.
@@ -120,6 +128,9 @@ export interface PropertyNoteMapPin {
   code: string | null;
   property_type: { name_en: string; name_mm: string } | null;
   listing_type: PropertyNoteListingType | null;
+  area_acre?: number | null;
+  price_amount?: number | null;
+  currency?: string | null;
   price_display: string | null;
   phone_numbers: string[];
   region: PropertyNoteNamedPlace | null;
@@ -164,6 +175,10 @@ export interface PropertyNoteMapDetail {
   phone_numbers: string[];
   length_ft: number | null;
   width_ft: number | null;
+  area_acre: number | null;
+  price_amount: number | null;
+  currency: string | null;
+  price_display: string | null;
   location: PropertyNoteMapLocation;
   images: PropertyNoteMediaImage[];
   primary_image: PropertyNoteMediaImage | null;
@@ -229,6 +244,9 @@ export interface PropertyNoteCreateData {
   road?: string | null;
   length_ft?: number | null;
   width_ft?: number | null;
+  area_acre?: number | null;
+  price_amount?: number | null;
+  currency?: string | null;
   latitude: number;
   longitude: number;
   /**

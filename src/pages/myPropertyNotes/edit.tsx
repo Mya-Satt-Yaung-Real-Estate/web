@@ -63,9 +63,26 @@ export default function EditPropertyNotePage() {
   }, [listingTypesResp?.data]);
 
   const watchedRegionId = form.watch('region_id');
+  const selectedCurrency = form.watch('currency') || 'MMK';
   const availableTownships = allTownships.filter(
     (township) => township.region_id === Number(watchedRegionId)
   );
+  const priceLabel =
+    selectedCurrency === 'MMK'
+      ? mm
+        ? 'ဈေးနှုန်း (သိန်း)'
+        : 'Price (Lakhs)'
+      : selectedCurrency === 'THB'
+        ? mm
+          ? 'ဈေးနှုန်း (Baht)'
+          : 'Price (Baht)'
+        : selectedCurrency === 'CNY'
+          ? mm
+            ? 'ဈေးနှုန်း (Yuan)'
+            : 'Price (Yuan)'
+          : mm
+            ? 'ဈေးနှုန်း (USD)'
+            : 'Price (USD)';
 
   useEffect(() => {
     if (!note || hydrated) return;
@@ -78,6 +95,9 @@ export default function EditPropertyNotePage() {
       road: note.road || '',
       length_ft: note.length_ft,
       width_ft: note.width_ft,
+      area_acre: note.area_acre,
+      price_amount: note.price_amount,
+      currency: (note.currency as 'MMK' | 'USD' | 'THB' | 'CNY' | null) || 'MMK',
       latitude: note.latitude ?? undefined,
       longitude: note.longitude ?? undefined,
       boundary: note.boundary ?? null,
@@ -124,6 +144,9 @@ export default function EditPropertyNotePage() {
       road: data.road || null,
       length_ft: data.length_ft ?? null,
       width_ft: data.width_ft ?? null,
+      area_acre: data.area_acre ?? null,
+      price_amount: data.price_amount ?? null,
+      currency: data.price_amount != null ? (data.currency || 'MMK') : null,
       latitude: data.latitude,
       longitude: data.longitude,
       media_ids: mediaIds,
@@ -277,6 +300,40 @@ export default function EditPropertyNotePage() {
                 </FormField>
                 <FormField name="width_ft" label={mm ? 'အနံ (ft)' : 'Width (ft)'} error={errors.width_ft}>
                   <Input type="number" step="any" {...form.register('width_ft')} />
+                </FormField>
+              </div>
+
+              <FormField name="area_acre" label={mm ? 'ဧရိယာ (ဧက)' : 'Area (acre)'} error={errors.area_acre}>
+                <Input type="number" step="any" min="0" {...form.register('area_acre')} />
+              </FormField>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField name="currency" label={mm ? 'ငွေကြေး' : 'Currency'} error={errors.currency}>
+                  <Select
+                    value={selectedCurrency}
+                    onValueChange={(value) =>
+                      form.setValue('currency', value as 'MMK' | 'USD' | 'THB' | 'CNY', { shouldValidate: true })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={mm ? 'ရွေးချယ်ပါ' : 'Select'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MMK">{mm ? 'MMK (သိန်း)' : 'MMK (Lakhs)'}</SelectItem>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="THB">Baht</SelectItem>
+                      <SelectItem value="CNY">Yuan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormField>
+                <FormField name="price_amount" label={priceLabel} error={errors.price_amount}>
+                  <Input
+                    type="number"
+                    step="any"
+                    min="0"
+                    placeholder={selectedCurrency === 'MMK' ? (mm ? 'ဥပမာ: 1500' : 'e.g. 1500') : 'e.g. 25000'}
+                    {...form.register('price_amount')}
+                  />
                 </FormField>
               </div>
             </CardContent>
