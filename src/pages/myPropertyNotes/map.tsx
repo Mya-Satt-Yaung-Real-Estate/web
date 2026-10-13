@@ -11,7 +11,6 @@ import {
   Ruler,
   MapPin,
   Phone,
-  Maximize2,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -21,12 +20,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import {
   Sheet,
   SheetContent,
@@ -137,10 +130,6 @@ export default function MyPropertyNotesMapPage() {
    * Last clicked map pin (green). Separate from sidebar sheet.
    */
   const [activePin, setActivePin] = useState<PropertyNoteMapPin | null>(null);
-  /**
-   * Large dialog map — hide inline map while open (avoids dual Leaflet instances).
-   */
-  const [isMapMaximized, setIsMapMaximized] = useState(false);
   /**
    * Sheet photo carousel index (reset when pin/detail changes).
    */
@@ -368,109 +357,46 @@ export default function MyPropertyNotesMapPage() {
                 {mm ? 'pin မရှိသေးပါ' : 'No pins to show'}
               </div>
             ) : (
-              <>
-                {/**
-                 * Same Expand pattern as MapLocationPicker (create form): outline + icon + label above map.
-                 */}
-                {!isMapMaximized && (
-                  <div className="space-y-2">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        <span className="inline-flex items-center gap-1.5">
-                          <span
-                            className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
-                            style={{ borderColor: '#dc2626' }}
-                          />
-                          <span className="font-medium text-gray-700">
-                            {mm ? 'အိမ်' : 'Property'}
-                          </span>
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <span
-                            className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
-                            style={{ borderColor: '#2563eb' }}
-                          />
-                          <span className="font-medium text-gray-700">
-                            {mm ? 'မှတ်စု' : 'Notes'}
-                          </span>
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <span
-                            className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
-                            style={{ borderColor: '#16a34a' }}
-                          />
-                          <span className="font-medium text-gray-700">
-                            {mm ? 'ရွေးထား' : 'Selected'}
-                          </span>
-                        </span>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsMapMaximized(true)}
-                        className="shrink-0"
-                      >
-                        <Maximize2 className="h-4 w-4 mr-1.5" />
-                        {mm ? 'ချဲ့ရန်' : 'Expand'}
-                      </Button>
-                    </div>
-                    <div className="relative h-[65vh] min-h-[360px] w-full overflow-hidden rounded-lg">
-                      <PropertyNoteMapCanvas
-                        pins={pins}
-                        language={language}
-                        activePin={activePin}
-                        onPinClick={setActivePin}
-                        onViewDetails={(pin) => {
-                          setActivePin(pin);
-                          setSelectedPin(pin);
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-                {isMapMaximized && (
-                  <div className="h-[65vh] min-h-[360px] w-full flex items-center justify-center text-sm text-gray-500 rounded-lg bg-muted/30">
-                    {mm ? 'ချဲ့ထားသော မြေပုံ ဖွင့်ထားသည်…' : 'Maximized map is open…'}
-                  </div>
-                )}
-              </>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3 px-1 text-sm text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                      style={{ borderColor: '#dc2626' }}
+                    />
+                    <span className="font-medium text-gray-700">{mm ? 'အိမ်' : 'Property'}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                      style={{ borderColor: '#2563eb' }}
+                    />
+                    <span className="font-medium text-gray-700">{mm ? 'မှတ်စု' : 'Notes'}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                      style={{ borderColor: '#16a34a' }}
+                    />
+                    <span className="font-medium text-gray-700">{mm ? 'ရွေးထား' : 'Selected'}</span>
+                  </span>
+                </div>
+                <div className="relative h-[65vh] min-h-[360px] w-full">
+                  <PropertyNoteMapCanvas
+                    pins={pins}
+                    language={language}
+                    activePin={activePin}
+                    onPinClick={setActivePin}
+                    onViewDetails={(pin) => {
+                      setActivePin(pin);
+                      setSelectedPin(pin);
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
-      )}
-
-      {isMapMaximized && (
-        <Dialog open={isMapMaximized} onOpenChange={setIsMapMaximized}>
-          <DialogContent
-            size="2xl"
-            className="max-w-[98vw] w-[98vw] h-[96vh] !flex !flex-col !gap-0 !p-0"
-            style={{ maxHeight: '96vh' }}
-          >
-            <div className="px-3 py-2 pr-12 border-b flex items-center flex-shrink-0">
-              <DialogHeader className="flex-1 space-y-0 py-0 text-left">
-                <DialogTitle className="text-sm font-medium leading-tight">
-                  {mm ? 'မြေပုံ (ကြီးမားသော မြေပုံ)' : 'Property notes map (expanded)'}
-                </DialogTitle>
-              </DialogHeader>
-            </div>
-            <div className="relative min-h-0 flex-1 overflow-hidden">
-              {pins.length > 0 && (
-                <PropertyNoteMapCanvas
-                  pins={pins}
-                  language={language}
-                  activePin={activePin}
-                  onPinClick={setActivePin}
-                  onViewDetails={(pin) => {
-                    setActivePin(pin);
-                    setSelectedPin(pin);
-                    setIsMapMaximized(false);
-                  }}
-                />
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
       )}
 
       <Sheet

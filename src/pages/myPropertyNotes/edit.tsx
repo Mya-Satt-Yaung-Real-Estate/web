@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { MediaUpload } from '@/components/MediaUpload';
-import { MapAreaPicker } from '@/components/MapAreaPicker';
+import { GooglePropertyNoteMap } from '@/components/GooglePropertyNoteMap';
 import { FormField } from '@/components/forms';
 import { seoUtils } from '@/lib/seo';
 import { updatePropertyNoteSchema } from '@/lib/validation';
@@ -292,7 +292,7 @@ export default function EditPropertyNotePage() {
                   {errors.boundary?.message || errors.latitude?.message || errors.longitude?.message}
                 </p>
               )}
-              <MapAreaPicker
+              <GooglePropertyNoteMap
                 requireBoundary={false}
                 mapHeightClassName="h-[55vh] min-h-[400px]"
                 latitude={form.watch('latitude')}
