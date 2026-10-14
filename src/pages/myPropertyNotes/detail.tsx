@@ -22,7 +22,10 @@ import { seoUtils } from '@/lib/seo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
-import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PAGE_SHELL,
+  PropertyNotePageHeader,
+} from './components/PropertyNotePageHeader';
 import { PropertyNoteDetailMiniMap } from './components/PropertyNoteDetailMiniMap';
 import {
   PROPERTY_NOTE_PHOTO_NAV_BUTTON,
@@ -224,7 +227,7 @@ export default function MyPropertyNoteDetailPage() {
     <>
       <SEOHead seo={seo} path={`/my-property-notes/${noteId}`} />
 
-      <div className="container mx-auto max-w-5xl px-4 pt-24 pb-6">
+      <div className={PROPERTY_NOTE_PAGE_SHELL}>
         <PropertyNotePageHeader
           title={note?.note_code || (mm ? 'အိမ်ခြံမြေမှတ်စု အသေးစိတ်' : 'Property Note Detail')}
           meta={
@@ -406,7 +409,11 @@ export default function MyPropertyNoteDetailPage() {
               </div>
             )}
 
-            <Card className="min-w-0 lg:sticky lg:top-24">
+            {/**
+             * No sticky — sticky Details made only the left gallery scroll
+             * while the right column stayed fixed (see scrollable.mp4).
+             */}
+            <Card className="min-w-0 max-w-full overflow-hidden">
               <CardHeader className="pb-2 font-medium">
                 {mm ? 'အချက်အလက်' : 'Details'}
               </CardHeader>

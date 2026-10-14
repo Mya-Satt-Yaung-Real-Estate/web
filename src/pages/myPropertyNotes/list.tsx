@@ -296,68 +296,104 @@ export default function MyPropertyNotesListPage() {
                   .map((p) => (mm ? p!.name_mm : p!.name_en))
                   .join(', ');
 
+                const detailPath = `/my-property-notes/${note.id}`;
+
                 return (
-                  <Card key={note.id} className="overflow-hidden">
-                    <div className="relative h-40 bg-muted">
+                  <Card key={note.id} className="flex flex-col overflow-hidden">
+                    <Link
+                      to={detailPath}
+                      className="relative block h-40 shrink-0 bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
                       {imageUrl ? (
                         <ImageWithFallback
                           src={imageUrl}
                           alt={note.note_code}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover transition-opacity hover:opacity-95"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+                        <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
                           {mm ? 'ပုံမရှိ' : 'No image'}
                         </div>
                       )}
-                      <Badge className={`absolute top-2 right-2 border ${statusBadgeClass(note.status)}`}>
+                      <Badge
+                        className={`absolute top-2 right-2 border ${statusBadgeClass(note.status)}`}
+                      >
                         {note.status}
                       </Badge>
-                    </div>
-                    <CardHeader className="pb-2 space-y-1">
-                      <div className="font-semibold text-gray-900">{note.note_code}</div>
-                      {listingName && <div className="text-sm text-gray-600">{listingName}</div>}
+                    </Link>
+
+                    <CardHeader className="space-y-1 pb-2">
+                      <Link
+                        to={detailPath}
+                        className="font-semibold text-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                      >
+                        {note.note_code}
+                      </Link>
+                      {listingName && (
+                        <div className="text-sm text-muted-foreground">{listingName}</div>
+                      )}
                       {note.price_display && (
-                        <div className="text-sm font-medium text-primary">{note.price_display}</div>
+                        <div className="text-sm font-medium text-primary">
+                          {note.price_display}
+                        </div>
                       )}
                       {place && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <MapPin className="h-3 w-3" />
-                          {place}
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          <span className="line-clamp-1">{place}</span>
                         </div>
                       )}
                       {(note.ward || note.road) && (
-                        <div className="text-xs text-gray-500 line-clamp-1">
+                        <div className="line-clamp-1 text-xs text-muted-foreground">
                           {[note.road, note.ward].filter(Boolean).join(', ')}
                         </div>
                       )}
                     </CardHeader>
-                    <CardContent className="pt-0 flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" asChild>
-                        <Link to={`/my-property-notes/${note.id}`}>
-                          <Eye className="h-3.5 w-3.5 mr-1" />
-                          {mm ? 'ကြည့်ရန်' : 'View'}
-                        </Link>
-                      </Button>
-                      {!note.is_locked && (
-                        <Button size="sm" variant="outline" asChild>
-                          <Link to={`/my-property-notes/${note.id}/edit`}>
-                            <Edit className="h-3.5 w-3.5 mr-1" />
-                            {mm ? 'ပြင်ရန်' : 'Edit'}
+
+                    {/**
+                     * Footer action bar — View primary left; Edit/Delete icon-only right.
+                     */}
+                    <CardContent className="mt-auto pt-0">
+                      <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-3">
+                        <Button size="sm" asChild className="h-8 px-3 shadow-sm shadow-primary/15">
+                          <Link to={detailPath}>
+                            <Eye className="mr-1.5 h-3.5 w-3.5" />
+                            {mm ? 'ကြည့်ရန်' : 'View'}
                           </Link>
                         </Button>
-                      )}
-                      {!note.is_locked && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600"
-                          onClick={() => handleDelete(note)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5 mr-1" />
-                          {mm ? 'ဖျက်ရန်' : 'Delete'}
-                        </Button>
-                      )}
+                        {!note.is_locked ? (
+                          <div className="flex items-center gap-1.5">
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8"
+                              asChild
+                            >
+                              <Link
+                                to={`/my-property-notes/${note.id}/edit`}
+                                title={mm ? 'ပြင်ရန်' : 'Edit'}
+                                aria-label={mm ? 'ပြင်ရန်' : 'Edit'}
+                              >
+                                <Edit className="h-3.5 w-3.5" />
+                              </Link>
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                              title={mm ? 'ဖျက်ရန်' : 'Delete'}
+                              aria-label={mm ? 'ဖျက်ရန်' : 'Delete'}
+                              onClick={() => handleDelete(note)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            {mm ? 'ပြင်မရ' : 'Locked'}
+                          </span>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 );

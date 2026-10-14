@@ -21,7 +21,7 @@ interface PropertyNotePageHeaderProps {
    */
   meta?: ReactNode;
   /**
-   * Note-level actions (Edit / Mark / Delete) — beside title, not under global nav.
+   * Note-level actions (Edit / Mark / Delete) — under global nav on the right.
    */
   actions?: ReactNode;
   /**
@@ -112,13 +112,22 @@ export function PropertyNotePageHeader({
 
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      {/**
+       * Title aligns with right nav on every page (same top space).
+       * Back sits under title/meta so Create/Detail match Approvals/List.
+       */}
       <div className="min-w-0 flex-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
+        {description ? (
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        ) : null}
+        {meta ? <div className="mt-2">{meta}</div> : null}
         {showBack ? (
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="mb-1 -ml-2 text-muted-foreground hover:text-primary"
+            className="mt-2 -ml-2 h-8 text-muted-foreground hover:text-primary"
           >
             <Link to={resolvedBackTo}>
               <ArrowLeft className="mr-1 h-4 w-4" />
@@ -126,38 +135,21 @@ export function PropertyNotePageHeader({
             </Link>
           </Button>
         ) : null}
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
-            {description ? (
-              <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-            ) : null}
-            {meta ? <div className="mt-2">{meta}</div> : null}
-          </div>
-          {actions ? (
-            <div
-              className="flex flex-wrap gap-2 sm:shrink-0 sm:justify-end"
-              aria-label={mm ? 'မှတ်စု လုပ်ဆောင်ချက်များ' : 'Note actions'}
-            >
-              {actions}
-            </div>
-          ) : null}
-        </div>
       </div>
 
-      {/**
-       * Global nav only (segment ± Create). Note CRUD stays in `actions` beside the title.
-       */}
-      {(showSegmentNav || extra) && (
-        <div
-          className={cn(
-            'flex flex-col items-stretch gap-2.5 sm:items-end',
-            showBack ? 'sm:pt-9' : 'sm:pt-0.5'
-          )}
-        >
+      {(showSegmentNav || extra || actions) && (
+        <div className="flex max-w-full min-w-0 flex-col items-stretch gap-2.5 sm:items-end">
           {showSegmentNav ? (
             <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              {/** Create first (2), then view segment (1). */}
+              {showCreateNote ? (
+                <Button size="sm" asChild className="h-9 shadow-sm shadow-primary/20">
+                  <Link to="/my-property-notes/create">
+                    <Plus className="mr-1.5 h-4 w-4" />
+                    {mm ? 'မှတ်စု အသစ်' : 'Create Note'}
+                  </Link>
+                </Button>
+              ) : null}
               <div
                 className="inline-flex flex-wrap items-center gap-0.5 rounded-xl border border-primary/15 bg-card/80 p-1 shadow-sm"
                 role="navigation"
@@ -188,14 +180,14 @@ export function PropertyNotePageHeader({
                   </>
                 ) : null}
               </div>
-              {showCreateNote ? (
-                <Button size="sm" asChild className="h-9 shadow-sm shadow-primary/20">
-                  <Link to="/my-property-notes/create">
-                    <Plus className="mr-1.5 h-4 w-4" />
-                    {mm ? 'မှတ်စု အသစ်' : 'Create Note'}
-                  </Link>
-                </Button>
-              ) : null}
+            </div>
+          ) : null}
+          {actions ? (
+            <div
+              className="flex flex-wrap gap-2 sm:justify-end"
+              aria-label={mm ? 'မှတ်စု လုပ်ဆောင်ချက်များ' : 'Note actions'}
+            >
+              {actions}
             </div>
           ) : null}
           {extra ? <div className="flex flex-wrap gap-2 sm:justify-end">{extra}</div> : null}
