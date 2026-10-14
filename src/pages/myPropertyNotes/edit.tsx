@@ -224,7 +224,7 @@ export default function EditPropertyNotePage() {
               >
                 <Select
                   value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : undefined}
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
                     form.setValue('listing_type_id', Number(value), {
                       shouldDirty: true,
                       shouldTouch: true,
@@ -275,7 +275,7 @@ export default function EditPropertyNotePage() {
                 <FormField name="township_id" label={mm ? 'မြို့နယ်' : 'Township'} required error={errors.township_id}>
                   <Select
                     value={form.watch('township_id') ? String(form.watch('township_id')) : undefined}
-                    onValueChange={(value) =>
+                    onValueChange={(value) => {
                       form.setValue('township_id', Number(value), {
                         shouldDirty: true,
                         shouldTouch: true,
