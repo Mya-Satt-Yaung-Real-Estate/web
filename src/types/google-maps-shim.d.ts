@@ -137,6 +137,7 @@ declare namespace google.maps {
     mapTypeId?: string;
     streetViewControl?: boolean;
     fullscreenControl?: boolean;
+    disableDefaultUI?: boolean;
     disableDoubleClickZoom?: boolean;
     zoomControl?: boolean;
     zoomControlOptions?: {
@@ -148,6 +149,8 @@ declare namespace google.maps {
       position?: number;
       mapTypeIds?: string[];
     };
+    gestureHandling?: 'cooperative' | 'greedy' | 'none' | 'auto';
+    clickableIcons?: boolean;
   }
 
   interface MarkerOptions {
