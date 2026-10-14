@@ -387,6 +387,18 @@ const translations: Translations = {
     'validation.phoneNumbers.required': { en: 'At least one phone number is required', mm: 'ဖုန်းနံပါတ်အနည်းဆုံး တစ်ခု လိုအပ်ပါသည်' },
     'validation.phoneNumbers.invalid': { en: 'Phone number must be digits only (max 13) with optional + at start', mm: 'ဖုန်းနံပါတ်သည် အစတွင် + ရှိနိုင်ပြီး နံပါတ်များသာ (အများဆုံး 13) ဖြစ်ရမည်' },
     'validation.media.required': { en: 'Please upload at least one media file', mm: 'အနည်းဆုံး မီဒီယာဖိုင် တစ်ဖိုင် ရှိရပါမည်' },
+    'validation.boundary.required': {
+      en: 'Please draw the desired area on the map',
+      mm: 'မြေပုံပေါ်တွင် လိုချင်သော ဧရိယာကို ဆွဲပေးပါ',
+    },
+    'validation.latitude.required': {
+      en: 'Please set a location on the map',
+      mm: 'မြေပုံပေါ်တွင် တည်နေရာ သတ်မှတ်ပေးပါ',
+    },
+    'validation.longitude.required': {
+      en: 'Please set a location on the map',
+      mm: 'မြေပုံပေါ်တွင် တည်နေရာ သတ်မှတ်ပေးပါ',
+    },
     'validation.agreeTerms': { en: 'You must agree to the terms and conditions', mm: 'သင်သည် စည်းမျဉ်းများနှင့် လိုက်နာရမည့်အချက်များကို သဘောတူရပါမည်' },
     'validation.consentPersonalData': { en: 'You must consent to the processing of your personal data', mm: 'သင်၏ကိုယ်ရေးကိုယ်တာအချက်အလက်များ ကိုင်တွယ်ခြင်းကို သဘောတူညီရပါမည်' },
     'validation.authorizeCreditCheck': { en: 'You must authorize credit check', mm: 'သင်သည် အကြွေးစစ်ဆေးခြင်းကို ခွင့်ပြုရပါမည်' },

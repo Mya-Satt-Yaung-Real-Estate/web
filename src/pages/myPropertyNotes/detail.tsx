@@ -1,9 +1,11 @@
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
+  CircleDollarSign,
   Edit,
+  KeyRound,
   Maximize2,
   Trash2,
   MapPin,
@@ -13,12 +15,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from '@/components/ui/carousel';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
@@ -27,6 +23,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import { PropertyNoteDetailMiniMap } from './components/PropertyNoteDetailMiniMap';
 import {
   PROPERTY_NOTE_PHOTO_NAV_BUTTON,
   PROPERTY_NOTE_PHOTO_NAV_ICON,
@@ -40,6 +37,7 @@ import {
   useUpdatePropertyNoteStatus,
 } from '@/hooks/mutations/usePropertyNoteMutations';
 import type { PropertyNoteMediaImage, PropertyNoteStatus } from '@/types/propertyNote';
+import { cn } from '@/lib/utils';
 
 function statusBadgeClass(status: PropertyNoteStatus | string): string {
   if (status === 'active') return 'bg-green-600 text-white hover:bg-green-600 border-transparent';
@@ -84,16 +82,19 @@ export default function MyPropertyNoteDetailPage() {
    * Fullscreen lightbox index — null means closed.
    */
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  /**
-   * Embla API for gallery prev/next — custom buttons (same style as map sheet).
-   */
-  const [galleryApi, setGalleryApi] = useState<CarouselApi>();
+  /** Hero photo index (1) — thumbs (2+) switch this. */
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const thumbsRef = useRef<HTMLDivElement | null>(null);
 
   const images: PropertyNoteMediaImage[] = note?.images?.length
     ? note.images
     : note?.primary_image
       ? [note.primary_image]
       : [];
+
+  useEffect(() => {
+    setActivePhotoIndex(0);
+  }, [note?.id]);
 
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -130,27 +131,14 @@ export default function MyPropertyNoteDetailPage() {
   const imageSrc = (img: PropertyNoteMediaImage): string =>
     img.url || img.medium_url || img.small_url || img.thumbnail_url || '';
 
-  /**
-   * Thumbnail with top-right maximize control.
-   */
-  const renderPhotoThumb = (img: PropertyNoteMediaImage, index: number) => (
-    <div key={img.id} className="relative group">
-      <ImageWithFallback
-        src={img.medium_url || img.url || img.small_url || ''}
-        alt={note?.note_code || 'Photo'}
-        className="h-36 w-full object-cover rounded-md"
-      />
-      <button
-        type="button"
-        onClick={() => openLightbox(index)}
-        className={`absolute top-2 right-2 z-10 flex items-center justify-center ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
-        title={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
-        aria-label={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
-      >
-        <Maximize2 className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
-      </button>
-    </div>
-  );
+  const thumbSrc = (img: PropertyNoteMediaImage): string =>
+    img.small_url || img.thumbnail_url || img.medium_url || img.url || '';
+
+  const scrollThumbs = (dir: 'prev' | 'next') => {
+    const el = thumbsRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === 'next' ? 160 : -160, behavior: 'smooth' });
+  };
 
   const handleStatus = (status: 'sold' | 'rented') => {
     if (!note || note.is_locked) return;
@@ -236,16 +224,72 @@ export default function MyPropertyNoteDetailPage() {
     <>
       <SEOHead seo={seo} path={`/my-property-notes/${noteId}`} />
 
-      <div className="container mx-auto px-4 pt-24 pb-6 max-w-4xl">
+      <div className="container mx-auto max-w-5xl px-4 pt-24 pb-6">
         <PropertyNotePageHeader
           title={note?.note_code || (mm ? 'အိမ်ခြံမြေမှတ်စု အသေးစိတ်' : 'Property Note Detail')}
+          meta={
+            note ? (
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge className={statusBadgeClass(note.status)}>{note.status}</Badge>
+                  {note.is_locked && (
+                    <Badge variant="outline">{mm ? 'ပြင်မရ' : 'Locked'}</Badge>
+                  )}
+                </div>
+                {note.listing_type ? (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {mm ? note.listing_type.name_mm : note.listing_type.name_en}
+                  </p>
+                ) : null}
+              </div>
+            ) : null
+          }
+          actions={
+            note && !note.is_locked ? (
+              <>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={`/my-property-notes/${note.id}/edit`}>
+                    <Edit className="mr-1.5 h-4 w-4" />
+                    {mm ? 'ပြင်ရန်' : 'Edit'}
+                  </Link>
+                </Button>
+                {note.listing_type?.slug === 'for-sale' && (
+                  <Button variant="outline" size="sm" onClick={() => handleStatus('sold')}>
+                    <CircleDollarSign className="mr-1.5 h-4 w-4" />
+                    {mm ? 'Sold' : 'Mark sold'}
+                  </Button>
+                )}
+                {note.listing_type?.slug === 'for-rent' && (
+                  <Button variant="outline" size="sm" onClick={() => handleStatus('rented')}>
+                    <KeyRound className="mr-1.5 h-4 w-4" />
+                    {mm ? 'Rented' : 'Mark rented'}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="mr-1.5 h-4 w-4" />
+                  {mm ? 'ဖျက်ရန်' : 'Delete'}
+                </Button>
+              </>
+            ) : null
+          }
         />
 
         {(accessLoading || isLoading) && (
-          <div className="space-y-3">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-56 w-full" />
-            <Skeleton className="h-24 w-full" />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-6">
+            <div className="space-y-2">
+              <Skeleton className="aspect-[16/10] w-full rounded-xl lg:aspect-[4/3]" />
+              <div className="flex gap-2">
+                <Skeleton className="h-16 w-24 rounded-lg sm:h-20 sm:w-28" />
+                <Skeleton className="h-16 w-24 rounded-lg sm:h-20 sm:w-28" />
+                <Skeleton className="h-16 w-24 rounded-lg sm:h-20 sm:w-28" />
+              </div>
+            </div>
+            <Skeleton className="h-64 w-full rounded-xl lg:h-full lg:min-h-[320px]" />
           </div>
         )}
 
@@ -261,130 +305,173 @@ export default function MyPropertyNoteDetailPage() {
         )}
 
         {!isLoading && note && (
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge className={statusBadgeClass(note.status)}>{note.status}</Badge>
-                  {note.is_locked && (
-                    <Badge variant="outline">{mm ? 'ပြင်မရ' : 'Locked'}</Badge>
+          /**
+           * Mobile: gallery then details (stack).
+           * Desktop: gallery | details (~60% / 40%).
+           */
+          <div
+            className={cn(
+              'grid grid-cols-1 gap-4',
+              images.length > 0 && 'lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-start lg:gap-6'
+            )}
+          >
+            {images.length > 0 && (
+              <div className="min-w-0 space-y-2">
+                <div className="relative overflow-hidden rounded-xl border border-border/60 bg-muted/30">
+                  <button
+                    type="button"
+                    className="block w-full cursor-zoom-in"
+                    onClick={() => openLightbox(activePhotoIndex)}
+                    aria-label={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize photo'}
+                  >
+                    <ImageWithFallback
+                      src={
+                        images[activePhotoIndex]?.medium_url ||
+                        images[activePhotoIndex]?.url ||
+                        images[activePhotoIndex]?.small_url ||
+                        ''
+                      }
+                      alt={note.note_code || 'Photo'}
+                      className="aspect-[16/10] w-full object-cover lg:aspect-[4/3]"
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openLightbox(activePhotoIndex)}
+                    className={`absolute right-3 top-3 z-10 flex items-center justify-center ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                    title={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
+                    aria-label={mm ? 'ချဲ့ကြည့်ရန်' : 'Maximize'}
+                  >
+                    <Maximize2 className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                  </button>
+                  {images.length > 1 && (
+                    <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/55 px-2.5 py-0.5 text-xs font-medium text-white">
+                      {activePhotoIndex + 1} / {images.length}
+                    </div>
                   )}
                 </div>
-                {note.listing_type && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {mm ? note.listing_type.name_mm : note.listing_type.name_en}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {!note.is_locked && (
-                  <>
-                    <Button variant="outline" asChild>
-                      <Link to={`/my-property-notes/${note.id}/edit`}>
-                        <Edit className="h-4 w-4 mr-1" />
-                        {mm ? 'ပြင်ရန်' : 'Edit'}
-                      </Link>
-                    </Button>
-                    {note.listing_type?.slug === 'for-sale' && (
-                      <Button variant="outline" onClick={() => handleStatus('sold')}>
-                        {mm ? 'Sold' : 'Mark sold'}
-                      </Button>
-                    )}
-                    {note.listing_type?.slug === 'for-rent' && (
-                      <Button variant="outline" onClick={() => handleStatus('rented')}>
-                        {mm ? 'Rented' : 'Mark rented'}
-                      </Button>
-                    )}
-                    <Button variant="outline" className="text-red-600" onClick={handleDelete}>
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      {mm ? 'ဖျက်ရန်' : 'Delete'}
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
 
-            {images.length > 0 && (
-              images.length > 3 ? (
-                /**
-                 * More than 3 photos: show ~3 at a time with prev/next scroll.
-                 */
-                <Carousel
-                  opts={{ align: 'start', slidesToScroll: 1, loop: true }}
-                  setApi={setGalleryApi}
-                  className="relative w-full"
-                >
-                  <CarouselContent className="-ml-2">
-                    {images.map((img, index) => (
-                      <CarouselItem
-                        key={img.id}
-                        className="pl-2 basis-1/2 sm:basis-1/3"
-                      >
-                        {renderPhotoThumb(img, index)}
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <button
-                    type="button"
-                    className={`absolute left-2 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
-                    onClick={() => galleryApi?.scrollPrev()}
-                    aria-label={mm ? 'ယခင်ပုံ' : 'Previous photo'}
-                  >
-                    <ChevronLeft className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
-                  </button>
-                  <button
-                    type="button"
-                    className={`absolute right-2 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
-                    onClick={() => galleryApi?.scrollNext()}
-                    aria-label={mm ? 'နောက်ပုံ' : 'Next photo'}
-                  >
-                    <ChevronRight className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
-                  </button>
-                </Carousel>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {images.map((img, index) => renderPhotoThumb(img, index))}
-                </div>
-              )
+                {images.length > 1 && (
+                  <div className="relative">
+                    <div
+                      ref={thumbsRef}
+                      className="flex gap-2 overflow-x-auto scroll-smooth pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    >
+                      {images.map((img, index) => (
+                        <button
+                          key={img.id}
+                          type="button"
+                          onClick={() => setActivePhotoIndex(index)}
+                          className={cn(
+                            'relative h-16 w-24 shrink-0 overflow-hidden rounded-lg border-2 transition-colors sm:h-20 sm:w-28',
+                            index === activePhotoIndex
+                              ? 'border-primary'
+                              : 'border-transparent opacity-80 hover:opacity-100'
+                          )}
+                          aria-label={
+                            mm ? `ပုံ ${index + 1}` : `Photo ${index + 1}`
+                          }
+                          aria-current={index === activePhotoIndex}
+                        >
+                          <ImageWithFallback
+                            src={thumbSrc(img)}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    {images.length > 3 && (
+                      <>
+                        <button
+                          type="button"
+                          className={`absolute left-1 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                          onClick={() => scrollThumbs('prev')}
+                          aria-label={mm ? 'ယခင်ပုံများ' : 'Previous photos'}
+                        >
+                          <ChevronLeft className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                        </button>
+                        <button
+                          type="button"
+                          className={`absolute right-1 top-1/2 z-10 -translate-y-1/2 ${PROPERTY_NOTE_PHOTO_NAV_BUTTON}`}
+                          onClick={() => scrollThumbs('next')}
+                          aria-label={mm ? 'နောက်ပုံများ' : 'Next photos'}
+                        >
+                          <ChevronRight className={PROPERTY_NOTE_PHOTO_NAV_ICON} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
 
-            <Card>
-              <CardHeader className="pb-2 font-medium">{mm ? 'အချက်အလက်' : 'Details'}</CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                {(note.length_ft != null || note.width_ft != null) && (
-                  <p>
-                    <span className="text-gray-500">{mm ? 'အတိုင်းအတာ' : 'Size'}: </span>
-                    {note.length_ft ?? '-'}' × {note.width_ft ?? '-'}'
+            <Card className="min-w-0 lg:sticky lg:top-24">
+              <CardHeader className="pb-2 font-medium">
+                {mm ? 'အချက်အလက်' : 'Details'}
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm">
+                  {(note.length_ft != null || note.width_ft != null) && (
+                    <p>
+                      <span className="text-muted-foreground">
+                        {mm ? 'အတိုင်းအတာ' : 'Size'}:{' '}
+                      </span>
+                      {note.length_ft ?? '-'}' × {note.width_ft ?? '-'}'
+                    </p>
+                  )}
+                  {note.area_acre != null && (
+                    <p>
+                      <span className="text-muted-foreground">
+                        {mm ? 'ဧရိယာ' : 'Area'}:{' '}
+                      </span>
+                      {note.area_acre} {mm ? 'ဧက' : 'acre'}
+                    </p>
+                  )}
+                  {note.price_display && (
+                    <p>
+                      <span className="text-muted-foreground">
+                        {mm ? 'ဈေးနှုန်း' : 'Price'}:{' '}
+                      </span>
+                      <span className="font-medium text-primary">
+                        {note.price_display}
+                      </span>
+                    </p>
+                  )}
+                  <p className="flex items-start gap-1.5">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                    <span>
+                      {[
+                        note.road,
+                        note.ward,
+                        note.township &&
+                          (mm ? note.township.name_mm : note.township.name_en),
+                        note.region &&
+                          (mm ? note.region.name_mm : note.region.name_en),
+                      ]
+                        .filter(Boolean)
+                        .join(', ') || '-'}
+                    </span>
                   </p>
-                )}
-                {note.area_acre != null && (
-                  <p>
-                    <span className="text-gray-500">{mm ? 'ဧရိယာ' : 'Area'}: </span>
-                    {note.area_acre} {mm ? 'ဧက' : 'acre'}
+                  {note.latitude != null && note.longitude != null && (
+                    <p className="text-muted-foreground">
+                      {note.latitude.toFixed(6)}, {note.longitude.toFixed(6)}
+                    </p>
+                  )}
+                  <p className="text-muted-foreground">
+                    {mm ? 'ဖန်တီးချိန်' : 'Created'}: {note.created_at || '-'}
                   </p>
-                )}
-                {note.price_display && (
-                  <p>
-                    <span className="text-gray-500">{mm ? 'ဈေးနှုန်း' : 'Price'}: </span>
-                    {note.price_display}
-                  </p>
-                )}
-                <p className="flex items-start gap-1">
-                  <MapPin className="h-4 w-4 mt-0.5 text-gray-400" />
-                  <span>
-                    {[note.road, note.ward, note.township && (mm ? note.township.name_mm : note.township.name_en), note.region && (mm ? note.region.name_mm : note.region.name_en)]
-                      .filter(Boolean)
-                      .join(', ') || '-'}
-                  </span>
-                </p>
-                {note.latitude != null && note.longitude != null && (
-                  <p className="text-gray-500">
-                    {note.latitude.toFixed(6)}, {note.longitude.toFixed(6)}
-                  </p>
-                )}
-                <p className="text-gray-500">
-                  {mm ? 'ဖန်တီးချိန်' : 'Created'}: {note.created_at || '-'}
-                </p>
+                </div>
+
+                {note.latitude != null && note.longitude != null ? (
+                  <PropertyNoteDetailMiniMap
+                    latitude={Number(note.latitude)}
+                    longitude={Number(note.longitude)}
+                    boundary={note.boundary}
+                    language={language}
+                    className="min-h-[200px] w-full lg:min-h-[240px]"
+                  />
+                ) : null}
               </CardContent>
             </Card>
           </div>

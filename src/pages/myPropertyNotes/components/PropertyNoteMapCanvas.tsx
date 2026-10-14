@@ -13,10 +13,10 @@ import type { PropertyNoteBoundaryGeoJson, PropertyNoteMapPin } from '@/types/pr
 const PIN_ZOOM_THRESHOLD = 14;
 const DEFAULT_CENTER = { lat: 16.8661, lng: 96.1951 };
 
-/** Legend colors: Notes=blue, Property=red, Selected=green (ring). */
+/** Legend colors: Notes=blue, Property=red, Selected=jade primary (ring). */
 const NOTE_PIN_COLOR = '#2563eb';
 const PROPERTY_PIN_COLOR = '#dc2626';
-const SELECTED_PIN_COLOR = '#16a34a';
+const SELECTED_PIN_COLOR = '#36846E';
 
 /** Same height + hover as create/edit map toolbar. */
 const MAP_TOOL_BTN =

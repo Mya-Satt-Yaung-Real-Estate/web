@@ -3,7 +3,8 @@ import type { ReactNode } from 'react';
 
 interface FormFieldProps {
   name: string;
-  label: string;
+  /** Omit when the section CardTitle already names the field. */
+  label?: string;
   error?: { message?: string };
   children: ReactNode;
   required?: boolean;
@@ -24,9 +25,11 @@ export const FormField = ({
 }: FormFieldProps) => {
   return (
     <div className={className}>
-      <Label htmlFor={name} className="font-normal">
-        {label} {required && <span className="text-red-500">*</span>}
-      </Label>
+      {label ? (
+        <Label htmlFor={name} className="font-normal">
+          {label} {required && <span className="text-red-500">*</span>}
+        </Label>
+      ) : null}
       {children}
       {error && (
         <p className="text-sm text-red-500">{error.message}</p>

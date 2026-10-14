@@ -38,7 +38,10 @@ import {
   usePropertyNoteMapDetail,
 } from '@/hooks/queries/usePropertyNotes';
 import { PropertyNoteMapCanvas } from './components/PropertyNoteMapCanvas';
-import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PAGE_SHELL,
+  PropertyNotePageHeader,
+} from './components/PropertyNotePageHeader';
 import {
   PROPERTY_NOTE_PHOTO_NAV_BUTTON,
   PROPERTY_NOTE_PHOTO_NAV_ICON,
@@ -214,23 +217,37 @@ export default function MyPropertyNotesMapPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-6 max-w-7xl">
+    <div className={PROPERTY_NOTE_PAGE_SHELL}>
       <SEOHead seo={seo} path="/my-property-notes/map" />
 
       <PropertyNotePageHeader
         title={mm ? 'အိမ်ခြံမြေမှတ်စုများ မြေပုံ' : 'Property Note Map'}
+        description={
+          mm
+            ? 'မှတ်စုနှင့် အိမ်ခြံမြေ pins ကို မြေပုံပေါ်တွင် ကြည့်ပါ'
+            : 'Browse note and property pins on the map'
+        }
         extra={
           counts ? (
             <>
-              <Badge className="gap-1 border-transparent !bg-blue-600 !text-white hover:!bg-blue-700">
+              <Badge
+                variant="outline"
+                className="gap-1.5 border-blue-500/25 bg-blue-500/10 font-medium text-blue-800 hover:bg-blue-500/15"
+              >
                 <StickyNote className="h-3 w-3" />
                 {mm ? 'မှတ်စု' : 'Notes'}: {Number(counts.notes)}
               </Badge>
-              <Badge className="gap-1 border-transparent !bg-red-600 !text-white hover:!bg-red-700">
+              <Badge
+                variant="outline"
+                className="gap-1.5 border-red-500/25 bg-red-500/10 font-medium text-red-800 hover:bg-red-500/15"
+              >
                 <Home className="h-3 w-3" />
                 {mm ? 'အိမ်' : 'Properties'}: {Number(counts.properties)}
               </Badge>
-              <Badge className="gap-1 border-transparent !bg-green-600 !text-white hover:!bg-green-700">
+              <Badge
+                variant="outline"
+                className="gap-1.5 border-primary/25 bg-primary/10 font-medium text-primary hover:bg-primary/15"
+              >
                 {mm ? 'စုစုပေါင်း' : 'Total'}: {Number(counts.total)}
               </Badge>
             </>
@@ -242,7 +259,7 @@ export default function MyPropertyNotesMapPage() {
        * CardContent defaults to pt-0 — force full padding so filters are not flush to the card top.
        */}
       <Card className="mb-6">
-        <CardContent className="!p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <CardContent className="!p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="relative lg:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -358,27 +375,24 @@ export default function MyPropertyNotesMapPage() {
               </div>
             ) : (
               <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-3 px-1 text-sm text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-3 px-1 text-xs text-muted-foreground sm:text-sm">
                   <span className="inline-flex items-center gap-1.5">
                     <span
-                      className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                      className="inline-block h-3 w-3 rounded-full border-[2.5px] bg-white shadow-sm"
                       style={{ borderColor: '#dc2626' }}
                     />
-                    <span className="font-medium text-gray-700">{mm ? 'အိမ်' : 'Property'}</span>
+                    <span className="font-medium text-foreground/80">{mm ? 'အိမ်' : 'Property'}</span>
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span
-                      className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
+                      className="inline-block h-3 w-3 rounded-full border-[2.5px] bg-white shadow-sm"
                       style={{ borderColor: '#2563eb' }}
                     />
-                    <span className="font-medium text-gray-700">{mm ? 'မှတ်စု' : 'Notes'}</span>
+                    <span className="font-medium text-foreground/80">{mm ? 'မှတ်စု' : 'Notes'}</span>
                   </span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span
-                      className="inline-block h-3.5 w-3.5 rounded-full border-[3px] bg-white shadow"
-                      style={{ borderColor: '#16a34a' }}
-                    />
-                    <span className="font-medium text-gray-700">{mm ? 'ရွေးထား' : 'Selected'}</span>
+                    <span className="inline-block h-3 w-3 rounded-full border-[2.5px] border-primary bg-white shadow-sm" />
+                    <span className="font-medium text-foreground/80">{mm ? 'ရွေးထား' : 'Selected'}</span>
                   </span>
                 </div>
                 <div className="relative h-[65vh] min-h-[360px] w-full">

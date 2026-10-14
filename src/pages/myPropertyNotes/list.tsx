@@ -24,7 +24,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useModal } from '@/contexts/ModalContext';
 import { useConfirmModal } from '@/hooks/useConfirmModal';
 import { useSyncAuthProfileFlags } from '@/hooks/useSyncAuthProfileFlags';
-import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PAGE_SHELL,
+  PropertyNotePageHeader,
+} from './components/PropertyNotePageHeader';
 import { useRegions, useTownships } from '@/hooks/queries/useLocations';
 import { usePropertyNoteAccess, usePropertyNotes } from '@/hooks/queries/usePropertyNotes';
 import { useDeletePropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
@@ -153,12 +156,10 @@ export default function MyPropertyNotesListPage() {
     <>
       <SEOHead seo={seo} path="/my-property-notes/list" />
 
-      <div className="container mx-auto px-4 pt-24 pb-6 max-w-7xl">
+      <div className={PROPERTY_NOTE_PAGE_SHELL}>
         <PropertyNotePageHeader
           title={mm ? 'အိမ်ခြံမြေမှတ်စုများ စာရင်း' : 'Property Note List'}
           description={mm ? 'ကိုယ်ပိုင် မှတ်စုများကို စီမံပါ' : 'Manage your own property notes'}
-          backTo="/my-property-notes"
-          backLabel={mm ? 'ပြန်သွားရန်' : 'Back'}
         />
 
         <Card className="mb-6">

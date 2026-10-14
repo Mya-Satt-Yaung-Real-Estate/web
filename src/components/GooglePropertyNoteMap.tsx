@@ -33,11 +33,11 @@ interface GooglePropertyNoteMapProps {
 
 const DEFAULT_CENTER = { lat: 16.8661, lng: 96.1951 };
 
-/** High-contrast on satellite; soft fill, sharp edge. */
+/** High-contrast on satellite; red edge (draw line), soft red fill. */
 const POLY_STYLE = {
-  fillColor: '#06B6D4',
-  fillOpacity: 0.22,
-  strokeColor: '#FACC15',
+  fillColor: '#EF4444',
+  fillOpacity: 0.18,
+  strokeColor: '#DC2626',
   strokeOpacity: 1,
   strokeWeight: 3.5,
 };

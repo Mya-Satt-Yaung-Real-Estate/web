@@ -40,7 +40,10 @@ import {
   useApprovePropertyNoteRequest,
   useRejectPropertyNoteRequest,
 } from '@/hooks/mutations/usePropertyNoteMutations';
-import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PAGE_SHELL,
+  PropertyNotePageHeader,
+} from './components/PropertyNotePageHeader';
 import type {
   PropertyNoteApprovalFilterStatus,
   PropertyNoteApprovalItem,
@@ -258,7 +261,7 @@ export default function PropertyNoteApprovalsPage() {
 
   if (!isSynced) {
     return (
-      <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
+      <div className={PROPERTY_NOTE_PAGE_SHELL}>
         <Skeleton className="h-10 w-64 mb-4" />
         <Skeleton className="h-28 w-full" />
       </div>
@@ -273,7 +276,7 @@ export default function PropertyNoteApprovalsPage() {
     <>
       <SEOHead seo={seo} path="/my-property-notes/approvals" />
 
-      <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
+      <div className={PROPERTY_NOTE_PAGE_SHELL}>
         <PropertyNotePageHeader
           title={mm ? 'အိမ်ခြံမြေမှတ်စု အတည်ပြုမှုများ' : 'Property Note Approvals'}
           description={
@@ -281,8 +284,6 @@ export default function PropertyNoteApprovalsPage() {
               ? 'Admin အတည်ပြုပြီးသား တောင်းဆိုမှုများကို နောက်ဆုံး အတည်ပြု / ငြင်းပယ်ပါ။'
               : 'Final approve or reject requests that admin already passed.'
           }
-          backTo="/my-property-notes"
-          backLabel={mm ? 'ပြန်သွားရန်' : 'Back'}
           extra={
             pendingCount > 0 ? (
               <Badge className="bg-amber-600 text-white hover:bg-amber-600 border-transparent w-fit">

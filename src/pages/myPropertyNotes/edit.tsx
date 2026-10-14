@@ -21,7 +21,10 @@ import {
   usePropertyNoteDetail,
 } from '@/hooks/queries/usePropertyNotes';
 import { useUpdatePropertyNote } from '@/hooks/mutations/usePropertyNoteMutations';
-import { PropertyNotePageHeader } from './components/PropertyNotePageHeader';
+import {
+  PROPERTY_NOTE_PAGE_SHELL,
+  PropertyNotePageHeader,
+} from './components/PropertyNotePageHeader';
 import type { PropertyNoteUpdateData } from '@/types/propertyNote';
 import type { PropertyNoteUpdateFormData } from '@/lib/validation/propertyNote';
 
@@ -33,7 +36,7 @@ export default function EditPropertyNotePage() {
   const noteId = Number(id);
   const navigate = useNavigate();
   const seo = seoUtils.getPageSEO('myPropertyNotesEdit');
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const mm = language === 'mm';
   const { showSuccess, showError } = useModal();
   const [mediaIds, setMediaIds] = useState<number[]>([]);
@@ -189,7 +192,7 @@ export default function EditPropertyNotePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-6 max-w-6xl">
+    <div className={PROPERTY_NOTE_PAGE_SHELL}>
       <SEOHead seo={seo} path={`/my-property-notes/${noteId}/edit`} />
 
       <PropertyNotePageHeader
@@ -379,15 +382,13 @@ export default function EditPropertyNotePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{mm ? 'ဓာတ်ပုံများ' : 'Photos'}</CardTitle>
+              <CardTitle className="text-base">
+                {mm ? 'ဓာတ်ပုံများ' : 'Photos'}{' '}
+                <span className="text-red-500">*</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <FormField
-                name="media_ids"
-                label={t('common.photos') || (mm ? 'ဓာတ်ပုံ' : 'Photos')}
-                required
-                error={errors.media_ids}
-              >
+              <FormField name="media_ids" error={errors.media_ids}>
                 <MediaUpload
                   acceptedTypes={['image/*']}
                   maxFiles={10}
