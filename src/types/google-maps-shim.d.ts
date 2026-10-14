@@ -233,6 +233,7 @@ declare namespace google.maps {
   function importLibrary(name: string): Promise<unknown>;
 
   namespace places {
+    /** Legacy — prefer PlaceAutocompleteElement (Places API New). */
     class Autocomplete {
       constructor(inputField: HTMLInputElement, opts?: AutocompleteOptions);
       addListener(eventName: string, handler: (...args: unknown[]) => void): MapsEventListener;
@@ -250,6 +251,33 @@ declare namespace google.maps {
       };
       name?: string;
       formatted_address?: string;
+    }
+
+    /** Places API (New) autocomplete widget. */
+    class PlaceAutocompleteElement extends HTMLElement {
+      constructor(opts?: PlaceAutocompleteElementOptions);
+      placeholder: string;
+      includedRegionCodes?: string[];
+    }
+
+    interface PlaceAutocompleteElementOptions {
+      placeholder?: string;
+      includedRegionCodes?: string[];
+    }
+
+    interface PlacePredictionSelectEvent extends Event {
+      placePrediction?: PlacePrediction;
+    }
+
+    interface PlacePrediction {
+      toPlace(): Place;
+    }
+
+    interface Place {
+      fetchFields(opts: { fields: string[] }): Promise<void>;
+      location?: LatLng | null;
+      displayName?: string | null;
+      formattedAddress?: string | null;
     }
   }
 

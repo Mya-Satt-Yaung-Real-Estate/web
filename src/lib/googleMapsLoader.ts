@@ -69,9 +69,13 @@ export function loadGoogleMaps(): Promise<typeof google> {
     script.id = 'msy-google-maps-js';
     script.async = true;
     script.defer = true;
+    /**
+     * weekly includes PlaceAutocompleteElement (Places API New).
+     * Legacy Autocomplete is blocked when only Places API (New) is enabled.
+     */
     script.src =
       `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}` +
-      '&libraries=places&v=weekly&callback=__msyGoogleMapsCallback';
+      '&libraries=places&v=weekly&callback=__msyGoogleMapsCallback&loading=async';
 
     script.onerror = () => {
       fail('Failed to load Google Maps script (network or blocked).');

@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, Maximize2, Minimize2, Pencil, Search, Trash2, X } from 'lucide-react';
+import { Check, Maximize2, Minimize2, Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { loadGoogleMaps } from '@/lib/googleMapsLoader';
+import {
+  mountPlaceAutocompleteNew,
+  type PlaceAutocompleteHandle,
+} from '@/lib/placeAutocompleteNew';
 import type { PropertyNoteBoundaryGeoJson } from '@/types/propertyNote';
 
 export type { PropertyNoteBoundaryGeoJson };
@@ -152,8 +155,11 @@ export function GooglePropertyNoteMap({
   const [isDrawing, setIsDrawing] = useState(false);
   const [draftVertexCount, setDraftVertexCount] = useState(0);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
-  /** roadmap | satellite | hybrid — custom toolbar control (order: Draw, Maximize, Map type). */
-  const [mapTypeId, setMapTypeId] = useState<'roadmap' | 'satellite' | 'hybrid'>('roadmap');
+  /**
+   * roadmap = Map; hybrid = Satellite with place labels (same look as Google Hybrid).
+   * Toolbar still shows “Satellite” — users expect labels on aerial view.
+   */
+  const [mapTypeId, setMapTypeId] = useState<'roadmap' | 'hybrid'>('roadmap');
   const [pinLabel, setPinLabel] = useState<string>(() =>
     latitude != null && longitude != null
       ? `Pin: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
@@ -170,13 +176,13 @@ export function GooglePropertyNoteMap({
   /** Outer chrome (search + draw + map) — fullscreen this so Draw stays available. */
   const mapChromeRef = useRef<HTMLDivElement | null>(null);
   const mapElRef = useRef<HTMLDivElement | null>(null);
-  const searchRef = useRef<HTMLInputElement | null>(null);
+  const searchHostRef = useRef<HTMLDivElement | null>(null);
 
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const polygonRef = useRef<google.maps.Polygon | null>(null);
   const draftLineRef = useRef<google.maps.Polyline | null>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const placeSearchRef = useRef<PlaceAutocompleteHandle | null>(null);
   const listenersRef = useRef<google.maps.MapsEventListener[]>([]);
   const pathListenersRef = useRef<google.maps.MapsEventListener[]>([]);
 
@@ -411,18 +417,11 @@ export function GooglePropertyNoteMap({
     isDrawingRef.current = false;
 
     try {
-      const mapsEvent = (
-        window.google?.maps as
-          | { event?: { clearInstanceListeners?: (o: object) => void } }
-          | undefined
-      )?.event;
-      if (autocompleteRef.current && mapsEvent?.clearInstanceListeners) {
-        mapsEvent.clearInstanceListeners(autocompleteRef.current);
-      }
+      placeSearchRef.current?.destroy();
     } catch {
       // ignore
     }
-    autocompleteRef.current = null;
+    placeSearchRef.current = null;
 
     try {
       polygonRef.current?.setMap(null);
@@ -440,7 +439,7 @@ export function GooglePropertyNoteMap({
     mapInstanceRef.current = null;
   };
 
-  const mountMap = (mapEl: HTMLDivElement, searchEl: HTMLInputElement | null) => {
+  const mountMap = (mapEl: HTMLDivElement) => {
     clearMapListeners();
 
     const center =
@@ -529,29 +528,30 @@ export function GooglePropertyNoteMap({
       })
     );
 
-    if (searchEl) {
-      const autocomplete = new google.maps.places.Autocomplete(searchEl, {
-        fields: ['geometry', 'name', 'formatted_address'],
-      });
-      autocompleteRef.current = autocomplete;
-      track(
-        autocomplete.addListener('place_changed', () => {
-          if (isDrawingRef.current) return;
-          const place = autocomplete.getPlace();
-          const loc = place.geometry?.location;
-          if (!loc) return;
-          const lat = loc.lat();
-          const lng = loc.lng();
-          map.panTo({ lat, lng });
-          map.setZoom(17);
-          marker.setMap(map);
-          marker.setPosition({ lat, lng });
-          emitPin(lat, lng);
-        })
-      );
-    }
-
     setReady(true);
+  };
+
+  const mountPlaceSearch = async () => {
+    placeSearchRef.current?.destroy();
+    placeSearchRef.current = null;
+    const host = searchHostRef.current;
+    if (!host) return;
+
+    placeSearchRef.current = await mountPlaceAutocompleteNew(host, {
+      placeholder: mm ? 'နေရာ / ဧရိယာ ရှာရန်…' : 'Search place / area…',
+      includedRegionCodes: ['mm'],
+      onPlace: ({ lat, lng }) => {
+        if (isDrawingRef.current) return;
+        const map = mapInstanceRef.current;
+        const marker = markerRef.current;
+        if (!map || !marker) return;
+        map.panTo({ lat, lng });
+        map.setZoom(17);
+        marker.setMap(map);
+        marker.setPosition({ lat, lng });
+        emitPin(lat, lng);
+      },
+    });
   };
 
   useEffect(() => {
@@ -586,7 +586,12 @@ export function GooglePropertyNoteMap({
           setLoadError(mm ? 'မြေပုံ container မတွေ့ပါ' : 'Map container not ready');
           return;
         }
-        mountMap(el, searchRef.current);
+        mountMap(el);
+        try {
+          await mountPlaceSearch();
+        } catch (searchErr) {
+          console.warn('Places autocomplete (New) failed', searchErr);
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Google Maps failed to load';
         setLoadError(message);
@@ -599,6 +604,8 @@ export function GooglePropertyNoteMap({
     return () => {
       cancelled = true;
       w.gm_authFailure = prevAuthFailure;
+      placeSearchRef.current?.destroy();
+      placeSearchRef.current = null;
       clearMapListeners();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -700,16 +707,11 @@ export function GooglePropertyNoteMap({
           */}
           <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] p-3">
             <div className="pointer-events-auto flex w-full items-center justify-between gap-3">
-              <div className="relative w-[min(100%,18rem)] shrink">
-                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  ref={searchRef}
-                  type="text"
-                  placeholder={mm ? 'နေရာ ရှာရန်…' : 'Search place…'}
-                  className="h-10 border-border/80 bg-white pl-9 shadow-md dark:bg-background"
-                  autoComplete="off"
-                />
-              </div>
+              <div
+                ref={searchHostRef}
+                className="msy-place-search-host w-[min(100%,18rem)] shrink"
+                aria-label={mm ? 'နေရာ ရှာရန်' : 'Search place'}
+              />
 
               {/* Order: 1 Draw · 2 Maximize · 3 Map/Satellite — same height + hover */}
               <div className="flex h-10 shrink-0 items-center gap-2">
@@ -779,15 +781,14 @@ export function GooglePropertyNoteMap({
                   aria-label={mm ? 'မြေပုံ အမျိုးအစား' : 'Map type'}
                   value={mapTypeId}
                   onChange={(e) => {
-                    const next = e.target.value as 'roadmap' | 'satellite' | 'hybrid';
+                    const next = e.target.value as 'roadmap' | 'hybrid';
                     setMapTypeId(next);
                     mapInstanceRef.current?.setMapTypeId(next);
                   }}
                   className={MAP_TOOL_SELECT}
                 >
                   <option value="roadmap">Map</option>
-                  <option value="satellite">Satellite</option>
-                  <option value="hybrid">Hybrid</option>
+                  <option value="hybrid">Satellite</option>
                 </select>
               </div>
             </div>

@@ -225,8 +225,12 @@ export default function EditPropertyNotePage() {
                 <Select
                   value={form.watch('listing_type_id') ? String(form.watch('listing_type_id')) : undefined}
                   onValueChange={(value) =>
-                    form.setValue('listing_type_id', Number(value), { shouldValidate: true })
-                  }
+                    form.setValue('listing_type_id', Number(value), {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    });
+                    form.clearErrors('listing_type_id');
+                  }}
                 >
                   <SelectTrigger className={errors.listing_type_id ? 'border-red-500' : ''}>
                     <SelectValue placeholder={mm ? 'ရွေးချယ်ပါ' : 'Select'} />
@@ -246,8 +250,13 @@ export default function EditPropertyNotePage() {
                   <Select
                     value={form.watch('region_id') ? String(form.watch('region_id')) : undefined}
                     onValueChange={(value) => {
-                      form.setValue('region_id', Number(value), { shouldValidate: true });
+                      form.setValue('region_id', Number(value), {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                      });
+                      form.clearErrors('region_id');
                       form.setValue('township_id', undefined as unknown as number);
+                      form.clearErrors('township_id');
                     }}
                   >
                     <SelectTrigger className={errors.region_id ? 'border-red-500' : ''}>
@@ -267,8 +276,12 @@ export default function EditPropertyNotePage() {
                   <Select
                     value={form.watch('township_id') ? String(form.watch('township_id')) : undefined}
                     onValueChange={(value) =>
-                      form.setValue('township_id', Number(value), { shouldValidate: true })
-                    }
+                      form.setValue('township_id', Number(value), {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                      });
+                      form.clearErrors('township_id');
+                    }}
                     disabled={!watchedRegionId}
                   >
                     <SelectTrigger className={errors.township_id ? 'border-red-500' : ''}>

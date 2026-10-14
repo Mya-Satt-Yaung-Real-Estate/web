@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Maximize2, Minimize2, Search } from 'lucide-react';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import jadeLogo from '@/assets/jade.png';
 import { loadGoogleMaps } from '@/lib/googleMapsLoader';
+import {
+  mountPlaceAutocompleteNew,
+  type PlaceAutocompleteHandle,
+} from '@/lib/placeAutocompleteNew';
 import type { PropertyNoteBoundaryGeoJson, PropertyNoteMapPin } from '@/types/propertyNote';
 
 /** Below this zoom: smaller pins / hide boundaries. At/above: larger + show area. */
@@ -251,9 +254,9 @@ export function PropertyNoteMapCanvas({
   /** Fullscreen this chrome so search stays available (same idea as create/edit map). */
   const mapChromeRef = useRef<HTMLDivElement | null>(null);
   const mapElRef = useRef<HTMLDivElement | null>(null);
-  const searchRef = useRef<HTMLInputElement | null>(null);
+  const searchHostRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const placeSearchRef = useRef<PlaceAutocompleteHandle | null>(null);
   const pinsLayerRef = useRef<Map<string, HtmlPinHandle>>(new Map());
   const polygonsRef = useRef<Map<string, google.maps.Polygon>>(new Map());
   const infoRef = useRef<google.maps.InfoWindow | null>(null);
@@ -269,7 +272,10 @@ export function PropertyNoteMapCanvas({
   const [ready, setReady] = useState(false);
   const [zoom, setZoom] = useState(12);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
-  const [mapTypeId, setMapTypeId] = useState<'roadmap' | 'satellite' | 'hybrid'>('roadmap');
+  /**
+   * roadmap = Map; hybrid = Satellite with place labels (Google Hybrid under the hood).
+   */
+  const [mapTypeId, setMapTypeId] = useState<'roadmap' | 'hybrid'>('roadmap');
 
   pinsRef.current = pins;
   activePinRef.current = activePin;
@@ -438,20 +444,22 @@ export function PropertyNoteMapCanvas({
         mapRef.current = map;
         infoRef.current = new google.maps.InfoWindow({ maxWidth: 300 });
 
-        if (searchRef.current) {
-          const autocomplete = new google.maps.places.Autocomplete(searchRef.current, {
-            fields: ['geometry', 'name', 'formatted_address'],
-          });
-          autocompleteRef.current = autocomplete;
-          listenersRef.current.push(
-            autocomplete.addListener('place_changed', () => {
-              const place = autocomplete.getPlace();
-              const loc = place.geometry?.location;
-              if (!loc) return;
-              map.panTo({ lat: loc.lat(), lng: loc.lng() });
-              map.setZoom(Math.max(map.getZoom() ?? 12, 15));
-            })
-          );
+        if (searchHostRef.current) {
+          try {
+            placeSearchRef.current?.destroy();
+            placeSearchRef.current = await mountPlaceAutocompleteNew(searchHostRef.current, {
+              placeholder: mmRef.current ? 'နေရာ / ဧရိယာ ရှာရန်…' : 'Search place / area…',
+              includedRegionCodes: ['mm'],
+              onPlace: ({ lat, lng }) => {
+                const current = mapRef.current;
+                if (!current) return;
+                current.panTo({ lat, lng });
+                current.setZoom(Math.max(current.getZoom() ?? 12, 15));
+              },
+            });
+          } catch (searchErr) {
+            console.warn('Places autocomplete (New) failed', searchErr);
+          }
         }
 
         const onZoom = () => {
@@ -490,14 +498,8 @@ export function PropertyNoteMapCanvas({
         }
       });
       listenersRef.current = [];
-      try {
-        if (autocompleteRef.current) {
-          google.maps.event.clearInstanceListeners(autocompleteRef.current);
-        }
-      } catch {
-        // ignore
-      }
-      autocompleteRef.current = null;
+      placeSearchRef.current?.destroy();
+      placeSearchRef.current = null;
       clearLayers();
       infoRef.current?.close();
       infoRef.current = null;
@@ -577,16 +579,11 @@ export function PropertyNoteMapCanvas({
       {/* Same chrome as create/edit maximize — search + maximize, no Draw */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] p-3">
         <div className="pointer-events-auto flex w-full items-center justify-between gap-3">
-          <div className="relative w-[min(100%,18rem)] shrink">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              ref={searchRef}
-              type="text"
-              placeholder={mm ? 'နေရာ ရှာရန်…' : 'Search place…'}
-              className="h-10 border-border/80 bg-white pl-9 shadow-md dark:bg-background"
-              autoComplete="off"
-            />
-                    </div>
+          <div
+            ref={searchHostRef}
+            className="msy-place-search-host w-[min(100%,18rem)] shrink"
+            aria-label={mm ? 'နေရာ ရှာရန်' : 'Search place'}
+          />
           {/* No Draw on list — order: Maximize · Map/Satellite */}
           <div className="flex h-10 shrink-0 items-center gap-2">
                     <Button
@@ -607,15 +604,14 @@ export function PropertyNoteMapCanvas({
               aria-label={mm ? 'မြေပုံ အမျိုးအစား' : 'Map type'}
               value={mapTypeId}
               onChange={(e) => {
-                const next = e.target.value as 'roadmap' | 'satellite' | 'hybrid';
+                const next = e.target.value as 'roadmap' | 'hybrid';
                 setMapTypeId(next);
                 mapRef.current?.setMapTypeId(next);
               }}
               className={MAP_TOOL_SELECT}
             >
               <option value="roadmap">Map</option>
-              <option value="satellite">Satellite</option>
-              <option value="hybrid">Hybrid</option>
+              <option value="hybrid">Satellite</option>
             </select>
           </div>
         </div>
