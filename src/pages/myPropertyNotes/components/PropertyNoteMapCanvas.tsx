@@ -48,6 +48,11 @@ interface PropertyNoteMapCanvasProps {
   activePin?: PropertyNoteMapPin | null;
   /** Marker click only (info window). Does not open the sidebar. */
   onPinClick?: (pin: PropertyNoteMapPin) => void;
+  /**
+   * When the detail sheet is open it covers the map’s top-right —
+   * hide Maximize so it does not sit on the sheet photo.
+   */
+  detailSheetOpen?: boolean;
 }
 
 function pinKey(pin: PropertyNoteMapPin): string {
@@ -249,6 +254,7 @@ export function PropertyNoteMapCanvas({
   onViewDetails,
   activePin = null,
   onPinClick,
+  detailSheetOpen = false,
 }: PropertyNoteMapCanvasProps) {
   const mm = language === 'mm';
   /** Fullscreen this chrome so search stays available (same idea as create/edit map). */
@@ -576,8 +582,11 @@ export function PropertyNoteMapCanvas({
                     </div>
       ) : null}
 
-      {/* Same chrome as create/edit maximize — search + maximize, no Draw */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] p-3">
+      {/**
+       * z-20 stays under Sheet (z-50) so tools do not float on the detail photo.
+       * Hide Maximize while the sheet is open (keep Exit when fullscreen).
+       */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3">
         <div className="pointer-events-auto flex w-full items-center justify-between gap-3">
           <div
             ref={searchHostRef}
@@ -586,20 +595,22 @@ export function PropertyNoteMapCanvas({
           />
           {/* No Draw on list — order: Maximize · Map/Satellite */}
           <div className="flex h-10 shrink-0 items-center gap-2">
-                    <Button
-              type="button"
-              variant="outline"
-                      size="sm"
-              onClick={() => void toggleMapFullscreen()}
-              className={MAP_TOOL_ICON_BTN}
-              title={isMapFullscreen ? (mm ? 'ပိတ်ရန်' : 'Exit') : mm ? 'ချဲ့ရန်' : 'Maximize'}
-            >
-              {isMapFullscreen ? (
-                <Minimize2 className="h-5 w-5" strokeWidth={2.5} />
-              ) : (
-                <Maximize2 className="h-5 w-5" strokeWidth={2.5} />
-              )}
-                    </Button>
+            {!detailSheetOpen || isMapFullscreen ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => void toggleMapFullscreen()}
+                className={MAP_TOOL_ICON_BTN}
+                title={isMapFullscreen ? (mm ? 'ပိတ်ရန်' : 'Exit') : mm ? 'ချဲ့ရန်' : 'Maximize'}
+              >
+                {isMapFullscreen ? (
+                  <Minimize2 className="h-5 w-5" strokeWidth={2.5} />
+                ) : (
+                  <Maximize2 className="h-5 w-5" strokeWidth={2.5} />
+                )}
+              </Button>
+            ) : null}
             <select
               aria-label={mm ? 'မြေပုံ အမျိုးအစား' : 'Map type'}
               value={mapTypeId}
@@ -615,7 +626,7 @@ export function PropertyNoteMapCanvas({
             </select>
           </div>
         </div>
-              </div>
+      </div>
 
       <div ref={mapElRef} className="h-full w-full min-h-[360px]" />
     </div>

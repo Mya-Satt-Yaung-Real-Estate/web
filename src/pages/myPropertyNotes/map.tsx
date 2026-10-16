@@ -401,6 +401,7 @@ export default function MyPropertyNotesMapPage() {
                     language={language}
                     activePin={activePin}
                     onPinClick={setActivePin}
+                    detailSheetOpen={Boolean(selectedPin)}
                     onViewDetails={(pin) => {
                       setActivePin(pin);
                       setSelectedPin(pin);
